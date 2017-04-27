@@ -93,7 +93,7 @@ $(document).ready(function() {
                 break;
         
             // acknowledge build
-            case 'ackBuild':
+            case 'ackHotSwap':
                 if (ticketType !== 'task') {
                     sendResponse({success: false, errMsg: 'Please open a task.'});
                 } else {

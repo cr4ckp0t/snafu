@@ -18,6 +18,9 @@
 
 var autoFinish
 
+var arrAckTasks = ['ackTask|Generic Task', 'ackHotSwap|Hot Swap', 'ackInstall|Install Task', 'ackQuarantine|Quarantine Task', 'ackReclaim|Reclaim Task'];
+var arrCloseTasks = ['closeHotSwap|Hot Swap', 'closeInstall|Install Task', 'closeQuarantine|Quarantine Task', 'closeReclaim|Reclaim Task'];
+
 chrome.storage.sync.get({autoTicket: 'none'}, function(items) {
 	autoFinish = (items.autoTicket === undefined) ? 'none' : items.autoFinish;
 });
@@ -39,17 +42,160 @@ chrome.contextMenus.create({
 	}
 });
 
-// auto acknowledge task
 chrome.contextMenus.create({
-	title: 'SNAFU: Acknowledge Task',
+	title: 'Acknowledge Tasks',
 	contexts: ['page'],
 	//parentId: 'parent',
+	id: 'parentAckTask',
+	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*']
+});
+
+chrome.contextMenus.create({
+	title: 'Generic Task',
+	contexts: ['page'],
 	id: 'ackTask',
+	parentId: 'parentAckTask',
 	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
 	onclick: function() {
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
 			chrome.tabs.sendMessage(tabs[0].id, {
 				type: 'ackTask',
+				autoFinish: autoFinish
+			});
+		});
+	}
+});
+
+chrome.contextMenus.create({
+	title: 'Hot Swap',
+	contexts: ['page'],
+	id: 'ackHotSwap',
+	parentId: 'parentAckTask',
+	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
+	onclick: function() {
+		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+			chrome.tabs.sendMessage(tabs[0].id, {
+				type: 'ackHotSwap',
+				autoFinish: autoFinish
+			});
+		});
+	}
+});
+
+chrome.contextMenus.create({
+	title: 'Install Task',
+	contexts: ['page'],
+	id: 'ackInstall',
+	parentId: 'parentAckTask',
+	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
+	onclick: function() {
+		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+			chrome.tabs.sendMessage(tabs[0].id, {
+				type: 'ackInstall',
+				autoFinish: autoFinish
+			});
+		});
+	}
+});
+
+chrome.contextMenus.create({
+	title: 'Quarantine Task',
+	contexts: ['page'],
+	id: 'ackQuarantine',
+	parentId: 'parentAckTask',
+	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
+	onclick: function() {
+		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+			chrome.tabs.sendMessage(tabs[0].id, {
+				type: 'ackQuarantine',
+				autoFinish: autoFinish
+			});
+		});
+	}
+});
+
+chrome.contextMenus.create({
+	title: 'Reclaim Task',
+	contexts: ['page'],
+	id: 'ackReclaim',
+	parentId: 'parentAckTask',
+	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
+	onclick: function() {
+		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+			chrome.tabs.sendMessage(tabs[0].id, {
+				type: 'ackReclaim',
+				autoFinish: autoFinish
+			});
+		});
+	}
+});
+
+// closure tasks
+chrome.contextMenus.create({
+	title: 'Close Tasks',
+	contexts: ['page'],
+	id: 'parentCloseTask',
+	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*']
+});
+
+chrome.contextMenus.create({
+	title: 'Hot Swap',
+	contexts: ['page'],
+	id: 'closeHotSwap',
+	parentId: 'parentCloseTask',
+	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
+	onclick: function() {
+		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+			chrome.tabs.sendMessage(tabs[0].id, {
+				type: 'closeHotSwap',
+				autoFinish: autoFinish
+			});
+		});
+	}
+});
+
+chrome.contextMenus.create({
+	title: 'Install Task',
+	contexts: ['page'],
+	id: 'closeInstall',
+	parentId: 'parentCloseTask',
+	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
+	onclick: function() {
+		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+			chrome.tabs.sendMessage(tabs[0].id, {
+				type: 'closeInstall',
+				autoFinish: autoFinish
+			});
+		});
+	}
+});
+
+chrome.contextMenus.create({
+	title: 'Quarantine Task',
+	contexts: ['page'],
+	id: 'closeQuarantine',
+	parentId: 'parentCloseTask',
+	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
+	onclick: function() {
+		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+			chrome.tabs.sendMessage(tabs[0].id, {
+				type: 'closeQuarantine',
+				autoFinish: autoFinish
+			});
+		});
+	}
+});
+
+chrome.contextMenus.create({
+	title: 'Reclaim Task',
+	contexts: ['page'],
+	id: 'closeReclaim',
+	parentId: 'parentCloseTask',
+	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
+	onclick: function() {
+		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+			chrome.tabs.sendMessage(tabs[0].id, {
+				type: 'closeReclaim',
 				autoFinish: autoFinish
 			});
 		});

@@ -1,6 +1,8 @@
 # SNAFU: SNow Automated Form Utilizer
 *Like SNAP, only way better!*
 
+[Chrome Web Store](https://chrome.google.com/webstore/detail/snafu-snow-automated-form/hnnbkmfkgnjngnkijdmfijmbkpjmmmpd?hl=en-US&gl=US)
+
 ```
 SNAFU: SNow Automated Field Utilizer
 Copyright (C) 2017  Adam Koch <akoch@ghs.org>
