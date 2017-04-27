@@ -36,6 +36,13 @@ $(document).ready(function() {
     
     chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
         var ticketType = getTicketType();
+        var autoFinish = 'none';
+
+        if (msg.autoFinish === null || msg.autoFinish === undefined) {
+            chrome.storage.sync.get({autoTicket: 'none'}, function(items) {
+                autoFinish = items.autoTicket;
+            });
+        }
 
         switch (msg.type) {
             // acknowledge incident
@@ -46,7 +53,7 @@ $(document).ready(function() {
                     // set the data to inject
                     injectData = {
                         type: msg.type,
-                        autoFinish: msg.autoFinish,
+                        autoFinish: msg.autoFinish || autoFinish,
                         field: 'incident_state',
                         value: '3', // In Progress
                         workNotes: 'Acknowledging Incident',
@@ -64,7 +71,7 @@ $(document).ready(function() {
                     // set the data to inject
                     injectData = {
                         type: msg.type,
-                        autoFinish: msg.autoFinish,
+                        autoFinish: msg.autoFinish || autoFinish,
                         field: 'incident_state',
                         value: '3', // In Progress
                         workNotes: 'Acknowledging Incident.  Calling {USER} at {NUMBER}.',
@@ -82,7 +89,7 @@ $(document).ready(function() {
                 } else {
                     injectData = {
                         type: msg.type,
-                        autoFinish: msg.autoFinish,
+                        autoFinish: msg.autoFinish || autoFinish,
                         field: 'state',
                         value: '2', // Work in Progress
                         workNotes: 'Acknowledging task.',
@@ -99,7 +106,7 @@ $(document).ready(function() {
                 } else {
                     injectData = {
                         type: msg.type,
-                        autoFinish: msg.autoFinish,
+                        autoFinish: msg.autoFinish || autoFinish,
                         field: 'state',
                         value: '2', // work in progress
                         workNotes: 'Acknowledging build request.',
@@ -116,7 +123,7 @@ $(document).ready(function() {
                 } else {
                     injectData = {
                         type: msg.type,
-                        autoFinish: msg.autoFinish,
+                        autoFinish: msg.autoFinish || autoFinish,
                         field: 'state',
                         value: '2', // work in progress
                         workNotes: 'Acknowledging quarantine task.',
@@ -133,7 +140,7 @@ $(document).ready(function() {
                 } else {
                     injectData = {
                         type: msg.type,
-                        autoFinish: msg.autoFinish,
+                        autoFinish: msg.autoFinish || autoFinish,
                         field: 'state',
                         value: '2', // work in progress
                         workNotes: 'Acknowledging reclaim task.',
@@ -149,7 +156,7 @@ $(document).ready(function() {
                 } else {
                     injectData = {
                         type: msg.type,
-                        autoFinish: msg.autoFinish,
+                        autoFinish: msg.autoFinish || autoFinish,
                         field: 'state',
                         value: '3', // closed complete
                         workNotes: 'Computer has been built. One {MODEL} has been built {BUILD}. Tag {ASSET} HostName {HOSTNAME}. Resolving Task.',
@@ -166,7 +173,7 @@ $(document).ready(function() {
                 } else {
                     injectData = {
                         type: msg.type,
-                        autoFinish: msg.autoFinish,
+                        autoFinish: msg.autoFinish || autoFinish,
                         field: 'state',
                         value: '3', // closed complete
                         workNotes: 'Installed requested equipment and attached signed completion sheet.',
@@ -183,7 +190,7 @@ $(document).ready(function() {
                 } else {
                     injectData = {
                         type: msg.type,
-                        autoFinish: msg.autoFinish,
+                        autoFinish: msg.autoFinish || autoFinish,
                         field: 'state',
                         value: '3', // closed complete
                         workNotes: 'Device removed from quarantine.',
@@ -200,7 +207,7 @@ $(document).ready(function() {
                 } else {
                     injectData = {
                         type: msg.type,
-                        autoFinish: msg.autoFinish,
+                        autoFinish: msg.autoFinish || autoFinish,
                         field: 'state',
                         value: '3', // closed complete
                         workNotes: 'Device reclaimed and added to quarantine.',
@@ -221,11 +228,11 @@ $(document).ready(function() {
                         // generate the data to inject
                         injectData = {
                             type: msg.type,
-                            autoFinish: msg.autoFinish,
+                            autoFinish: msg.autoFinish || autoFinish,
                             field: 'incident_state',
                             value: incStates[parseInt(msg.tState)],
-                            workNotes: (msg.workNotes || null),
-                            custNotes: (msg.custNotes || null)
+                            workNotes: msg.workNotes || null,
+                            custNotes: msg.custNotes || null
                         }
                         // send success!
                         sendResponse({success: true, errMsg: null});
@@ -234,11 +241,11 @@ $(document).ready(function() {
                     // generate the data to inject
                     injectData = {
                         type: msg.type,
-                        autoFinish: msg.autoFinish,
+                        autoFinish: msg.autoFinish || autoFinish,
                         field: 'state',
                         value: taskStates[parseInt(msg.tState)],
-                        workNotes: (msg.workNotes || null),
-                        custNotes: (msg.custNotes || null)
+                        workNotes: msg.workNotes || null,
+                        custNotes: msg.custNotes || null
                     }
                     // send success!
                     sendResponse({success: true, errMsg: null});
@@ -247,6 +254,13 @@ $(document).ready(function() {
                     sendResponse({success: false, errMsg: 'Service Now must be active tab.'});
                 }
                 break;
+
+            // send an equipment build
+            case 'sendEquipment':
+                // Computer has been built. One {MAKE} has been built {BUILD}. Tag {ASSET} HostName {HOSTNAME}. Resolving Task. Placing computer in Deployment Room. Please assign to a tech for install and resolution. Once this ticket is closed, the request will generate another task to have a technician come on site to install the equipment. This is just a ticket to track the build and equipment used. A tech should be calling the customer momentarily to set up a time for installation.
+                // My name is {NAME} and I have completed the build process for your workstation. The next step is for the system to be delivered to our technicians supporting your campus or ambulatory location so they can schedule an appropriate time to come to your desk and install the system. Please be sure to watch for communication regarding the delivery and installation of your computer at your desk.
+                break;
+
             default: 
                 injectData = null;
                 break;

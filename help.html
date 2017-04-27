@@ -73,10 +73,11 @@
 		<br />
 		<h3>Automation</h3>
 		<p>
-			Automation is split in to 2 types.
+			Automation is split in to 3 types.
 			<ol>
 				<li>Acknowledgments</li>
 				<li>Closures</li>
+				<li>Equipment Orders</li>
 			</ol>
 		</p>
 		<br />
@@ -104,6 +105,17 @@
 				<li><strong>Quarantine Task</strong><pre>Device removed from quarantine.</pre></li>
 				<li><strong>Reclaim Task</strong><pre>Device reclaimed and added to quarantine.</pre></li>
 			</ul>
+		</p>
+		<br />
+		<h4>Equipment Orders</h4>
+		<p>
+			<div class="alert alert-info"><em>Note: Because Equipment Orders do not have the information for the device being built saved on the page I had to create a tab especially for these types of builds.</em></div>
+			These are handled exactly like the Hot Swap closures except with a different closure script.
+			<ul>
+				<li><strong>Comments:</strong><pre>My name is {NAME} and I have completed the build process for your workstation. The next step is for the system to be delivered to our technicians supporting your campus or ambulatory location so they can schedule an appropriate time to come to your desk and install the system. Please be sure to watch for communication regarding the delivery and installation of your computer at your desk.</pre></li>
+				<li><strong>Work Notes:</strong><pre>Computer has been built. One {MAKE} has been built {BUILD}. Tag {ASSET} HostName {HOSTNAME}. Resolving Task. Placing computer in Deployment Room. Please assign to a tech for install and resolution. Once this ticket is closed, the request will generate another task to have a technician come on site to install the equipment. This is just a ticket to track the build and equipment used. A tech should be calling the customer momentarily to set up a time for installation.</pre></li>
+			</ul>
+		</p>
 	</div>
 	<script src="js/jquery.min.js"></script>
     <script src="js/bootstrap.min.js"></script>

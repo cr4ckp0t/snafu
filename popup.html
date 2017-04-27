@@ -31,7 +31,7 @@
         <!-- Navigation -->
         <ul class="nav nav-tabs" role="tablist">
             <li role="presentation" class="active"><a href="#main" aria-controls="main" role="tab" data-toggle="tab">Main</a></li>
-            <li role="presentation"><a href="#equipment" aria-controls="main" role="tab" data-toggle="tab">Equipment Order</a></li>
+            <li role="presentation"><a href="#equipment" aria-controls="main" role="tab" data-toggle="tab">Equipment Orders</a></li>
             <li role="presentation">
                 <a href="#" id="ackTicket" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Acknowledge<span class="caret"></span></a>
                 <ul class="dropdown-menu" aria-labelledby="ackTicket">
@@ -59,7 +59,7 @@
         <!-- Tab Panes -->
         <div class="tab-content">
             <div role="tabpanel" class="tab-pane active" id="main">
-                <p>
+                <div class="form-group" style="padding-top:5px;">
                     <label for="tStatus">Ticket Status</label>
                     <div class="btn-group" data-toggle="buttons">
                         <label class="btn btn-primary btn-sm active">
@@ -75,16 +75,16 @@
                             <input type="radio" name="tStatus" id="3" value="3" autocomplete="off" /> Incomplete
                         </label>
                     </div>
-                </p>
-                <p>
+                </div>
+                <div class="form-group">
                     <label for="customerNotes">Additional Comments</label>
                     <textarea class="form-control" id="customerNotes" name="customerNotes" rows="2" cols="35"></textarea>
-                </p>
-                <p>
+                </div>
+                <div class="form-group">
                     <label for="workNotes">Work Notes (Not Viewable By Customer)</label>
                     <textarea class="form-control" id="workNotes" name="workNotes" rows="2" cols="35"></textarea>
-                </p>
-                <p>
+                </div>
+                <div class="form-group">
                     <div class="btn-group" data-toggle="buttons">
                         <label id="autoTicket-save" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="Save ticket automatically.">
                             <input type="radio" name="autoTicket" value="save" autocomplete="off" /> Auto Save
@@ -96,22 +96,44 @@
                             <input type="radio" name="autoTicket" value="none" autocomplete="off" /> Neither
                         </label>
                     </div>
-                </p>
-                <p>
+                </div>
+                <div class="form-group">
                     <button type="button" class="btn btn-primary btn-md" id="sendUpdate">Send Update</button>
                     <button type="button" class="btn btn-default btn-md" style="float:right;" id="getHelp">Help</button>
-                </p>
-                <p>
-                    <div id="alertSuccess" class="alert alert-success" style="width:100%;"></div>
-                    <div id="alertFailed" class="alert alert-danger" style="width:100%;"></div>
-                </p>
+                </div>
             </div>
             <div role="tabpanel" class="tab-pane" id="equipment">
-                <strong>Coming Soon!</strong>
+                <div class="form-group">
+                    <label for="compRitm">Request Item</label>
+                    <input type="text" id="compRitm" class="form-control" placeholder="RITM" />
+                </div>
+                <div class="form-group">
+                    <label for="compHost">Hostname</label>
+                    <input type="text" id="compHost" class="form-control" placeholder="DTXXXXXXXXXX" />
+                </div>
+                <div class="form-group">
+                    <label for="compAsset">Asset Tag</label>
+                    <input type="text" id="compAsset" class="form-control" placeholder="XXXXXXXX" />
+                </div>
+                <div class="form-group">
+                    <label for="compModel">Model</label>
+                    <input type="text" id="compModel" class="form-control" placeHolder="850 G1 HD" />
+                </div>
+                <div class="form-group">
+                    <label for="compBuild">Build</label>
+                    <input type="text" id="compBuild" class="form-control" placeHolder="GMH-MANDATORY" />
+                </div>
+                <div class="form-group">
+                    <button type="button" class="btn btn-primary btn-md" id="sendEquipment">Send Update</button>
+                    <button type="button" class="btn btn-default btn-md" style="float:right;" id="getHelp2">Help</button>
+                </div>
+            </div>
+            <div class="form-group">
+                <div id="alertSuccess" class="alert alert-success" style="width:100%;"></div>
+                <div id="alertFailed" class="alert alert-danger" style="width:100%;"></div>
             </div>
         </div>
     </div>
-    <br />
     <script src="js/jquery.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="js/popup.js"></script>

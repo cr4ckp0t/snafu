@@ -24,6 +24,11 @@ body {
     padding: 5px;
 }
 
+input {
+    font-size: 12px;
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+
 span#title {
     font-size: 28px;
     color: #3eb049;

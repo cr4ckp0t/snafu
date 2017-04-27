@@ -16,12 +16,13 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  **/
 
-var autoFinish
-
 $(document).ready(function() {
     $('#alertSuccess').hide();
     $('#alertFailed').hide();
     $('[data-toggle="tooltip"]').tooltip();
+
+    var autoFinish
+    var helpUrl = chrome.extension.getURL('help.html');
 
     chrome.storage.sync.get({autoTicket: 'none'}, function(items) {
         if (items.autoTicket === undefined) {
@@ -244,7 +245,11 @@ $(document).ready(function() {
 
     // open help page
     $('#getHelp').click(function() {
-        var helpUrl = chrome.extension.getURL('help.html');
+        chrome.tabs.create({ url: helpUrl });
+    });
+
+    // open help page (equipment tab)
+    $('#getHelp2').click(function() {
         chrome.tabs.create({ url: helpUrl });
     });
 });

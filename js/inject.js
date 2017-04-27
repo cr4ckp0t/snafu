@@ -54,7 +54,11 @@ document.addEventListener('SNAFU_Inject', function(snafuInject) {
 
 		// call user's acknowledgement
 		if (snafuType === 'ackCallUser') {
-			
+			var callerId = g_form.getReference('caller_id').first_name
+			callerId = callerId.charAt(0).toUpperCase() + callerId.slice(1).toLowerCase();
+
+			snafuWorkNotes = snafuWorkNotes.replace('{USER}', callerId || 'UNKNOWN');
+			snafuWorkNotes = snafuWorkNotes.replace('{NUMBER}', g_form.getValue('u_current_phone') || 'UNKNOWN');
 
 		// hot swaps have their own script that requires replacements
 		} else if (snafuType === 'closeHotSwap') {
