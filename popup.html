@@ -1,0 +1,120 @@
+<!--
+    SNAFU: SNow Automated Form Utilizer
+    Copyright (C) 2017  Adam Koch <akoch@ghs.org>
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<!doctype html>
+<html>
+
+<head>
+    <title>SNAFU: SNow Automated Form Utilizer</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="css/popup.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+    <h1 id="header"><img src="images/icon-64.png" alt="Logo" style="height:50px;width:50px;" /> SNAFU <small>SNow Automated Form Utilizer</small></h1>
+    <div>
+        <!-- Navigation -->
+        <ul class="nav nav-tabs" role="tablist">
+            <li role="presentation" class="active"><a href="#main" aria-controls="main" role="tab" data-toggle="tab">Main</a></li>
+            <li role="presentation"><a href="#equipment" aria-controls="main" role="tab" data-toggle="tab">Equipment Order</a></li>
+            <li role="presentation">
+                <a href="#" id="ackTicket" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Acknowledge<span class="caret"></span></a>
+                <ul class="dropdown-menu" aria-labelledby="ackTicket">
+                    <li><a style="cursor:pointer;" id="ackIncident">Incident</a></li>
+                    <li><a style="cursor:pointer;" id="ackCallUser">Incident (Call EU)</a></li>
+                    <li role="separator" class="divider"></li>
+                    <li><a style="cursor:pointer;" id="ackTask">Generic Task</a></li>
+                    <li><a style="cursor:pointer;" id="ackBuild">Hot Swap</a></li>
+                    <li><a style="cursor:pointer;" id="ackInstall">Install Task</a></li>
+                    <li><a style="cursor:pointer;" id="ackQuarantine">Quarantine Task</a></li>
+                    <li><a style="cursor:pointer;" id="ackReclaim">Reclaim Task</a></li>
+                </ul>
+            </li>
+            <li role="presentation">
+                <a href="#" id="closeTicket" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Closures<span class="caret"></span></a>
+                <ul class="dropdown-menu" aria-labelledby="closeTicket">
+                    <li><a style="cursor:pointer;" id="closeHotSwap">Hot Swap</a></li>
+                    <li><a style="cursor:pointer;" id="closeInstall">Install Task</a></li>
+                    <li><a style="cursor:pointer;" id="closeQuarantine">Quarantine Task</a></li>
+                    <li><a style="cursor:pointer;" id="closeReclaim">Reclaim Task</a></li>
+                </ul>
+            </li>
+        </ul>
+
+        <!-- Tab Panes -->
+        <div class="tab-content">
+            <div role="tabpanel" class="tab-pane active" id="main">
+                <p>
+                    <label for="tStatus">Ticket Status</label>
+                    <div class="btn-group" data-toggle="buttons">
+                        <label class="btn btn-primary btn-sm active">
+                            <input type="radio" name="tStatus" id="0" value="0" autocomplete="off" checked /> In Progress
+                        </label>
+                        <label class="btn btn-primary btn-sm">
+                            <input type="radio" name="tStatus" id="1" value="1" autocomplete="off" /> On Hold
+                        </label>
+                        <label class="btn btn-primary btn-sm">
+                            <input type="radio" name="tStatus" id="2" value="2" autocomplete="off" /> Resolved
+                        </label>
+                        <label class="btn btn-primary btn-sm">
+                            <input type="radio" name="tStatus" id="3" value="3" autocomplete="off" /> Incomplete
+                        </label>
+                    </div>
+                </p>
+                <p>
+                    <label for="customerNotes">Additional Comments</label>
+                    <textarea class="form-control" id="customerNotes" name="customerNotes" rows="2" cols="35"></textarea>
+                </p>
+                <p>
+                    <label for="workNotes">Work Notes (Not Viewable By Customer)</label>
+                    <textarea class="form-control" id="workNotes" name="workNotes" rows="2" cols="35"></textarea>
+                </p>
+                <p>
+                    <div class="btn-group" data-toggle="buttons">
+                        <label id="autoTicket-save" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="Save ticket automatically.">
+                            <input type="radio" name="autoTicket" value="save" autocomplete="off" /> Auto Save
+                        </label>
+                        <label id="autoTicket-update" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="Update ticket automatically.">
+                            <input type="radio" name="autoTicket" value="update" autocomplete="off" /> Auto Update
+                        </label>
+                        <label id="autoTicket-none" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="Don't save/update automatically.">
+                            <input type="radio" name="autoTicket" value="none" autocomplete="off" /> Neither
+                        </label>
+                    </div>
+                </p>
+                <p>
+                    <button type="button" class="btn btn-primary btn-md" id="sendUpdate">Send Update</button>
+                    <button type="button" class="btn btn-default btn-md" style="float:right;" id="getHelp">Help</button>
+                </p>
+                <p>
+                    <div id="alertSuccess" class="alert alert-success" style="width:100%;"></div>
+                    <div id="alertFailed" class="alert alert-danger" style="width:100%;"></div>
+                </p>
+            </div>
+            <div role="tabpanel" class="tab-pane" id="equipment">
+                <strong>Coming Soon!</strong>
+            </div>
+        </div>
+    </div>
+    <br />
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/popup.js"></script>
+</body>
+
+</html>

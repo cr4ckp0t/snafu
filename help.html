@@ -1,0 +1,113 @@
+<!--
+    SNAFU: SNow Automated Form Utilizer
+    Copyright (C) 2017  Adam Koch <akoch@ghs.org>
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<!doctype html>
+<html>
+
+<head>
+    <title>SNAFU: SNow Automated Form Utilizer - HELP!</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="css/help.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+	<div id="content">
+		<h1 id="header"><img src="images/icon-64.png" alt="Logo" style="height:50px;width:50px;" /> SNAFU <small>SNow Automated Form Utilizer v<span id="version"></span></small></h1>
+		<blockquote id="thanks">
+			<p>Thank you for installing this Chrome extension!  It has actually been quite fun to write, as well as filling a need created when we all moved over to GHS and lost the use of SNAP (a Dell product).  I am confident that this will perform above and beyond anything that SNAP could have ever hoped for, though to be fair it's not SNAP's fault.<br /><br />I am always open to any questions or comments for bugs, or to request new features so please contact me!</p>
+			<footer>Adam Koch <a href="mailto:akoch@ghs.org">&lt;akoch@ghs.org&gt;</a></footer>
+		</blockquote>
+		<br />
+		<h3>How It Works</h3>
+		<p>Without going in to too much detail this basically injects a script (inject.js) in to the Service Now main frame.  This script houses all of the code that manipulates the various forms using Service Now's provided API aka <a href="http://wiki.servicenow.com/index.php?title=GlideForm_(g_form)#gsc.tab=0" target="_blank">GlideForm</a>.  Since webpages and Chrome extensions operate in separate worlds we have to use a JavaScript CustomEvent <code>SNAFU_Inject</code> in order to pass data to the page to then be submitted to the form.</p>
+		<p>Because I don't have to worry about the other contracts that the developers of SNAP had to, I am able to automate a lot of the processes that we have to follow in order to properly handle the incidents and tasks that come our way.  This is why I am able to include code that can automatically acknowledge incidents/tasks, or close a build request by pulling the replacement device's information directly from the page.</p>
+		<p>The truth is that SNAP wasn't really all that bad of a program.  It was written quite well.  It's just they tried to cram so many different contracts, all using different customized versions of Service Now, into one program using various JavaScript hacks that it eventually severely impeded the performance of the program and caused Service Now to be sluggish as well.  This this extension there isn't any of that!</p> 
+		<br />
+		<h3>Layout</h3>
+		<h4>Toolbar Button</h4>
+		<div id="ui-image"><img src="images/help/toolbar-buttons.png" alt="Button" /></div>
+		<p>Above is the toolbar button that you click to bring up the main GUI.</p>
+		<br />
+		<h4>Main GUI</h4>
+		<div id="ui-image"><img src="images/help/main-ui.png" alt="Main UI" /></div>
+		<p>The main GUI when you click on the toolbar button.  This window is also known as the popup.  This is where the magic happens, so to speak.  Everything is pretty straight forward, but just in case this operates a lot like SNAP did, except that FS Status Codes were removed when we were brought over to GHS, so now it's just a matter of setting the ticket's state (In Progress, On Hold, etc.) and then providing whatever notes you want, whether comments (viewable by the customer) or work notes (not viewable).</p>
+		<br />
+		<h4>Auto Save/Update/Neither Buttons</h4>
+		<p>
+			<div class="alert alert-info"><em>Note: These apply to the automated and manual updates (via Send Update).</em></div>
+			<ul>
+				<li>
+					<strong>Auto Save</strong>
+					<ul>
+						<li>After filling out the fields the data will be saved, submitting the data but keeping you on the same page.</li>
+						<li>Just like clicking Save in the Additonal Actions menu.</li>
+					</ul>
+				</li>
+				<li>
+					<strong>Auto Update</strong>
+					<ul>
+						<li>Same as Auto Save, but after submitting the data it will take you back to the page you were previously.</li>
+						<li>Just like clicking Update on the toolbar of the ticket's page.</li>
+					</ul>
+				</li>
+				<li>
+					<strong>Neither</strong>
+					<ul><li>As I'm sure you've guessed this doesn't do anything after sending the data.</li></ul>
+				</li>
+			</ul>
+		<br />
+		<h3>Automation</h3>
+		<p>
+			Automation is split in to 2 types.
+			<ol>
+				<li>Acknowledgments</li>
+				<li>Closures</li>
+			</ol>
+		</p>
+		<br />
+		<h4>Acknowledgements</h4>
+		<p>
+			As you might have guessed acknowledgements have to do with acknowledging an incident or task.  In both cases they simply place the ticket in progress (or Work in Progress) and then include a predetermined text in the Work Notes field.  Additionally, in the case of tasks it will also set the Due Date to today @ 17:00:00, and then set the Root Cause CI field to Desktop Services.  See below for the predetermined text sent for each automated event.
+			<ul>
+				<li><strong>Incident (Generic)</strong><pre>Acknowledging incident.</pre></li>
+				<li><strong>Incident (Call EU)</strong><pre>Acknowledging incident.  Calling {USER} at {NUMBER}.</pre></li>
+				<li><strong>Task (Generic)</strong><pre>Acknowledging task.</pre></li>
+				<li><strong>Hot Swap (Build Request)</strong><pre>Acknowledging build request.</pre></li>
+				<li><strong>Install Task</strong><pre>Acknowledging install task.</pre></li>
+				<li><strong>Quarantine Task</strong><pre>Acknowledging quarantine task.</pre></li>
+				<li><strong>Reclaim Task</strong><pre>Acknowledging reclaim task.</pre></li>
+			</ul>
+		</p>
+		<br />
+		<h4>Closures</h4>
+		<p>
+			<div class="alert alert-info"><em>Note: Incidents can't be closed automatically.  There's quite a few fields that need to be updated, along with descriptive notes that SNAFU just can't generate.</em></div>
+			Closures work similarly to acknowledgements, with a few differences.  It will set the Due Date and Root Cause CI as with acknowledgements, and will set the state to Closed Complete.  The biggest differences come in the predetermined text used in the Work Notes.  In the case of Hot Swap closures it will pull the replacement device's information from the ticket and then generate the closure script determined by Staging to be used when closing a build request.
+			<ul>
+				<li><strong>Hot Swap</strong><pre>Computer has been built. One {MODEL} has been built {BUILD}. Tag {ASSET} HostName {HOSTNAME}. Resolving Task.</pre></li>
+				<li><strong>Install Task</strong><pre>Installed requested equipment and attached signed completion sheet.</pre></li>
+				<li><strong>Quarantine Task</strong><pre>Device removed from quarantine.</pre></li>
+				<li><strong>Reclaim Task</strong><pre>Device reclaimed and added to quarantine.</pre></li>
+			</ul>
+	</div>
+	<script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+	<script src="js/help.js"></script>
+</body>
+
+</html>

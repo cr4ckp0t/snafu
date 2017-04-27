@@ -1,0 +1,36 @@
+{
+    "name": "SNAFU: SNow Automated Form Utilizer",
+    "short_name": "SNAFU",
+    "version": "0.9.2",
+    "description": "It's like SNAP, but way better!",
+    "author": "Adam Koch",
+    "icons": {
+        "16": "images/icon-16.png",
+        "48": "images/icon-48.png",
+        "128": "images/icon-128.png"
+    },
+    "background": {
+        "scripts": ["js/menu.js"]
+    },
+    "browser_action": {
+        "default_icon": "images/icon-64.png",
+        "default_title": "SNAFU: SNow Automated Form Utilizezr",
+        "default_popup": "popup.html"
+    },
+    "permissions": [
+        "tabs",
+        "contextMenus",
+        "storage",
+        "http://*/*",
+        "https://*/*"
+    ],
+    "content_scripts": [{
+        "matches": ["https://ghsprod.service-now.com/*"],
+        "js": ["js/jquery.min.js", "js/content.js"],
+        "all_frames": true,
+        "run_at": "document_end"
+    }],
+    "options_page": "options.html",
+    "web_accessible_resources": ["js/inject.js"],
+    "manifest_version": 2
+}

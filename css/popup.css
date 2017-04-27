@@ -1,0 +1,54 @@
+/**
+ *  SNAFU: SNow Automated Form Utilizer
+ *  Copyright (C) 2017  Adam Koch <akoch@ghs.org>
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ **/
+
+body {
+    width: 500px;
+    overflow-x: hidden;
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size: 12px;
+    padding: 5px;
+}
+
+span#title {
+    font-size: 28px;
+    color: #3eb049;
+    font-weight: bold;
+}
+
+a, a:active, a:visited {
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    text-decoration: none;
+    color: #000;
+}
+
+a:hover {
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    text-decoration: underline;
+    color: #000;
+}
+
+h1#header {
+    font-size: 28px;
+    color: #3eb049;
+    font-weight:bold;
+}
+
+h1#header small {
+    font-size: 20px;
+    font-style: italic;
+}
