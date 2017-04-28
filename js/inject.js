@@ -36,6 +36,10 @@ document.addEventListener('SNAFU_Inject', function(snafuInject) {
 	var snafuValue = snafuInject.detail.value;
 	var snafuWorkNotes = snafuInject.detail.workNotes;
 	var snafuCustNotes = snafuInject.detail.custNotes;
+
+	// get technician's name
+	var snafuAssigned = g_form.getReference('assigned_to').first_name
+	snafuAssigned = snafuAssigned.charAt(0).toUpperCase() + snafuAssigned.slice(1).toLowerCase(); 
 	
 	// set field with value
 	if (snafuField !== null && snafuValue !== null) {
@@ -74,6 +78,13 @@ document.addEventListener('SNAFU_Inject', function(snafuInject) {
 			snafuWorkNotes = snafuWorkNotes.replace('{BUILD}', g_form.getValue('rhs_software'));
 			snafuWorkNotes = snafuWorkNotes.replace('{ASSET}', snafuReplacement.asset_tag || 'UNKNOWN');
 			snafuWorkNotes = snafuWorkNotes.replace('{HOSTNAME}', snafuReplacement.name || 'UNKNOWN');
+
+		// close equipment orders
+		} else if (snafuType === 'sendEquipment') {
+			snafuCustNotes = snafuCustNotes.replace('{NAME}', snafuAssigned);
+
+			g_form.setValue('comments', snafuCustNotes);
+			g_form.flash('comments', '#3eb049', 0);
 		}
 	
 		g_form.setValue('work_notes', snafuWorkNotes);
@@ -82,11 +93,6 @@ document.addEventListener('SNAFU_Inject', function(snafuInject) {
 
 	// set the resolve message if it is a resolved code (incident only)
 	if (snafuField === 'incident_state' && snafuValue === '6') {
-
-		// get technician's name
-		var snafuAssigned = g_form.getReference('assigned_to').first_name
-		snafuAssigned = snafuAssigned.charAt(0).toUpperCase() + snafuAssigned.slice(1).toLowerCase(); 
-
 		// generate comment string
 		var snafuComments = snafuRslvComments.replace('{NAME}', snafuAssigned);
 		snafuComments = snafuComments.replace('{TICKET}', g_form.getValue('number'));

@@ -19,6 +19,7 @@
 $(document).ready(function() {
     $('#alertSuccess').hide();
     $('#alertFailed').hide();
+    $('span[id^=comp]').hide();
     $('[data-toggle="tooltip"]').tooltip();
 
     var autoFinish
@@ -31,7 +32,6 @@ $(document).ready(function() {
         } else {
             $('input[value=' + items.autoTicket +']').prop('checked', true);
             autoFinish = items.autoTicket;
-            console.log('SNAFU: Loaded settings.');
         }
         updateTicketLabels(autoFinish);
     });
@@ -52,6 +52,27 @@ $(document).ready(function() {
 
     // do nothing with ticket when submitted
     $('#autoTicket-none').click(function() {
+        chrome.storage.sync.set({autoTicket: 'none'});
+        autoFinish = 'none';
+        updateTicketLabels(autoFinish);
+    });
+
+    // save ticket when submitted
+    $('#autoEquipTicket-save').click(function() {
+        chrome.storage.sync.set({autoTicket: 'save'});
+        autoFinish = 'save';
+        updateTicketLabels(autoFinish);
+    });
+    
+    // update ticket when submitted
+    $('#autoEquipTicket-update').click(function() {
+        chrome.storage.sync.set({autoTicket: 'update'});
+        autoFinish = 'update';
+        updateTicketLabels(autoFinish);
+    });
+
+    // do nothing with ticket when submitted
+    $('#autoEquipTicket-none').click(function() {
         chrome.storage.sync.set({autoTicket: 'none'});
         autoFinish = 'none';
         updateTicketLabels(autoFinish);
@@ -220,9 +241,9 @@ $(document).ready(function() {
 
     // send ticket update
     $('#sendUpdate').click(function() {
-        if ($('input[name=tStatus]:checked').val() === '1' && $('#customerNotes').val().trim() == '') {
+        if ($('input[name=tStatus]:checked').val() === '1' && isInputEmpty($('#customerNotes').val()) === '') {
             sendError('Pending tickets must have customer notes.');
-        } else if ($('#customerNotes').val().trim() == '' && $('#workNotes').val().trim() == '') {
+        } else if (isInputEmpty($('#customerNotes').val()) === true && isInputEmpty($('#workNotes').val()) === true) {
             sendError('You must provide customer and/or work notes.');
         } else {
             chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
@@ -237,6 +258,34 @@ $(document).ready(function() {
                         sendError(response.errMsg);
                     } else {
                         sendSuccess('Update sent!');
+                    }
+                });
+            });
+        }
+    });
+
+    $('#sendEquipment').click(function() {
+        if (isInputEmpty($('#compHost').val()) === true || isInputEmpty($('#compAsset').val()) === true || isInputEmpty($('#compModel').val()) === true || isInputEmpty($('#compBuild').val()) === true) {
+            sendError('You must provide valid input.');
+        } else {
+            // custom closure script
+            var equipWorkNotes = 'Computer has been built. One {MODEL} has been built {BUILD}. Tag {ASSET} HostName {HOSTNAME}. Resolving Task. Placing computer in Deployment Room. Please assign to a tech for install and resolution. Once this ticket is closed, the request will generate another task to have a technician come on site to install the equipment. This is just a ticket to track the build and equipment used. A tech should be calling the customer momentarily to set up a time for installation.';
+            equipWorkNotes = equipWorkNotes.replace('{MODEL}', $('#compModel').val());
+            equipWorkNotes = equipWorkNotes.replace('{BUILD}', $('#compBuild').val());
+            equipWorkNotes = equipWorkNotes.replace('{ASSET}', $('#compAsset').val());
+            equipWorkNotes = equipWorkNotes.replace('{HOSTNAME}', $('#compHost').val());
+            chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+                chrome.tabs.sendMessage(tabs[0].id, {
+                    type: 'sendEquipment',
+                    autoFinish: autoFinish,
+                    tState: '3',    // closed complete
+                    workNotes: equipWorkNotes,
+                    custNotes: null
+                }, function(response) {
+                    if (response.success === false) {
+                        sendError(response.errMsg);
+                    } else {
+                        sendSuccess('Equipment Order closure sent.');
                     }
                 });
             });
@@ -260,7 +309,6 @@ function sendSuccess(alert) {
     $('#alertSuccess').fadeIn();
     setTimeout(function() {
         $('#alertSuccess').fadeOut();
-        setTimeout(function() { window.close(); }, 500);
     }, 3000);
 }
 
@@ -270,16 +318,22 @@ function sendError(alert) {
     $('#alertFailed').fadeIn();
     setTimeout(function() {
         $('#alertFailed').fadeOut();
-        setTimeout(function() { window.close(); }, 500);
     }, 3000);
 }
 
 function updateTicketLabels(autoFinish) {
     // remove active class from each label
-    $('#autoTicket-save').removeClass('active');
-    $('#autoTicket-update').removeClass('active');
-    $('#autoTicket-none').removeClass('active');
+    //$('#autoTicket-save').removeClass('active');
+    //$('#autoTicket-update').removeClass('active');
+    //$('#autoTicket-none').removeClass('active');
+    $('[id^=autoTicket]').removeClass('active');
+    $('[id^=autoEquipTicket').removeClass('active');
 
     // set the correct label with active
     $('#autoTicket-' + autoFinish).addClass('active');
+    $('#autoEquipTicket-' + autoFinish).addClass('active');
+}
+
+function isInputEmpty(value) {
+    return (value === null || value === undefined || value === NaN || value === '') ? true : false
 }

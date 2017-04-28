@@ -257,8 +257,19 @@ $(document).ready(function() {
 
             // send an equipment build
             case 'sendEquipment':
-                // Computer has been built. One {MAKE} has been built {BUILD}. Tag {ASSET} HostName {HOSTNAME}. Resolving Task. Placing computer in Deployment Room. Please assign to a tech for install and resolution. Once this ticket is closed, the request will generate another task to have a technician come on site to install the equipment. This is just a ticket to track the build and equipment used. A tech should be calling the customer momentarily to set up a time for installation.
-                // My name is {NAME} and I have completed the build process for your workstation. The next step is for the system to be delivered to our technicians supporting your campus or ambulatory location so they can schedule an appropriate time to come to your desk and install the system. Please be sure to watch for communication regarding the delivery and installation of your computer at your desk.
+                if (ticketType !== 'task') {
+                    sendResponse({success: false, errMsg: 'Please open a task.'});
+                } else {
+                    injectData = {
+                        type: msg.type,
+                        autoFinish: msg.autoFinish || autoFinish,
+                        field: 'state',
+                        value: '3',
+                        workNotes: msg.workNotes || null,
+                        custNotes: 'My name is {NAME} and I have completed the build process for your workstation. The next step is for the system to be delivered to our technicians supporting your campus or ambulatory location so they can schedule an appropriate time to come to your desk and install the system. Please be sure to watch for communication regarding the delivery and installation of your computer at your desk.'
+                    }
+                    sendResponse({success: true, errMsg: null});
+                }
                 break;
 
             default: 

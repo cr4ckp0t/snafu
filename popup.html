@@ -103,25 +103,34 @@
                 </div>
             </div>
             <div role="tabpanel" class="tab-pane" id="equipment">
-                <div class="form-group">
-                    <label for="compRitm">Request Item</label>
-                    <input type="text" id="compRitm" class="form-control" placeholder="RITM" />
-                </div>
-                <div class="form-group">
+                <div id="compHostGroup" class="form-group">
                     <label for="compHost">Hostname</label>
                     <input type="text" id="compHost" class="form-control" placeholder="DTXXXXXXXXXX" />
                 </div>
-                <div class="form-group">
+                <div id="compAssetGroup" class="form-group">
                     <label for="compAsset">Asset Tag</label>
                     <input type="text" id="compAsset" class="form-control" placeholder="XXXXXXXX" />
                 </div>
-                <div class="form-group">
+                <div id="compModelGroup" class="form-group">
                     <label for="compModel">Model</label>
                     <input type="text" id="compModel" class="form-control" placeHolder="850 G1 HD" />
                 </div>
-                <div class="form-group">
+                <div id="compBuildGroup" class="form-group">
                     <label for="compBuild">Build</label>
                     <input type="text" id="compBuild" class="form-control" placeHolder="GMH-MANDATORY" />
+                </div>
+                <div class="form-group">
+                    <div class="btn-group" data-toggle="buttons">
+                        <label id="autoEquipTicket-save" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="Save ticket automatically.">
+                            <input type="radio" name="autoEquipTicket" value="save" autocomplete="off" /> Auto Save
+                        </label>
+                        <label id="autoEquipTicket-update" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="Update ticket automatically.">
+                            <input type="radio" name="autoEquipTicket" value="update" autocomplete="off" /> Auto Update
+                        </label>
+                        <label id="autoEquipTicket-none" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="Don't save/update automatically.">
+                            <input type="radio" name="autoEquipTicket" value="none" autocomplete="off" /> Neither
+                        </label>
+                    </div>
                 </div>
                 <div class="form-group">
                     <button type="button" class="btn btn-primary btn-md" id="sendEquipment">Send Update</button>
