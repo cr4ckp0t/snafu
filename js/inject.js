@@ -122,6 +122,8 @@ document.addEventListener('SNAFU_Inject', function(snafuInject) {
 			g_form.flash('cmdb_ci', '#3eb049', 0);
 		}
 	}
+	
+	console.log('autoFinish: ' + snafuInject.detail.autoFinish);
 
 	// autofinish
 	switch (snafuInject.detail.autoFinish) {

@@ -25,8 +25,8 @@ $(document).ready(function() {
     var autoFinish
     var helpUrl = chrome.extension.getURL('help.html');
 
-    chrome.storage.sync.get({autoTicket: 'none'}, function(items) {
-        if (items.autoTicket === undefined) {
+    chrome.storage.sync.get(['autoTicket'], function(items) {
+        if (isValueEmpty(items.autoTicket) === true) {
             $('input[value=none]').prop('checked', true);
             autoFinish = 'none';
         } else {
@@ -241,9 +241,9 @@ $(document).ready(function() {
 
     // send ticket update
     $('#sendUpdate').click(function() {
-        if ($('input[name=tStatus]:checked').val() === '1' && isInputEmpty($('#customerNotes').val()) === '') {
+        if ($('input[name=tStatus]:checked').val() === '1' && isValueEmpty($('#customerNotes').val()) === '') {
             sendError('Pending tickets must have customer notes.');
-        } else if (isInputEmpty($('#customerNotes').val()) === true && isInputEmpty($('#workNotes').val()) === true) {
+        } else if (isValueEmpty($('#customerNotes').val()) === true && isValueEmpty($('#workNotes').val()) === true) {
             sendError('You must provide customer and/or work notes.');
         } else {
             chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
@@ -265,7 +265,7 @@ $(document).ready(function() {
     });
 
     $('#sendEquipment').click(function() {
-        if (isInputEmpty($('#compHost').val()) === true || isInputEmpty($('#compAsset').val()) === true || isInputEmpty($('#compModel').val()) === true || isInputEmpty($('#compBuild').val()) === true) {
+        if (isValueEmpty($('#compHost').val()) === true || isValueEmpty($('#compAsset').val()) === true || isValueEmpty($('#compModel').val()) === true || isValueEmpty($('#compBuild').val()) === true) {
             sendError('You must provide valid input.');
         } else {
             // custom closure script
@@ -334,6 +334,6 @@ function updateTicketLabels(autoFinish) {
     $('#autoEquipTicket-' + autoFinish).addClass('active');
 }
 
-function isInputEmpty(value) {
+function isValueEmpty(value) {
     return (value === null || value === undefined || value === NaN || value === '') ? true : false
 }

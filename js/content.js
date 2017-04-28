@@ -36,13 +36,6 @@ $(document).ready(function() {
     
     chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
         var ticketType = getTicketType();
-        var autoFinish = 'none';
-
-        if (msg.autoFinish === null || msg.autoFinish === undefined) {
-            chrome.storage.sync.get({autoTicket: 'none'}, function(items) {
-                autoFinish = items.autoTicket;
-            });
-        }
 
         switch (msg.type) {
             // acknowledge incident
@@ -53,7 +46,7 @@ $(document).ready(function() {
                     // set the data to inject
                     injectData = {
                         type: msg.type,
-                        autoFinish: msg.autoFinish || autoFinish,
+                        autoFinish: msg.autoFinish,
                         field: 'incident_state',
                         value: '3', // In Progress
                         workNotes: 'Acknowledging Incident',
@@ -71,7 +64,7 @@ $(document).ready(function() {
                     // set the data to inject
                     injectData = {
                         type: msg.type,
-                        autoFinish: msg.autoFinish || autoFinish,
+                        autoFinish: msg.autoFinish,
                         field: 'incident_state',
                         value: '3', // In Progress
                         workNotes: 'Acknowledging Incident.  Calling {USER} at {NUMBER}.',
@@ -89,7 +82,7 @@ $(document).ready(function() {
                 } else {
                     injectData = {
                         type: msg.type,
-                        autoFinish: msg.autoFinish || autoFinish,
+                        autoFinish: msg.autoFinish,
                         field: 'state',
                         value: '2', // Work in Progress
                         workNotes: 'Acknowledging task.',
@@ -106,7 +99,7 @@ $(document).ready(function() {
                 } else {
                     injectData = {
                         type: msg.type,
-                        autoFinish: msg.autoFinish || autoFinish,
+                        autoFinish: msg.autoFinish,
                         field: 'state',
                         value: '2', // work in progress
                         workNotes: 'Acknowledging build request.',
@@ -123,7 +116,7 @@ $(document).ready(function() {
                 } else {
                     injectData = {
                         type: msg.type,
-                        autoFinish: msg.autoFinish || autoFinish,
+                        autoFinish: msg.autoFinish,
                         field: 'state',
                         value: '2', // work in progress
                         workNotes: 'Acknowledging quarantine task.',
@@ -140,7 +133,7 @@ $(document).ready(function() {
                 } else {
                     injectData = {
                         type: msg.type,
-                        autoFinish: msg.autoFinish || autoFinish,
+                        autoFinish: msg.autoFinish,
                         field: 'state',
                         value: '2', // work in progress
                         workNotes: 'Acknowledging reclaim task.',
@@ -156,7 +149,7 @@ $(document).ready(function() {
                 } else {
                     injectData = {
                         type: msg.type,
-                        autoFinish: msg.autoFinish || autoFinish,
+                        autoFinish: msg.autoFinish,
                         field: 'state',
                         value: '3', // closed complete
                         workNotes: 'Computer has been built. One {MODEL} has been built {BUILD}. Tag {ASSET} HostName {HOSTNAME}. Resolving Task.',
@@ -173,7 +166,7 @@ $(document).ready(function() {
                 } else {
                     injectData = {
                         type: msg.type,
-                        autoFinish: msg.autoFinish || autoFinish,
+                        autoFinish: msg.autoFinish,
                         field: 'state',
                         value: '3', // closed complete
                         workNotes: 'Installed requested equipment and attached signed completion sheet.',
@@ -190,7 +183,7 @@ $(document).ready(function() {
                 } else {
                     injectData = {
                         type: msg.type,
-                        autoFinish: msg.autoFinish || autoFinish,
+                        autoFinish: msg.autoFinish,
                         field: 'state',
                         value: '3', // closed complete
                         workNotes: 'Device removed from quarantine.',
@@ -207,7 +200,7 @@ $(document).ready(function() {
                 } else {
                     injectData = {
                         type: msg.type,
-                        autoFinish: msg.autoFinish || autoFinish,
+                        autoFinish: msg.autoFinish,
                         field: 'state',
                         value: '3', // closed complete
                         workNotes: 'Device reclaimed and added to quarantine.',
@@ -228,7 +221,7 @@ $(document).ready(function() {
                         // generate the data to inject
                         injectData = {
                             type: msg.type,
-                            autoFinish: msg.autoFinish || autoFinish,
+                            autoFinish: msg.autoFinish,
                             field: 'incident_state',
                             value: incStates[parseInt(msg.tState)],
                             workNotes: msg.workNotes || null,
@@ -241,7 +234,7 @@ $(document).ready(function() {
                     // generate the data to inject
                     injectData = {
                         type: msg.type,
-                        autoFinish: msg.autoFinish || autoFinish,
+                        autoFinish: msg.autoFinish,
                         field: 'state',
                         value: taskStates[parseInt(msg.tState)],
                         workNotes: msg.workNotes || null,
@@ -262,7 +255,7 @@ $(document).ready(function() {
                 } else {
                     injectData = {
                         type: msg.type,
-                        autoFinish: msg.autoFinish || autoFinish,
+                        autoFinish: msg.autoFinish,
                         field: 'state',
                         value: '3',
                         workNotes: msg.workNotes || null,
@@ -295,4 +288,8 @@ function getTicketType() {
     } else {
         return false;
     }
+}
+
+function isValueEmpty(value) {
+    return (value === null || value === undefined || value === NaN || value === '') ? true : false
 }

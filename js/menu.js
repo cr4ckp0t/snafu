@@ -15,6 +15,11 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  **/
+var autoFinish;
+
+chrome.storage.sync.get(['autoTicket'], function(items) {
+	autoFinish = items.autoTicket;
+});
 
 // auto acknowledge incident
 chrome.contextMenus.create({
@@ -35,7 +40,8 @@ chrome.contextMenus.create({
 	onclick: function() {
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
 			chrome.tabs.sendMessage(tabs[0].id, {
-				type: 'ackCallUser'
+				type: 'ackCallUser',
+				autoFinish: autoFinish
 			});
 		});
 	}
@@ -51,7 +57,8 @@ chrome.contextMenus.create({
 	onclick: function() {
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
 			chrome.tabs.sendMessage(tabs[0].id, {
-				type: 'ackIncident'
+				type: 'ackIncident',
+				autoFinish: autoFinish
 			});
 		});
 	}
@@ -75,7 +82,8 @@ chrome.contextMenus.create({
 	onclick: function() {
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
 			chrome.tabs.sendMessage(tabs[0].id, {
-				type: 'ackTask'
+				type: 'ackTask',
+				autoFinish: autoFinish
 			});
 		});
 	}
@@ -90,7 +98,8 @@ chrome.contextMenus.create({
 	onclick: function() {
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
 			chrome.tabs.sendMessage(tabs[0].id, {
-				type: 'ackHotSwap'
+				type: 'ackHotSwap',
+				autoFinish: autoFinish
 			});
 		});
 	}
@@ -105,7 +114,8 @@ chrome.contextMenus.create({
 	onclick: function() {
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
 			chrome.tabs.sendMessage(tabs[0].id, {
-				type: 'ackInstall'
+				type: 'ackInstall',
+				autoFinish: autoFinish
 			});
 		});
 	}
@@ -120,7 +130,8 @@ chrome.contextMenus.create({
 	onclick: function() {
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
 			chrome.tabs.sendMessage(tabs[0].id, {
-				type: 'ackQuarantine'
+				type: 'ackQuarantine',
+				autoFinish: autoFinish
 			});
 		});
 	}
@@ -135,7 +146,8 @@ chrome.contextMenus.create({
 	onclick: function() {
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
 			chrome.tabs.sendMessage(tabs[0].id, {
-				type: 'ackReclaim'
+				type: 'ackReclaim',
+				autoFinish: autoFinish
 			});
 		});
 	}
@@ -158,7 +170,8 @@ chrome.contextMenus.create({
 	onclick: function() {
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
 			chrome.tabs.sendMessage(tabs[0].id, {
-				type: 'closeHotSwap'
+				type: 'closeHotSwap',
+				autoFinish: autoFinish
 			});
 		});
 	}
@@ -173,7 +186,8 @@ chrome.contextMenus.create({
 	onclick: function() {
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
 			chrome.tabs.sendMessage(tabs[0].id, {
-				type: 'closeInstall'
+				type: 'closeInstall',
+				autoFinish: autoFinish
 			});
 		});
 	}
@@ -188,7 +202,8 @@ chrome.contextMenus.create({
 	onclick: function() {
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
 			chrome.tabs.sendMessage(tabs[0].id, {
-				type: 'closeQuarantine'
+				type: 'closeQuarantine',
+				autoFinish: autoFinish
 			});
 		});
 	}
@@ -203,7 +218,8 @@ chrome.contextMenus.create({
 	onclick: function() {
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
 			chrome.tabs.sendMessage(tabs[0].id, {
-				type: 'closeReclaim'
+				type: 'closeReclaim',
+				autoFinish: autoFinish
 			});
 		});
 	}
