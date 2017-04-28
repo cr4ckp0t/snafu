@@ -20,5 +20,7 @@ chrome.runtime.onInstalled.addListener(function(details) {
 	if (details.reason === 'install') {
 		// first install, so create the settings
 		chrome.storage.sync.set({autoTicket: 'none'});
+		// show help page
+		chrome.tabs.create({url: chrome.extension.getURL('help.html')});
 	}
 });

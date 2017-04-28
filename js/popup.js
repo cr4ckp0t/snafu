@@ -25,6 +25,12 @@ $(document).ready(function() {
     var autoFinish
     var helpUrl = chrome.extension.getURL('help.html');
 
+    var cannedMsgs = {
+        'callingUser': 'Calling {ENDUSER} at {NUMBER}.',
+        'equipDelivered': 'Equipment delivered to {SITE}.',
+        'leftVoicemail': 'Left voicemail for {ENDUSER} to discuss the ticket.'
+    }
+
     chrome.storage.sync.get(['autoTicket'], function(items) {
         if (isValueEmpty(items.autoTicket) === true) {
             $('input[value=none]').prop('checked', true);
@@ -78,6 +84,15 @@ $(document).ready(function() {
         updateTicketLabels(autoFinish);
     });
 
+    // canned messages
+    $('#cannedMsgs').change(function() {
+        if ($(this).val() !== 'none') {
+            var needSpace = ($('#workNotes').val().trim() === '') ? '' : ' ';
+            $('#workNotes').append(needSpace + cannedMsgs[$(this).val()]);
+            $(this).val('none');
+        }
+    });
+
     // acknowledge incident
     $('#ackIncident').click(function() {
         chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
@@ -85,10 +100,14 @@ $(document).ready(function() {
                 type: 'ackIncident',
                 autoFinish: autoFinish
             }, function(response) {
-                if (response.success === false) {
-                    sendError(response.errMsg);
+                if (isValueEmpty(response) === false) {
+                    if (response.success === false) {
+                        sendError(response.errMsg);
+                    } else {
+                        sendSuccess('Incident acknowledgement sent.');
+                    }
                 } else {
-                    sendSuccess('Incident acknowledgement sent.');
+                    sendError('Unable to process response to message.');
                 }
             });
         });
@@ -101,10 +120,14 @@ $(document).ready(function() {
                 type: 'ackCallUser',
                 autoFinish: autoFinish
             }, function(response) {
-                if (response.success === false) {
-                    sendError(response.errMsg);
+                if (isValueEmpty(response) === false) {
+                    if (response.success === false) {
+                        sendError(response.errMsg);
+                    } else {
+                        sendSuccess('Incident acknowledgement sent.');
+                    }
                 } else {
-                    sendSuccess('Incident acknowledgement sent.');
+                    sendError('Unable to process response to message.');
                 }
             });
         });
@@ -117,10 +140,14 @@ $(document).ready(function() {
                 type: 'ackTask',
                 autoFinish: autoFinish
             }, function(response) {
-                if (response.success === false) {
-                    sendError(response.errMsg);
+                if (isValueEmpty(response) === false) {
+                    if (response.success === false) {
+                        sendError(response.errMsg);
+                    } else {
+                        sendSuccess('Task acknowledgement sent.');
+                    }
                 } else {
-                    sendSuccess('Task acknowledgement sent.');
+                    sendError('Unable to process response to message.');
                 }
             });
         });
@@ -134,10 +161,14 @@ $(document).ready(function() {
                 type: 'ackBuild',
                 autoFinish: autoFinish
             }, function(response) {
-                if (response.success === false) {
-                    sendError(response.errMsg);
+                if (isValueEmpty(response) === false) {
+                    if (response.success === false) {
+                        sendError(response.errMsg);
+                    } else {
+                        sendSuccess('Build acknowledgement sent.');
+                    }
                 } else {
-                    sendSuccess('Build acknowledgement sent.');
+                    sendError('Unable to process response to message.');
                 }
             });
         });
@@ -150,10 +181,14 @@ $(document).ready(function() {
                 type: 'ackQuarantine',
                 autoFinish: autoFinish
             }, function(response) {
-                if (response.success === false) {
-                    sendError(response.errMsg);
+                if (isValueEmpty(response) === false) {
+                    if (response.success === false) {
+                        sendError(response.errMsg);
+                    } else {
+                        sendSuccess('Quarantine acknowledgement sent.');
+                    }
                 } else {
-                    sendSuccess('Quarantine acknowledgement sent.');
+                    sendError('Unable to process response to message.');
                 }
             });
         });
@@ -166,10 +201,14 @@ $(document).ready(function() {
                 type: 'ackReclaim',
                 autoFinish: autoFinish
             }, function(response) {
-                if (response.success === false) {
-                    sendError(response.errMsg);
+                if (isValueEmpty(response) === false) {
+                    if (response.success === false) {
+                        sendError(response.errMsg);
+                    } else {
+                        sendSuccess('Reclaim acknowledgement sent.');
+                    }
                 } else {
-                    sendSuccess('Reclaim acknowledgement sent.');
+                    sendError('Unable to process response to message.');
                 }
             });
         });
@@ -182,10 +221,14 @@ $(document).ready(function() {
                 type: 'closeHotSwap',
                 autoFinish: autoFinish
             }, function(response) {
-                if (response.success === false) {
-                    sendError(response.errMsg);
+                if (isValueEmpty(response) === false) {
+                    if (response.success === false) {
+                        sendError(response.errMsg);
+                    } else {
+                        sendSuccess('Hot Swap closure sent.');
+                    }
                 } else {
-                    sendSuccess('Hot Swap closure sent.');
+                    sendError('Unable to process response to message.');
                 }
             });
         });
@@ -198,10 +241,14 @@ $(document).ready(function() {
                 type: 'closeInstall',
                 autoFinish: autoFinish
             }, function(response) {
-                if (response.success === false) {
-                    sendError(response.errMsg);
+                if (isValueEmpty(response) === false) {
+                    if (response.success === false) {
+                        sendError(response.errMsg);
+                    } else {
+                        sendSuccess('Install closure sent.');
+                    }
                 } else {
-                    sendSuccess('Install closure sent.');
+                    sendError('Unable to process response to message.');
                 }
             });
         });
@@ -214,10 +261,14 @@ $(document).ready(function() {
                 type: 'closeQuarantine',
                 autoFinish: autoFinish
             }, function(response) {
-                if (response.success === false) {
-                    sendError(response.errMsg);
+                if (isValueEmpty(response) === false) {
+                    if (response.success === false) {
+                        sendError(response.errMsg);
+                    } else {
+                        sendSuccess('Quarantine closure sent.');
+                    }
                 } else {
-                    sendSuccess('Quarantine closure sent.');
+                    sendError('Unable to process response to message.');
                 }
             });
         });
@@ -230,10 +281,14 @@ $(document).ready(function() {
                 type: 'closeReclaim',
                 autoFinish: autoFinish
             }, function(response) {
-                if (response.success === false) {
-                    sendError(response.errMsg);
+                if (isValueEmpty(response) === false) {
+                    if (response.success === false) {
+                        sendError(response.errMsg);
+                    } else {
+                        sendSuccess('Reclaim closure sent.');
+                    }
                 } else {
-                    sendSuccess('Reclaim closure sent.');
+                    sendError('Unable to process response to message.');
                 }
             });
         });
@@ -254,10 +309,14 @@ $(document).ready(function() {
                     workNotes: $('#workNotes').val(),
                     custNotes: $('#customerNotes').val()
                 }, function(response) {
-                    if (response.success === false) {
-                        sendError(response.errMsg);
+                    if (isValueEmpty(response) === false) {
+                        if (response.success === false) {
+                            sendError(response.errMsg);
+                        } else {
+                            sendSuccess('Update sent!');
+                        }
                     } else {
-                        sendSuccess('Update sent!');
+                        sendError('Unable to process response to message.');
                     }
                 });
             });
@@ -282,10 +341,14 @@ $(document).ready(function() {
                     workNotes: equipWorkNotes,
                     custNotes: null
                 }, function(response) {
-                    if (response.success === false) {
-                        sendError(response.errMsg);
+                    if (isValueEmpty(response) === false) {
+                        if (response.success === false) {
+                            sendError(response.errMsg);
+                        } else {
+                            sendSuccess('Equipment Order closure sent.');
+                        }
                     } else {
-                        sendSuccess('Equipment Order closure sent.');
+                        sendError('Unable to process response to message.');
                     }
                 });
             });

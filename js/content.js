@@ -36,7 +36,7 @@ $(document).ready(function() {
     
     chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
         var ticketType = getTicketType();
-
+        
         switch (msg.type) {
             // acknowledge incident
             case 'ackIncident':
@@ -49,7 +49,7 @@ $(document).ready(function() {
                         autoFinish: msg.autoFinish,
                         field: 'incident_state',
                         value: '3', // In Progress
-                        workNotes: 'Acknowledging Incident',
+                        workNotes: 'Acknowledging Incident.',
                         custNotes: null
                     }
                     // send the response

@@ -57,3 +57,10 @@ h1#header small {
     font-size: 20px;
     font-style: italic;
 }
+
+div#form-info {
+    font-size: 10px;
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-style: italic;
+    color: #A0A0A0
+}
