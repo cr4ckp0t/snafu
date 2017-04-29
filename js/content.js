@@ -67,7 +67,7 @@ $(document).ready(function() {
                         autoFinish: msg.autoFinish,
                         field: 'incident_state',
                         value: '3', // In Progress
-                        workNotes: 'Acknowledging Incident.  Calling {USER} at {NUMBER}.',
+                        workNotes: 'Acknowledging Incident.  Calling {ENDUSER} at {NUMBER}.',
                         custNotes: null
                     }
                     // send the response
@@ -212,35 +212,17 @@ $(document).ready(function() {
 
             // send a ticket update
             case 'sendUpdate':
-                // set the status first
-                if (ticketType === 'incident') {
-                    if (msg.tState === '3') {
-                        // incidents cant be closed as incomplete
-                        sendResponse({success: false, errMsg: 'Can\'t close incidents as incomplete.'});
-                    } else {
-                        // generate the data to inject
-                        injectData = {
-                            type: msg.type,
-                            autoFinish: msg.autoFinish,
-                            field: 'incident_state',
-                            value: incStates[parseInt(msg.tState)],
-                            workNotes: msg.workNotes || null,
-                            custNotes: msg.custNotes || null
-                        }
-                        // send success!
-                        sendResponse({success: true, errMsg: null});
-                    }
-                } else if (ticketType === 'task') {
-                    // generate the data to inject
+                // prevent closing incident as incomplete
+                if (ticketType === 'incident' && msg.tState === '3') msg.tState = '2';
+                if (ticketType !== false) {
                     injectData = {
                         type: msg.type,
                         autoFinish: msg.autoFinish,
-                        field: 'state',
-                        value: taskStates[parseInt(msg.tState)],
+                        field: (ticketType === 'incident') ? 'incident_state' : 'state',
+                        value: (ticketType === 'incident') ? incStates[parseInt(msg.tState)] : taskStates[parseInt(msg.tState)],
                         workNotes: msg.workNotes || null,
                         custNotes: msg.custNotes || null
                     }
-                    // send success!
                     sendResponse({success: true, errMsg: null});
                 } else {
                     // send error
@@ -259,7 +241,7 @@ $(document).ready(function() {
                         field: 'state',
                         value: '3',
                         workNotes: msg.workNotes || null,
-                        custNotes: 'My name is {NAME} and I have completed the build process for your workstation. The next step is for the system to be delivered to our technicians supporting your campus or ambulatory location so they can schedule an appropriate time to come to your desk and install the system. Please be sure to watch for communication regarding the delivery and installation of your computer at your desk.'
+                        custNotes: 'My name is {TECHNAME} and I have completed the build process for your workstation. The next step is for the system to be delivered to our technicians supporting your campus or ambulatory location so they can schedule an appropriate time to come to your desk and install the system. Please be sure to watch for communication regarding the delivery and installation of your computer at your desk.'
                     }
                     sendResponse({success: true, errMsg: null});
                 }
@@ -291,5 +273,5 @@ function getTicketType() {
 }
 
 function isValueEmpty(value) {
-    return (value === null || value === undefined || value === NaN || value === '') ? true : false
+    return (value === null || value === undefined || value === NaN || value.trim() === '') ? true : false
 }

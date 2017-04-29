@@ -29,7 +29,7 @@
 	<div id="content">
 		<h1 id="header"><img src="images/icon-64.png" alt="Logo" style="height:50px;width:50px;" /> SNAFU <small>SNow Automated Form Utilizer v<span id="version"></span></small></h1>
 		<blockquote id="thanks">
-			<p>Thank you for installing this Chrome extension!  It has actually been quite fun to write, as well as filling a need created when we all moved over to GHS and lost the use of SNAP (a Dell product).  I am confident that this will perform above and beyond anything that SNAP could have ever hoped for, though to be fair it's not SNAP's fault.<br /><br />I am always open to any questions or comments for bugs, or to request new features so please contact me!</p>
+			<p>Thank you for installing this Chrome extension!  It has actually been quite fun to write, as well as filling a need created when we all moved over to GHS and lost the use of SNAP (a Dell product).  I am confident that this will perform above and beyond anything that SNAP could have ever hoped for, though to be fair it's not SNAP's fault.</p>
 			<footer>Adam Koch <a href="mailto:akoch@ghs.org">&lt;akoch@ghs.org&gt;</a></footer>
 		</blockquote>
 		<br />
@@ -47,9 +47,16 @@
 		<div id="ui-image"><img src="images/help/main-ui.png" alt="Main UI" /></div>
 		<p>The main GUI when you click on the toolbar button.  This window is also known as the popup.  This is where the magic happens, so to speak.  Everything is pretty straight forward, but just in case this operates a lot like SNAP did, except that FS Status Codes were removed when we were brought over to GHS, so now it's just a matter of setting the ticket's state (In Progress, On Hold, etc.) and then providing whatever notes you want, whether comments (viewable by the customer) or work notes (not viewable).</p>
 		<br />
+		<h4>Equipment Orders UI</h4>
+		<div id="ui-image"><img src="images/help/equipment-order.png" alt="Equipment Orders" /></div>
+		<p>The form used when <strong>closing</strong> Equipment Orders.  Since the RITM's do you allow you to fill in the computer information like Asset Management does this requires you to fill in the request information manually.</p>
+		<br />
+		<h4>Canned Messages</h4>
+		<p>These are frequently used messages that you can quickly add to your Work Notes.  Selecting a message will append the text to what you have written.  They also include various wildcards that will be replaced with the information when the update is submitted.</p>
+		<br />
 		<h4>Auto Save/Update/Neither Buttons</h4>
 		<p>
-			<div class="alert alert-info"><em>Note: These apply to the automated and manual updates (via Send Update).</em></div>
+			<div class="alert alert-info"><em>Note: These apply to the automated and manual updates (via Send Update).  This setting is persistent and will apply for every update you send.  The default is neither.</em></div>
 			<ul>
 				<li>
 					<strong>Auto Save</strong>
@@ -100,6 +107,7 @@
 			<div class="alert alert-info"><em>Note: Incidents can't be closed automatically.  There's quite a few fields that need to be updated, along with descriptive notes that SNAFU just can't generate.</em></div>
 			Closures work similarly to acknowledgements, with a few differences.  It will set the Due Date and Root Cause CI as with acknowledgements, and will set the state to Closed Complete.  The biggest differences come in the predetermined text used in the Work Notes.  In the case of Hot Swap closures it will pull the replacement device's information from the ticket and then generate the closure script determined by Staging to be used when closing a build request.
 			<ul>
+				<li><strong>Incident Customer Notes</strong><pre>My name is {TECHNAME} and I was the technician that assisted you with {TICKET}. Thank you for the opportunity to provide you with service today with your {CATEGORY}. If for any reason, your issue does not appear to be resolved please contact the Service Desk at (864) 455-8000.</pre></li>
 				<li><strong>Hot Swap</strong><pre>Computer has been built. One {MODEL} has been built {BUILD}. Tag {ASSET} HostName {HOSTNAME}. Resolving Task.</pre></li>
 				<li><strong>Install Task</strong><pre>Installed requested equipment and attached signed completion sheet.</pre></li>
 				<li><strong>Quarantine Task</strong><pre>Device removed from quarantine.</pre></li>
@@ -112,10 +120,63 @@
 			<div class="alert alert-info"><em>Note: Because Equipment Orders do not have the information for the device being built saved on the page I had to create a tab especially for these types of builds.</em></div>
 			These are handled exactly like the Hot Swap closures except with a different closure script.
 			<ul>
-				<li><strong>Comments:</strong><pre>My name is {NAME} and I have completed the build process for your workstation. The next step is for the system to be delivered to our technicians supporting your campus or ambulatory location so they can schedule an appropriate time to come to your desk and install the system. Please be sure to watch for communication regarding the delivery and installation of your computer at your desk.</pre></li>
+				<li><strong>Comments:</strong><pre>My name is {TECHNAME} and I have completed the build process for your workstation. The next step is for the system to be delivered to our technicians supporting your campus or ambulatory location so they can schedule an appropriate time to come to your desk and install the system. Please be sure to watch for communication regarding the delivery and installation of your computer at your desk.</pre></li>
 				<li><strong>Work Notes:</strong><pre>Computer has been built. One {MAKE} has been built {BUILD}. Tag {ASSET} HostName {HOSTNAME}. Resolving Task. Placing computer in Deployment Room. Please assign to a tech for install and resolution. Once this ticket is closed, the request will generate another task to have a technician come on site to install the equipment. This is just a ticket to track the build and equipment used. A tech should be calling the customer momentarily to set up a time for installation.</pre></li>
 			</ul>
 		</p>
+		<br />
+		<div id="aboutExtension" class="panel panel-primary">
+			<div class="panel-heading"><strong>SNAFU: SNow Automated Form Utilizer</strong></div>
+			<table class="table">
+				<tbody>
+					<tr>
+						<td id="about-label">Version:</td>
+						<td id="about-value"><span id="aboutVersion"></span></td>
+					</tr>
+					<tr>
+						<td id="about-label">Author:</td>
+						<td id="about-value"><a href="mailto:akoch@ghs.org">Adam Koch</a>
+					</tr>
+					<tr>
+						<td id="about-label">Website:</td>
+						<td id="about-value"><a href="https://adamko.ch" target="_blank">https://adamko.ch</a></td>
+					</tr>
+					<tr>
+						<td id="about-label">Web Store:</td>
+						<td id="about-value"><a href="https://chrome.google.com/webstore/detail/snafu-snow-automated-form/hnnbkmfkgnjngnkijdmfijmbkpjmmmpd?hl=en-US&gl=US" target="_blank">Click Here</a></td>
+					</tr>
+					<tr>
+						<td id="about-label">License:</td>
+						<td id="about-value"><a id="licenseLink" href="#">GNU General Public License v3</a></td>
+					</tr>
+					<tr>
+						<td id="about-label">Git Repository:</td>
+						<td id="about-value"><a href="https://github.com/akoch-ghs/snafu" target="_blank" title="Email me to be given access.">Click Here</a> (Private)</td>
+					</tr>
+					<tr>
+						<td id="about-label">Tools Used:</td>
+						<td id="about-value">
+							<a href="https://code.visualstudio.com/" target="_blank" title="IDE">Microsoft Visual Studio Code</a><br />
+							<a href="https://github.com" target="_blank" title="Git repository host.">GitHub</a>
+						</td>
+					</tr>
+					<tr>
+						<td id="about-label">Languages Used:</td>
+						<td id="about-value">JavaScript, <acronym title="Hypertext Markup Language">HTML</acronym>, <acronym title="Cascading Stylesheets">CSS</acronym></td>
+					</tr>
+					<tr>
+						<td id="about-label">JavaScript Libraries:</td>
+						<td id="about-value">
+							<a href="https://jquery.com/" target="_blank">jQuery</a><br />
+							<a href="http://getbootrap.com/" target="_blank">Bootstrap</a>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<br />
+		<p><em>If you would like to request additions, changes, or submit a bug report please use GitHub's <a href="https://github.com/akoch-ghs/snafu/issues" target="_blank">Issue Tracker</a>.  That way I'll be able to keep track of them and close them as they're completed.  Just <a href="mailto:akoch@ghs.org">email me</a> to be given access. You will need to register a free account on GitHub and provide me with your username.</em></p>
+		<br />
 	</div>
 	<script src="js/jquery.min.js"></script>
     <script src="js/bootstrap.min.js"></script>

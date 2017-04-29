@@ -19,4 +19,9 @@
 $(document).ready(function() {
 	//console.log(chrome.app.getDetails().version);
 	$('#version').html(chrome.app.getDetails().version);
+	$('#aboutVersion').html(chrome.app.getDetails().version);
+
+	$('#licenseLink').click(function() {
+		chrome.tabs.create({url: chrome.extension.getURL('LICENSE')});
+	});
 });

@@ -398,5 +398,5 @@ function updateTicketLabels(autoFinish) {
 }
 
 function isValueEmpty(value) {
-    return (value === null || value === undefined || value === NaN || value === '') ? true : false
+    return (value === null || value === undefined || value === NaN || value.trim() === '') ? true : false
 }

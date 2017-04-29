@@ -41,6 +41,11 @@ div#ui-image {
 	text-align: center;
 }
 
+div#aboutExtension {
+	width: 50%;
+	margin: 0 auto;
+}
+
 h1#header {
 	color: #3eb049;
 	font-weight: bold;
@@ -59,4 +64,13 @@ blockquote#thanks footer {
 	float: right;
 	font-style: italic;
 	font-size: 16px;
+}
+
+td#about-label {
+	text-align: left;
+	font-weight: bold;
+}
+
+td#about-value {
+	text-align: left;
 }
