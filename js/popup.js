@@ -28,11 +28,11 @@ $(document).ready(function() {
     var cannedMsgs = {
         'callingUser': 'Calling {ENDUSER} at {NUMBER}.',
         'equipDelivered': 'Equipment delivered to {SITE}.',
-        'leftVoicemail': 'Left voicemail for {ENDUSER} to discuss the ticket.'
+        'leftVoicemail': 'Left voicemail for {ENDUSER} at {NUMBER} to discuss the ticket.'
     }
 
     chrome.storage.sync.get(['autoTicket'], function(items) {
-        if (isValueEmpty(items.autoTicket) === true) {
+        if (isVarEmpty(items.autoTicket) === true) {
             $('input[value=none]').prop('checked', true);
             autoFinish = 'none';
         } else {
@@ -100,7 +100,7 @@ $(document).ready(function() {
                 type: 'ackIncident',
                 autoFinish: autoFinish
             }, function(response) {
-                if (isValueEmpty(response) === false) {
+                if (isVarEmpty(response) === false) {
                     if (response.success === false) {
                         sendError(response.errMsg);
                     } else {
@@ -120,7 +120,7 @@ $(document).ready(function() {
                 type: 'ackCallUser',
                 autoFinish: autoFinish
             }, function(response) {
-                if (isValueEmpty(response) === false) {
+                if (isVarEmpty(response) === false) {
                     if (response.success === false) {
                         sendError(response.errMsg);
                     } else {
@@ -140,7 +140,7 @@ $(document).ready(function() {
                 type: 'ackTask',
                 autoFinish: autoFinish
             }, function(response) {
-                if (isValueEmpty(response) === false) {
+                if (isVarEmpty(response) === false) {
                     if (response.success === false) {
                         sendError(response.errMsg);
                     } else {
@@ -161,7 +161,7 @@ $(document).ready(function() {
                 type: 'ackBuild',
                 autoFinish: autoFinish
             }, function(response) {
-                if (isValueEmpty(response) === false) {
+                if (isVarEmpty(response) === false) {
                     if (response.success === false) {
                         sendError(response.errMsg);
                     } else {
@@ -181,7 +181,7 @@ $(document).ready(function() {
                 type: 'ackQuarantine',
                 autoFinish: autoFinish
             }, function(response) {
-                if (isValueEmpty(response) === false) {
+                if (isVarEmpty(response) === false) {
                     if (response.success === false) {
                         sendError(response.errMsg);
                     } else {
@@ -201,7 +201,7 @@ $(document).ready(function() {
                 type: 'ackReclaim',
                 autoFinish: autoFinish
             }, function(response) {
-                if (isValueEmpty(response) === false) {
+                if (isVarEmpty(response) === false) {
                     if (response.success === false) {
                         sendError(response.errMsg);
                     } else {
@@ -221,7 +221,7 @@ $(document).ready(function() {
                 type: 'closeHotSwap',
                 autoFinish: autoFinish
             }, function(response) {
-                if (isValueEmpty(response) === false) {
+                if (isVarEmpty(response) === false) {
                     if (response.success === false) {
                         sendError(response.errMsg);
                     } else {
@@ -241,7 +241,7 @@ $(document).ready(function() {
                 type: 'closeInstall',
                 autoFinish: autoFinish
             }, function(response) {
-                if (isValueEmpty(response) === false) {
+                if (isVarEmpty(response) === false) {
                     if (response.success === false) {
                         sendError(response.errMsg);
                     } else {
@@ -261,7 +261,7 @@ $(document).ready(function() {
                 type: 'closeQuarantine',
                 autoFinish: autoFinish
             }, function(response) {
-                if (isValueEmpty(response) === false) {
+                if (isVarEmpty(response) === false) {
                     if (response.success === false) {
                         sendError(response.errMsg);
                     } else {
@@ -281,7 +281,7 @@ $(document).ready(function() {
                 type: 'closeReclaim',
                 autoFinish: autoFinish
             }, function(response) {
-                if (isValueEmpty(response) === false) {
+                if (isVarEmpty(response) === false) {
                     if (response.success === false) {
                         sendError(response.errMsg);
                     } else {
@@ -296,9 +296,9 @@ $(document).ready(function() {
 
     // send ticket update
     $('#sendUpdate').click(function() {
-        if ($('input[name=tStatus]:checked').val() === '1' && isValueEmpty($('#customerNotes').val()) === '') {
+        if ($('input[name=tStatus]:checked').val() === '1' && isVarEmpty($('#customerNotes').val()) === '') {
             sendError('Pending tickets must have customer notes.');
-        } else if (isValueEmpty($('#customerNotes').val()) === true && isValueEmpty($('#workNotes').val()) === true) {
+        } else if (isVarEmpty($('#customerNotes').val()) === true && isVarEmpty($('#workNotes').val()) === true) {
             sendError('You must provide customer and/or work notes.');
         } else {
             chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
@@ -309,7 +309,7 @@ $(document).ready(function() {
                     workNotes: $('#workNotes').val(),
                     custNotes: $('#customerNotes').val()
                 }, function(response) {
-                    if (isValueEmpty(response) === false) {
+                    if (isVarEmpty(response) === false) {
                         if (response.success === false) {
                             sendError(response.errMsg);
                         } else {
@@ -324,7 +324,7 @@ $(document).ready(function() {
     });
 
     $('#sendEquipment').click(function() {
-        if (isValueEmpty($('#compHost').val()) === true || isValueEmpty($('#compAsset').val()) === true || isValueEmpty($('#compModel').val()) === true || isValueEmpty($('#compBuild').val()) === true) {
+        if (isVarEmpty($('#compHost').val()) === true || isVarEmpty($('#compAsset').val()) === true || isVarEmpty($('#compModel').val()) === true || isVarEmpty($('#compBuild').val()) === true) {
             sendError('You must provide valid input.');
         } else {
             // custom closure script
@@ -341,7 +341,7 @@ $(document).ready(function() {
                     workNotes: equipWorkNotes,
                     custNotes: null
                 }, function(response) {
-                    if (isValueEmpty(response) === false) {
+                    if (isVarEmpty(response) === false) {
                         if (response.success === false) {
                             sendError(response.errMsg);
                         } else {
@@ -397,6 +397,6 @@ function updateTicketLabels(autoFinish) {
     $('#autoEquipTicket-' + autoFinish).addClass('active');
 }
 
-function isValueEmpty(value) {
-    return (value === null || value === undefined || value === NaN || value.trim() === '') ? true : false
+function isVarEmpty(value) {
+    return (value === null || value === undefined || value === NaN || value.toString().trim() === '') ? true : false
 }

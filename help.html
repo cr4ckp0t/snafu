@@ -36,7 +36,7 @@
 		<h3>How It Works</h3>
 		<p>Without going in to too much detail this basically injects a script (inject.js) in to the Service Now main frame.  This script houses all of the code that manipulates the various forms using Service Now's provided API aka <a href="http://wiki.servicenow.com/index.php?title=GlideForm_(g_form)#gsc.tab=0" target="_blank">GlideForm</a>.  Since webpages and Chrome extensions operate in separate worlds we have to use a JavaScript CustomEvent <code>SNAFU_Inject</code> in order to pass data to the page to then be submitted to the form.</p>
 		<p>Because I don't have to worry about the other contracts that the developers of SNAP had to, I am able to automate a lot of the processes that we have to follow in order to properly handle the incidents and tasks that come our way.  This is why I am able to include code that can automatically acknowledge incidents/tasks, or close a build request by pulling the replacement device's information directly from the page.</p>
-		<p>The truth is that SNAP wasn't really all that bad of a program.  It was written quite well.  It's just they tried to cram so many different contracts, all using different customized versions of Service Now, into one program using various JavaScript hacks that it eventually severely impeded the performance of the program and caused Service Now to be sluggish as well.  This this extension there isn't any of that!</p> 
+		<p>The truth is that SNAP wasn't really all that bad of a program.  It was written quite well.  It's just they tried to cram so many different contracts, all using different customized versions of Service Now, into one program using various JavaScript hacks that it eventually severely impeded the performance of the program and caused Service Now to be sluggish as well.  In this extension there isn't any of that!</p> 
 		<br />
 		<h3>Layout</h3>
 		<h4>Toolbar Button</h4>
@@ -57,48 +57,96 @@
 		<h4>Auto Save/Update/Neither Buttons</h4>
 		<p>
 			<div class="alert alert-info"><em>Note: These apply to the automated and manual updates (via Send Update).  This setting is persistent and will apply for every update you send.  The default is neither.</em></div>
-			<ul>
-				<li>
-					<strong>Auto Save</strong>
-					<ul>
-						<li>After filling out the fields the data will be saved, submitting the data but keeping you on the same page.</li>
-						<li>Just like clicking Save in the Additonal Actions menu.</li>
-					</ul>
-				</li>
-				<li>
-					<strong>Auto Update</strong>
-					<ul>
-						<li>Same as Auto Save, but after submitting the data it will take you back to the page you were previously.</li>
-						<li>Just like clicking Update on the toolbar of the ticket's page.</li>
-					</ul>
-				</li>
-				<li>
-					<strong>Neither</strong>
-					<ul><li>As I'm sure you've guessed this doesn't do anything after sending the data.</li></ul>
-				</li>
+			<strong>Auto Save</strong>
+			<ul class="list-group">
+				<li class="list-group-item">After filling out the fields the data will be saved, submitting the data but keeping you on the same page.  Just like clicking Save in the Additonal Actions menu.</li>
 			</ul>
+			<strong>Auto Update</strong>
+			<ul class="list-group">
+				<li class="list-group-item">Same as Auto Save, but after submitting the data it will take you back to the page you were previously.  Just like clicking Update on the toolbar of the ticket's page.</li>
+			</ul>
+			<strong>Neither</strong>
+			<ul class="list-group">
+				<li class="list-group-item">As I'm sure you've guessed this doesn't do anything after sending the data.</li>
+			</ul>
+		<br />
+		<h3>Wildcards</h3>
+		<p>
+			<div class="alert alert-info"><em>Note: Certain wildcards can only be used in certain situations. For example, all of the {REPLACE_*} wildcards can only be used on a Hot Swap requests.  Otherwise, they will be replaced with "UNKNOWN".</em></div>
+			<p>There are certain wildcards that you can use in your notes that will be replaced automatically by the extension with the information from the ticket.  I will list them here for your reference.  If there is one you'd like to see added, please let me know.</p>
+			<strong>Global</strong>
+			<ul class="list-group">
+				<li class="list-group-item"><code>{ASSIGN_GROUP}</code> - Current assignment group.</li>
+				<li class="list-group-item"><code>{OPENED}</code> - Date and time the incident or task was opened.</li>
+				<li class="list-group-item"><code>{OPENED_BY}</code> - Whomever opened the task or incident.</li>
+				<li class="list-group-item"><code>{ROOT_CAUSE}</code> - Root Cause CI</li>
+				<li class="list-group-item"><code>{TECH_NAME}</code> - Assigned To's name (You!).</li>
+				<li class="list-group-item"><code>{TICKET}</code> - Incident or task number.</li>
+			</ul>
+			<strong>Incident Only</strong>
+			<ul class="list-group">
+				<li class="list-group-item"><code>{INC_ADDR}</code> - Customer's street address.</li>
+				<li class="list-group-item"><code>{INC_ADD_LOC}</code> - Additional location information.</li>
+				<li class="list-group-item"><code>{INC_ALT_PHONE}</code> - Customer's alternate phone.</li>
+				<li class="list-group-item"><code>{INC_CAMPUS}</code> - Customer's campus.</li>
+				<li class="list-group-item"><code>{INC_CUR_PHONE}</code> - Customer's current phone.</li>
+				<li class="list-group-item"><code>{INC_CUSTOMER}</code> - Customer's name who called in the incident.</li>
+				<li class="list-group-item"><code>{INC_DETAIL_DESC}</code> - Incident's detailed description.</li>
+				<li class="list-group-item"><code>{INC_EMAIL}</code> - Customer's email.</li>
+				<li class="list-group-item"><code>{INC_IMPACT}</code> - Incident impact.</li>
+				<li class="list-group-item"><code>{INC_KB}</code> - Incident's Knowledge Base article, if provided.</li>
+				<li class="list-group-item"><code>{INC_LOC_TYPE}</code> - Customer's location type (Hospital, Offsite, etc.).</li>
+				<li class="list-group-item"><code>{INC_PRACTICE}</code> - Customer's practice name.</li>
+				<li class="list-group-item"><code>{INC_PRIORITY}</code> - Incident priority.</li>
+				<li class="list-group-item"><code>{INC_SHORT_DESC}</code> - Incident's short description.</li>
+				<li class="list-group-item"><code>{INC_TYPE}</code> - Incident Type (Service Degradation, Service Interruption, etc.).</li>
+				<li class="list-group-item"><code>{INC_TYPE_2}</code> - Incident Type Level 2 (Availability-Performance, Data Related, etc.).</li>
+				<li class="list-group-item"><code>{INC_TYPE_3}</code> - Incident Type Level 3 (Damaged Hardware, Liquid Damage, etc.).</li>
+				<li class="list-group-item"><code>{INC_URGENCY}</code> - Incident urgency.</li>
+			</ul>
+			<strong>Task Only</strong>
+			<ul class="list-group">
+				<li class="list-group-item"><code>{CATEGORY_ITEM}</code> - Task's category item (Asset Management, etc.)</li>
+				<li class="list-group-item"><code>{DUE_DATE}</code> - Task's due date.</li>
+				<li class="list-group-item"><code>{REQUEST_ITEM}</code> - Request item number.</li>
+				<li class="list-group-item"><code>{REQUESTED_BY}</code> - Task requested by.</li>
+				<li class="list-group-item"><code>{REQUESTED_FOR}</code> - Task requested for.</li>
+			</ul>
+			<strong>Hot Swap Only</strong>
+			<ul class="list-group">
+				<li class="list-group-item"><code>{BROKEN_ASSET}</code> - Broken device's asset tag.</li>
+				<li class="list-group-item"><code>{BROKEN_HOSTNAME}</code> - Broken device's hostname.</li>
+				<li class="list-group-item"><code>{BROKEN_MODEL}</code> - Broken device's model.</li>
+				<li class="list-group-item"><code>{RELATED_INC}</code> - Related incident that lead to the Hot Swap.</li>
+				<li class="list-group-item"><code>{REPLACE_ASSET}</code> - Replacement computer's asset tag.</li>
+				<li class="list-group-item"><code>{REPLACE_BUILD}</code> - Replacement computer's build/software.</li>
+				<li class="list-group-item"><code>{REPLACE_CUSTOMER}</code> - Customer having the device replaced.</li>
+				<li class="list-group-item"><code>{REPLACE_HOSTNAME}</code> - Replacement computer's hostname.</li>
+				<li class="list-group-item"><code>{REPLACE_MODEL}</code> - Replacement computer's model.</li>
+			</ul>
+		</p>	
 		<br />
 		<h3>Automation</h3>
 		<p>
 			Automation is split in to 3 types.
-			<ol>
-				<li>Acknowledgments</li>
-				<li>Closures</li>
-				<li>Equipment Orders</li>
-			</ol>
+			<ul class="list-group">
+				<li class="list-group-item">Acknowledgments</li>
+				<li class="list-group-item">Closures</li>
+				<li class="list-group-item">Equipment Orders</li>
+			</ul>
 		</p>
 		<br />
 		<h4>Acknowledgements</h4>
 		<p>
 			As you might have guessed acknowledgements have to do with acknowledging an incident or task.  In both cases they simply place the ticket in progress (or Work in Progress) and then include a predetermined text in the Work Notes field.  Additionally, in the case of tasks it will also set the Due Date to today @ 17:00:00, and then set the Root Cause CI field to Desktop Services.  See below for the predetermined text sent for each automated event.
-			<ul>
-				<li><strong>Incident (Generic)</strong><pre>Acknowledging incident.</pre></li>
-				<li><strong>Incident (Call EU)</strong><pre>Acknowledging incident.  Calling {USER} at {NUMBER}.</pre></li>
-				<li><strong>Task (Generic)</strong><pre>Acknowledging task.</pre></li>
-				<li><strong>Hot Swap (Build Request)</strong><pre>Acknowledging build request.</pre></li>
-				<li><strong>Install Task</strong><pre>Acknowledging install task.</pre></li>
-				<li><strong>Quarantine Task</strong><pre>Acknowledging quarantine task.</pre></li>
-				<li><strong>Reclaim Task</strong><pre>Acknowledging reclaim task.</pre></li>
+			<ul class="list-group">
+				<li class="list-group-item"><strong>Incident (Generic)</strong><pre>Acknowledging incident.</pre></li>
+				<li class="list-group-item"><strong>Incident (Call EU)</strong><pre>Acknowledging incident.  Calling {USER} at {NUMBER}.</pre></li>
+				<li class="list-group-item"><strong>Task (Generic)</strong><pre>Acknowledging task.</pre></li>
+				<li class="list-group-item"><strong>Hot Swap (Build Request)</strong><pre>Acknowledging build request.</pre></li>
+				<li class="list-group-item"><strong>Install Task</strong><pre>Acknowledging install task.</pre></li>
+				<li class="list-group-item"><strong>Quarantine Task</strong><pre>Acknowledging quarantine task.</pre></li>
+				<li class="list-group-item"><strong>Reclaim Task</strong><pre>Acknowledging reclaim task.</pre></li>
 			</ul>
 		</p>
 		<br />
@@ -106,12 +154,12 @@
 		<p>
 			<div class="alert alert-info"><em>Note: Incidents can't be closed automatically.  There's quite a few fields that need to be updated, along with descriptive notes that SNAFU just can't generate.</em></div>
 			Closures work similarly to acknowledgements, with a few differences.  It will set the Due Date and Root Cause CI as with acknowledgements, and will set the state to Closed Complete.  The biggest differences come in the predetermined text used in the Work Notes.  In the case of Hot Swap closures it will pull the replacement device's information from the ticket and then generate the closure script determined by Staging to be used when closing a build request.
-			<ul>
-				<li><strong>Incident Customer Notes</strong><pre>My name is {TECHNAME} and I was the technician that assisted you with {TICKET}. Thank you for the opportunity to provide you with service today with your {CATEGORY}. If for any reason, your issue does not appear to be resolved please contact the Service Desk at (864) 455-8000.</pre></li>
-				<li><strong>Hot Swap</strong><pre>Computer has been built. One {MODEL} has been built {BUILD}. Tag {ASSET} HostName {HOSTNAME}. Resolving Task.</pre></li>
-				<li><strong>Install Task</strong><pre>Installed requested equipment and attached signed completion sheet.</pre></li>
-				<li><strong>Quarantine Task</strong><pre>Device removed from quarantine.</pre></li>
-				<li><strong>Reclaim Task</strong><pre>Device reclaimed and added to quarantine.</pre></li>
+			<ul class="list-group">
+				<li class="list-group-item"><strong>Incident Customer Notes</strong><pre>My name is {TECHNAME} and I was the technician that assisted you with {TICKET}. Thank you for the opportunity to provide you with service today with your {CATEGORY}. If for any reason, your issue does not appear to be resolved please contact the Service Desk at (864) 455-8000.</pre></li>
+				<li class="list-group-item"><strong>Hot Swap</strong><pre>Computer has been built. One {MODEL} has been built {BUILD}. Tag {ASSET} HostName {HOSTNAME}. Resolving Task.</pre></li>
+				<li class="list-group-item"><strong>Install Task</strong><pre>Installed requested equipment and attached signed completion sheet.</pre></li>
+				<li class="list-group-item"><strong>Quarantine Task</strong><pre>Device removed from quarantine.</pre></li>
+				<li class="list-group-item"><strong>Reclaim Task</strong><pre>Device reclaimed and added to quarantine.</pre></li>
 			</ul>
 		</p>
 		<br />
@@ -119,9 +167,9 @@
 		<p>
 			<div class="alert alert-info"><em>Note: Because Equipment Orders do not have the information for the device being built saved on the page I had to create a tab especially for these types of builds.</em></div>
 			These are handled exactly like the Hot Swap closures except with a different closure script.
-			<ul>
-				<li><strong>Comments:</strong><pre>My name is {TECHNAME} and I have completed the build process for your workstation. The next step is for the system to be delivered to our technicians supporting your campus or ambulatory location so they can schedule an appropriate time to come to your desk and install the system. Please be sure to watch for communication regarding the delivery and installation of your computer at your desk.</pre></li>
-				<li><strong>Work Notes:</strong><pre>Computer has been built. One {MAKE} has been built {BUILD}. Tag {ASSET} HostName {HOSTNAME}. Resolving Task. Placing computer in Deployment Room. Please assign to a tech for install and resolution. Once this ticket is closed, the request will generate another task to have a technician come on site to install the equipment. This is just a ticket to track the build and equipment used. A tech should be calling the customer momentarily to set up a time for installation.</pre></li>
+			<ul class="list-group">
+				<li class="list-group-item"><strong>Comments:</strong><pre>My name is {TECHNAME} and I have completed the build process for your workstation. The next step is for the system to be delivered to our technicians supporting your campus or ambulatory location so they can schedule an appropriate time to come to your desk and install the system. Please be sure to watch for communication regarding the delivery and installation of your computer at your desk.</pre></li>
+				<li class="list-group-item"><strong>Work Notes:</strong><pre>Computer has been built. One {MAKE} has been built {BUILD}. Tag {ASSET} HostName {HOSTNAME}. Resolving Task. Placing computer in Deployment Room. Please assign to a tech for install and resolution. Once this ticket is closed, the request will generate another task to have a technician come on site to install the equipment. This is just a ticket to track the build and equipment used. A tech should be calling the customer momentarily to set up a time for installation.</pre></li>
 			</ul>
 		</p>
 		<br />

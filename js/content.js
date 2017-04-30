@@ -67,7 +67,7 @@ $(document).ready(function() {
                         autoFinish: msg.autoFinish,
                         field: 'incident_state',
                         value: '3', // In Progress
-                        workNotes: 'Acknowledging Incident.  Calling {ENDUSER} at {NUMBER}.',
+                        workNotes: 'Acknowledging Incident.  Calling {INC_CUSTOMER} at {INC_CUR_PHONE}.',
                         custNotes: null
                     }
                     // send the response
@@ -152,7 +152,7 @@ $(document).ready(function() {
                         autoFinish: msg.autoFinish,
                         field: 'state',
                         value: '3', // closed complete
-                        workNotes: 'Computer has been built. One {MODEL} has been built {BUILD}. Tag {ASSET} HostName {HOSTNAME}. Resolving Task.',
+                        workNotes: 'Computer has been built. One {REPLACE_MODEL} has been built {REPLACE_BUILD}. Tag {REPLACE_ASSET} HostName {REPLACE_HOSTNAME}. Resolving Task.',
                         custNotes: null
                     }
                     sendResponse({success: true, errMsg: null});
@@ -241,7 +241,7 @@ $(document).ready(function() {
                         field: 'state',
                         value: '3',
                         workNotes: msg.workNotes || null,
-                        custNotes: 'My name is {TECHNAME} and I have completed the build process for your workstation. The next step is for the system to be delivered to our technicians supporting your campus or ambulatory location so they can schedule an appropriate time to come to your desk and install the system. Please be sure to watch for communication regarding the delivery and installation of your computer at your desk.'
+                        custNotes: 'My name is {TECH_NAME} and I have completed the build process for your workstation. The next step is for the system to be delivered to our technicians supporting your campus or ambulatory location so they can schedule an appropriate time to come to your desk and install the system. Please be sure to watch for communication regarding the delivery and installation of your computer at your desk.'
                     }
                     sendResponse({success: true, errMsg: null});
                 }
@@ -272,6 +272,6 @@ function getTicketType() {
     }
 }
 
-function isValueEmpty(value) {
+function isVarEmpty(value) {
     return (value === null || value === undefined || value === NaN || value.trim() === '') ? true : false
 }

@@ -1,7 +1,7 @@
 {
     "name": "SNAFU: SNow Automated Form Utilizer",
     "short_name": "SNAFU",
-    "version": "0.9.3",
+    "version": "0.9.4",
     "description": "It's like SNAP, but way better!",
     "author": "Adam Koch",
     "icons": {
@@ -14,7 +14,7 @@
     },
     "browser_action": {
         "default_icon": "images/icon-64.png",
-        "default_title": "SNAFU: SNow Automated Form Utilizezr",
+        "default_title": "SNAFU: SNow Automated Form Utilizer",
         "default_popup": "popup.html"
     },
     "permissions": [

@@ -19,20 +19,19 @@
 /**
  * we have to use Service Now's g_form JavaScript object in order to
  * access fields and inputs correctly.  Chrome extensions do not
- * access to page variables we have to inject code and use Custom Events
+ * access to page variables, so we have to inject code and use Custom Events
  * to pass data between the extension and page.
  **/
 
-var snafuRslvComments = "My name is {TECHNAME} and I was the technician that assisted you with {TICKET}. Thank you for the opportunity to provide you with service today with your {CATEGORY}. If for any reason, your issue does not appear to be resolved please contact the Service Desk at (864) 455-8000.";
+var snafuRslvComments = "My name is {TECH_NAME} and I was the technician that assisted you with {TICKET}. Thank you for the opportunity to provide you with service today with your {INC_TYPE}. If for any reason, your issue does not appear to be resolved please contact the Service Desk at (864) 455-8000.";
 
 // listen for triggers on the custom event for passing text
 document.addEventListener('SNAFU_Inject', function(snafuInject) {
-	
 	var snafuType = snafuInject.detail.type;
 	var snafuField = snafuInject.detail.field;
 	var snafuValue = snafuInject.detail.value;
-	var snafuWorkNotes = replaceWildcards(snafuInject.detail.workNotes || '');
-	var snafuCustNotes = replaceWildcards(snafuInject.detail.custNotes || '');
+	var snafuWorkNotes = (isVarEmpty(snafuInject.detail.workNotes) === false) ? replaceWildcards(snafuInject.detail.workNotes) : null;
+	var snafuCustNotes = (isVarEmpty(snafuInject.detail.custNotes) === false) ? replaceWildcards(snafuInject.detail.custNotes) : null;
 
 	// set field with value
 	if (snafuField !== null && snafuValue !== null) {
@@ -41,13 +40,13 @@ document.addEventListener('SNAFU_Inject', function(snafuInject) {
 	}
 
 	// customer notes (comments)
-	if (isValueEmpty(snafuCustNotes) === false) {
+	if (isVarEmpty(snafuCustNotes) === false) {
 		g_form.setValue('comments', snafuCustNotes);
 		g_form.flash('comments', '#3eb049', 0);
 	}
 
 	// work notes
-	if (isValueEmpty(snafuWorkNotes) === false) {
+	if (isVarEmpty(snafuWorkNotes) === false) {
 		g_form.setValue('work_notes', snafuWorkNotes);
 		g_form.flash('work_notes', '#3eb049', 0);
 	}
@@ -75,8 +74,6 @@ document.addEventListener('SNAFU_Inject', function(snafuInject) {
 			g_form.flash('cmdb_ci', '#3eb049', 0);
 		}
 	}
-	
-	//console.log('autoFinish: ' + snafuInject.detail.autoFinish);
 
 	// autofinish
 	switch (snafuInject.detail.autoFinish) {
@@ -110,36 +107,82 @@ function snafuGetDueDate() {
     return ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2) + '-' + d.getFullYear() + ' 17:00:00';
 }
 
+// replace wildcards in the notes using eval() and regular expressions
 function replaceWildcards(strIn) {
-	if (strIn.search('{TICKET}') !== -1) strIn = strIn.replace('{TICKET}', g_form.getValue('number') || 'UNKNOWN');
-	if (strIn.search('{CATEGORY}') !== -1) strIn = strIn.replace('{CATEGORY}', g_form.getValue('u_incident_type') || 'UNKNOWN');
-	if (strIn.search('{NUMBER}') !== -1) strIn = strIn.replace('{NUMBER}', g_form.getValue('u_current_phone') || 'UNKNOWN');
-	if (strIn.search('{BUILD}') !== -1) strIn = strIn.replace('{BUILD}', g_form.getValue('rhs_software') || 'UNKNOWN');
-	if (strIn.search('{MODEL}') !== -1 || strIn.search('{ASSET}') !== -1 || strIn.search('{HOSTNAME}') !== -1) {
-		var replacement = g_form.getReference('rhs_replacement_computer');
-		var model = new GlideRecord('cmdb_model');
-		model.addQuery('sys_id', replacement.model_id);
-		model.query();
-		strIn = strIn.replace('{MODEL}', (model.next()) ? model.name : 'UNKNOWN');
-		strIn = strIn.replace('{ASSET}', replacement.asset_tag || 'UNKNOWN');
-		strIn = strIn.replace('{HOSTNAME}', replacement.name || 'UNKNOWN');
-	}
-	if (strIn.search('{ENDUSER}') !== -1) {
-		strIn = strIn.replace('{ENDUSER}', function(x) {
-			var callerId = g_form.getReference('caller_id').first_name;
-			return callerId.charAt(0).toUpperCase() + callerId.slice(1).toLowerCase();
-		});
-	}
-	if (strIn.search('{TECHNAME}') !== -1) {
-		strIn = strIn.replace('{TECHNAME}', function(x) {
-			var assignedTo = g_form.getReference('assigned_to').first_name;
-			return assignedTo.charAt(0).toUpperCase() + assignedTo.slice(1).toLowerCase();
-		});
-	}
+	// object containing the code to be eval'd as a replacement for the wildcards
+	var wildcards = {
+		// global
+		"{ASSIGN_GROUP}": "g_form.getReference('assignment_group').name;",
+		"{OPENED}": "g_form.getValue('opened_at');",
+		"{OPENED_BY}": "g_form.getValue('opened_by_label');",
+		"{ROOT_CAUSE}": "g_form.getReference('cmdb_ci').name;",
+		"{TECH_NAME}": "ucwords(g_form.getReference('assigned_to').name);",
+		"{TICKET}": "g_form.getValue('number');",
 
-	return strIn;
+		//incident only
+		"{INC_ADDR}": "ucwords(g_form.getReference('u_street_address').u_name);",
+		"{INC_ADD_LOC}": "g_form.getValue('u_location_description');",
+		"{INC_ALT_PHONE}": "g_form.getValue('u_alternate_phone');",
+		"{INC_CAMPUS}": "g_form.getValue('u_campus');",
+		"{INC_CUR_PHONE}": "g_form.getValue('u_current_phone');",
+		"{INC_CUSTOMER}": "ucwords(g_form.getReference('caller_id').name);",
+		"{INC_DETAIL_DESC}": "g_form.getValue('description');",
+		"{INC_EMAIL}": "g_form.getValue('email');",
+		"{INC_IMPACT}": "g_form.getValue('impact');",
+		"{INC_KB}": "g_form.getReference('u_kb_article').number;",
+		"{INC_LOC_TYPE}": "g_form.getValue('u_location_type');",
+		"{INC_PRACTICE}": "ucwords(g_form.getReference('u_practice_name').name);",
+		"{INC_PRIORITY}": "g_form.getValue('priority');",
+		"{INC_SHORT_DESC}": "g_form.getValue('short_description');",
+		"{INC_TYPE}": "g_form.getValue('u_incident_type');",
+		"{INC_TYPE_2}": "g_form.getValue('u_incident_type_2');",
+		"{INC_TYPE_3}": "g_form.getValue('u_incident_type_3');",
+		"{INC_URGENCY}": "g_form.getValue('urgency');",
+
+		// task only
+		"{CATEGORY_ITEM}": "g_form.getValue('cat_item');",
+		"{DUE_DATE}": "g_form.getValue('due_date');",
+		"{REQUEST_ITEM}": "g_form.getValue('request_item');",
+		"{REQUESTED_BY}": "ucwords(g_form.getReference('requested_for').name);",
+		"{REQUESTED_FOR}": "ucwords(g_form.getReference('u_requested_for').name);",
+
+		// hot swap only
+		"{BROKEN_ASSET}": "g_form.getReference('rhs_comp_name').asset_tag;",
+		"{BROKEN_HOSTNAME}": "g_form.getReference('rhs_comp.name').name;",
+		"{BROKEN_MODEL}": "getComputerModel(g_form.getReference('rhs_comp_name').model_id);",
+		"{RELATED_INC}": "g_form.getReference('rhs_inc').number;",
+		"{REPLACE_ASSET}": "g_form.getReference('rhs_replacement_computer').asset_tag;",
+		"{REPLACE_BUILD}": "g_form.getValue('rhs_software');",
+		"{REPLACE_CUSTOMER}": "ucwords(g_form.getReference('rhs_user').name);",
+		"{REPLACE_HOSTNAME}": "g_form.getReference('rhs_replacement_computer').name;",
+		"{REPLACE_MODEL}": "getComputerModel(g_form.getReference('rhs_replacement_computer').model_id);"
+	};
+
+	return strIn.replace(/\{(.+?)\}/g, function(match) {
+		// if the match is found in the wildcards then it will eval the code and return the output
+		// if not, then it will be replaced with UNKNOWN (to prevent shenanigans)
+		return (match in wildcards) ? eval(wildcards[match]) : 'UNKNOWN';
+	});	
 }
 
-function isValueEmpty(value) {
+function getComputerModel(model_id) {
+	var model = new GlideRecord('cmdb_model');
+	model.addQuery('sys_id', model_id);
+	model.query()
+	return (model.next()) ? model.name : 'UNKNOWN';
+}
+
+function isVarEmpty(value) {
     return (value === null || value === undefined || value === NaN || value.trim() === '') ? true : false
+}
+
+function capitalize(value) {
+	return value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
+}
+
+// similar to php's ucwords
+function ucwords(str) {
+	return str.toLowerCase().replace(/^([a-z\u00E0-\u00FC])|\s+([a-z\u00E0-\u00FC])/g, function(e) {
+		return e.toUpperCase();
+	});
 }
