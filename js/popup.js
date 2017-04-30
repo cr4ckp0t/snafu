@@ -323,6 +323,7 @@ $(document).ready(function() {
         }
     });
 
+    // equipment order update
     $('#sendEquipment').click(function() {
         if (isVarEmpty($('#compHost').val()) === true || isVarEmpty($('#compAsset').val()) === true || isVarEmpty($('#compModel').val()) === true || isVarEmpty($('#compBuild').val()) === true) {
             sendError('You must provide valid input.');
@@ -356,12 +357,7 @@ $(document).ready(function() {
     });
 
     // open help page
-    $('#getHelp').click(function() {
-        chrome.tabs.create({ url: helpUrl });
-    });
-
-    // open help page (equipment tab)
-    $('#getHelp2').click(function() {
+    $('[id^=getHelp]').click(function() {
         chrome.tabs.create({ url: helpUrl });
     });
 });

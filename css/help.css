@@ -60,10 +60,14 @@ h3 {
 	font-weight: bold;
 }
 
+blockquote#thanks {
+	font-size: 14px;
+}
+
 blockquote#thanks footer {
 	float: right;
 	font-style: italic;
-	font-size: 16px;
+	font-size: 12px;
 }
 
 td#about-label {

@@ -99,6 +99,7 @@
 				<li class="list-group-item"><code>{INC_PRACTICE}</code> - Customer's practice name.</li>
 				<li class="list-group-item"><code>{INC_PRIORITY}</code> - Incident priority.</li>
 				<li class="list-group-item"><code>{INC_SHORT_DESC}</code> - Incident's short description.</li>
+				<li class="list-group-item"><code>{INC_STATE}</code> - Incident's state (In Progress, On Hold, etc..).</li>
 				<li class="list-group-item"><code>{INC_TYPE}</code> - Incident Type (Service Degradation, Service Interruption, etc.).</li>
 				<li class="list-group-item"><code>{INC_TYPE_2}</code> - Incident Type Level 2 (Availability-Performance, Data Related, etc.).</li>
 				<li class="list-group-item"><code>{INC_TYPE_3}</code> - Incident Type Level 3 (Damaged Hardware, Liquid Damage, etc.).</li>
@@ -111,18 +112,21 @@
 				<li class="list-group-item"><code>{REQUEST_ITEM}</code> - Request item number.</li>
 				<li class="list-group-item"><code>{REQUESTED_BY}</code> - Task requested by.</li>
 				<li class="list-group-item"><code>{REQUESTED_FOR}</code> - Task requested for.</li>
+				<li class="list-group-item"><code>{TASK_STATE}</code> - Task state (Work In Progress, Pending, etc.).</li>
 			</ul>
 			<strong>Hot Swap Only</strong>
 			<ul class="list-group">
 				<li class="list-group-item"><code>{BROKEN_ASSET}</code> - Broken device's asset tag.</li>
 				<li class="list-group-item"><code>{BROKEN_HOSTNAME}</code> - Broken device's hostname.</li>
 				<li class="list-group-item"><code>{BROKEN_MODEL}</code> - Broken device's model.</li>
+				<li class="list-group-item"><code>{BROKEN_SERIAL}</code> - Broken device's serial number.</li>
 				<li class="list-group-item"><code>{RELATED_INC}</code> - Related incident that lead to the Hot Swap.</li>
 				<li class="list-group-item"><code>{REPLACE_ASSET}</code> - Replacement computer's asset tag.</li>
 				<li class="list-group-item"><code>{REPLACE_BUILD}</code> - Replacement computer's build/software.</li>
 				<li class="list-group-item"><code>{REPLACE_CUSTOMER}</code> - Customer having the device replaced.</li>
 				<li class="list-group-item"><code>{REPLACE_HOSTNAME}</code> - Replacement computer's hostname.</li>
 				<li class="list-group-item"><code>{REPLACE_MODEL}</code> - Replacement computer's model.</li>
+				<li class="list-group-item"><code>{REPLACE_SERIAL}</code> - Replacement computer's serial number.</li>
 			</ul>
 		</p>	
 		<br />
@@ -168,7 +172,7 @@
 			<div class="alert alert-info"><em>Note: Because Equipment Orders do not have the information for the device being built saved on the page I had to create a tab especially for these types of builds.</em></div>
 			These are handled exactly like the Hot Swap closures except with a different closure script.
 			<ul class="list-group">
-				<li class="list-group-item"><strong>Comments:</strong><pre>My name is {TECHNAME} and I have completed the build process for your workstation. The next step is for the system to be delivered to our technicians supporting your campus or ambulatory location so they can schedule an appropriate time to come to your desk and install the system. Please be sure to watch for communication regarding the delivery and installation of your computer at your desk.</pre></li>
+				<li class="list-group-item"><strong>Comments:</strong><pre>My name is {TECH_NAME} and I have completed the build process for your workstation. The next step is for the system to be delivered to our technicians supporting your campus or ambulatory location so they can schedule an appropriate time to come to your desk and install the system. Please be sure to watch for communication regarding the delivery and installation of your computer at your desk.</pre></li>
 				<li class="list-group-item"><strong>Work Notes:</strong><pre>Computer has been built. One {MAKE} has been built {BUILD}. Tag {ASSET} HostName {HOSTNAME}. Resolving Task. Placing computer in Deployment Room. Please assign to a tech for install and resolution. Once this ticket is closed, the request will generate another task to have a technician come on site to install the equipment. This is just a ticket to track the build and equipment used. A tech should be calling the customer momentarily to set up a time for installation.</pre></li>
 			</ul>
 		</p>
