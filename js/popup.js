@@ -22,7 +22,8 @@ $(document).ready(function() {
     $('span[id^=comp]').hide();
     $('[data-toggle="tooltip"]').tooltip();
 
-    var autoFinish
+    var autoFinish;
+    var needSpace;
     var helpUrl = chrome.extension.getURL('help.html');
 
     var cannedMsgs = {
@@ -84,10 +85,19 @@ $(document).ready(function() {
         updateTicketLabels(autoFinish);
     });
 
-    // canned messages
-    $('#cannedMsgs').change(function() {
+    // customer notes canned messages
+    $('#custCannedMsgs').change(function() {
         if ($(this).val() !== 'none') {
-            var needSpace = ($('#workNotes').val().trim() === '') ? '' : ' ';
+            needSpace = ($('#customerNotes').val().trim() === '') ? '' : ' ';
+            $('#customerNotes').append(needSpace + cannedMsgs[$(this).val()]);
+            $(this).val('none');
+        }
+    });
+
+    // work notes canned messages
+    $('#workCannedMsgs').change(function() {
+        if ($(this).val() !== 'none') {
+            needSpace = ($('#workNotes').val().trim() === '') ? '' : ' ';
             $('#workNotes').append(needSpace + cannedMsgs[$(this).val()]);
             $(this).val('none');
         }
