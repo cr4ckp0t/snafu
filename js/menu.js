@@ -17,10 +17,6 @@
  **/
 var autoFinish;
 
-chrome.storage.sync.get(['autoTicket'], function(items) {
-	autoFinish = items.autoTicket;
-});
-
 // auto acknowledge incident
 chrome.contextMenus.create({
 	title: 'Acknowledge Incident',
@@ -41,7 +37,7 @@ chrome.contextMenus.create({
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
 			chrome.tabs.sendMessage(tabs[0].id, {
 				type: 'ackCallUser',
-				autoFinish: autoFinish
+				autoFinish: chrome.storage.sync.get(['autoTicket'], function(items) { return items.autoTicket; })
 			});
 		});
 	}
@@ -58,7 +54,7 @@ chrome.contextMenus.create({
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
 			chrome.tabs.sendMessage(tabs[0].id, {
 				type: 'ackIncident',
-				autoFinish: autoFinish
+				autoFinish: chrome.storage.sync.get(['autoTicket'], function(items) { return items.autoTicket; })
 			});
 		});
 	}
@@ -83,7 +79,23 @@ chrome.contextMenus.create({
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
 			chrome.tabs.sendMessage(tabs[0].id, {
 				type: 'ackTask',
-				autoFinish: autoFinish
+				autoFinish: chrome.storage.sync.get(['autoTicket'], function(items) { return items.autoTicket; })
+			});
+		});
+	}
+});
+
+chrome.contextMenus.create({
+	title: 'Equipment Removal',
+	contexts: ['page'],
+	id: 'ackRemoval',
+	parentId: 'parentAckTask',
+	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
+	onclick: function() {
+		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+			chrome.tabs.sendMessage(tabs[0].id, {
+				type: 'ackRemoval',
+				autoFinish: chrome.storage.sync.get(['autoTicket'], function(items) { return items.autoTicket; })
 			});
 		});
 	}
@@ -99,7 +111,7 @@ chrome.contextMenus.create({
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
 			chrome.tabs.sendMessage(tabs[0].id, {
 				type: 'ackHotSwap',
-				autoFinish: autoFinish
+				autoFinish: chrome.storage.sync.get(['autoTicket'], function(items) { return items.autoTicket; })
 			});
 		});
 	}
@@ -115,7 +127,7 @@ chrome.contextMenus.create({
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
 			chrome.tabs.sendMessage(tabs[0].id, {
 				type: 'ackInstall',
-				autoFinish: autoFinish
+				autoFinish: chrome.storage.sync.get(['autoTicket'], function(items) { return items.autoTicket; })
 			});
 		});
 	}
@@ -131,7 +143,7 @@ chrome.contextMenus.create({
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
 			chrome.tabs.sendMessage(tabs[0].id, {
 				type: 'ackQuarantine',
-				autoFinish: autoFinish
+				autoFinish: chrome.storage.sync.get(['autoTicket'], function(items) { return items.autoTicket; })
 			});
 		});
 	}
@@ -147,7 +159,7 @@ chrome.contextMenus.create({
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
 			chrome.tabs.sendMessage(tabs[0].id, {
 				type: 'ackReclaim',
-				autoFinish: autoFinish
+				autoFinish: chrome.storage.sync.get(['autoTicket'], function(items) { return items.autoTicket; })
 			});
 		});
 	}
@@ -162,6 +174,22 @@ chrome.contextMenus.create({
 });
 
 chrome.contextMenus.create({
+	title: 'Equipment Removal',
+	contexts: ['page'],
+	id: 'closeRemoval',
+	parentId: 'parentCloseTask',
+	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
+	onclick: function() {
+		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+			chrome.tabs.sendMessage(tabs[0].id, {
+				type: 'closeRemoval',
+				autoFinish: chrome.storage.sync.get(['autoTicket'], function(items) { return items.autoTicket; })
+			});
+		});
+	}
+});
+
+chrome.contextMenus.create({
 	title: 'Hot Swap',
 	contexts: ['page'],
 	id: 'closeHotSwap',
@@ -171,7 +199,7 @@ chrome.contextMenus.create({
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
 			chrome.tabs.sendMessage(tabs[0].id, {
 				type: 'closeHotSwap',
-				autoFinish: autoFinish
+				autoFinish: chrome.storage.sync.get(['autoTicket'], function(items) { return items.autoTicket; })
 			});
 		});
 	}
@@ -187,7 +215,7 @@ chrome.contextMenus.create({
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
 			chrome.tabs.sendMessage(tabs[0].id, {
 				type: 'closeInstall',
-				autoFinish: autoFinish
+				autoFinish: chrome.storage.sync.get(['autoTicket'], function(items) { return items.autoTicket; })
 			});
 		});
 	}
@@ -203,7 +231,7 @@ chrome.contextMenus.create({
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
 			chrome.tabs.sendMessage(tabs[0].id, {
 				type: 'closeQuarantine',
-				autoFinish: autoFinish
+				autoFinish: chrome.storage.sync.get(['autoTicket'], function(items) { return items.autoTicket; })
 			});
 		});
 	}
@@ -219,7 +247,7 @@ chrome.contextMenus.create({
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
 			chrome.tabs.sendMessage(tabs[0].id, {
 				type: 'closeReclaim',
-				autoFinish: autoFinish
+				autoFinish: chrome.storage.sync.get(['autoTicket'], function(items) { return items.autoTicket; })
 			});
 		});
 	}

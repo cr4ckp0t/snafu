@@ -28,6 +28,10 @@
 <body>
 	<div id="content">
 		<h1 id="header"><img src="images/icon-64.png" alt="Logo" style="height:50px;width:50px;" /> SNAFU <small>SNow Automated Form Utilizer v<span id="version"></span></small></h1>
+		<div class="panel panel-danger">
+			<div class="panel-heading">Troubleshooting</div>
+			<em>Note: Because of how this extension is forced to inject scripts in to Serivce Now in order to get it to work sometimes things don't get refreshed correctly when the page changes.  If you notice when you try to send an update that it isn't being sent to Service Now just refresh the Service Now tab, or at the very least Right Click on Service Now to bring up the Context Menu and then select "Reload Frame".  Service now operates with an iFrame, so the ticket displays are actually full webpages being displayed inside of the navigation, shortcuts, etc. wrapper.</em>
+		</div>
 		<blockquote id="thanks">
 			<p>Thank you for installing this Chrome extension!  It has actually been quite fun to write, as well as filling a need created when we all moved over to GHS and lost the use of SNAP (a Dell product).  I am confident that this will perform above and beyond anything that SNAP could have ever hoped for, though to be fair it's not SNAP's fault.</p>
 			<footer>Adam Koch <a href="mailto:akoch@ghs.org">&lt;akoch@ghs.org&gt;</a></footer>
@@ -178,6 +182,10 @@
 				<li class="list-group-item"><strong>Comments:</strong><pre>My name is {TECH_NAME} and I have completed the build process for your workstation. The next step is for the system to be delivered to our technicians supporting your campus or ambulatory location so they can schedule an appropriate time to come to your desk and install the system. Please be sure to watch for communication regarding the delivery and installation of your computer at your desk.</pre></li>
 				<li class="list-group-item"><strong>Work Notes:</strong><pre>Computer has been built. One {MAKE} has been built {BUILD}. Tag {ASSET} HostName {HOSTNAME}. Resolving Task. Placing computer in Deployment Room. Please assign to a tech for install and resolution. Once this ticket is closed, the request will generate another task to have a technician come on site to install the equipment. This is just a ticket to track the build and equipment used. A tech should be calling the customer momentarily to set up a time for installation.</pre></li>
 			</ul>
+		</p>
+		<br />
+		<h4>Troubleshooting</h4>
+		<p>
 		</p>
 		<br />
 		<div id="aboutExtension" class="panel panel-primary">

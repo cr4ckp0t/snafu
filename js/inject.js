@@ -57,6 +57,11 @@ document.addEventListener('SNAFU_Inject', function(snafuInject) {
 	if (snafuField === 'incident_state' && snafuValue === '6') {
 		g_form.setValue('comments', replaceWildcards(snafuRslvComments));
 		g_form.flash('comments', '#3eb049', 0);
+
+		if (isVarEmpty(snafuWorkNotes) === false) {
+			g_form.setValue('close_notes', snafuWorkNotes);
+			g_form.flash('close_notes', '#3eb049', 0);
+		}
 	}
 
 	// change the root cause ci and due date for tasks

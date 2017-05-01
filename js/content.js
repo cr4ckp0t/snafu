@@ -108,6 +108,23 @@ $(document).ready(function() {
                     sendResponse({success: true, errMsg: null});
                 }
                 break;
+            
+            // acknowledge install task
+            case 'ackInstall':
+                if (ticketType !== 'task') {
+                    sendResponse({success: false, errMsg: 'Please open a task.'});
+                } else {
+                    injectData = {
+                        type: msg.type,
+                        autoFinish: msg.autoFinish,
+                        field: 'state',
+                        value: '2', // work in progress
+                        workNotes: 'Acknowledging install task.',
+                        custNotes: null
+                    }
+                    sendResponse({success: true, errMsg: null});
+                }
+                break;
 
             // acknowledge quarantine
             case 'ackQuarantine':
@@ -137,6 +154,23 @@ $(document).ready(function() {
                         field: 'state',
                         value: '2', // work in progress
                         workNotes: 'Acknowledging reclaim task.',
+                        custNotes: null
+                    }
+                    sendResponse({success: true, errMsg: null});
+                }
+                break;
+
+            // acknowledge equipment removal
+            case 'ackRemoval':
+                if (ticketType !== 'task') {
+                    sendResponse({success: false, errMsg: 'Please open a task.'});
+                } else {
+                    injectData = {
+                        type: msg.type,
+                        autoFinish: msg.autoFinish,
+                        field: 'state',
+                        value: '2', // work in progress
+                        workNotes: 'Acknowledging equipment removal task.',
                         custNotes: null
                     }
                     sendResponse({success: true, errMsg: null});
@@ -204,6 +238,22 @@ $(document).ready(function() {
                         field: 'state',
                         value: '3', // closed complete
                         workNotes: 'Device reclaimed and added to quarantine.',
+                        custNotes: null
+                    }
+                    sendResponse({success: true, errMsg: null});
+                }
+                break;
+            
+            case 'closeRemoval':
+                if (ticketType !== 'task') {
+                    sendResponse({success: false, errMsg: 'Please open a task.'});
+                } else {
+                    injectData = {
+                        type: msg.type,
+                        autoFinish: msg.autoFinish,
+                        field: 'state',
+                        value: '3',
+                        workNotes: 'Removed requested equipment.',
                         custNotes: null
                     }
                     sendResponse({success: true, errMsg: null});

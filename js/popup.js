@@ -87,6 +87,7 @@ $(document).ready(function() {
 
     // customer notes canned messages
     $('#custCannedMsgs').change(function() {
+        console.log('msg: ' + $(this).val());
         if ($(this).val() !== 'none') {
             needSpace = ($('#customerNotes').val().trim() === '') ? '' : ' ';
             $('#customerNotes').append(needSpace + cannedMsgs[$(this).val()]);
