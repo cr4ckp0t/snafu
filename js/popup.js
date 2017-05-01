@@ -28,7 +28,7 @@ $(document).ready(function() {
 
     var cannedMsgs = {
         'callingUser': 'Calling {INC_CUST_FNAME} at {INC_CUR_PHONE}.',
-        'equipDelivered': 'Equipment delivered to {SITE}.',
+        //'equipDelivered': 'Equipment delivered to {TASK_SITE}.',
         'leftVoicemail': 'Left voicemail for {INC_CUST_FNAME} at {INC_CUR_PHONE} to discuss the ticket.'
     }
 
