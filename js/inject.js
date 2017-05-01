@@ -122,25 +122,27 @@ function replaceWildcards(strIn) {
 		"{TICKET}": "g_form.getValue('number');",							// task/incident number
 
 		//incident only
-		"{INC_ADDR}": "ucwords(g_form.getReference('u_street_address').u_name);",	// incident street address
-		"{INC_ADD_LOC}": "g_form.getValue('u_location_description');",				// incident additional location information
-		"{INC_ALT_PHONE}": "g_form.getValue('u_alternate_phone');",					// alternative phone number
-		"{INC_CAMPUS}": "g_form.getValue('u_campus');",								// campus
-		"{INC_CUR_PHONE}": "g_form.getValue('u_current_phone');",					// current phone number
-		"{INC_CUSTOMER}": "ucwords(g_form.getReference('caller_id').name);",		// customer who called in the incident
-		"{INC_DETAIL_DESC}": "g_form.getValue('description');",						// detailed description
-		"{INC_EMAIL}": "g_form.getValue('email');",									// customer's email
-		"{INC_IMPACT}": "g_form.getValue('impact');",								// incident impact
-		"{INC_KB}": "g_form.getReference('u_kb_article').number;",					// knowledgebase article
-		"{INC_LOC_TYPE}": "g_form.getValue('u_location_type');",					// location type
-		"{INC_PRACTICE}": "ucwords(g_form.getReference('u_practice_name').name);",	// practice name
-		"{INC_PRIORITY}": "g_form.getValue('priority');",							// incident priority
-		"{INC_SHORT_DESC}": "g_form.getValue('short_description');",				// short description
-		"{INC_STATE}": "g_form.getDisplayValue('incident_state');",					// incident state
-		"{INC_TYPE}": "g_form.getValue('u_incident_type');",						// incident type
-		"{INC_TYPE_2}": "g_form.getValue('u_incident_type_2');",					// incident type 2
-		"{INC_TYPE_3}": "g_form.getValue('u_incident_type_3');",					// incident type 3
-		"{INC_URGENCY}": "g_form.getValue('urgency');",								// incident urgency
+		"{INC_ADDR}": "ucwords(g_form.getReference('u_street_address').u_name);",		// incident street address
+		"{INC_ADD_LOC}": "g_form.getValue('u_location_description');",					// incident additional location information
+		"{INC_ALT_PHONE}": "g_form.getValue('u_alternate_phone');",						// alternative phone number
+		"{INC_CAMPUS}": "g_form.getValue('u_campus');",									// campus
+		"{INC_CUR_PHONE}": "g_form.getValue('u_current_phone');",						// current phone number
+		"{INC_CUSTOMER}": "ucwords(g_form.getReference('caller_id').name);",			// customer who called in the incident
+		"{INC_CUST_FNAME}": "ucwords(g_form.getReference('caller_id').first_name);",	// customer's first name
+		"{INC_CUST_LNAME}": "ucwords(g_form.getReference('caller_id').last_name);",		// customer's last name
+		"{INC_DETAIL_DESC}": "g_form.getValue('description');",							// detailed description
+		"{INC_EMAIL}": "g_form.getValue('email');",										// customer's email
+		"{INC_IMPACT}": "g_form.getValue('impact');",									// incident impact
+		"{INC_KB}": "g_form.getReference('u_kb_article').number;",						// knowledgebase article
+		"{INC_LOC_TYPE}": "g_form.getValue('u_location_type');",						// location type
+		"{INC_PRACTICE}": "ucwords(g_form.getReference('u_practice_name').name);",		// practice name
+		"{INC_PRIORITY}": "g_form.getValue('priority');",								// incident priority
+		"{INC_SHORT_DESC}": "g_form.getValue('short_description');",					// short description
+		"{INC_STATE}": "g_form.getDisplayValue('incident_state');",						// incident state
+		"{INC_TYPE}": "g_form.getValue('u_incident_type');",							// incident type
+		"{INC_TYPE_2}": "g_form.getValue('u_incident_type_2');",						// incident type 2
+		"{INC_TYPE_3}": "g_form.getValue('u_incident_type_3');",						// incident type 3
+		"{INC_URGENCY}": "g_form.getValue('urgency');",									// incident urgency
 
 		// task only
 		"{CATEGORY_ITEM}": "g_form.getValue('cat_item');",							// category item
@@ -180,10 +182,6 @@ function getComputerModel(model_id) {
 
 function isVarEmpty(value) {
     return (value === null || value === undefined || value === NaN || value.trim() === '') ? true : false
-}
-
-function capitalize(value) {
-	return value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
 }
 
 // similar to php's ucwords

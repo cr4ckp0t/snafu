@@ -27,9 +27,9 @@ $(document).ready(function() {
     var helpUrl = chrome.extension.getURL('help.html');
 
     var cannedMsgs = {
-        'callingUser': 'Calling {ENDUSER} at {NUMBER}.',
+        'callingUser': 'Calling {INC_CUST_FNAME} at {INC_CUR_PHONE}.',
         'equipDelivered': 'Equipment delivered to {SITE}.',
-        'leftVoicemail': 'Left voicemail for {ENDUSER} at {NUMBER} to discuss the ticket.'
+        'leftVoicemail': 'Left voicemail for {INC_CUST_FNAME} at {INC_CUR_PHONE} to discuss the ticket.'
     }
 
     chrome.storage.sync.get(['autoTicket'], function(items) {
