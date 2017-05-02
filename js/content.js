@@ -38,10 +38,6 @@ injectScript.onload = function() { this.remove(); };
 
 chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
     var ticketType = getTicketType();
-
-    chrome.storage.local.get({autoFinish: 'none'}, function(items) {
-        autoFinish = items.autoFinish;
-    });
     
     switch (msg.type) {
         // acknowledge incident
