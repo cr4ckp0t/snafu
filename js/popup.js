@@ -15,10 +15,8 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  **/
-
 $(document).ready(function() {
-    $('#alertSuccess').hide();
-    $('#alertFailed').hide();
+    $('div[id^=alert]').hide();
     $('span[id^=comp]').hide();
     $('[data-toggle="tooltip"]').tooltip();
 
@@ -32,55 +30,57 @@ $(document).ready(function() {
         'leftVoicemail': 'Left voicemail for {INC_CUST_FNAME} at {INC_CUR_PHONE} to discuss the ticket.'
     }
 
-    chrome.storage.sync.get(['autoTicket'], function(items) {
-        if (isVarEmpty(items.autoTicket) === true) {
+    chrome.storage.local.get(['autoFinish'], function(items) {
+        console.log('autoFinish: ' + items.autoFinish);
+        if (isVarEmpty(items.autoFinish) === true) {
             $('input[value=none]').prop('checked', true);
             autoFinish = 'none';
+            chrome.storage.local.set({autoFinish: 'none'});
         } else {
-            $('input[value=' + items.autoTicket +']').prop('checked', true);
-            autoFinish = items.autoTicket;
+            $('input[value=' + items.autoFinish +']').prop('checked', true);
+            autoFinish = items.autoFinish;
         }
         updateTicketLabels(autoFinish);
     });
 
     // save ticket when submitted
-    $('#autoTicket-save').click(function() {
-        chrome.storage.sync.set({autoTicket: 'save'});
+    $('#autoFinish-save').click(function() {
+        chrome.storage.local.set({autoFinish: 'save'});
         autoFinish = 'save';
         updateTicketLabels(autoFinish);
     });
     
     // update ticket when submitted
-    $('#autoTicket-update').click(function() {
-        chrome.storage.sync.set({autoTicket: 'update'});
+    $('#autoFinish-update').click(function() {
+        chrome.storage.local.set({autoFinish: 'update'});
         autoFinish = 'update';
         updateTicketLabels(autoFinish);
     });
 
     // do nothing with ticket when submitted
-    $('#autoTicket-none').click(function() {
-        chrome.storage.sync.set({autoTicket: 'none'});
+    $('#autoFinish-none').click(function() {
+        chrome.storage.local.set({autoFinish: 'none'});
         autoFinish = 'none';
         updateTicketLabels(autoFinish);
     });
 
     // save ticket when submitted
     $('#autoEquipTicket-save').click(function() {
-        chrome.storage.sync.set({autoTicket: 'save'});
+        chrome.storage.local.set({autoFinish: 'save'});
         autoFinish = 'save';
         updateTicketLabels(autoFinish);
     });
     
     // update ticket when submitted
     $('#autoEquipTicket-update').click(function() {
-        chrome.storage.sync.set({autoTicket: 'update'});
+        chrome.storage.local.set({autoFinish: 'update'});
         autoFinish = 'update';
         updateTicketLabels(autoFinish);
     });
 
     // do nothing with ticket when submitted
     $('#autoEquipTicket-none').click(function() {
-        chrome.storage.sync.set({autoTicket: 'none'});
+        chrome.storage.local.set({autoFinish: 'none'});
         autoFinish = 'none';
         updateTicketLabels(autoFinish);
     });
@@ -108,8 +108,7 @@ $(document).ready(function() {
     $('#ackIncident').click(function() {
         chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
             chrome.tabs.sendMessage(tabs[0].id, {
-                type: 'ackIncident',
-                autoFinish: autoFinish
+                type: 'ackIncident'
             }, function(response) {
                 if (isVarEmpty(response) === false) {
                     if (response.success === false) {
@@ -128,8 +127,7 @@ $(document).ready(function() {
     $('#ackCallUser').click(function() {
         chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
             chrome.tabs.sendMessage(tabs[0].id, {
-                type: 'ackCallUser',
-                autoFinish: autoFinish
+                type: 'ackCallUser'
             }, function(response) {
                 if (isVarEmpty(response) === false) {
                     if (response.success === false) {
@@ -148,8 +146,7 @@ $(document).ready(function() {
     $('#ackTask').click(function() {
         chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
             chrome.tabs.sendMessage(tabs[0].id, {
-                type: 'ackTask',
-                autoFinish: autoFinish
+                type: 'ackTask'
             }, function(response) {
                 if (isVarEmpty(response) === false) {
                     if (response.success === false) {
@@ -169,8 +166,7 @@ $(document).ready(function() {
     $('#ackBuild').click(function() {
         chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
             chrome.tabs.sendMessage(tabs[0].id, {
-                type: 'ackBuild',
-                autoFinish: autoFinish
+                type: 'ackBuild'
             }, function(response) {
                 if (isVarEmpty(response) === false) {
                     if (response.success === false) {
@@ -189,8 +185,7 @@ $(document).ready(function() {
     $('#ackQuarantine').click(function() {
         chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
             chrome.tabs.sendMessage(tabs[0].id, {
-                type: 'ackQuarantine',
-                autoFinish: autoFinish
+                type: 'ackQuarantine'
             }, function(response) {
                 if (isVarEmpty(response) === false) {
                     if (response.success === false) {
@@ -209,8 +204,7 @@ $(document).ready(function() {
     $('#ackReclaim').click(function() {
         chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
             chrome.tabs.sendMessage(tabs[0].id, {
-                type: 'ackReclaim',
-                autoFinish: autoFinish
+                type: 'ackReclaim'
             }, function(response) {
                 if (isVarEmpty(response) === false) {
                     if (response.success === false) {
@@ -229,8 +223,7 @@ $(document).ready(function() {
     $('#closeHotSwap').click(function() {
         chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
             chrome.tabs.sendMessage(tabs[0].id, {
-                type: 'closeHotSwap',
-                autoFinish: autoFinish
+                type: 'closeHotSwap'
             }, function(response) {
                 if (isVarEmpty(response) === false) {
                     if (response.success === false) {
@@ -249,8 +242,7 @@ $(document).ready(function() {
     $('#closeInstall').click(function() {
         chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
             chrome.tabs.sendMessage(tabs[0].id, {
-                type: 'closeInstall',
-                autoFinish: autoFinish
+                type: 'closeInstall'
             }, function(response) {
                 if (isVarEmpty(response) === false) {
                     if (response.success === false) {
@@ -269,8 +261,7 @@ $(document).ready(function() {
     $('#closeQuarantine').click(function() {
         chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
             chrome.tabs.sendMessage(tabs[0].id, {
-                type: 'closeQuarantine',
-                autoFinish: autoFinish
+                type: 'closeQuarantine'
             }, function(response) {
                 if (isVarEmpty(response) === false) {
                     if (response.success === false) {
@@ -289,8 +280,7 @@ $(document).ready(function() {
     $('#closeReclaim').click(function() {
         chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
             chrome.tabs.sendMessage(tabs[0].id, {
-                type: 'closeReclaim',
-                autoFinish: autoFinish
+                type: 'closeReclaim'
             }, function(response) {
                 if (isVarEmpty(response) === false) {
                     if (response.success === false) {
@@ -315,7 +305,6 @@ $(document).ready(function() {
             chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
                 chrome.tabs.sendMessage(tabs[0].id, {
                     type: 'sendUpdate',
-                    autoFinish: autoFinish,
                     tState: $('input[name=tStatus]:checked').val(),
                     workNotes: $('#workNotes').val(),
                     custNotes: $('#customerNotes').val()
@@ -348,7 +337,6 @@ $(document).ready(function() {
             chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
                 chrome.tabs.sendMessage(tabs[0].id, {
                     type: 'sendEquipment',
-                    autoFinish: autoFinish,
                     tState: '3',    // closed complete
                     workNotes: equipWorkNotes,
                     custNotes: null
@@ -393,14 +381,11 @@ function sendError(alert) {
 
 function updateTicketLabels(autoFinish) {
     // remove active class from each label
-    //$('#autoTicket-save').removeClass('active');
-    //$('#autoTicket-update').removeClass('active');
-    //$('#autoTicket-none').removeClass('active');
-    $('[id^=autoTicket]').removeClass('active');
+    $('[id^=autoFinish]').removeClass('active');
     $('[id^=autoEquipTicket').removeClass('active');
 
     // set the correct label with active
-    $('#autoTicket-' + autoFinish).addClass('active');
+    $('#autoFinish-' + autoFinish).addClass('active');
     $('#autoEquipTicket-' + autoFinish).addClass('active');
 }
 

@@ -25,8 +25,6 @@
 
 var snafuRslvComments = "My name is {TECH_NAME} and I was the technician that assisted you with {TICKET}. Thank you for the opportunity to provide you with service today with your {INC_TYPE}. If for any reason, your issue does not appear to be resolved please contact the Service Desk at (864) 455-8000.";
 
-//console.log(g_form.getReference('rhs_replacement_computer'));
-
 // listen for triggers on the custom event for passing text
 document.addEventListener('SNAFU_Inject', function(snafuInject) {
 	var snafuType = snafuInject.detail.type;
@@ -36,7 +34,7 @@ document.addEventListener('SNAFU_Inject', function(snafuInject) {
 	var snafuCustNotes = (isVarEmpty(snafuInject.detail.custNotes) === false) ? replaceWildcards(snafuInject.detail.custNotes) : null;
 
 	// set field with value
-	if (snafuField !== null && snafuValue !== null) {
+	if (isVarEmpty(snafuField) === false && isVarEmpty(snafuValue) === false) {
 		g_form.setValue(snafuField, snafuValue);
 		g_form.flash(snafuField, '#3eb049', 0);
 	}
@@ -81,6 +79,10 @@ document.addEventListener('SNAFU_Inject', function(snafuInject) {
 			g_form.flash('cmdb_ci', '#3eb049', 0);
 		}
 	}
+
+	console.log('autoFinish: ', snafuInject.detail.autoFinish);
+
+	debugger;
 
 	// autofinish
 	switch (snafuInject.detail.autoFinish) {

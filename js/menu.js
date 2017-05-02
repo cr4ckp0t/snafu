@@ -36,8 +36,7 @@ chrome.contextMenus.create({
 	onclick: function() {
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
 			chrome.tabs.sendMessage(tabs[0].id, {
-				type: 'ackCallUser',
-				autoFinish: chrome.storage.sync.get(['autoTicket'], function(items) { return items.autoTicket; })
+				type: 'ackCallUser'
 			});
 		});
 	}
@@ -53,8 +52,7 @@ chrome.contextMenus.create({
 	onclick: function() {
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
 			chrome.tabs.sendMessage(tabs[0].id, {
-				type: 'ackIncident',
-				autoFinish: chrome.storage.sync.get(['autoTicket'], function(items) { return items.autoTicket; })
+				type: 'ackIncident'
 			});
 		});
 	}
@@ -78,8 +76,7 @@ chrome.contextMenus.create({
 	onclick: function() {
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
 			chrome.tabs.sendMessage(tabs[0].id, {
-				type: 'ackTask',
-				autoFinish: chrome.storage.sync.get(['autoTicket'], function(items) { return items.autoTicket; })
+				type: 'ackTask'
 			});
 		});
 	}
@@ -94,8 +91,7 @@ chrome.contextMenus.create({
 	onclick: function() {
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
 			chrome.tabs.sendMessage(tabs[0].id, {
-				type: 'ackRemoval',
-				autoFinish: chrome.storage.sync.get(['autoTicket'], function(items) { return items.autoTicket; })
+				type: 'ackRemoval'
 			});
 		});
 	}
@@ -110,8 +106,7 @@ chrome.contextMenus.create({
 	onclick: function() {
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
 			chrome.tabs.sendMessage(tabs[0].id, {
-				type: 'ackHotSwap',
-				autoFinish: chrome.storage.sync.get(['autoTicket'], function(items) { return items.autoTicket; })
+				type: 'ackHotSwap'
 			});
 		});
 	}
@@ -126,8 +121,7 @@ chrome.contextMenus.create({
 	onclick: function() {
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
 			chrome.tabs.sendMessage(tabs[0].id, {
-				type: 'ackInstall',
-				autoFinish: chrome.storage.sync.get(['autoTicket'], function(items) { return items.autoTicket; })
+				type: 'ackInstall'
 			});
 		});
 	}
@@ -142,8 +136,7 @@ chrome.contextMenus.create({
 	onclick: function() {
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
 			chrome.tabs.sendMessage(tabs[0].id, {
-				type: 'ackQuarantine',
-				autoFinish: chrome.storage.sync.get(['autoTicket'], function(items) { return items.autoTicket; })
+				type: 'ackQuarantine'
 			});
 		});
 	}
@@ -158,8 +151,7 @@ chrome.contextMenus.create({
 	onclick: function() {
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
 			chrome.tabs.sendMessage(tabs[0].id, {
-				type: 'ackReclaim',
-				autoFinish: chrome.storage.sync.get(['autoTicket'], function(items) { return items.autoTicket; })
+				type: 'ackReclaim'
 			});
 		});
 	}
@@ -182,8 +174,7 @@ chrome.contextMenus.create({
 	onclick: function() {
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
 			chrome.tabs.sendMessage(tabs[0].id, {
-				type: 'closeRemoval',
-				autoFinish: chrome.storage.sync.get(['autoTicket'], function(items) { return items.autoTicket; })
+				type: 'closeRemoval'
 			});
 		});
 	}
@@ -198,8 +189,7 @@ chrome.contextMenus.create({
 	onclick: function() {
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
 			chrome.tabs.sendMessage(tabs[0].id, {
-				type: 'closeHotSwap',
-				autoFinish: chrome.storage.sync.get(['autoTicket'], function(items) { return items.autoTicket; })
+				type: 'closeHotSwap'
 			});
 		});
 	}
@@ -214,8 +204,7 @@ chrome.contextMenus.create({
 	onclick: function() {
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
 			chrome.tabs.sendMessage(tabs[0].id, {
-				type: 'closeInstall',
-				autoFinish: chrome.storage.sync.get(['autoTicket'], function(items) { return items.autoTicket; })
+				type: 'closeInstall'
 			});
 		});
 	}
@@ -230,8 +219,7 @@ chrome.contextMenus.create({
 	onclick: function() {
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
 			chrome.tabs.sendMessage(tabs[0].id, {
-				type: 'closeQuarantine',
-				autoFinish: chrome.storage.sync.get(['autoTicket'], function(items) { return items.autoTicket; })
+				type: 'closeQuarantine'
 			});
 		});
 	}
@@ -246,8 +234,7 @@ chrome.contextMenus.create({
 	onclick: function() {
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
 			chrome.tabs.sendMessage(tabs[0].id, {
-				type: 'closeReclaim',
-				autoFinish: chrome.storage.sync.get(['autoTicket'], function(items) { return items.autoTicket; })
+				type: 'closeReclaim'
 			});
 		});
 	}
