@@ -133,6 +133,23 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                     }
                     break;
 
+                // acknowledge equipment move
+                case 'ackMove':
+                    if (ticketType !== 'task') {
+                        sendResponse({success: false, errMsg: 'Please open a task.'});
+                    } else {
+                        injectData = {
+                            type: msg.type,
+                            autoFinish: items.autoFinish,
+                            field: 'state',
+                            value: '2', // work in progress
+                            workNotes: 'Acknowledging equipment move task.',
+                            custNotes: null
+                        }
+                        sendResponse({success: true, errMsg: null});
+                    }
+                    break;
+
                 // acknowledge quarantine
                 case 'ackQuarantine':
                     if (ticketType !== 'task') {
@@ -211,6 +228,23 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                             field: 'state',
                             value: '3', // closed complete
                             workNotes: 'Installed requested equipment and attached signed completion sheet.',
+                            custNotes: null
+                        }
+                        sendResponse({success: true, errMsg: null});
+                    }
+                    break;
+
+                // close equipment move task
+                case 'closeMove':
+                    if (ticketType !== 'task') {
+                        sendResponse({success: false, errMsg: 'Please open a task.'});
+                    } else {
+                        injectData = {
+                            type: msg.type,
+                            autoFinish: items.autoFinish,
+                            field: 'state',
+                            value: '3', // closed complete
+                            workNotes: 'Equipment has been moved, per the request.',
                             custNotes: null
                         }
                         sendResponse({success: true, errMsg: null});
