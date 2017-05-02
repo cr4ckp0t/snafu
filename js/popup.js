@@ -20,7 +20,6 @@ $(document).ready(function() {
     $('span[id^=comp]').hide();
     $('[data-toggle="tooltip"]').tooltip();
 
-    var autoFinish;
     var needSpace;
     var helpUrl = chrome.extension.getURL('help.html');
 
@@ -30,64 +29,19 @@ $(document).ready(function() {
         'leftVoicemail': 'Left voicemail for {INC_CUST_FNAME} at {INC_CUR_PHONE} to discuss the ticket.'
     }
 
-    chrome.storage.local.get(['autoFinish'], function(items) {
-        console.log('autoFinish: ' + items.autoFinish);
-        if (isVarEmpty(items.autoFinish) === true) {
-            $('input[value=none]').prop('checked', true);
-            autoFinish = 'none';
-            chrome.storage.local.set({autoFinish: 'none'});
-        } else {
-            $('input[value=' + items.autoFinish +']').prop('checked', true);
-            autoFinish = items.autoFinish;
-        }
-        updateTicketLabels(autoFinish);
-    });
+    // load settings
+    getSettings();
 
-    // save ticket when submitted
-    $('#autoFinish-save').click(function() {
-        chrome.storage.local.set({autoFinish: 'save'});
-        autoFinish = 'save';
-        updateTicketLabels(autoFinish);
-    });
-    
-    // update ticket when submitted
-    $('#autoFinish-update').click(function() {
-        chrome.storage.local.set({autoFinish: 'update'});
-        autoFinish = 'update';
-        updateTicketLabels(autoFinish);
-    });
-
-    // do nothing with ticket when submitted
-    $('#autoFinish-none').click(function() {
-        chrome.storage.local.set({autoFinish: 'none'});
-        autoFinish = 'none';
-        updateTicketLabels(autoFinish);
-    });
-
-    // save ticket when submitted
-    $('#autoEquipTicket-save').click(function() {
-        chrome.storage.local.set({autoFinish: 'save'});
-        autoFinish = 'save';
-        updateTicketLabels(autoFinish);
-    });
-    
-    // update ticket when submitted
-    $('#autoEquipTicket-update').click(function() {
-        chrome.storage.local.set({autoFinish: 'update'});
-        autoFinish = 'update';
-        updateTicketLabels(autoFinish);
-    });
-
-    // do nothing with ticket when submitted
-    $('#autoEquipTicket-none').click(function() {
-        chrome.storage.local.set({autoFinish: 'none'});
-        autoFinish = 'none';
-        updateTicketLabels(autoFinish);
-    });
+    // save autoFinish settings
+    $('#autoFinish-save').click(function() { saveSettings('save'); });
+    $('#autoEquipTicket-save').click(function() { saveSettings('save'); });
+    $('#autoFinish-update').click(function() { saveSettings('update'); });
+    $('#autoEquipTicket-update').click(function() { saveSettings('update'); });
+    $('#autoFinish-none').click(function() { saveSettings('none'); });
+    $('#autoEquipTicket-none').click(function() { saveSettings('none'); });
 
     // customer notes canned messages
     $('#custCannedMsgs').change(function() {
-        console.log('msg: ' + $(this).val());
         if ($(this).val() !== 'none') {
             needSpace = ($('#customerNotes').val().trim() === '') ? '' : ' ';
             $('#customerNotes').append(needSpace + cannedMsgs[$(this).val()]);
@@ -391,4 +345,33 @@ function updateTicketLabels(autoFinish) {
 
 function isVarEmpty(value) {
     return (value === null || value === undefined || value === NaN || value.toString().trim() === '') ? true : false
+}
+
+function saveSettings(value) {
+    chrome.storage.sync.set({autoFinish: value}, function() {
+        if (chrome.runtime.lastError) {
+            console.warn('Sync Set Error: %s', chrome.runtime.lastError.message);
+        } else {
+            console.info('SNAFU: Saved settings.');
+        }
+    });
+
+    // remove active class from each label
+    $('[id^=autoFinish]').removeClass('active');
+    $('[id^=autoEquipTicket').removeClass('active');
+
+    // set the correct label with active
+    $('#autoFinish-' + value).addClass('active');
+    $('#autoEquipTicket-' + value).addClass('active');
+}
+
+function getSettings() {
+    chrome.storage.sync.get('autoFinish', function(items) {
+        if (chrome.runtime.lastError) {
+            console.warn('Sync Get Error: %s', chrome.runtime.lastError.message);
+        } else {
+            console.info('SNAFU: Received settings.');
+            updateTicketLabels(items.autoFinish);
+        }
+    });
 }

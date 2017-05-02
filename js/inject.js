@@ -80,10 +80,6 @@ document.addEventListener('SNAFU_Inject', function(snafuInject) {
 		}
 	}
 
-	console.log('autoFinish: ', snafuInject.detail.autoFinish);
-
-	debugger;
-
 	// autofinish
 	switch (snafuInject.detail.autoFinish) {
 		// save (stay on ticket's page)

@@ -18,9 +18,23 @@
 
 chrome.runtime.onInstalled.addListener(function(details) {
 	if (details.reason === 'install') {
-		// first install, so create the settings
-		chrome.storage.local.set({autoFinish: 'none'});
 		// show help page
 		chrome.tabs.create({url: chrome.extension.getURL('help.html')});
 	}
+});
+
+chrome.runtime.onStartup.addListener(function() {
+	chrome.storage.sync.get(['autoFinish'], function(items) {
+		if (chrome.runtime.lastError) {
+			console.warn('SNAFU: Sync Get Error: %s', chrome.runtime.lastError.message);
+		} else if (!items.autoFinish) {
+			chrome.storage.sync.set({autoFinish: 'none'}, function() {
+				if (chrome.runtime.lastError) {
+					console.warn('SNAFU: Sync Set Error: %s', chrome.runtime.lastError.message);
+				} else {
+					console.info('SNAFU: Initialized Settings');
+				}	
+			});
+		}
+	});
 });
