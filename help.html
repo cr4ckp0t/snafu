@@ -153,7 +153,7 @@
 			As you might have guessed acknowledgements have to do with acknowledging an incident or task.  In both cases they simply place the ticket in progress (or Work in Progress) and then include a predetermined text in the Work Notes field.  Additionally, in the case of tasks it will also set the Due Date to today @ 17:00:00, and then set the Root Cause CI field to Desktop Services.  See below for the predetermined text sent for each automated event.
 			<ul class="list-group">
 				<li class="list-group-item"><strong>Incident (Generic)</strong><pre>Acknowledging incident.</pre></li>
-				<li class="list-group-item"><strong>Incident (Call EU)</strong><pre>Acknowledging incident.  Calling {USER} at {NUMBER}.</pre></li>
+				<li class="list-group-item"><strong>Incident (Call EU)</strong><pre>Acknowledging incident.  Calling {INC_CUST_FNAME} at {INC_CUR_PHONE}.</pre></li>
 				<li class="list-group-item"><strong>Task (Generic)</strong><pre>Acknowledging task.</pre></li>
 				<li class="list-group-item"><strong>Hot Swap (Build Request)</strong><pre>Acknowledging build request.</pre></li>
 				<li class="list-group-item"><strong>Install Task</strong><pre>Acknowledging install task.</pre></li>
@@ -167,8 +167,8 @@
 			<div class="alert alert-info"><em>Note: Incidents can't be closed automatically.  There's quite a few fields that need to be updated, along with descriptive notes that SNAFU just can't generate.</em></div>
 			Closures work similarly to acknowledgements, with a few differences.  It will set the Due Date and Root Cause CI as with acknowledgements, and will set the state to Closed Complete.  The biggest differences come in the predetermined text used in the Work Notes.  In the case of Hot Swap closures it will pull the replacement device's information from the ticket and then generate the closure script determined by Staging to be used when closing a build request.
 			<ul class="list-group">
-				<li class="list-group-item"><strong>Incident Customer Notes</strong><pre>My name is {TECHNAME} and I was the technician that assisted you with {TICKET}. Thank you for the opportunity to provide you with service today with your {CATEGORY}. If for any reason, your issue does not appear to be resolved please contact the Service Desk at (864) 455-8000.</pre></li>
-				<li class="list-group-item"><strong>Hot Swap</strong><pre>Computer has been built. One {MODEL} has been built {BUILD}. Tag {ASSET} HostName {HOSTNAME}. Resolving Task.</pre></li>
+				<li class="list-group-item"><strong>Incident Customer Notes</strong><pre>My name is {TECH_NAME} and I was the technician that assisted you with {TICKET}. Thank you for the opportunity to provide you with service today with your {INC_TYPE}. If for any reason, your issue does not appear to be resolved please contact the Service Desk at (864) 455-8000.</pre></li>
+				<li class="list-group-item"><strong>Hot Swap</strong><pre>Computer has been built. One {REPLACE_MODEL} has been built {REPLACE_BUILD}. Tag {REPLACE_ASSET} HostName {REPLACE_HOSTNAME}. Resolving Task.</pre></li>
 				<li class="list-group-item"><strong>Install Task</strong><pre>Installed requested equipment and attached signed completion sheet.</pre></li>
 				<li class="list-group-item"><strong>Quarantine Task</strong><pre>Device removed from quarantine.</pre></li>
 				<li class="list-group-item"><strong>Reclaim Task</strong><pre>Device reclaimed and added to quarantine.</pre></li>

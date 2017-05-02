@@ -251,6 +251,7 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                     }
                     break;
                 
+                // close equipment removal
                 case 'closeRemoval':
                     if (ticketType !== 'task') {
                         sendResponse({success: false, errMsg: 'Please open a task.'});

@@ -39,6 +39,8 @@
                     <li><a style="cursor:pointer;" id="ackCallUser">Incident (Call EU)</a></li>
                     <li role="separator" class="divider"></li>
                     <li><a style="cursor:pointer;" id="ackTask">Generic Task</a></li>
+                    <li><a style="cursor:pointer;" id="ackMove">Equipment Move</a></li>
+                    <li><a style="cursor:pointer;" id="ackRemoval">Equipment Removal</a></li>
                     <li><a style="cursor:pointer;" id="ackHotSwap">Hot Swap</a></li>
                     <li><a style="cursor:pointer;" id="ackInstall">Install Task</a></li>
                     <li><a style="cursor:pointer;" id="ackQuarantine">Quarantine Task</a></li>
@@ -48,6 +50,8 @@
             <li role="presentation">
                 <a href="#" id="closeTicket" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Closures<span class="caret"></span></a>
                 <ul class="dropdown-menu" aria-labelledby="closeTicket">
+                    <li><a style="cursor:pointer;" id="closeMove">Equipment Move</a></li>
+                    <li><a style="cursor:pointer;" id="closeRemoval">Equipment Removal</a></li>
                     <li><a style="cursor:pointer;" id="closeHotSwap">Hot Swap</a></li>
                     <li><a style="cursor:pointer;" id="closeInstall">Install Task</a></li>
                     <li><a style="cursor:pointer;" id="closeQuarantine">Quarantine Task</a></li>
@@ -84,7 +88,6 @@
                         <select id="custCannedMsgs" name="cannedMsgs" class="form-control">
                             <option value="none" selected="selected">---- None ----</option>
                             <option value="callingUser">Calling {INC_CUST_FNAME} at {INC_CUR_PHONE}.</option>
-                            <!-- <option value="equipDelivered">Equipment delivered to {TASK_SITE}.</option> -->
                             <option value="leftVoicemail">Left voicemail for {INC_CUST_FNAME} at {INC_CUR_PHONE} to discuss the ticket.</option>
                         </select>
                     </div>
@@ -97,7 +100,6 @@
                         <select id="workCannedMsgs" name="cannedMsgs" class="form-control">
                             <option value="none" selected="selected">---- None ----</option>
                             <option value="callingUser">Calling {INC_CUST_FNAME} at {INC_CUR_PHONE}.</option>
-                            <!-- <option value="equipDelivered">Equipment delivered to {TASK_SITE}.</option> -->
                             <option value="leftVoicemail">Left voicemail for {INC_CUST_FNAME} at {INC_CUR_PHONE} to discuss the ticket.</option>
                         </select>
                     </div>
@@ -154,10 +156,6 @@
                     <button type="button" class="btn btn-primary btn-md" id="sendEquipment">Send Update</button>
                     <button type="button" class="btn btn-default btn-md" style="float:right;" id="getHelp2">Help</button>
                 </div>
-            </div>
-            <div class="form-group">
-                <div id="alertSuccess" class="alert alert-success" style="width:100%;"></div>
-                <div id="alertFailed" class="alert alert-danger" style="width:100%;"></div>
             </div>
         </div>
     </div>

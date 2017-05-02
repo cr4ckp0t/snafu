@@ -58,203 +58,18 @@ $(document).ready(function() {
         }
     });
 
-    // acknowledge incident
-    $('#ackIncident').click(function() {
-        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-            chrome.tabs.sendMessage(tabs[0].id, {
-                type: 'ackIncident'
-            }, function(response) {
-                if (isVarEmpty(response) === false) {
-                    if (response.success === false) {
-                        sendError(response.errMsg);
-                    } else {
-                        sendSuccess('Incident acknowledgement sent.');
-                    }
-                } else {
-                    sendError('Unable to process response to message.');
-                }
-            });
-        });
-    });
+    // acknowledgement clicks
+    $('a[id^=ack]').click(function(event) { processClick(event.target.id); });
 
-    // acknowledge incident (call user)
-    $('#ackCallUser').click(function() {
-        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-            chrome.tabs.sendMessage(tabs[0].id, {
-                type: 'ackCallUser'
-            }, function(response) {
-                if (isVarEmpty(response) === false) {
-                    if (response.success === false) {
-                        sendError(response.errMsg);
-                    } else {
-                        sendSuccess('Incident acknowledgement sent.');
-                    }
-                } else {
-                    sendError('Unable to process response to message.');
-                }
-            });
-        });
-    });
-
-    // acknowledge task
-    $('#ackTask').click(function() {
-        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-            chrome.tabs.sendMessage(tabs[0].id, {
-                type: 'ackTask'
-            }, function(response) {
-                if (isVarEmpty(response) === false) {
-                    if (response.success === false) {
-                        sendError(response.errMsg);
-                    } else {
-                        sendSuccess('Task acknowledgement sent.');
-                    }
-                } else {
-                    sendError('Unable to process response to message.');
-                }
-            });
-        });
-        
-    });
-
-    // acknowledge build
-    $('#ackBuild').click(function() {
-        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-            chrome.tabs.sendMessage(tabs[0].id, {
-                type: 'ackBuild'
-            }, function(response) {
-                if (isVarEmpty(response) === false) {
-                    if (response.success === false) {
-                        sendError(response.errMsg);
-                    } else {
-                        sendSuccess('Build acknowledgement sent.');
-                    }
-                } else {
-                    sendError('Unable to process response to message.');
-                }
-            });
-        });
-    });
-
-    // acknowledge quarantine
-    $('#ackQuarantine').click(function() {
-        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-            chrome.tabs.sendMessage(tabs[0].id, {
-                type: 'ackQuarantine'
-            }, function(response) {
-                if (isVarEmpty(response) === false) {
-                    if (response.success === false) {
-                        sendError(response.errMsg);
-                    } else {
-                        sendSuccess('Quarantine acknowledgement sent.');
-                    }
-                } else {
-                    sendError('Unable to process response to message.');
-                }
-            });
-        });
-    });
-
-    // acknowledge reclaim task
-    $('#ackReclaim').click(function() {
-        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-            chrome.tabs.sendMessage(tabs[0].id, {
-                type: 'ackReclaim'
-            }, function(response) {
-                if (isVarEmpty(response) === false) {
-                    if (response.success === false) {
-                        sendError(response.errMsg);
-                    } else {
-                        sendSuccess('Reclaim acknowledgement sent.');
-                    }
-                } else {
-                    sendError('Unable to process response to message.');
-                }
-            });
-        });
-    });
-
-    // close quarantine
-    $('#closeHotSwap').click(function() {
-        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-            chrome.tabs.sendMessage(tabs[0].id, {
-                type: 'closeHotSwap'
-            }, function(response) {
-                if (isVarEmpty(response) === false) {
-                    if (response.success === false) {
-                        sendError(response.errMsg);
-                    } else {
-                        sendSuccess('Hot Swap closure sent.');
-                    }
-                } else {
-                    sendError('Unable to process response to message.');
-                }
-            });
-        });
-    });
-
-    // close install task
-    $('#closeInstall').click(function() {
-        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-            chrome.tabs.sendMessage(tabs[0].id, {
-                type: 'closeInstall'
-            }, function(response) {
-                if (isVarEmpty(response) === false) {
-                    if (response.success === false) {
-                        sendError(response.errMsg);
-                    } else {
-                        sendSuccess('Install closure sent.');
-                    }
-                } else {
-                    sendError('Unable to process response to message.');
-                }
-            });
-        });
-    });
-
-    // close quarantine
-    $('#closeQuarantine').click(function() {
-        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-            chrome.tabs.sendMessage(tabs[0].id, {
-                type: 'closeQuarantine'
-            }, function(response) {
-                if (isVarEmpty(response) === false) {
-                    if (response.success === false) {
-                        sendError(response.errMsg);
-                    } else {
-                        sendSuccess('Quarantine closure sent.');
-                    }
-                } else {
-                    sendError('Unable to process response to message.');
-                }
-            });
-        });
-    });
-
-    // close reclaim task
-    $('#closeReclaim').click(function() {
-        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-            chrome.tabs.sendMessage(tabs[0].id, {
-                type: 'closeReclaim'
-            }, function(response) {
-                if (isVarEmpty(response) === false) {
-                    if (response.success === false) {
-                        sendError(response.errMsg);
-                    } else {
-                        sendSuccess('Reclaim closure sent.');
-                    }
-                } else {
-                    sendError('Unable to process response to message.');
-                }
-            });
-        });
-    });
+    // closure clicks
+    $('a[id^=close]').click(function(event) { processClick(event.target.id); });
 
     // send ticket update
     $('#sendUpdate').click(function() {
         if ($('input[name=tStatus]:checked').val() === '1' && isVarEmpty($('#customerNotes').val()) === '') {
-            sendError('Pending tickets must have customer notes.');
+            console.warn('SNAFU Error: Pending tickets must have customer notes.');
         } else if (isVarEmpty($('#customerNotes').val()) === true && isVarEmpty($('#workNotes').val()) === true) {
-            sendError('You must provide customer and/or work notes.');
+            console.warn('SNAFU Error: You must provide customer and/or work notes.');
         } else {
             chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
                 chrome.tabs.sendMessage(tabs[0].id, {
@@ -265,12 +80,12 @@ $(document).ready(function() {
                 }, function(response) {
                     if (isVarEmpty(response) === false) {
                         if (response.success === false) {
-                            sendError(response.errMsg);
+                            console.warn('SNAFU Error: %s', response.errMsg);
                         } else {
-                            sendSuccess('Update sent!');
+                            console.info('SNAFU: Update sent!');
                         }
                     } else {
-                        sendError('Unable to process response to message.');
+                        console.warn('SNAFU Error: Unable to process response to message.');
                     }
                 });
             });
@@ -280,7 +95,7 @@ $(document).ready(function() {
     // equipment order update
     $('#sendEquipment').click(function() {
         if (isVarEmpty($('#compHost').val()) === true || isVarEmpty($('#compAsset').val()) === true || isVarEmpty($('#compModel').val()) === true || isVarEmpty($('#compBuild').val()) === true) {
-            sendError('You must provide valid input.');
+            console.warn('SNAFU Error: You must provide valid input.');
         } else {
             // custom closure script
             var equipWorkNotes = 'Computer has been built. One {MODEL} has been built {BUILD}. Tag {ASSET} HostName {HOSTNAME}. Resolving Task. Placing computer in Deployment Room. Please assign to a tech for install and resolution. Once this ticket is closed, the request will generate another task to have a technician come on site to install the equipment. This is just a ticket to track the build and equipment used. A tech should be calling the customer momentarily to set up a time for installation.';
@@ -297,41 +112,23 @@ $(document).ready(function() {
                 }, function(response) {
                     if (isVarEmpty(response) === false) {
                         if (response.success === false) {
-                            sendError(response.errMsg);
+                            console.warn('SNAFU Error: %s', response.errMsg);
                         } else {
-                            sendSuccess('Equipment Order closure sent.');
+                            console.info('SNAFU: Equipment Order closure sent.');
                         }
                     } else {
-                        sendError('Unable to process response to message.');
+                        console.warn('SNAFU Error: Unable to process response to message.');
                     }
                 });
             });
         }
     });
-
+    
     // open help page
     $('[id^=getHelp]').click(function() {
         chrome.tabs.create({ url: helpUrl });
     });
 });
-
-function sendSuccess(alert) {
-    var status = document.getElementById('alertSuccess');
-    status.textContent = alert;
-    $('#alertSuccess').fadeIn();
-    setTimeout(function() {
-        $('#alertSuccess').fadeOut();
-    }, 3000);
-}
-
-function sendError(alert) {
-    var status = document.getElementById('alertFailed');
-    status.textContent = alert;
-    $('#alertFailed').fadeIn();
-    setTimeout(function() {
-        $('#alertFailed').fadeOut();
-    }, 3000);
-}
 
 function updateTicketLabels(autoFinish) {
     // remove active class from each label
@@ -347,6 +144,7 @@ function isVarEmpty(value) {
     return (value === null || value === undefined || value === NaN || value.toString().trim() === '') ? true : false
 }
 
+// save settings to chrome.storage.sync and update inputs
 function saveSettings(value) {
     chrome.storage.sync.set({autoFinish: value}, function() {
         if (chrome.runtime.lastError) {
@@ -365,6 +163,7 @@ function saveSettings(value) {
     $('#autoEquipTicket-' + value).addClass('active');
 }
 
+// pull settings from chrome.storage.sync and process them
 function getSettings() {
     chrome.storage.sync.get('autoFinish', function(items) {
         if (chrome.runtime.lastError) {
@@ -373,5 +172,18 @@ function getSettings() {
             console.info('SNAFU: Received settings.');
             updateTicketLabels(items.autoFinish);
         }
+    });
+}
+
+// process the clicks of the dropdown menus
+function processClick(clickType) {
+    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+        chrome.tabs.sendMessage(tabs[0].id, {
+            type: clickType
+        }, function(response) {
+            if (chrome.runtime.lastError) {
+                console.warn('SNAFU Error: %s', chrome.runtime.lastError.message);
+            }
+        });
     });
 }

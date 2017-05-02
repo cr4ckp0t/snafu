@@ -179,7 +179,7 @@ function replaceWildcards(strIn) {
 function getComputerModel(model_id) {
 	var model = new GlideRecord('cmdb_model');
 	model.addQuery('sys_id', model_id);
-	model.query()
+	model.query();
 	return (model.next()) ? model.name : 'UNKNOWN';
 }
 

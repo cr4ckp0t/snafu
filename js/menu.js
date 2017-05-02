@@ -83,6 +83,21 @@ chrome.contextMenus.create({
 });
 
 chrome.contextMenus.create({
+	title: 'Equipment Move',
+	contexts: ['page'],
+	id: 'ackMove',
+	parentId: 'parentAckTask',
+	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
+	onclick: function() {
+		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+			chrome.tabs.sendMessage(tabs[0].id, {
+				type: 'ackMove'
+			});
+		});
+	}
+});
+
+chrome.contextMenus.create({
 	title: 'Equipment Removal',
 	contexts: ['page'],
 	id: 'ackRemoval',
@@ -163,6 +178,21 @@ chrome.contextMenus.create({
 	contexts: ['page'],
 	id: 'parentCloseTask',
 	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*']
+});
+
+chrome.contextMenus.create({
+	title: 'Equipment Move',
+	contexts: ['page'],
+	id: 'closeMove',
+	parentId: 'parentCloseTask',
+	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
+	onclick: function() {
+		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+			chrome.tabs.sendMessage(tabs[0].id, {
+				type: 'closeMove'
+			});
+		});
+	}
 });
 
 chrome.contextMenus.create({
