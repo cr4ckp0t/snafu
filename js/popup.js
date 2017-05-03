@@ -21,7 +21,6 @@ $(document).ready(function() {
     $('[data-toggle="tooltip"]').tooltip();
 
     var needSpace;
-    var helpUrl = chrome.extension.getURL('help.html');
 
     var cannedMsgs = {
         'callingUser': 'Calling {INC_CUST_FNAME} at {INC_CUR_PHONE}.',
@@ -142,7 +141,14 @@ $(document).ready(function() {
     
     // open help page
     $('[id^=getHelp]').click(function() {
+        var helpUrl = chrome.extension.getURL('help.html');
         chrome.tabs.create({ url: helpUrl });
+    });
+
+    // open options page
+    $('[id^=openOptions]').click(function() {
+        var optionsUrl = chrome.extension.getURL('options.html');
+        chrome.tabs.create({ url: optionsUrl });
     });
 });
 
