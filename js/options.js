@@ -30,11 +30,20 @@ $(document).ready(function() {
 		}, function() {
 			if (chrome.runtime.lastError) {
 				$('#alertFailureMsg').text('Failed to save settings.');
-				$('#alertFailure').show();
+				$('#alertFailure').fadeIn();
+				setTimeout(function() {
+					$('#alertFailureMsg').text('');
+					$('#alertFailure').fadeOut();
+				}, 2500);
+
 				console.warn('SNAFU Sync Set Error: %s', chrome.runtime.lastError.message);
 			} else {
 				$('#alertSuccessMsg').text('Settings saved successfully.');
-				$('#alertSuccess').show();
+				$('#alertSuccess').fadeIn();
+				setTimeout(function() {
+					$('#alertSuccessMsg').text('');
+					$('#alertSuccess').fadeOut();
+				}, 2500);
 			}
 		});
 	});
