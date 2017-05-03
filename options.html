@@ -21,10 +21,41 @@
 <head>
     <title>SNAFU: SNow Automated Form Utilizer</title>
     <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="css/options.css" rel="stylesheet" type="text/css" />
 </head>
 
 <body>
-	<strong>Coming Soon!</strong>
+	<div id="content" class="panel panel-primary">
+        <div class="panel-heading">
+            <div class="panel-title">
+                <strong>SNAFU v<span id="snafu-version"></span> Options</strong>
+            </div>
+        </div>
+        <div class="panel-body">
+            <div id="alertSuccess" class="alert alert-success alert-dismissible" role="alert">
+                <span id="alertSuccessMsg"></span>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div id="alertFailure" class="alert alert-danger alert-dismissible" role="alert">
+                <span id="alertFailureMsg"></span>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="input-group">
+                <span class="input-group-addon" id="debugAddon">Debug Mode</span>
+                <select id="debugMode" class="form-control" aria-describedby="debugAddon">
+                    <option value="enable">Enabled</option>
+                    <option value="disable">Disabled</option>
+                </select>
+            </div>
+            <br />
+            <div class="form-group">
+                <button type="button" class="btn btn-default" id="saveSettings">Save Settings</button>
+            </div>
+        </div>
+	</div>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/options.js"></script>
 </body>
 
 </html>
