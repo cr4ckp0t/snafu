@@ -20,14 +20,6 @@ $(document).ready(function() {
     $('span[id^=comp]').hide();
     $('[data-toggle="tooltip"]').tooltip();
 
-    var needSpace;
-
-    var cannedMsgs = {
-        'callingUser': 'Calling {INC_CUST_FNAME} at {INC_CUR_PHONE}.',
-        //'equipDelivered': 'Equipment delivered to {TASK_SITE}.',
-        'leftVoicemail': 'Left voicemail for {INC_CUST_FNAME} at {INC_CUR_PHONE} to discuss the ticket.'
-    }
-
     // load settings
     getSettings();
 
@@ -39,20 +31,19 @@ $(document).ready(function() {
     $('#autoFinish-none').click(function() { saveSettings('none'); });
     $('#autoEquipTicket-none').click(function() { saveSettings('none'); });
 
-    // customer notes canned messages
-    $('#custCannedMsgs').change(function() {
+    // canned messages
+    $('[id$=CannedMsgs]').change(function(event) {
         if ($(this).val() !== 'none') {
-            needSpace = ($('#customerNotes').val().trim() === '') ? '' : ' ';
-            $('#customerNotes').append(needSpace + cannedMsgs[$(this).val()]);
-            $(this).val('none');
-        }
-    });
-
-    // work notes canned messages
-    $('#workCannedMsgs').change(function() {
-        if ($(this).val() !== 'none') {
-            needSpace = ($('#workNotes').val().trim() === '') ? '' : ' ';
-            $('#workNotes').append(needSpace + cannedMsgs[$(this).val()]);
+            var msg = $('#' + event.target.id + ' option[value=' + $(this).val() + ']').text()
+            var textArea = (event.target.id === 'custCannedMsgs') ? '#customerNotes' : '#workNotes'
+            var needSpace = ($(textArea).val().trim() === '') ? '' : ' ';
+            chrome.storage.sync.get(['debug'], function(items) {
+                if (items.debug === true) {
+                    console.info('SNAFU msg: %s', msg);
+                    console.info('SNAFU textArea: %s', textArea);
+                }
+            });
+            $(textArea).append(needSpace + msg);
             $(this).val('none');
         }
     });
@@ -187,13 +178,22 @@ function saveSettings(value) {
 
 // pull settings from chrome.storage.sync and process them
 function getSettings() {
-    chrome.storage.sync.get(['autoFinish', 'debug'], function(items) {
+    chrome.storage.sync.get(['autoFinish', 'debug', 'canned'], function(items) {
         if (chrome.runtime.lastError) {
             console.warn('SNAFU Sync Get Error: %s', chrome.runtime.lastError.message);
         } else {
             if (items.debug === true) {
                 console.info('SNAFU: Received settings.');
-                updateTicketLabels(items.autoFinish);
+            }
+            updateTicketLabels(items.autoFinish);
+
+            if (items.canned) {
+                var cannedMsgs = '<option value="none" selected="selected">---- None ----</option>';
+				for (var key in items.canned) {
+					if (!items.canned.hasOwnProperty(key)) continue;
+					cannedMsgs = cannedMsgs + ('<option value="{KEY}">{VALUE}</option>').replace('{KEY}', key).replace('{VALUE}', items.canned[key]);
+				}
+				$('[id$=CannedMsgs]').html(cannedMsgs);
             }
         }
     });

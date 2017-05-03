@@ -34,6 +34,20 @@ a:hover {
 
 
 div#content {
-	width: 25%;
+	width: 30%;
     margin: 0 auto;
+}
+
+div.extraInfo {
+	color: #bfbfbf;
+	font-size: 12px;
+}
+
+textarea {
+	width: 100%;
+}
+
+label {
+	color: #3eb049;
+	font-weight: bold;
 }

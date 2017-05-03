@@ -24,14 +24,14 @@ chrome.runtime.onInstalled.addListener(function(details) {
 });
 
 chrome.runtime.onStartup.addListener(function() {
-	chrome.storage.sync.get(['autoFinish', 'debug'], function(items) {
+	chrome.storage.sync.get(['autoFinish', 'debug', 'canned'], function(items) {
 		if (chrome.runtime.lastError) {
 			console.warn('SNAFU: Sync Get Error: %s', chrome.runtime.lastError.message);
 		} else {
 			if (!items.autoFinish) {
 				chrome.storage.sync.set({autoFinish: 'none'}, function() {
 					if (chrome.runtime.lastError) {
-						console.warn('SNAFU: autoFinish Set Error: %s', chrome.runtime.lastError.message);
+						console.warn('SNAFU autoFinish Set Error: %s', chrome.runtime.lastError.message);
 					}
 				});
 			}
@@ -39,7 +39,20 @@ chrome.runtime.onStartup.addListener(function() {
 			if (!items.debug) {
 				chrome.storage.sync.set({debug: false}, function() {
 					if (chrome.runtime.lastError) {
-						console.warn('SNAFU: debug Set Error: %s', chrome.runtime.lastError.message);
+						console.warn('SNAFU debug Set Error: %s', chrome.runtime.lastError.message);
+					}
+				});
+			}
+
+			if (!items.canned) {
+				chrome.storage.sync.set({
+					canned: {
+						'callingUser': 'Calling {INC_CUST_FNAME} at {INC_CUR_PHONE}.',
+						'leftVoicemail': 'Left voicemail for {INC_CUST_FNAME} at {INC_CUR_PHONE} to discuss the ticket.'
+					}
+				}, function() {
+					if (chrome.runtime.lastError) {
+						console.warn('SNAFU canned Set Error: %s', chrome.runtime.lastError.message);
 					}
 				});
 			}

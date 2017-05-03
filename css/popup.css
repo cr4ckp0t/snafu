@@ -68,3 +68,8 @@ div#form-info {
 textarea#customerNotes, textarea#workNotes {
     width: 100%;
 }
+
+label {
+	color: #3eb049;
+	font-weight: bold;
+}

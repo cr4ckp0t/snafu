@@ -25,7 +25,8 @@ $(document).ready(function() {
 
 	$('#saveSettings').click(function() {
 		chrome.storage.sync.set({
-			debug: ($('#debugMode').val() === 'enable') ? true : false
+			debug: ($('#debugMode').val() === 'enable') ? true : false,
+			canned: getCannedMessages()
 		}, function() {
 			if (chrome.runtime.lastError) {
 				$('#alertFailureMsg').text('Failed to save settings.');
@@ -46,11 +47,69 @@ $(document).ready(function() {
 });
 
 function loadSettings() {
-	chrome.storage.sync.get(['debug'], function(items) {
+	chrome.storage.sync.get(['debug', 'canned'], function(items) {
 		if (chrome.runtime.lastError) {
 			console.warn('SNAFU Sync Get Error: %s', chrome.runtime.lastError.message);
 		} else {
-			$('#debugMode').val((items.debug === true) ? 'enable' : 'disable');
+
+			// debug settings
+			if (!items.debug) {
+				chrome.storage.sync.set({ debug: false }, function() {
+					if (chrome.runtime.lastError) {
+						console.warn('SNAFU debug Set Error: %s', chrome.runtime.lastError.message);
+					} else {
+						console.info('SNAFU: Created debug setting.');
+					}
+				});
+				$('#debugMode').val('disable');
+			} else {
+				$('#debugMode').val((items.debug === true) ? 'enable' : 'disable');
+			}
+			
+			// canned messages
+			if (!items.canned) {
+				chrome.storage.sync.set({
+					canned: {
+						'callingUser': 'Calling {INC_CUST_FNAME} at {INC_CUR_PHONE}.',
+						'leftVoicemail': 'Left voicemail for {INC_CUST_FNAME} at {INC_CUR_PHONE} to discuss the ticket.'
+					}
+				}, function() {
+					if (chrome.runtime.lastError) {
+						console.warn('SNAFU canned Set Error: %s', chrome.runtime.lastError.message);
+					} else {
+						console.info('SNAFU: Created canned messages.');
+					}
+				});
+			} else {
+				var cannedMsgs = '';
+				for (var key in items.canned) {
+					if (!items.canned.hasOwnProperty(key)) continue;
+					cannedMsgs = cannedMsgs + ('{KEY}|{VALUE}\n').replace('{KEY}', key).replace('{VALUE}', items.canned[key]);
+				}
+				$('#cannedMsgs').text(cannedMsgs);
+			}
 		}
 	});
+}
+
+function getCannedMessages() {
+	var msgs = $('#cannedMsgs').val().split('\n');
+	var objMsgs = {};
+
+	if (msgs.length > 0) {
+		for (var i = 0; i < msgs.length; i++) {
+			var strTemp = msgs[i];
+			if (strTemp.trim() !== '' && strTemp.indexOf('|') !== -1) {
+				var left = strTemp.substring(0, strTemp.indexOf('|') - 1);
+				var right = strTemp.substring(strTemp.indexOf('|') + 1);
+				objMsgs[left] = right;
+				console.info('SNAFU Left: %s', left);
+				console.info('SNAFU Right: %s', right);
+			}
+		}
+
+		return objMsgs;
+	} else {
+		return false;
+	}
 }

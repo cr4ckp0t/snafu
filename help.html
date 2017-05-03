@@ -56,6 +56,14 @@
 		<div id="ui-image"><img src="images/help/equipment-order.png" alt="Equipment Orders" /></div>
 		<p>The form used when <strong>closing</strong> Equipment Orders.  Since the RITM's do you allow you to fill in the computer information like Asset Management does this requires you to fill in the request information manually.</p>
 		<br />
+		<h4>Options UI</h4>
+		<div id="ui-image"><img src="images/help/options-ui.png" alt="Options UI" /></div>
+		<p>Above is the UI for editing the limited options available at this time.  This will likely grow as I add more features.</p>
+		<br />
+		<h4>Context Menu</h4>
+		<div id="ui-image"><img src="images/help/context-menu.png" alt="Context Menu" /></div>
+		<p>Above is the context menu from <strong>Right-Clicking</strong> somewhere on a Task or Incident.  The context menu will only appear on pages that it supports (specific tasks or incidents).</p>
+		<br />
 		<h4>Canned Messages</h4>
 		<p>These are frequently used messages that you can quickly add to your Work Notes.  Selecting a message will append the text to what you have written.  They also include various wildcards that will be replaced with the information when the update is submitted.</p>
 		<br />
@@ -168,7 +176,11 @@
 			Closures work similarly to acknowledgements, with a few differences.  It will set the Due Date and Root Cause CI as with acknowledgements, and will set the state to Closed Complete.  The biggest differences come in the predetermined text used in the Work Notes.  In the case of Hot Swap closures it will pull the replacement device's information from the ticket and then generate the closure script determined by Staging to be used when closing a build request.
 			<ul class="list-group">
 				<li class="list-group-item"><strong>Incident Customer Notes</strong><pre>My name is {TECH_NAME} and I was the technician that assisted you with {TICKET}. Thank you for the opportunity to provide you with service today with your {INC_TYPE}. If for any reason, your issue does not appear to be resolved please contact the Service Desk at (864) 455-8000.</pre></li>
-				<li class="list-group-item"><strong>Hot Swap</strong><pre>Computer has been built. One {REPLACE_MODEL} has been built {REPLACE_BUILD}. Tag {REPLACE_ASSET} HostName {REPLACE_HOSTNAME}. Resolving Task.</pre></li>
+				<li class="list-group-item">
+					<strong>Hot Swap</strong>
+					<div class="alert alert-warning"><em>Before using this make sure you have filled in the Replacement Hostname in the Hot Swap ticket.  Otherwise, it will not have any information to fill in.</em></div>
+					<pre>Computer has been built. One {REPLACE_MODEL} has been built {REPLACE_BUILD}. Tag {REPLACE_ASSET} HostName {REPLACE_HOSTNAME}. Resolving Task.</pre>
+				</li>
 				<li class="list-group-item"><strong>Install Task</strong><pre>Installed requested equipment and attached signed completion sheet.</pre></li>
 				<li class="list-group-item"><strong>Quarantine Task</strong><pre>Device removed from quarantine.</pre></li>
 				<li class="list-group-item"><strong>Reclaim Task</strong><pre>Device reclaimed and added to quarantine.</pre></li>

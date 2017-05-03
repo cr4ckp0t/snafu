@@ -64,7 +64,6 @@
         <div class="tab-content">
             <div role="tabpanel" class="tab-pane active" id="main">
                 <div class="form-group" style="padding-top:10px;">
-                    <label for="tStatus">Ticket Status</label>
                     <div class="btn-group" data-toggle="buttons">
                         <label class="btn btn-primary btn-sm active">
                             <input type="radio" name="tStatus" id="0" value="0" autocomplete="off" checked /> In Progress
@@ -86,9 +85,6 @@
                     <div class="input-group input-group-sm">
                         <span class="input-group-addon">Messages</span>
                         <select id="custCannedMsgs" name="cannedMsgs" class="form-control">
-                            <option value="none" selected="selected">---- None ----</option>
-                            <option value="callingUser">Calling {INC_CUST_FNAME} at {INC_CUR_PHONE}.</option>
-                            <option value="leftVoicemail">Left voicemail for {INC_CUST_FNAME} at {INC_CUR_PHONE} to discuss the ticket.</option>
                         </select>
                     </div>
                 </div>
@@ -98,9 +94,6 @@
                     <div class="input-group input-group-sm">
                         <span class="input-group-addon">Messages</span>
                         <select id="workCannedMsgs" name="cannedMsgs" class="form-control">
-                            <option value="none" selected="selected">---- None ----</option>
-                            <option value="callingUser">Calling {INC_CUST_FNAME} at {INC_CUR_PHONE}.</option>
-                            <option value="leftVoicemail">Left voicemail for {INC_CUST_FNAME} at {INC_CUR_PHONE} to discuss the ticket.</option>
                         </select>
                     </div>
                 </div>
