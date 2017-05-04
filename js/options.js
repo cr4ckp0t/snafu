@@ -116,7 +116,6 @@ function getCannedMessages() {
 				console.info('SNAFU Right: %s', right);
 			}
 		}
-
 		return objMsgs;
 	} else {
 		return false;
