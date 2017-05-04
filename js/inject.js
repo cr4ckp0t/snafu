@@ -117,58 +117,59 @@ function replaceWildcards(strIn) {
 	// object containing the code to be eval'd as a replacement for the wildcards
 	var wildcards = {
 		// global
-		"{ASSIGN_GROUP}": "g_form.getReference('assignment_group').name;",	// assignment group
-		"{OPENED}": "g_form.getValue('opened_at');",						// date/time ticket opened
-		"{OPENED_BY}": "g_form.getValue('opened_by_label');",				// who opened the ticket
-		"{ROOT_CAUSE}": "g_form.getReference('cmdb_ci').name;",				// root cause ci field
-		"{TECH_NAME}": "ucwords(g_form.getReference('assigned_to').name);",	// technician's name
-		"{TICKET}": "g_form.getValue('number');",							// task/incident number
+		"{ASSIGN_GROUP}": "g_form.getReference('assignment_group').name || 'UNKNOWN';",									// assignment group
+		"{OPENED}": "g_form.getValue('opened_at') || 'UNKNOWN';",														// date/time ticket opened
+		"{OPENED_BY}": "g_form.getValue('opened_by_label') || 'UNKNOWN';",												// who opened the ticket
+		"{ROOT_CAUSE}": "g_form.getReference('cmdb_ci').name || 'UNKNOWN';",											// root cause ci field
+		"{TECH_NAME}": "ucwords(g_form.getReference('assigned_to').name) || 'UNKNOWN';",								// technician's name
+		"{TICKET}": "g_form.getValue('number') || 'UNKNOWN';",															// task/incident number
 
 		//incident only
-		"{INC_ADDR}": "ucwords(g_form.getReference('u_street_address').u_name);",		// incident street address
-		"{INC_ADD_LOC}": "g_form.getValue('u_location_description');",					// incident additional location information
-		"{INC_ALT_PHONE}": "g_form.getValue('u_alternate_phone');",						// alternative phone number
-		"{INC_CAMPUS}": "g_form.getValue('u_campus');",									// campus
-		"{INC_CUR_PHONE}": "g_form.getValue('u_current_phone');",						// current phone number
-		"{INC_CUSTOMER}": "ucwords(g_form.getReference('caller_id').name);",			// customer who called in the incident
-		"{INC_CUST_FNAME}": "ucwords(g_form.getReference('caller_id').first_name);",	// customer's first name
-		"{INC_CUST_LNAME}": "ucwords(g_form.getReference('caller_id').last_name);",		// customer's last name
-		"{INC_DETAIL_DESC}": "g_form.getValue('description');",							// detailed description
-		"{INC_EMAIL}": "g_form.getValue('email');",										// customer's email
-		"{INC_IMPACT}": "g_form.getValue('impact');",									// incident impact
-		"{INC_KB}": "g_form.getReference('u_kb_article').number;",						// knowledgebase article
-		"{INC_LOC_TYPE}": "g_form.getValue('u_location_type');",						// location type
-		"{INC_PRACTICE}": "ucwords(g_form.getReference('u_practice_name').name);",		// practice name
-		"{INC_PRIORITY}": "g_form.getValue('priority');",								// incident priority
-		"{INC_SHORT_DESC}": "g_form.getValue('short_description');",					// short description
-		"{INC_STATE}": "g_form.getDisplayValue('incident_state');",						// incident state
-		"{INC_TYPE}": "g_form.getValue('u_incident_type');",							// incident type
-		"{INC_TYPE_2}": "g_form.getValue('u_incident_type_2');",						// incident type 2
-		"{INC_TYPE_3}": "g_form.getValue('u_incident_type_3');",						// incident type 3
-		"{INC_URGENCY}": "g_form.getValue('urgency');",									// incident urgency
+		"{INC_ADDR}": "ucwords(g_form.getReference('u_street_address').u_name) || 'UNKNOWN';",							// incident street address
+		"{INC_ADD_LOC}": "g_form.getValue('u_location_description') || 'UNKNOWN';",										// incident additional location information
+		"{INC_ALT_PHONE}": "g_form.getValue('u_alternate_phone') || 'UNKNOWN';",										// alternative phone number
+		"{INC_CAMPUS}": "g_form.getValue('u_campus') || 'UNKNOWN';",													// campus
+		"{INC_CUR_PHONE}": "g_form.getValue('u_current_phone') || 'UNKNOWN';",											// current phone number
+		"{INC_CUSTOMER}": "ucwords(g_form.getReference('caller_id').name) || 'UNKNOWN';",								// customer who called in the incident
+		"{INC_CUST_FNAME}": "ucwords(g_form.getReference('caller_id').first_name) || 'UNKNOWN';",						// customer's first name
+		"{INC_CUST_LNAME}": "ucwords(g_form.getReference('caller_id').last_name) || 'UNKNOWN';",						// customer's last name
+		"{INC_DETAIL_DESC}": "g_form.getValue('description') || 'UNKNOWN';",											// detailed description
+		"{INC_EMAIL}": "g_form.getValue('email') || 'UNKNOWN';",														// customer's email
+		"{INC_IMPACT}": "g_form.getValue('impact') || 'UNKNOWN';",														// incident impact
+		"{INC_KB}": "g_form.getReference('u_kb_article').number || 'UNKNOWN';",											// knowledgebase article
+		"{INC_LOC_TYPE}": "g_form.getValue('u_location_type') || 'UNKNOWN';",											// location type
+		"{INC_PRACTICE}": "ucwords(g_form.getReference('u_practice_name').name) || 'UNKNOWN';",							// practice name
+		"{INC_PRIORITY}": "g_form.getValue('priority') || 'UNKNOWN';",													// incident priority
+		"{INC_SHORT_DESC}": "g_form.getValue('short_description') || 'UNKNOWN';",										// short description
+		"{INC_STATE}": "g_form.getDisplayValue('incident_state') || 'UNKNOWN';",										// incident state
+		"{INC_TYPE}": "g_form.getValue('u_incident_type') || 'UNKNOWN';",												// incident type
+		"{INC_TYPE_2}": "g_form.getValue('u_incident_type_2') || 'UNKNOWN';",											// incident type 2
+		"{INC_TYPE_3}": "g_form.getValue('u_incident_type_3') || 'UNKNOWN';",											// incident type 3
+		"{INC_URGENCY}": "g_form.getValue('urgency') || 'UNKNOWN';",													// incident urgency
 
-		// task only
-		"{CATEGORY_ITEM}": "g_form.getValue('cat_item');",							// category item
-		"{DUE_DATE}": "g_form.getValue('due_date');",								// due date
-		"{REQUEST_ITEM}": "g_form.getValue('request_item');",						// ritm number
-		"{REQUESTED_BY}": "ucwords(g_form.getReference('requested_for').name);",	// task requested by
-		"{REQUESTED_FOR}": "ucwords(g_form.getReference('u_requested_for').name);",	// task requested for
-		"{TASK_STATE}": "g_form.getDisplayValue('state');",							// task state
+		// task only	
+		"{CATEGORY_ITEM}": "g_form.getValue('cat_item') || 'UNKNOWN';",													// category item
+		"{DUE_DATE}": "g_form.getValue('due_date') || 'UNKNOWN';",														// due date
+		"{REQUEST_ITEM}": "g_form.getValue('request_item') || 'UNKNOWN';",												// ritm number
+		"{REQUESTED_BY}": "ucwords(g_form.getReference('requested_for').name) || 'UNKNOWN';",							// task requested by
+		"{REQUESTED_FOR}": "ucwords(g_form.getReference('u_requested_for').name) || 'UNKNOWN';",						// task requested for
+		"{TASK_STATE}": "g_form.getDisplayValue('state') || 'UNKNOWN';",												// task state
 
 		// hot swap only
-		"{BROKEN_ASSET}": "g_form.getReference('rhs_comp_name').asset_tag;",								// broken computer asset tag
-		"{BROKEN_HOSTNAME}": "g_form.getReference('rhs_comp_name').name;",									// broken computer hostname
-		"{BROKEN_MODEL}": "getComputerModel(g_form.getReference('rhs_comp_name').model_id);",				// broken computer model
-		"{BROKEN_SERIAL}": "g_form.getReference('rhs_comp_name').serial_number;",							// broken computer serial number
-		"{RELATED_INC}": "g_form.getReference('rhs_inc').number;",											// incident requiring hot swap
-		"{REPLACE_ASSET}": "g_form.getReference('rhs_replacement_computer').asset_tag;",					// replacement computer asset tag
-		"{REPLACE_BUILD}": "g_form.getValue('rhs_software');",												// replacement computer build
-		"{REPLACE_CUSTOMER}": "ucwords(g_form.getReference('rhs_user').name);",								// user requiring the hot swap
-		"{REPLACE_HOSTNAME}": "g_form.getReference('rhs_replacement_computer').name;",						// replacement computer hostname
-		"{REPLACE_MODEL}": "getComputerModel(g_form.getReference('rhs_replacement_computer').model_id);",	// replacement computer model
-		"{REPLACE_SERIAL}": "g_form.getReference('rhs_replacement_computer').serial_number;"				// replacement computer serial number
+		"{BROKEN_ASSET}": "g_form.getReference('rhs_comp_name').asset_tag || 'UNKNOWN';",								// broken computer asset tag
+		"{BROKEN_HOSTNAME}": "g_form.getReference('rhs_comp_name').name || 'UNKNOWN';",									// broken computer hostname
+		"{BROKEN_MODEL}": "getComputerModel(g_form.getReference('rhs_comp_name').model_id) || 'UNKNOWN';",				// broken computer model
+		"{BROKEN_SERIAL}": "g_form.getReference('rhs_comp_name').serial_number || 'UNKNOWN';",							// broken computer serial number
+		"{RELATED_INC}": "g_form.getReference('rhs_inc').number || 'UNKNOWN';",											// incident requiring hot swap
+		"{REPLACE_ASSET}": "g_form.getReference('rhs_replacement_computer').asset_tag || 'UNKNOWN';",					// replacement computer asset tag
+		"{REPLACE_BUILD}": "g_form.getValue('rhs_software') || 'UNKNOWN';",												// replacement computer build
+		"{REPLACE_CUSTOMER}": "ucwords(g_form.getReference('rhs_user').name) || 'UNKNOWN';",							// user requiring the hot swap
+		"{REPLACE_HOSTNAME}": "g_form.getReference('rhs_replacement_computer').name || 'UNKNOWN';",						// replacement computer hostname
+		"{REPLACE_MODEL}": "getComputerModel(g_form.getReference('rhs_replacement_computer').model_id) || 'UNKNOWN';",	// replacement computer model
+		"{REPLACE_SERIAL}": "g_form.getReference('rhs_replacement_computer').serial_number || 'UNKNOWN';"				// replacement computer serial number
 	};
-
+	
+	// use regular expressions to find matches and send them for processing
 	return strIn.replace(/\{(.+?)\}/g, function(match) {
 		// if the match is found in the wildcards then it will eval the code and return the output
 		// if not, then it will be replaced with UNKNOWN (to prevent shenanigans)
@@ -176,6 +177,7 @@ function replaceWildcards(strIn) {
 	});	
 }
 
+// use ajax query to get a computer's model id
 function getComputerModel(model_id) {
 	var model = new GlideRecord('cmdb_model');
 	model.addQuery('sys_id', model_id);

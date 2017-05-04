@@ -15,7 +15,6 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  **/
-var autoFinish;
 
 // auto acknowledge incident
 chrome.contextMenus.create({
@@ -58,11 +57,18 @@ chrome.contextMenus.create({
 	}
 });
 
+chrome.contextMenus.create({
+	title: 'Catalog Tasks',
+	contexts: ['page'],
+	id: 'catalogTasks',
+	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*']
+});
+
 // parent for acknowledge tasks
 chrome.contextMenus.create({
 	title: 'Acknowledge Tasks',
 	contexts: ['page'],
-	//parentId: 'parent',
+	parentId: 'catalogTasks',
 	id: 'parentAckTask',
 	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*']
 });
@@ -176,6 +182,7 @@ chrome.contextMenus.create({
 chrome.contextMenus.create({
 	title: 'Close Tasks',
 	contexts: ['page'],
+	parentId: 'catalogTasks',
 	id: 'parentCloseTask',
 	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*']
 });
