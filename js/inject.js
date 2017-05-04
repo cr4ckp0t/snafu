@@ -25,85 +25,104 @@
 
 var snafuRslvComments = "My name is {TECH_NAME} and I was the technician that assisted you with {TICKET}. Thank you for the opportunity to provide you with service today with your {INC_TYPE}. If for any reason, your issue does not appear to be resolved please contact the Service Desk at (864) 455-8000.";
 
+//console.info(window.g_user);
+
 // listen for triggers on the custom event for passing text
 document.addEventListener('SNAFU_Inject', function(snafuInject) {
-	var snafuType = snafuInject.detail.type;
-	var snafuField = snafuInject.detail.field;
-	var snafuValue = snafuInject.detail.value;
-	var snafuWorkNotes = (isVarEmpty(snafuInject.detail.workNotes) === false) ? replaceWildcards(snafuInject.detail.workNotes) : null;
-	var snafuCustNotes = (isVarEmpty(snafuInject.detail.custNotes) === false) ? replaceWildcards(snafuInject.detail.custNotes) : null;
 
-	// set field with value
-	if (isVarEmpty(snafuField) === false && isVarEmpty(snafuValue) === false) {
-		g_form.setValue(snafuField, snafuValue);
-		g_form.flash(snafuField, '#3eb049', 0);
-	}
+	if (snafuInject.detail.type === 'userQuery') {
+		var snafuAssignedTo = g_form.getReference('assigned_to');
+		var snafuAssignmentGroup = g_form.getReference('assignment_group');
+		// query the user info sent by the options page
+		var snafuQuery = document.createEvent('CustomEvent');
+		snafuQuery.initCustomEvent('SNAFU_UserQuery', true, true, {
+			fullName: ucwords(snafuAssignedTo.name),
+			userId: snafuAssignedTo.sys_id,
+			userName: snafuAssignedTo.user_name,
+			userEmail: snafuAssignedTo.email,
+			groupName: ucwords(snafuAssignmentGroup.name),
+			groupId: snafuAssignmentGroup.sys_id
+		});
+		document.dispatchEvent(snafuQuery);
+	} else {
+		var snafuType = snafuInject.detail.type;
+		var snafuField = snafuInject.detail.field;
+		var snafuValue = snafuInject.detail.value;
+		var snafuWorkNotes = (isVarEmpty(snafuInject.detail.workNotes) === false) ? replaceWildcards(snafuInject.detail.workNotes) : null;
+		var snafuCustNotes = (isVarEmpty(snafuInject.detail.custNotes) === false) ? replaceWildcards(snafuInject.detail.custNotes) : null;
 
-	// customer notes (comments)
-	if (isVarEmpty(snafuCustNotes) === false) {
-		g_form.setValue('comments', snafuCustNotes);
-		g_form.flash('comments', '#3eb049', 0);
-	}
+		// set field with value
+		if (isVarEmpty(snafuField) === false && isVarEmpty(snafuValue) === false) {
+			g_form.setValue(snafuField, snafuValue);
+			g_form.flash(snafuField, '#3eb049', 0);
+		}
 
-	// work notes
-	if (isVarEmpty(snafuWorkNotes) === false) {
-		g_form.setValue('work_notes', snafuWorkNotes);
-		g_form.flash('work_notes', '#3eb049', 0);
-	}
+		// customer notes (comments)
+		if (isVarEmpty(snafuCustNotes) === false) {
+			g_form.setValue('comments', snafuCustNotes);
+			g_form.flash('comments', '#3eb049', 0);
+		}
 
-	// set the resolve message if it is a resolved code (incident only)
-	if (snafuField === 'incident_state' && snafuValue === '6') {
-		g_form.setValue('comments', replaceWildcards(snafuRslvComments));
-		g_form.flash('comments', '#3eb049', 0);
-
+		// work notes
 		if (isVarEmpty(snafuWorkNotes) === false) {
-			g_form.setValue('close_notes', snafuWorkNotes);
-			g_form.flash('close_notes', '#3eb049', 0);
-		}
-	}
-
-	// change the root cause ci and due date for tasks
-	if (snafuField === 'state') {
-		var snafuDueDate = snafuGetDueDate();
-
-		// due date
-		if (g_form.getValue('due_date') !== snafuDueDate) {
-			g_form.setValue('due_date', snafuDueDate);
-			g_form.flash('due_date', '#3eb049', 0);
+			g_form.setValue('work_notes', snafuWorkNotes);
+			g_form.flash('work_notes', '#3eb049', 0);
 		}
 
-		// root cause ci
-		// desktop services value is 5a8d6816a1cf38003a42245d1035d56e
-		if (g_form.getValue('cmdb_ci') !== '5a8d6816a1cf38003a42245d1035d56e') {
-			g_form.setValue('cmdb_ci', '5a8d6816a1cf38003a42245d1035d56e', 'Desktop Services');
-			g_form.flash('cmdb_ci', '#3eb049', 0);
-		}
-	}
+		// set the resolve message if it is a resolved code (incident only)
+		if (snafuField === 'incident_state' && snafuValue === '6') {
+			g_form.setValue('comments', replaceWildcards(snafuRslvComments));
+			g_form.flash('comments', '#3eb049', 0);
 
-	// autofinish
-	switch (snafuInject.detail.autoFinish) {
-		// save (stay on ticket's page)
-		case 'save':
-			// not going to let incidents be autosaved
-			if (snafuField === 'state' || (snafuField === 'incident_state' && snafuValue !== '6')) {
-				// delay 1.5 seconds
-				setTimeout(function() { g_form.save(); }, 1500);
+			if (isVarEmpty(snafuWorkNotes) === false) {
+				g_form.setValue('close_notes', snafuWorkNotes);
+				g_form.flash('close_notes', '#3eb049', 0);
 			}
-			break;
-		
-		// update (go back to last page)
-		case 'update':
-			// not going to let incident be autoupdated
-			if (snafuField === 'state' || (snafuField === 'incident_state' && snafuValue !== '6')) {
-				// delay 1.5 seconds
-				setTimeout(function() { g_form.submit() }, 1500);
+		}
+
+		// change the root cause ci and due date for tasks
+		if (snafuField === 'state') {
+			var snafuDueDate = snafuGetDueDate();
+
+			// due date
+			if (g_form.getValue('due_date') !== snafuDueDate) {
+				g_form.setValue('due_date', snafuDueDate);
+				g_form.flash('due_date', '#3eb049', 0);
 			}
-			break;
-		
-		// neither
-		case 'none':
-		default:
-			break;
+
+			// root cause ci
+			// desktop services value is 5a8d6816a1cf38003a42245d1035d56e
+			if (g_form.getValue('cmdb_ci') !== '5a8d6816a1cf38003a42245d1035d56e') {
+				g_form.setValue('cmdb_ci', '5a8d6816a1cf38003a42245d1035d56e', 'Desktop Services');
+				g_form.flash('cmdb_ci', '#3eb049', 0);
+			}
+		}
+
+		// autofinish
+		switch (snafuInject.detail.autoFinish) {
+			// save (stay on ticket's page)
+			case 'save':
+				// not going to let incidents be autosaved
+				if (snafuField === 'state' || (snafuField === 'incident_state' && snafuValue !== '6')) {
+					// delay 1.5 seconds
+					setTimeout(function() { g_form.save(); }, 1500);
+				}
+				break;
+			
+			// update (go back to last page)
+			case 'update':
+				// not going to let incident be autoupdated
+				if (snafuField === 'state' || (snafuField === 'incident_state' && snafuValue !== '6')) {
+					// delay 1.5 seconds
+					setTimeout(function() { g_form.submit() }, 1500);
+				}
+				break;
+			
+			// neither
+			case 'none':
+			default:
+				break;
+		}
 	}
 });
 

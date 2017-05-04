@@ -25,61 +25,106 @@
 </head>
 
 <body>
-	<div id="content" class="panel panel-primary">
-        <div class="panel-heading">
-            <div class="panel-title">
-                <strong>SNAFU v<span id="snafu-version"></span> Options</strong>
-            </div>
-        </div>
-        <div class="panel-body">
-            <div id="alertSuccess" class="alert alert-success alert-dismissible" role="alert">
-                <span id="alertSuccessMsg"></span>
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            </div>
-            <div id="alertFailure" class="alert alert-danger alert-dismissible" role="alert">
-                <span id="alertFailureMsg"></span>
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            </div>
-            <div class="input-group">
-                <span class="input-group-addon" id="autoAddon">Ticket Completion</span>
-                <select id="ticketCompletion" class="form-control" aria-describedby="debugAddon">
-                    <option value="save">Save</option>
-                    <option value="update">Update</option>
-                    <option value="none">Do Nothing</option>
-                </select>
-            </div>
-            <br />
-            <div class="input-group">
-                <span class="input-group-addon" id="debugAddon">Debug Mode</span>
-                <select id="debugMode" class="form-control" aria-describedby="debugAddon">
-                    <option value="enable">Enabled</option>
-                    <option value="disable">Disabled</option>
-                </select>
-            </div>
-            <!--
-            <br />
-            <div class="input-group">
-                <span class="input-group-addon" id="nameAddon">Your Name</span>
-                <input type="text" id="yourName" class="form-control" aria-describedby="nameAddon" placeholder="Your name in Service Now." />
-            </div>
-            <br />
-            <div class="input-group">
-                <span class="input-group-addon" id="groupAddon">Default Group</span>
-                <input type="text" id="defaultGroup" class="form-control" aria-describedby="groupAddon" placeholder="Your preferred Assignment Group." />
-            </div>-->
-            <br />
-            <div class="form-group">
-                <label for="cannedMsgs" class="textareaLabel">Canned Messages</label>
-                <textarea id="cannedMsgs" class="form-control" rows="6" cols="50"></textarea>
-                <div class="extraInfo">Put each message on its own line in the format of {label}|{message}.</div>
-            </div>
-            <br />
-            <div class="form-group">
-                <button type="button" class="btn btn-primary" id="saveSettings">Save Settings</button>
-                <button type="button" class="btn btn-default" id="closeWindow">Close Window</button>
-            </div>
-        </div>
-	</div>
+    <br />
+    <table style="width:100%">
+        <tr>
+            <td width="50%" style="vertical-align:top;padding-right:10px;" align="right">
+                <div id="content" class="panel panel-primary">
+                    <div class="panel-heading">
+                        <div class="panel-title">
+                            <strong>Options</strong>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <div id="alertSuccess" class="alert alert-success alert-dismissible" role="alert">
+                            <span id="alertSuccessMsg"></span>
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        </div>
+                        <div id="alertFailure" class="alert alert-danger alert-dismissible" role="alert">
+                            <span id="alertFailureMsg"></span>
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        </div>
+                        <div class="input-group">
+                            <span class="input-group-addon" id="autoAddon">Ticket Completion</span>
+                            <select id="ticketCompletion" class="form-control" aria-describedby="debugAddon">
+                                <option value="save">Save</option>
+                                <option value="update">Update</option>
+                                <option value="none">Do Nothing</option>
+                            </select>
+                        </div>
+                        <br />
+                        <div class="input-group">
+                            <span class="input-group-addon" id="debugAddon">Debug Mode</span>
+                            <select id="debugMode" class="form-control" aria-describedby="debugAddon">
+                                <option value="enable">Enabled</option>
+                                <option value="disable">Disabled</option>
+                            </select>
+                        </div>
+                        <br />
+                        <div class="form-group">
+                            <label for="cannedMsgs" class="textareaLabel">Canned Messages</label>
+                            <textarea id="cannedMsgs" class="form-control" rows="6" cols="50"></textarea>
+                            <div class="extraInfo">Put each message on its own line in the format of {label}|{message}.</div>
+                        </div>
+                    </div>
+                </div>
+            </td>
+            <td width="50%" style="vertical-align:top;padding-left:10px;" align="left">
+                <div id="content" class="panel panel-primary">
+                    <div class="panel-heading">
+                        <div class="panel-title"><strong>Service Now User Information</strong></div>
+                    </div>
+                    <div class="panel-body">
+                        <div id="querySuccess" class="alert alert-success alert-dismissible" role="alert">
+                            <span id="querySuccessMsg"></span>
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        </div>
+                        <div id="queryFailure" class="alert alert-danger alert-dismissible" role="alert">
+                            <span id="queryFailureMsg"></span>
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        </div>
+                        <div class="input-group">
+                            <span class="input-group-addon" id="nameAddon">Full Name</span>
+                            <input type="text" class="form-control" id="fullName" aria-describedby="nameAddon" readonly />
+                        </div>
+                        <br />
+                        <div class="input-group">
+                            <span class="input-group-addon" id="userNameAddon">Username</span>
+                            <input type="text" class="form-control" id="userName" aria-describedby="userNameAddon" readonly />
+                        </div>
+                        <br />
+                        <div class="input-group">
+                            <span class="input-group-addon" id="userIdAddon">User ID</span>
+                            <input type="text" class="form-control" id="userId" aria-describedby="userIdAddon" readonly />
+                        </div>
+                        <br />
+                        <div class="input-group">
+                            <span class="input-group-addon" id="emailAddon">Email</span>
+                            <input type="text" class="form-control" id="userEmail" aria-describedby="emailAddon" readonly />
+                        </div>
+                        <br />
+                        <div class="input-group">
+                            <span class="input-group-addon" id="groupAddon">Default Group</span>
+                            <input type="text" class="form-control" id="groupName" aria-describedby="groupAddon" readonly />
+                        </div>
+                        <br />
+                        <div class="input-group">
+                            <span class="input-group-addon" id="groupIdAddon">Group ID</span>
+                            <input type="text" class="form-control" id="groupId" aria-describedby="groupIdAddon" readonly />
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </table>
+    <br />
+    <div style="margin:0 auto;text-align:center;" class="form-group">
+        <button type="button" class="btn btn-lg btn-primary" id="saveSettings">Save Settings</button>
+        <button type="button" class="btn btn-lg btn-warning" id="reloadData">Reload Settings</button>
+        <button type="button" class="btn btn-lg btn-danger" id="resetUser">Reset User Data</button>
+        <button type="button" class="btn btn-lg btn-danger" id="resetAll">Reset ALL Data</button>
+        <button type="button" class="btn btn-lg btn-default" id="closeWindow">Close Window</button>
+    </div>
     <script src="js/jquery.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="js/options.js"></script>

@@ -17,9 +17,8 @@
  **/
 
 $(document).ready(function() {
-	$('#snafu-version').html(chrome.app.getDetails().version);
-	$('#alertSuccess').hide();
-	$('#alertFailure').hide();
+	$('[id$=Success').hide();
+	$('[id$=Failure').hide();
 
 	loadSettings();
 
@@ -37,10 +36,12 @@ $(document).ready(function() {
 			} else {
 				$('#alertSuccessMsg').text('Settings saved successfully.');
 				$('#alertSuccess').fadeIn();
-				setTimeout(function() { $('#alertSuccess').fadeOut(); }, 2500);
+				setTimeout(function() { $('#alertSuccess').fadeOut(); loadSettings(); }, 2500);
 			}
 		});
 	});
+
+	$('#reloadData').click(function() { loadSettings(); });
 
 	$('#closeWindow').click(function() {
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
@@ -50,7 +51,7 @@ $(document).ready(function() {
 });
 
 function loadSettings() {
-	chrome.storage.sync.get(['debug', 'canned', 'autoFinish'], function(items) {
+	chrome.storage.sync.get(['debug', 'canned', 'autoFinish', 'userId', 'userName', 'userEmail', 'fullName', 'groupName', 'groupId'], function(items) {
 		if (chrome.runtime.lastError) {
 			console.warn('SNAFU Sync Get Error: %s', chrome.runtime.lastError.message);
 		} else {
@@ -104,6 +105,14 @@ function loadSettings() {
 			} else {
 				$('#ticketCompletion').val(items.autoFinish);
 			}
+
+			// set user info
+			$('#fullName').val((!isVarEmpty(items.fullName)) ? items.fullName : '');
+			$('#userName').val((!isVarEmpty(items.userName)) ? items.userName : '');
+			$('#userId').val((!isVarEmpty(items.userId)) ? items.userId : '');
+			$('#userEmail').val((!isVarEmpty(items.userEmail)) ? items.userEmail : '');
+			$('#groupName').val((!isVarEmpty(items.groupName)) ? items.groupName : '');
+			$('#groupId').val((!isVarEmpty(items.groupId)) ? items.groupId : '');
 
 			console.info('SNAFU: Loaded settings.');
 		}

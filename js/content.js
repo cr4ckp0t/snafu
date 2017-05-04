@@ -24,8 +24,6 @@ var incStates = ['3', '4', '6'];
 // Work in Progress, Pending, Closed Complete, Closed Incomplete
 var taskStates = ['2', '-5', '3', '4'];
 
-// custom event for sending data to the injected script
-var injectEvent = document.createEvent('CustomEvent');
 // data to send
 var injectData = {}
 
@@ -35,10 +33,32 @@ injectScript.src = chrome.extension.getURL('js/inject.js');
 injectScript.onload = function() { this.remove(); };
 (document.head||document.documentElement).appendChild(injectScript);
 
+// listen for triggers on the custom event for passing text
+document.addEventListener('SNAFU_UserQuery', function(userData) {
+    if (isVarEmpty(userData.detail.fullName) || isVarEmpty(userData.detail.userName) || isVarEmpty(userData.detail.userId) || isVarEmpty(userData.detail.userEmail) || isVarEmpty(userData.detail.groupName) || isVarEmpty(userData.detail.groupId)) {
+        console.warn('SNAFU: Received incomplete user data.');
+    } else {
+        chrome.storage.sync.set({
+            fullName: userData.detail.fullName,
+            userName: userData.detail.userName,
+            userId: userData.detail.userId,
+            userEmail: userData.detail.userEmail,
+            groupName: userData.detail.groupName,
+            groupId: userData.detail.groupId
+        }, function() {
+            if (chrome.runtime.lastError) {
+                console.warn('SNAFU Sync Set Error: %s', chrome.runtime.lastError.message);
+            } else {
+                console.info('SNAFU: Received user data.');
+            }
+        });
+    }
+});
+
 chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
     chrome.storage.sync.get(['autoFinish', 'debug'], function(items) {
         if (chrome.runtime.lastError) {
-            console.warn('SNAFU: Sync Get Error: %s', chrome.runtime.lastError.message);
+            console.warn('SNAFU Sync Get Error: %s', chrome.runtime.lastError.message);
         } else {
             if (items.debug === true) {
                 console.info('SNAFU: Received Settings');
@@ -48,6 +68,13 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
             var ticketType = getTicketType();
             
             switch (msg.type) {
+                // query user information
+                case 'userQuery':
+                    injectData = {
+                        type: msg.type
+                    }
+                    break;
+
                 // acknowledge incident
                 case 'ackIncident':
                     if (ticketType !== 'incident') {
@@ -349,6 +376,8 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
 
             // prevent any shenanigans
             if (isVarEmpty(injectData.type) === false) {
+                // custom event for sending data to the injected script
+                var injectEvent = document.createEvent('CustomEvent');
                 injectEvent.initCustomEvent('SNAFU_Inject', true, true, injectData);
                 document.dispatchEvent(injectEvent);
             }

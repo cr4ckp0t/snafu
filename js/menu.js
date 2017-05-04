@@ -16,11 +16,19 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  **/
 
+// uber parent
+chrome.contextMenus.create({
+	title: 'SNAFU',
+	contexts: ['page'],
+	id: 'snafuParent',
+	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*', 'https://ghsprod.service-now.com/incident.do?*']
+});
+
 // auto acknowledge incident
 chrome.contextMenus.create({
 	title: 'Acknowledge Incident',
 	contexts: ['page'],
-	//parentId: 'parent',
+	parentId: 'snafuParent',
 	id: 'parentAckIncident',
 	documentUrlPatterns: ['https://ghsprod.service-now.com/incident.do?*']
 });
@@ -34,9 +42,7 @@ chrome.contextMenus.create({
 	documentUrlPatterns: ['https://ghsprod.service-now.com/incident.do?*'],
 	onclick: function() {
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-			chrome.tabs.sendMessage(tabs[0].id, {
-				type: 'ackCallUser'
-			});
+			chrome.tabs.sendMessage(tabs[0].id, {type: 'ackCallUser'});
 		});
 	}
 });
@@ -50,25 +56,16 @@ chrome.contextMenus.create({
 	documentUrlPatterns: ['https://ghsprod.service-now.com/incident.do?*'],
 	onclick: function() {
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-			chrome.tabs.sendMessage(tabs[0].id, {
-				type: 'ackIncident'
-			});
+			chrome.tabs.sendMessage(tabs[0].id, {type: 'ackIncident'});
 		});
 	}
-});
-
-chrome.contextMenus.create({
-	title: 'Catalog Tasks',
-	contexts: ['page'],
-	id: 'catalogTasks',
-	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*']
 });
 
 // parent for acknowledge tasks
 chrome.contextMenus.create({
 	title: 'Acknowledge Tasks',
 	contexts: ['page'],
-	parentId: 'catalogTasks',
+	parentId: 'snafuParent',
 	id: 'parentAckTask',
 	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*']
 });
@@ -81,9 +78,7 @@ chrome.contextMenus.create({
 	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
 	onclick: function() {
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-			chrome.tabs.sendMessage(tabs[0].id, {
-				type: 'ackTask'
-			});
+			chrome.tabs.sendMessage(tabs[0].id, {type: 'ackTask'});
 		});
 	}
 });
@@ -96,9 +91,7 @@ chrome.contextMenus.create({
 	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
 	onclick: function() {
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-			chrome.tabs.sendMessage(tabs[0].id, {
-				type: 'ackMove'
-			});
+			chrome.tabs.sendMessage(tabs[0].id, {type: 'ackMove'});
 		});
 	}
 });
@@ -111,9 +104,7 @@ chrome.contextMenus.create({
 	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
 	onclick: function() {
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-			chrome.tabs.sendMessage(tabs[0].id, {
-				type: 'ackRemoval'
-			});
+			chrome.tabs.sendMessage(tabs[0].id, {type: 'ackRemoval'});
 		});
 	}
 });
@@ -126,9 +117,7 @@ chrome.contextMenus.create({
 	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
 	onclick: function() {
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-			chrome.tabs.sendMessage(tabs[0].id, {
-				type: 'ackHotSwap'
-			});
+			chrome.tabs.sendMessage(tabs[0].id, {type: 'ackHotSwap'});
 		});
 	}
 });
@@ -141,9 +130,7 @@ chrome.contextMenus.create({
 	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
 	onclick: function() {
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-			chrome.tabs.sendMessage(tabs[0].id, {
-				type: 'ackInstall'
-			});
+			chrome.tabs.sendMessage(tabs[0].id, {type: 'ackInstall'});
 		});
 	}
 });
@@ -156,9 +143,7 @@ chrome.contextMenus.create({
 	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
 	onclick: function() {
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-			chrome.tabs.sendMessage(tabs[0].id, {
-				type: 'ackQuarantine'
-			});
+			chrome.tabs.sendMessage(tabs[0].id, {type: 'ackQuarantine'});
 		});
 	}
 });
@@ -171,9 +156,7 @@ chrome.contextMenus.create({
 	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
 	onclick: function() {
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-			chrome.tabs.sendMessage(tabs[0].id, {
-				type: 'ackReclaim'
-			});
+			chrome.tabs.sendMessage(tabs[0].id, {type: 'ackReclaim'});
 		});
 	}
 });
@@ -182,8 +165,8 @@ chrome.contextMenus.create({
 chrome.contextMenus.create({
 	title: 'Close Tasks',
 	contexts: ['page'],
-	parentId: 'catalogTasks',
 	id: 'parentCloseTask',
+	parentId: 'snafuParent',
 	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*']
 });
 
@@ -195,9 +178,7 @@ chrome.contextMenus.create({
 	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
 	onclick: function() {
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-			chrome.tabs.sendMessage(tabs[0].id, {
-				type: 'closeMove'
-			});
+			chrome.tabs.sendMessage(tabs[0].id, {type: 'closeMove'});
 		});
 	}
 });
@@ -210,9 +191,7 @@ chrome.contextMenus.create({
 	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
 	onclick: function() {
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-			chrome.tabs.sendMessage(tabs[0].id, {
-				type: 'closeRemoval'
-			});
+			chrome.tabs.sendMessage(tabs[0].id, {type: 'closeRemoval'});
 		});
 	}
 });
@@ -225,9 +204,7 @@ chrome.contextMenus.create({
 	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
 	onclick: function() {
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-			chrome.tabs.sendMessage(tabs[0].id, {
-				type: 'closeHotSwap'
-			});
+			chrome.tabs.sendMessage(tabs[0].id, {type: 'closeHotSwap'});
 		});
 	}
 });
@@ -240,9 +217,7 @@ chrome.contextMenus.create({
 	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
 	onclick: function() {
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-			chrome.tabs.sendMessage(tabs[0].id, {
-				type: 'closeInstall'
-			});
+			chrome.tabs.sendMessage(tabs[0].id, {type: 'closeInstall'});
 		});
 	}
 });
@@ -255,9 +230,7 @@ chrome.contextMenus.create({
 	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
 	onclick: function() {
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-			chrome.tabs.sendMessage(tabs[0].id, {
-				type: 'closeQuarantine'
-			});
+			chrome.tabs.sendMessage(tabs[0].id, {type: 'closeQuarantine'});
 		});
 	}
 });
@@ -270,9 +243,61 @@ chrome.contextMenus.create({
 	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
 	onclick: function() {
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-			chrome.tabs.sendMessage(tabs[0].id, {
-				type: 'closeReclaim'
-			});
+			chrome.tabs.sendMessage(tabs[0].id, {type: 'closeReclaim'});
 		});
 	}
 });
+
+chrome.contextMenus.create({type:'separator', parentId: 'snafuParent'});
+
+chrome.storage.sync.get(['debug', 'userId', 'userName', 'userEmail', 'fullName', 'groupName', 'groupId'], function(items) {
+	if (chrome.runtime.lastError) {
+		console.warn('SNAFU User Sync Error: %s', chrome.runtime.lastError.message);
+	} else {
+		if (isVarEmpty(items.userId) || isVarEmpty(items.userName) || isVarEmpty(items.userEmail) || isVarEmpty(items.fullName) || isVarEmpty(items.groupName) || isVarEmpty(items.groupId)) {
+			if (items.debug === true) {
+				console.info('SNAFU:  User info not found, adding query option.');
+			}
+			chrome.contextMenus.create({
+				title: 'Query User Info',
+				contexts: ['page'],
+				id: 'userQuery',
+				parentId: 'snafuParent',
+				onclick: function() {
+					chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+						chrome.tabs.sendMessage(tabs[0].id, {type: 'userQuery'})
+					});
+				}
+			});
+		} else {
+			if (items.debug === true) {
+				console.info('SNAFU:  User info found, adding Assign To Me menu.');
+			}
+			chrome.contextMenus.create({
+				title: 'Assign To Me',
+				contexts: ['page'],
+				id: 'assignToMe',
+				parentId: 'snafuParent',
+				onclick: function() {
+					chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+						chrome.tabs.sendMessage(tabs[0].id, {
+							type: 'assignToMe',
+							userInfo: {
+								userId: items.userId,
+								userName: items.userName,
+								fullName: items.fullName,
+								userEmail: items.userEmail,
+								groupId: items.groupId,
+								groupName: items.groupName
+							}
+						});
+					});
+				}
+			});
+		}
+	}
+});
+
+function isVarEmpty(value) {
+    return (value === null || value === undefined || value === NaN || value.toString().trim() === '') ? true : false
+}

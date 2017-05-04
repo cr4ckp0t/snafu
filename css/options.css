@@ -34,8 +34,9 @@ a:hover {
 
 
 div#content {
-	width: 30%;
-    margin: 0 auto;
+	width: 75%;
+    /*margin: 0 auto;*/
+	text-align: left;
 }
 
 div.extraInfo {
