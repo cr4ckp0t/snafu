@@ -274,10 +274,34 @@ chrome.storage.sync.get(['debug', 'userId', 'userName', 'userEmail', 'fullName',
 				console.info('SNAFU:  User info found, adding Assign To Me menu.');
 			}
 			chrome.contextMenus.create({
-				title: 'Assign To Me',
+				title: 'Assign Incident To Me',
 				contexts: ['page'],
-				id: 'assignToMe',
+				id: 'assignIncToMe',
 				parentId: 'snafuParent',
+				documentUrlPatterns: ['https://ghsprod.service-now.com/incident.do?*'],
+				onclick: function() {
+					chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+						chrome.tabs.sendMessage(tabs[0].id, {
+							type: 'assignToMe',
+							userInfo: {
+								userId: items.userId,
+								userName: items.userName,
+								fullName: items.fullName,
+								userEmail: items.userEmail,
+								groupId: items.groupId,
+								groupName: items.groupName
+							}
+						});
+					});
+				}
+			});
+
+			chrome.contextMenus.create({
+				title: 'Assign Task To Me',
+				contexts: ['page'],
+				id: 'assignTaskToMe',
+				parentId: 'snafuParent',
+				documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
 				onclick: function() {
 					chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
 						chrome.tabs.sendMessage(tabs[0].id, {
