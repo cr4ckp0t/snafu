@@ -26,24 +26,18 @@ $(document).ready(function() {
 	$('#saveSettings').click(function() {
 		chrome.storage.sync.set({
 			debug: ($('#debugMode').val() === 'enable') ? true : false,
-			canned: getCannedMessages()
+			canned: getCannedMessages(),
+			autoFinish: $('#ticketCompletion').val()
 		}, function() {
 			if (chrome.runtime.lastError) {
 				$('#alertFailureMsg').text('Failed to save settings.');
 				$('#alertFailure').fadeIn();
-				setTimeout(function() {
-					$('#alertFailureMsg').text('');
-					$('#alertFailure').fadeOut();
-				}, 2500);
-
+				setTimeout(function() { $('#alertFailure').fadeOut(); }, 2500);
 				console.warn('SNAFU Sync Set Error: %s', chrome.runtime.lastError.message);
 			} else {
 				$('#alertSuccessMsg').text('Settings saved successfully.');
 				$('#alertSuccess').fadeIn();
-				setTimeout(function() {
-					$('#alertSuccessMsg').text('');
-					$('#alertSuccess').fadeOut();
-				}, 2500);
+				setTimeout(function() { $('#alertSuccess').fadeOut(); }, 2500);
 			}
 		});
 	});
@@ -56,14 +50,14 @@ $(document).ready(function() {
 });
 
 function loadSettings() {
-	chrome.storage.sync.get(['debug', 'canned'], function(items) {
+	chrome.storage.sync.get(['debug', 'canned', 'autoFinish'], function(items) {
 		if (chrome.runtime.lastError) {
 			console.warn('SNAFU Sync Get Error: %s', chrome.runtime.lastError.message);
 		} else {
 
 			// debug settings
-			if (!items.debug) {
-				chrome.storage.sync.set({ debug: false }, function() {
+			if (isVarEmpty(items.debug) === true) {
+				chrome.storage.sync.set({debug: false}, function() {
 					if (chrome.runtime.lastError) {
 						console.warn('SNAFU debug Set Error: %s', chrome.runtime.lastError.message);
 					} else {
@@ -76,7 +70,7 @@ function loadSettings() {
 			}
 			
 			// canned messages
-			if (!items.canned) {
+			if (isVarEmpty(items.canned) === true) {
 				chrome.storage.sync.set({
 					canned: {
 						'callingUser': 'Calling {INC_CUST_FNAME} at {INC_CUR_PHONE}.',
@@ -97,6 +91,21 @@ function loadSettings() {
 				}
 				$('#cannedMsgs').text(cannedMsgs);
 			}
+
+			// auto finish
+			if (isVarEmpty(items.autoFinish) === true) {
+				chrome.storage.sync.set({autoFinish: 'none'}, function() {
+					if (chrome.runtime.lastError) {
+						console.warn('SNAFU autoFinish Set Error: %s', chrome.runtime.lastError.message);
+					} else {
+						console.info('SNAFU: Created autoFinish setting.');
+					}
+				});
+			} else {
+				$('#ticketCompletion').val(items.autoFinish);
+			}
+
+			console.info('SNAFU: Loaded settings.');
 		}
 	});
 }
@@ -120,4 +129,8 @@ function getCannedMessages() {
 	} else {
 		return false;
 	}
+}
+
+function isVarEmpty(value) {
+    return (value === null || value === undefined || value === NaN || value.toString().trim() === '') ? true : false
 }

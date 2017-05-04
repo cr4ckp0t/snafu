@@ -36,11 +36,14 @@ injectScript.onload = function() { this.remove(); };
 (document.head||document.documentElement).appendChild(injectScript);
 
 chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
-    chrome.storage.sync.get('autoFinish', function(items) {
+    chrome.storage.sync.get(['autoFinish', 'debug'], function(items) {
         if (chrome.runtime.lastError) {
             console.warn('SNAFU: Sync Get Error: %s', chrome.runtime.lastError.message);
         } else {
-            console.info('SNAFU: Received Settings');
+            if (items.debug === true) {
+                console.info('SNAFU: Received Settings');
+            }
+
             // get ticket type
             var ticketType = getTicketType();
             
@@ -48,7 +51,7 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                 // acknowledge incident
                 case 'ackIncident':
                     if (ticketType !== 'incident') {
-                        sendResponse({success: false, errMsg: 'Please open an incident.'});
+                        sendResponse({success: false, errMsg: 'Unable to detect an open incident..'});
                     } else {
                         // set the data to inject
                         injectData = {
@@ -66,7 +69,7 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
 
                 case 'ackCallUser':
                     if (ticketType !== 'incident') {
-                        sendResponse({success: false, errMsg: 'Please open an incident.'});
+                        sendResponse({success: false, errMsg: 'Unable to detect an open incident..'});
                     } else {
                         // set the data to inject
                         injectData = {
@@ -85,7 +88,7 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                 // acknowledge task
                 case 'ackTask':
                     if (ticketType !== 'task') {
-                        sendResponse({success: false, errMsg: 'Please open a task.'});
+                        sendResponse({success: false, errMsg: 'Unable to detect an open task.'});
                     } else {
                         injectData = {
                             type: msg.type,
@@ -102,7 +105,7 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                 // acknowledge build
                 case 'ackHotSwap':
                     if (ticketType !== 'task') {
-                        sendResponse({success: false, errMsg: 'Please open a task.'});
+                        sendResponse({success: false, errMsg: 'Unable to detect an open task.'});
                     } else {
                         injectData = {
                             type: msg.type,
@@ -119,7 +122,7 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                 // acknowledge install task
                 case 'ackInstall':
                     if (ticketType !== 'task') {
-                        sendResponse({success: false, errMsg: 'Please open a task.'});
+                        sendResponse({success: false, errMsg: 'Unable to detect an open task.'});
                     } else {
                         injectData = {
                             type: msg.type,
@@ -136,7 +139,7 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                 // acknowledge equipment move
                 case 'ackMove':
                     if (ticketType !== 'task') {
-                        sendResponse({success: false, errMsg: 'Please open a task.'});
+                        sendResponse({success: false, errMsg: 'Unable to detect an open task.'});
                     } else {
                         injectData = {
                             type: msg.type,
@@ -153,7 +156,7 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                 // acknowledge quarantine
                 case 'ackQuarantine':
                     if (ticketType !== 'task') {
-                        sendResponse({success: false, errMsg: 'Please open a task.'});
+                        sendResponse({success: false, errMsg: 'Unable to detect an open task.'});
                     } else {
                         injectData = {
                             type: msg.type,
@@ -170,7 +173,7 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                 // acknowledge reclaim
                 case 'ackReclaim':
                     if (ticketType !== 'task') {
-                        sendResponse({success: false, errMsg: 'Please open a task.'});
+                        sendResponse({success: false, errMsg: 'Unable to detect an open task.'});
                     } else {
                         injectData = {
                             type: msg.type,
@@ -187,7 +190,7 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                 // acknowledge equipment removal
                 case 'ackRemoval':
                     if (ticketType !== 'task') {
-                        sendResponse({success: false, errMsg: 'Please open a task.'});
+                        sendResponse({success: false, errMsg: 'Unable to detect an open task.'});
                     } else {
                         injectData = {
                             type: msg.type,
@@ -203,7 +206,7 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                 
                 case 'closeHotSwap':
                     if (ticketType !== 'task') {
-                        sendResponse({success: false, errMsg: 'Please open a task.'});
+                        sendResponse({success: false, errMsg: 'Unable to detect an open task.'});
                     } else {
                         injectData = {
                             type: msg.type,
@@ -220,7 +223,7 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                 // close install task
                 case 'closeInstall':
                     if (ticketType !== 'task') {
-                        sendResponse({success: false, errMsg: 'Please open a task.'});
+                        sendResponse({success: false, errMsg: 'Unable to detect an open task.'});
                     } else {
                         injectData = {
                             type: msg.type,
@@ -237,7 +240,7 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                 // close equipment move task
                 case 'closeMove':
                     if (ticketType !== 'task') {
-                        sendResponse({success: false, errMsg: 'Please open a task.'});
+                        sendResponse({success: false, errMsg: 'Unable to detect an open task.'});
                     } else {
                         injectData = {
                             type: msg.type,
@@ -254,7 +257,7 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                 // close quarantine task
                 case 'closeQuarantine':
                     if (ticketType !== 'task') {
-                        sendResponse({success: false, errMsg: 'Please open a task.'});
+                        sendResponse({success: false, errMsg: 'Unable to detect an open task.'});
                     } else {
                         injectData = {
                             type: msg.type,
@@ -271,7 +274,7 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                 // close reclaim task
                 case 'closeReclaim':
                     if (ticketType !== 'task') {
-                        sendResponse({success: false, errMsg: 'Please open a task.'});
+                        sendResponse({success: false, errMsg: 'Unable to detect an open task.'});
                     } else {
                         injectData = {
                             type: msg.type,
@@ -288,7 +291,7 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                 // close equipment removal
                 case 'closeRemoval':
                     if (ticketType !== 'task') {
-                        sendResponse({success: false, errMsg: 'Please open a task.'});
+                        sendResponse({success: false, errMsg: 'Unable to detect an open task.'});
                     } else {
                         injectData = {
                             type: msg.type,
@@ -325,7 +328,7 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                 // send an equipment build
                 case 'sendEquipment':
                     if (ticketType !== 'task') {
-                        sendResponse({success: false, errMsg: 'Please open a task.'});
+                        sendResponse({success: false, errMsg: 'Unable to detect an open task.'});
                     } else {
                         injectData = {
                             type: msg.type,

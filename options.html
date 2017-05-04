@@ -41,6 +41,15 @@
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             </div>
             <div class="input-group">
+                <span class="input-group-addon" id="autoAddon">Ticket Completion</span>
+                <select id="ticketCompletion" class="form-control" aria-describedby="debugAddon">
+                    <option value="save">Save</option>
+                    <option value="update">Update</option>
+                    <option value="none">Do Nothing</option>
+                </select>
+            </div>
+            <br />
+            <div class="input-group">
                 <span class="input-group-addon" id="debugAddon">Debug Mode</span>
                 <select id="debugMode" class="form-control" aria-describedby="debugAddon">
                     <option value="enable">Enabled</option>
