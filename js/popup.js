@@ -20,6 +20,13 @@ $(document).ready(function() {
     $('span[id^=comp]').hide();
     $('[data-toggle="tooltip"]').tooltip();
 
+    // close quarantine submenu
+    $('#closeQuarantine').on('click', function(event) {
+        $(this).next('ul').toggle();
+        event.stopPropagation();
+        event.preventDefault();
+    });
+
     // load settings
     getSettings();
 

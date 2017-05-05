@@ -225,12 +225,46 @@ chrome.contextMenus.create({
 chrome.contextMenus.create({
 	title: 'Quarantine Task',
 	contexts: ['page'],
-	id: 'closeQuarantine',
+	id: 'closeQuarantineParent',
 	parentId: 'parentCloseTask',
+	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*']
+});
+
+chrome.contextMenus.create({
+	title: 'Decommission Device',
+	contexts: ['page'],
+	id: 'closeQuarantineDecom',
+	parentId: 'closeQuarantineParent',
 	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
 	onclick: function() {
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-			chrome.tabs.sendMessage(tabs[0].id, {type: 'closeQuarantine'});
+			chrome.tabs.sendMessage(tabs[0].id, {type: 'closeQuarantineDecommission'});
+		});
+	}
+});
+
+chrome.contextMenus.create({
+	title: 'Repair Device',
+	contexts: ['page'],
+	id: 'closeQuarantineRepair',
+	parentId: 'closeQuarantineParent',
+	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
+	onclick: function() {
+		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+			chrome.tabs.sendMessage(tabs[0].id, {type: 'closeQuarantineRepair'});
+		});
+	}
+});
+
+chrome.contextMenus.create({
+	title: 'Restock Device',
+	contexts: ['page'],
+	id: 'closeQuarantineRestock',
+	parentId: 'closeQuarantineParent',
+	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
+	onclick: function() {
+		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+			chrome.tabs.sendMessage(tabs[0].id, {type: 'closeQuarantineRestock'});
 		});
 	}
 });
@@ -308,9 +342,7 @@ chrome.storage.sync.get(['debug', 'userId', 'userName', 'userEmail', 'fullName',
 							type: 'assignToMe',
 							userInfo: {
 								userId: items.userId,
-								userName: items.userName,
 								fullName: items.fullName,
-								userEmail: items.userEmail,
 								groupId: items.groupId,
 								groupName: items.groupName
 							}

@@ -75,6 +75,19 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                     }
                     break;
 
+                // assign to me
+                case 'assignToMe':
+                    if (ticketType === false) {
+                        sendResponse({success: false, errMsg: 'Unable to detect task or incident.'});
+                    } else {
+                        injectData = {
+                            type: msg.type,
+                            userInfo: msg.userInfo
+                        }
+                        sendResponse({success: true, errMsg: null});
+                    }
+                    break;
+
                 // acknowledge incident
                 case 'ackIncident':
                     if (ticketType !== 'incident') {
@@ -282,7 +295,9 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                     break;
                 
                 // close quarantine task
-                case 'closeQuarantine':
+                case 'closeQuarantineDecommission':
+                case 'closeQuarantineRepair':
+                case 'closeQuarantineRestock':
                     if (ticketType !== 'task') {
                         sendResponse({success: false, errMsg: 'Unable to detect an open task.'});
                     } else {
@@ -375,7 +390,7 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
             }
 
             // prevent any shenanigans
-            if (isVarEmpty(injectData.type) === false) {
+            if (isVarEmpty(injectData) === false && isVarEmpty(injectData.type) === false) {
                 // custom event for sending data to the injected script
                 var injectEvent = document.createEvent('CustomEvent');
                 injectEvent.initCustomEvent('SNAFU_Inject', true, true, injectData);
@@ -399,5 +414,5 @@ function getTicketType() {
 }
 
 function isVarEmpty(value) {
-    return (value === null || value === undefined || value === NaN || value.trim() === '') ? true : false
+    return (value === null || value === undefined || value === NaN ) ? true : false
 }

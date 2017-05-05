@@ -20,6 +20,7 @@ body {
     font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
     font-size: 14px;
     padding: 5px;
+	padding-top: 70px;
 }
 
 a:link, a:active, a:visited {

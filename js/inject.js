@@ -26,10 +26,12 @@
 var snafuRslvComments = "My name is {TECH_NAME} and I was the technician that assisted you with {TICKET}. Thank you for the opportunity to provide you with service today with your {INC_TYPE}. If for any reason, your issue does not appear to be resolved please contact the Service Desk at (864) 455-8000.";
 
 //console.info(window.g_user);
+//console.info(g_form.getValue('rhs_restock_status'));
 
 // listen for triggers on the custom event for passing text
 document.addEventListener('SNAFU_Inject', function(snafuInject) {
 
+	// query for the user informatoin
 	if (snafuInject.detail.type === 'userQuery') {
 		var snafuAssignedTo = g_form.getReference('assigned_to');
 		var snafuAssignmentGroup = g_form.getReference('assignment_group');
@@ -44,6 +46,26 @@ document.addEventListener('SNAFU_Inject', function(snafuInject) {
 			groupId: snafuAssignmentGroup.sys_id
 		});
 		document.dispatchEvent(snafuQuery);
+	
+	// assign task or incident to the user
+	} else if (snafuInject.detail.type === 'assignToMe') {
+		g_form.setValue('assignment_group', snafuInject.detail.userInfo.groupId, snafuInject.detail.userInfo.groupName);
+		g_form.flash('assignment_group', '#3eb049', 0);
+		g_form.setValue('assigned_to', snafuInject.detail.userInfo.userId, snafuInject.detail.userInfo.fullName.toUpperCase());
+		g_form.flash('assigned_to', '#3eb049', 0);
+		switch (snafuInject.detail.autoFinish) {
+			case 'save':
+				setTimeout(function() { g_form.save(); }, 1500);
+				break;
+			case 'update':
+				setTimeout(function() { g_form.submit(); }, 1500);
+				break;
+			case 'none':
+			default:
+				break;
+		}
+
+	// handle everything else
 	} else {
 		var snafuType = snafuInject.detail.type;
 		var snafuField = snafuInject.detail.field;
@@ -95,6 +117,12 @@ document.addEventListener('SNAFU_Inject', function(snafuInject) {
 			if (g_form.getValue('cmdb_ci') !== '5a8d6816a1cf38003a42245d1035d56e') {
 				g_form.setValue('cmdb_ci', '5a8d6816a1cf38003a42245d1035d56e', 'Desktop Services');
 				g_form.flash('cmdb_ci', '#3eb049', 0);
+			}
+
+			// set quarantine select, if needed
+			if (snafuType.indexOf('closeQuarantine') !== -1) {
+				g_form.setValue('rhs_restock_status', snafuType.replace('closeQuarantine', '').toLowerCase());
+				//g_form.flash('rhs_restock_status', '#3eb049', 0);
 			}
 		}
 

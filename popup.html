@@ -54,7 +54,14 @@
                     <li><a style="cursor:pointer;" id="closeRemoval">Equipment Removal</a></li>
                     <li><a style="cursor:pointer;" id="closeHotSwap">Hot Swap</a></li>
                     <li><a style="cursor:pointer;" id="closeInstall">Install Task</a></li>
-                    <li><a style="cursor:pointer;" id="closeQuarantine">Quarantine Task</a></li>
+                    <li class="dropdown-submenu">
+                        <a style="cursor:pointer;" id="closeQuarantine">Quarantine Task <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a style="cursor:pointer;" id="closeQuarantineDecommission">Decommission</a></li>
+                            <li><a style="cursor:pointer;" id="closeQuarantineRepair">Repair</a></li>
+                            <li><a style="cursor:pointer;" id="closeQuarantineRestock">Restock</a></li>
+                        </ul>
+                    </li>
                     <li><a style="cursor:pointer;" id="closeReclaim">Reclaim Task</a></li>
                 </ul>
             </li>
