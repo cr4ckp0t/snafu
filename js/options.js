@@ -16,6 +16,8 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  **/
 
+var debug;
+
 $(document).ready(function() {
 	$('[id$=Success').hide();
 	$('[id$=Failure').hide();
@@ -29,14 +31,11 @@ $(document).ready(function() {
 			autoFinish: $('#ticketCompletion').val()
 		}, function() {
 			if (chrome.runtime.lastError) {
-				$('#alertFailureMsg').text('Failed to save settings.');
-				$('#alertFailure').fadeIn();
-				setTimeout(function() { $('#alertFailure').fadeOut(); }, 2500);
 				console.warn('SNAFU Sync Set Error: %s', chrome.runtime.lastError.message);
+				errorMessage('Failed to save settings.');
 			} else {
-				$('#alertSuccessMsg').text('Settings saved successfully.');
-				$('#alertSuccess').fadeIn();
-				setTimeout(function() { $('#alertSuccess').fadeOut(); loadSettings(); }, 2500);
+				loadSettings();
+				successMessage('Settings saved successfully.');
 			}
 		});
 	});
@@ -46,6 +45,36 @@ $(document).ready(function() {
 	$('#closeWindow').click(function() {
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
 			chrome.tabs.remove(tabs[0].id);
+		});
+	});
+
+	// reset user data
+	$('#resetUser').click(function() {
+		chrome.storage.sync.remove(['userId', 'userName', 'userEmail', 'fullName', 'groupName', 'groupId'], function() {
+			if (chrome.runtime.lastError) {
+				console.warn('SNAFU Sync Remove Error: %s', chrome.runtime.lastError.message);
+				errorMessage('Failed to remove user data.');
+			} else {
+				if (debug === true) {
+					console.info('SNAFU: Removed user data.');
+				}
+				successMessage('Successfully removed user data.');
+			}
+		});
+	});
+
+	// reset all settings
+	$('#resetAll').click(function() {
+		chrome.storage.sync.clear(function() {
+			if (chrome.runtime.lastError) {
+				console.warn('SNAFU Sync Clear Error: %s', chrome.runtime.lastError.message);
+				errorMessage('Failed to clear settings.');
+			} else {
+				if (debug === true) {
+					console.info('SNAFU: Cleared all settings.');
+				}
+				successMessage('Successfully cleared all settings.');
+			}
 		});
 	});
 });
@@ -68,6 +97,7 @@ function loadSettings() {
 				$('#debugMode').val('disable');
 			} else {
 				$('#debugMode').val((items.debug === true) ? 'enable' : 'disable');
+				debug = items.debug;
 			}
 			
 			// canned messages
@@ -142,4 +172,16 @@ function getCannedMessages() {
 
 function isVarEmpty(value) {
     return (value === null || value === undefined || value === NaN || value.toString().trim() === '') ? true : false
+}
+
+function successMessage(msg) {
+	$('#alertSuccessMsg').text('Settings saved successfully.');
+	$('#alertSuccess').fadeIn();
+	setTimeout(function() { $('#alertSuccess').fadeOut(); }, 2500);
+}
+
+function errorMessage(msg) {
+	$('#alertFailureMsg').text('Failed to save settings.');
+	$('#alertFailure').fadeIn();
+	setTimeout(function() { $('#alertFailure').fadeOut(); }, 2500);
 }
