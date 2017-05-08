@@ -75,7 +75,7 @@ $(document).ready(function() {
                     workNotes: $('#workNotes').val(),
                     custNotes: $('#customerNotes').val()
                 }, function(response) {
-                    chrome.storage.sync.get(['debug'], function(items) {
+                    chrome.storage.sync.get(['debug', 'closePopup'], function(items) {
                         if (chrome.runtime.lastError) {
                             console.warn('SNAFU Sync Get Error: %s', chrome.runtime.lastError.message);
                         } else {
@@ -90,6 +90,10 @@ $(document).ready(function() {
                                     console.warn('SNAFU Error: Unable to process response to message.');
                                 }
                             }
+                        }
+
+                        if (items.closePopup === true) {
+                            setTimeout(function() { window.close(); }, 500);
                         }
                     });
                 });
@@ -115,7 +119,7 @@ $(document).ready(function() {
                     workNotes: equipWorkNotes,
                     custNotes: null
                 }, function(response) {
-                    chrome.storage.sync.get(['debug'], function(items) {
+                    chrome.storage.sync.get(['debug', 'closePopup'], function(items) {
                         if (chrome.runtime.lastError) {
                             console.warn('SNAFU Sync Get Error: %s', chrome.runtime.lastError.message);
                         } else {
@@ -129,6 +133,10 @@ $(document).ready(function() {
                                 } else {
                                     console.warn('SNAFU Error: Unable to process response to message.');
                                 }
+                            }
+
+                            if (items.closePopup === true) {
+                                setTimeout(function() { window.close(); }, 500);
                             }
                         }
                     });
@@ -176,6 +184,7 @@ function isVarEmpty(value) {
 /**
  * Save autoFinish to chrome.storage.sync.
  * @param   {String}    value
+ * @return  {Void}
  */
 function saveAutoFinish(value) {
     chrome.storage.sync.set({autoFinish: value}, function() {
@@ -184,20 +193,13 @@ function saveAutoFinish(value) {
         } else {
             console.info('SNAFU: Saved settings.');
         }
+        updateTicketLabels(value);
     });
-
-    // remove active class from each label
-    $('[id^=autoFinish]').removeClass('active');
-    $('[id^=autoEquipTicket').removeClass('active');
-
-    // set the correct label with active
-    $('#autoFinish-' + value).addClass('active');
-    $('#autoEquipTicket-' + value).addClass('active');
 }
 
 /**
  * Load settings from chrome.storage.sync.
- * @return  {Nothing}
+ * @return  {Void}
  */
 function getSettings() {
     chrome.storage.sync.get(['autoFinish', 'debug', 'canned'], function(items) {
@@ -230,7 +232,7 @@ function processClick(clickType) {
         chrome.tabs.sendMessage(tabs[0].id, {
             type: clickType
         }, function(response) {
-            chrome.storage.sync.get(['debug'], function() {
+            chrome.storage.sync.get(['debug', 'closePopup'], function() {
                 if (chrome.runtime.lastError) {
                     console.warn('SNAFU Error: %s', chrome.runtime.lastError.message);
                 } else if (items.debug === true) {
@@ -243,6 +245,10 @@ function processClick(clickType) {
                     } else {
                         console.warn('SNAFU Error: Unable to process response to message.');
                     }
+                }
+
+                if (items.closePopup === true) {
+                    setTimeout(function() { window.close(); }, 500);
                 }
             });
         });

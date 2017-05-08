@@ -52,7 +52,7 @@ chrome.contextMenus.create({
 	documentUrlPatterns: ['https://ghsprod.service-now.com/incident.do?*'],
 	onclick: function() {
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-			chrome.tabs.sendMessage(tabs[0].id, {type: 'ackCallUser'});
+			chrome.tabs.sendMessage(tabs[0].id, {type: 'ackCallUser'}, handleResponse);
 		});
 	}
 });
@@ -66,7 +66,7 @@ chrome.contextMenus.create({
 	documentUrlPatterns: ['https://ghsprod.service-now.com/incident.do?*'],
 	onclick: function() {
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-			chrome.tabs.sendMessage(tabs[0].id, {type: 'ackIncident'});
+			chrome.tabs.sendMessage(tabs[0].id, {type: 'ackIncident'}, handleResponse);
 		});
 	}
 });
@@ -88,7 +88,7 @@ chrome.contextMenus.create({
 	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
 	onclick: function() {
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-			chrome.tabs.sendMessage(tabs[0].id, {type: 'ackTask'});
+			chrome.tabs.sendMessage(tabs[0].id, {type: 'ackTask'}, handleResponse);
 		});
 	}
 });
@@ -101,7 +101,7 @@ chrome.contextMenus.create({
 	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
 	onclick: function() {
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-			chrome.tabs.sendMessage(tabs[0].id, {type: 'ackMove'});
+			chrome.tabs.sendMessage(tabs[0].id, {type: 'ackMove'}, handleResponse);
 		});
 	}
 });
@@ -114,7 +114,7 @@ chrome.contextMenus.create({
 	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
 	onclick: function() {
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-			chrome.tabs.sendMessage(tabs[0].id, {type: 'ackRemoval'});
+			chrome.tabs.sendMessage(tabs[0].id, {type: 'ackRemoval'}, handleResponse);
 		});
 	}
 });
@@ -127,7 +127,7 @@ chrome.contextMenus.create({
 	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
 	onclick: function() {
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-			chrome.tabs.sendMessage(tabs[0].id, {type: 'ackHotSwap'});
+			chrome.tabs.sendMessage(tabs[0].id, {type: 'ackHotSwap'}, handleResponse);
 		});
 	}
 });
@@ -140,7 +140,7 @@ chrome.contextMenus.create({
 	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
 	onclick: function() {
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-			chrome.tabs.sendMessage(tabs[0].id, {type: 'ackInstall'});
+			chrome.tabs.sendMessage(tabs[0].id, {type: 'ackInstall'}, handleResponse);
 		});
 	}
 });
@@ -153,7 +153,7 @@ chrome.contextMenus.create({
 	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
 	onclick: function() {
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-			chrome.tabs.sendMessage(tabs[0].id, {type: 'ackQuarantine'});
+			chrome.tabs.sendMessage(tabs[0].id, {type: 'ackQuarantine'}, handleResponse);
 		});
 	}
 });
@@ -166,7 +166,7 @@ chrome.contextMenus.create({
 	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
 	onclick: function() {
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-			chrome.tabs.sendMessage(tabs[0].id, {type: 'ackReclaim'});
+			chrome.tabs.sendMessage(tabs[0].id, {type: 'ackReclaim'}, handleResponse);
 		});
 	}
 });
@@ -188,7 +188,7 @@ chrome.contextMenus.create({
 	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
 	onclick: function() {
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-			chrome.tabs.sendMessage(tabs[0].id, {type: 'closeMove'});
+			chrome.tabs.sendMessage(tabs[0].id, {type: 'closeMove'}, handleResponse);
 		});
 	}
 });
@@ -201,7 +201,7 @@ chrome.contextMenus.create({
 	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
 	onclick: function() {
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-			chrome.tabs.sendMessage(tabs[0].id, {type: 'closeRemoval'});
+			chrome.tabs.sendMessage(tabs[0].id, {type: 'closeRemoval'}, handleResponse);
 		});
 	}
 });
@@ -214,7 +214,7 @@ chrome.contextMenus.create({
 	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
 	onclick: function() {
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-			chrome.tabs.sendMessage(tabs[0].id, {type: 'closeHotSwap'});
+			chrome.tabs.sendMessage(tabs[0].id, {type: 'closeHotSwap'}, handleResponse);
 		});
 	}
 });
@@ -227,7 +227,7 @@ chrome.contextMenus.create({
 	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
 	onclick: function() {
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-			chrome.tabs.sendMessage(tabs[0].id, {type: 'closeInstall'});
+			chrome.tabs.sendMessage(tabs[0].id, {type: 'closeInstall'}, handleResponse);
 		});
 	}
 });
@@ -248,7 +248,7 @@ chrome.contextMenus.create({
 	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
 	onclick: function() {
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-			chrome.tabs.sendMessage(tabs[0].id, {type: 'closeQuarantineDecommission'});
+			chrome.tabs.sendMessage(tabs[0].id, {type: 'closeQuarantineDecommission'}, handleResponse);
 		});
 	}
 });
@@ -261,7 +261,7 @@ chrome.contextMenus.create({
 	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
 	onclick: function() {
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-			chrome.tabs.sendMessage(tabs[0].id, {type: 'closeQuarantineRepair'});
+			chrome.tabs.sendMessage(tabs[0].id, {type: 'closeQuarantineRepair'}, handleResponse);
 		});
 	}
 });
@@ -274,7 +274,7 @@ chrome.contextMenus.create({
 	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
 	onclick: function() {
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-			chrome.tabs.sendMessage(tabs[0].id, {type: 'closeQuarantineRestock'});
+			chrome.tabs.sendMessage(tabs[0].id, {type: 'closeQuarantineRestock'}, handleResponse);
 		});
 	}
 });
@@ -287,7 +287,7 @@ chrome.contextMenus.create({
 	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
 	onclick: function() {
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-			chrome.tabs.sendMessage(tabs[0].id, {type: 'closeReclaim'});
+			chrome.tabs.sendMessage(tabs[0].id, {type: 'closeReclaim'}, handleResponse);
 		});
 	}
 });
@@ -309,7 +309,7 @@ chrome.storage.sync.get(['debug', 'userId', 'userName', 'userEmail', 'fullName',
 				parentId: 'snafuParent',
 				onclick: function() {
 					chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-						chrome.tabs.sendMessage(tabs[0].id, {type: 'userQuery'})
+						chrome.tabs.sendMessage(tabs[0].id, {type: 'userQuery'}, handleResponse)
 					});
 				}
 			});
@@ -335,7 +335,7 @@ chrome.storage.sync.get(['debug', 'userId', 'userName', 'userEmail', 'fullName',
 								groupId: items.groupId,
 								groupName: items.groupName
 							}
-						});
+						}, handleResponse);
 					});
 				}
 			});
@@ -356,7 +356,7 @@ chrome.storage.sync.get(['debug', 'userId', 'userName', 'userEmail', 'fullName',
 								groupId: items.groupId,
 								groupName: items.groupName
 							}
-						});
+						}, handleResponse);
 					});
 				}
 			});
@@ -374,17 +374,31 @@ chrome.storage.sync.get(['debug', 'userId', 'userName', 'userEmail', 'fullName',
 								chrome.tabs.sendMessage(tabs[0].id, {
 									type: 'sendErrorMsg',
 									statusMsg: 'Failed to reset your user data.'
+								}, function(response) {
+									chrome.contextMenus.remove('resetUserData');
+									chrome.contextMenus.create({
+										title: 'Query User Info',
+										contexts: ['page'],
+										id: 'userQuery',
+										parentId: 'snafuParent',
+										onclick: function() {
+											chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+												chrome.tabs.sendMessage(tabs[0].id, {type: 'userQuery'}, handleResponse)
+											});
+										}
+									});
+									handleResponse(response);
 								});
 							});
 						} else {
-							if (debug === true) {
+							if (items.debug === true) {
 								console.info('SNAFU: Removed user data.');
 							}
 							chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
 								chrome.tabs.sendMessage(tabs[0].id, {
 									type: 'sendSuccessMsg',
 									statusMsg: 'Successfully reset your user data.'
-								});
+								}, handleResponse);
 							});
 						}
 					});
@@ -401,4 +415,29 @@ chrome.storage.sync.get(['debug', 'userId', 'userName', 'userEmail', 'fullName',
  */
 function isVarEmpty(value) {
     return (value === null || value === undefined || value === NaN || value.toString().trim() === '') ? true : false
+}
+
+/**
+ * Handle the response from the sendMessage call for debugging purposes.
+ * @param	{Object}	response
+ * @return	{Void}
+ */
+function handleResponse(response) {
+	chrome.storage.sync.get(['debug'], function(items) {
+		if (chrome.runtime.lastError) {
+			console.warn('SNAFU Sync Get Error: %s', chrome.runtime.lastError.message);
+		} else {
+			if (items.debug === true) {
+				if (isVarEmpty(response) === false) {
+					if (response.success === false) {
+						console.warn('SNAFU Error: %s', response.errMsg);
+					} else {
+						console.info('SNAFU: Update sent!');
+					}
+				} else {
+					console.warn('SNAFU Error: Unable to process response to message.');
+				}
+			}
+		}
+	});
 }

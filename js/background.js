@@ -24,11 +24,11 @@ chrome.runtime.onInstalled.addListener(function(details) {
 });
 
 chrome.runtime.onStartup.addListener(function() {
-	chrome.storage.sync.get(['autoFinish', 'debug', 'canned'], function(items) {
+	chrome.storage.sync.get(['autoFinish', 'debug', 'canned', 'closePopup'], function(items) {
 		if (chrome.runtime.lastError) {
 			console.warn('SNAFU: Sync Get Error: %s', chrome.runtime.lastError.message);
 		} else {
-			if (!items.autoFinish) {
+			if (isVarEmpty(items.autoFinish) === true) {
 				chrome.storage.sync.set({autoFinish: 'none'}, function() {
 					if (chrome.runtime.lastError) {
 						console.warn('SNAFU autoFinish Set Error: %s', chrome.runtime.lastError.message);
@@ -36,7 +36,7 @@ chrome.runtime.onStartup.addListener(function() {
 				});
 			}
 
-			if (!items.debug) {
+			if (isVarEmpty(items.debug) === true) {
 				chrome.storage.sync.set({debug: false}, function() {
 					if (chrome.runtime.lastError) {
 						console.warn('SNAFU debug Set Error: %s', chrome.runtime.lastError.message);
@@ -44,7 +44,7 @@ chrome.runtime.onStartup.addListener(function() {
 				});
 			}
 
-			if (!items.canned) {
+			if (isVarEmpty(items.canned) === true) {
 				chrome.storage.sync.set({
 					canned: {
 						'callingUser': 'Calling {INC_CUST_FNAME} at {INC_CUR_PHONE}.',
@@ -56,6 +56,23 @@ chrome.runtime.onStartup.addListener(function() {
 					}
 				});
 			}
+
+			if (isVarEmpty(items.closePopup) === true) {
+				chrome.storage.sync.set({closePopup: false}, function() {
+					if (chrome.runtime.lastError) {
+						console.warn('SNAFU closePopup Set Error: %s', chrome.runtime.lastError.message);
+					}
+				});
+			}
 		}
 	});
 });
+
+/**
+ * Checks if a variable is empty (null, undefined, NaN, etc.).
+ * @param   {String}    value
+ * @return  {Boolean}
+ */
+function isVarEmpty(value) {
+    return (value === null || value === undefined || value === NaN || value.toString().trim() === '') ? true : false
+}

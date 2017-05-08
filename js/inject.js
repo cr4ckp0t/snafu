@@ -53,10 +53,10 @@ document.addEventListener('SNAFU_Inject', function(snafuInject) {
 		g_form.flash('assigned_to', '#3eb049', 0);
 		switch (snafuInject.detail.autoFinish) {
 			case 'save':
-				setTimeout(function() { g_form.save(); }, 1500);
+				setTimeout(function() { g_form.save(); }, 1000);
 				break;
 			case 'update':
-				setTimeout(function() { g_form.submit(); }, 1500);
+				setTimeout(function() { g_form.submit(); }, 1000);
 				break;
 			case 'none':
 			default:
@@ -139,7 +139,7 @@ document.addEventListener('SNAFU_Inject', function(snafuInject) {
 				// not going to let incidents be autosaved
 				if (snafuField === 'state' || (snafuField === 'incident_state' && snafuValue !== '6')) {
 					// delay 1.5 seconds
-					setTimeout(function() { g_form.save(); }, 1500);
+					setTimeout(function() { g_form.save(); }, 1000);
 				}
 				break;
 			
@@ -148,7 +148,7 @@ document.addEventListener('SNAFU_Inject', function(snafuInject) {
 				// not going to let incident be autoupdated
 				if (snafuField === 'state' || (snafuField === 'incident_state' && snafuValue !== '6')) {
 					// delay 1.5 seconds
-					setTimeout(function() { g_form.submit() }, 1500);
+					setTimeout(function() { g_form.submit() }, 1000);
 				}
 				break;
 			

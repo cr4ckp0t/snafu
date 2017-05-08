@@ -69,11 +69,12 @@ $(document).ready(function() {
 
 /**
  * Save settings from chrome.storage.sync.
- * @return	{Nothing}
+ * @return	{Void}
  */
 function saveSettings() {
 	chrome.storage.sync.set({
 		debug: ($('#debugMode').val() === 'enable') ? true : false,
+		closePopup: ($('#closePopup').val() === 'enable') ? true: false,
 		canned: getCannedMessages(),
 		autoFinish: $('#ticketCompletion').val()
 	}, function() {
@@ -81,18 +82,18 @@ function saveSettings() {
 			console.warn('SNAFU Sync Set Error: %s', chrome.runtime.lastError.message);
 			errorMessage('Failed to save settings.');
 		} else {
-			loadSettings();
 			successMessage('Settings saved successfully.');
 		}
+		loadSettings();
 	});
 }
 
 /**
  * Load settings from chrome.storage.sync.
- * @return	{Nothing}
+ * @return	{Void}
  */
 function loadSettings() {
-	chrome.storage.sync.get(['debug', 'canned', 'autoFinish', 'userId', 'userName', 'userEmail', 'fullName', 'groupName', 'groupId'], function(items) {
+	chrome.storage.sync.get(['debug', 'closePopup', 'canned', 'autoFinish', 'userId', 'userName', 'userEmail', 'fullName', 'groupName', 'groupId'], function(items) {
 		if (chrome.runtime.lastError) {
 			console.warn('SNAFU Sync Get Error: %s', chrome.runtime.lastError.message);
 		} else {
@@ -111,6 +112,19 @@ function loadSettings() {
 			} else {
 				$('#debugMode').val((items.debug === true) ? 'enable' : 'disable');
 				debug = items.debug;
+			}
+
+			// close popup on submit
+			if (isVarEmpty(items.closePopup) === true) {
+				chrome.storage.sync.set({closePopup: false}, function() {
+					if (chrome.runtime.lastError) {
+						console.warn('SNAFU closePopup Set Error: %s', chrome.runtime.lastError.message);
+					} else {
+						console.info('SNAFU: Created closePopup setting.');
+					}
+				});
+			} else {
+				$('#closePopup').val((items.closePopup === true) ? 'enable' : 'disable');
 			}
 			
 			// canned messages
