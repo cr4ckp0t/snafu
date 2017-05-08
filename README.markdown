@@ -2,6 +2,7 @@
 *Like SNAP, only way better!*
 
 [Chrome Web Store](https://chrome.google.com/webstore/detail/snafu-snow-automated-form/hnnbkmfkgnjngnkijdmfijmbkpjmmmpd?hl=en-US&gl=US)
+[Changelog](https://adamko.ch/snafu)
 
 ```
 SNAFU: SNow Automated Field Utilizer
