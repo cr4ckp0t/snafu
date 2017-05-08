@@ -108,23 +108,28 @@
                 </div>
             </td>
         </tr>
+        <tr>
+            <td colspan="2">
+                <br />
+                <div style="margin:0 auto;text-align:center;" class="form-group">
+                    <div id="alertSuccess" style="margin: 0 auto;text-align:center;width:75%" class="alert alert-success alert-dismissible" role="alert">
+                        <span id="alertSuccessMsg"></span>
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    </div>
+                    <div id="alertFailure" style="margin: 0 auto;text-align:center;width:75%;" class="alert alert-danger alert-dismissible" role="alert">
+                        <span id="alertFailureMsg"></span>
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    </div>
+                    <br />
+                    <button type="button" class="btn btn-lg btn-primary" id="saveSettings">Save Settings</button>
+                    <button type="button" class="btn btn-lg btn-warning" id="reloadData">Reload Settings</button>
+                    <button type="button" class="btn btn-lg btn-danger" id="resetUser">Reset User Data</button>
+                    <button type="button" class="btn btn-lg btn-danger" id="resetAll">Reset ALL Data</button>
+                    <button type="button" class="btn btn-lg btn-default" id="closeWindow">Close Window</button>
+                </div>
+            </td>
+        </tr>
     </table>
-    <br />
-    <div style="margin:0 auto;text-align:center;" class="form-group">
-        <div id="alertSuccess" class="alert alert-success alert-dismissible" role="alert">
-            <span id="alertSuccessMsg"></span>
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        </div>
-        <div id="alertFailure" class="alert alert-danger alert-dismissible" role="alert">
-            <span id="alertFailureMsg"></span>
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        </div>
-        <button type="button" class="btn btn-lg btn-primary" id="saveSettings">Save Settings</button>
-        <button type="button" class="btn btn-lg btn-warning" id="reloadData">Reload Settings</button>
-        <button type="button" class="btn btn-lg btn-danger" id="resetUser">Reset User Data</button>
-        <button type="button" class="btn btn-lg btn-danger" id="resetAll">Reset ALL Data</button>
-        <button type="button" class="btn btn-lg btn-default" id="closeWindow">Close Window</button>
-    </div>
     <script src="js/jquery.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="js/options.js"></script>

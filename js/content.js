@@ -27,6 +27,10 @@ var taskStates = ['2', '-5', '3', '4'];
 // data to send
 var injectData = {}
 
+// settings
+var debug;
+var autoFinish;
+
 // create event to manipulate g_form from the page
 var injectScript = document.createElement('script');
 injectScript.src = chrome.extension.getURL('js/inject.js');
@@ -35,6 +39,7 @@ injectScript.onload = function() { this.remove(); };
 
 // listen for triggers on the custom event for passing text
 document.addEventListener('SNAFU_UserQuery', function(userData) {
+    loadSettings();
     if (isVarEmpty(userData.detail.fullName) || isVarEmpty(userData.detail.userName) || isVarEmpty(userData.detail.userId) || isVarEmpty(userData.detail.userEmail) || isVarEmpty(userData.detail.groupName) || isVarEmpty(userData.detail.groupId)) {
         console.warn('SNAFU: Received incomplete user data.');
     } else {
@@ -56,350 +61,379 @@ document.addEventListener('SNAFU_UserQuery', function(userData) {
 });
 
 chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
+    
+    // load debug/autofinish settings
+    loadSettings();
+    
+    if (debug === true) {
+        console.info('SNAFU: Message received.');
+    }
+
+    // get ticket type
+    var ticketType = getTicketType();
+    
+    switch (msg.type) {
+        // query user information
+        case 'userQuery':
+            injectData = {
+                type: msg.type
+            }
+            break;
+        
+        // send info message
+        case 'sendSuccessMsg':
+        case 'sendErrorMsg':
+            injectData = {
+                type: msg.type,
+                statusMsg: msg.statusMsg
+            }
+            break;
+
+        // assign to me
+        case 'assignToMe':
+            if (ticketType === false) {
+                sendResponse({success: false, errMsg: 'Unable to detect task or incident.'});
+            } else {
+                injectData = {
+                    type: msg.type,
+                    userInfo: msg.userInfo
+                }
+                sendResponse({success: true, errMsg: null});
+            }
+            break;
+
+        // acknowledge incident
+        case 'ackIncident':
+            if (ticketType !== 'incident') {
+                sendResponse({success: false, errMsg: 'Unable to detect an open incident..'});
+            } else {
+                // set the data to inject
+                injectData = {
+                    type: msg.type,
+                    autoFinish: autoFinish,
+                    field: 'incident_state',
+                    value: '3', // In Progress
+                    workNotes: 'Acknowledging incident.',
+                    custNotes: null
+                }
+                // send the response
+                sendResponse({success: true, errMsg: null});
+            }
+            break;
+
+        case 'ackCallUser':
+            if (ticketType !== 'incident') {
+                sendResponse({success: false, errMsg: 'Unable to detect an open incident..'});
+            } else {
+                // set the data to inject
+                injectData = {
+                    type: msg.type,
+                    autoFinish: autoFinish,
+                    field: 'incident_state',
+                    value: '3', // In Progress
+                    workNotes: 'Acknowledging Incident.  Calling {INC_CUSTOMER} at {INC_CUR_PHONE}.',
+                    custNotes: null
+                }
+                // send the response
+                sendResponse({success: true, errMsg: null});
+            }
+            break;
+    
+        // acknowledge task
+        case 'ackTask':
+            if (ticketType !== 'task') {
+                sendResponse({success: false, errMsg: 'Unable to detect an open task.'});
+            } else {
+                injectData = {
+                    type: msg.type,
+                    autoFinish: autoFinish,
+                    field: 'state',
+                    value: '2', // Work in Progress
+                    workNotes: 'Acknowledging task.',
+                    custNotes: null
+                }
+                sendResponse({success: true, errMsg: null});
+            }
+            break;
+    
+        // acknowledge build
+        case 'ackHotSwap':
+            if (ticketType !== 'task') {
+                sendResponse({success: false, errMsg: 'Unable to detect an open task.'});
+            } else {
+                injectData = {
+                    type: msg.type,
+                    autoFinish: autoFinish,
+                    field: 'state',
+                    value: '2', // work in progress
+                    workNotes: 'Acknowledging build request.',
+                    custNotes: null
+                }
+                sendResponse({success: true, errMsg: null});
+            }
+            break;
+        
+        // acknowledge install task
+        case 'ackInstall':
+            if (ticketType !== 'task') {
+                sendResponse({success: false, errMsg: 'Unable to detect an open task.'});
+            } else {
+                injectData = {
+                    type: msg.type,
+                    autoFinish: autoFinish,
+                    field: 'state',
+                    value: '2', // work in progress
+                    workNotes: 'Acknowledging install task.',
+                    custNotes: null
+                }
+                sendResponse({success: true, errMsg: null});
+            }
+            break;
+
+        // acknowledge equipment move
+        case 'ackMove':
+            if (ticketType !== 'task') {
+                sendResponse({success: false, errMsg: 'Unable to detect an open task.'});
+            } else {
+                injectData = {
+                    type: msg.type,
+                    autoFinish: autoFinish,
+                    field: 'state',
+                    value: '2', // work in progress
+                    workNotes: 'Acknowledging equipment move task.',
+                    custNotes: null
+                }
+                sendResponse({success: true, errMsg: null});
+            }
+            break;
+
+        // acknowledge quarantine
+        case 'ackQuarantine':
+            if (ticketType !== 'task') {
+                sendResponse({success: false, errMsg: 'Unable to detect an open task.'});
+            } else {
+                injectData = {
+                    type: msg.type,
+                    autoFinish: autoFinish,
+                    field: 'state',
+                    value: '2', // work in progress
+                    workNotes: 'Acknowledging quarantine task.',
+                    custNotes: null
+                }
+                sendResponse({success: true, errMsg: null});
+            }
+            break;
+
+        // acknowledge reclaim
+        case 'ackReclaim':
+            if (ticketType !== 'task') {
+                sendResponse({success: false, errMsg: 'Unable to detect an open task.'});
+            } else {
+                injectData = {
+                    type: msg.type,
+                    autoFinish: autoFinish,
+                    field: 'state',
+                    value: '2', // work in progress
+                    workNotes: 'Acknowledging reclaim task.',
+                    custNotes: null
+                }
+                sendResponse({success: true, errMsg: null});
+            }
+            break;
+
+        // acknowledge equipment removal
+        case 'ackRemoval':
+            if (ticketType !== 'task') {
+                sendResponse({success: false, errMsg: 'Unable to detect an open task.'});
+            } else {
+                injectData = {
+                    type: msg.type,
+                    autoFinish: autoFinish,
+                    field: 'state',
+                    value: '2', // work in progress
+                    workNotes: 'Acknowledging equipment removal task.',
+                    custNotes: null
+                }
+                sendResponse({success: true, errMsg: null});
+            }
+            break;
+        
+        case 'closeHotSwap':
+            if (ticketType !== 'task') {
+                sendResponse({success: false, errMsg: 'Unable to detect an open task.'});
+            } else {
+                injectData = {
+                    type: msg.type,
+                    autoFinish: autoFinish,
+                    field: 'state',
+                    value: '3', // closed complete
+                    workNotes: 'Computer has been built. One {REPLACE_MODEL} has been built {REPLACE_BUILD}. Tag {REPLACE_ASSET} HostName {REPLACE_HOSTNAME}. Resolving Task.',
+                    custNotes: null
+                }
+                sendResponse({success: true, errMsg: null});
+            }
+            break;
+
+        // close install task
+        case 'closeInstall':
+            if (ticketType !== 'task') {
+                sendResponse({success: false, errMsg: 'Unable to detect an open task.'});
+            } else {
+                injectData = {
+                    type: msg.type,
+                    autoFinish: autoFinish,
+                    field: 'state',
+                    value: '3', // closed complete
+                    workNotes: 'Installed requested equipment and attached signed completion sheet.',
+                    custNotes: null
+                }
+                sendResponse({success: true, errMsg: null});
+            }
+            break;
+
+        // close equipment move task
+        case 'closeMove':
+            if (ticketType !== 'task') {
+                sendResponse({success: false, errMsg: 'Unable to detect an open task.'});
+            } else {
+                injectData = {
+                    type: msg.type,
+                    autoFinish: autoFinish,
+                    field: 'state',
+                    value: '3', // closed complete
+                    workNotes: 'Equipment has been moved, per the request.',
+                    custNotes: null
+                }
+                sendResponse({success: true, errMsg: null});
+            }
+            break;
+        
+        // close quarantine task
+        case 'closeQuarantineDecommission':
+        case 'closeQuarantineRepair':
+        case 'closeQuarantineRestock':
+            if (ticketType !== 'task') {
+                sendResponse({success: false, errMsg: 'Unable to detect an open task.'});
+            } else {
+                injectData = {
+                    type: msg.type,
+                    autoFinish: autoFinish,
+                    field: 'state',
+                    value: '3', // closed complete
+                    workNotes: 'Device removed from quarantine.',
+                    custNotes: null
+                }
+                sendResponse({success: true, errMsg: null});
+            }
+            break;
+
+        // close reclaim task
+        case 'closeReclaim':
+            if (ticketType !== 'task') {
+                sendResponse({success: false, errMsg: 'Unable to detect an open task.'});
+            } else {
+                injectData = {
+                    type: msg.type,
+                    autoFinish: autoFinish,
+                    field: 'state',
+                    value: '3', // closed complete
+                    workNotes: 'Device reclaimed and added to quarantine.',
+                    custNotes: null
+                }
+                sendResponse({success: true, errMsg: null});
+            }
+            break;
+        
+        // close equipment removal
+        case 'closeRemoval':
+            if (ticketType !== 'task') {
+                sendResponse({success: false, errMsg: 'Unable to detect an open task.'});
+            } else {
+                injectData = {
+                    type: msg.type,
+                    autoFinish: autoFinish,
+                    field: 'state',
+                    value: '3',
+                    workNotes: 'Removed requested equipment.',
+                    custNotes: null
+                }
+                sendResponse({success: true, errMsg: null});
+            }
+            break;
+
+        // send a ticket update
+        case 'sendUpdate':
+            // prevent closing incident as incomplete
+            if (ticketType === 'incident' && msg.tState === '3') msg.tState = '2';
+            if (ticketType !== false) {
+                injectData = {
+                    type: msg.type,
+                    autoFinish: autoFinish,
+                    field: (ticketType === 'incident') ? 'incident_state' : 'state',
+                    value: (ticketType === 'incident') ? incStates[parseInt(msg.tState)] : taskStates[parseInt(msg.tState)],
+                    workNotes: msg.workNotes || null,
+                    custNotes: msg.custNotes || null
+                }
+                sendResponse({success: true, errMsg: null});
+            } else {
+                // send error
+                sendResponse({success: false, errMsg: 'Service Now must be active tab.'});
+            }
+            break;
+
+        // send an equipment build
+        case 'sendEquipment':
+            if (ticketType !== 'task') {
+                sendResponse({success: false, errMsg: 'Unable to detect an open task.'});
+            } else {
+                injectData = {
+                    type: msg.type,
+                    autoFinish: autoFinish,
+                    field: 'state',
+                    value: '3',
+                    workNotes: msg.workNotes || null,
+                    custNotes: 'My name is {TECH_NAME} and I have completed the build process for your workstation. The next step is for the system to be delivered to our technicians supporting your campus or ambulatory location so they can schedule an appropriate time to come to your desk and install the system. Please be sure to watch for communication regarding the delivery and installation of your computer at your desk.'
+                }
+                sendResponse({success: true, errMsg: null});
+            }
+            break;
+
+        default: 
+            injectData = null;
+            break;
+    }
+
+    // prevent any shenanigans
+    if (isVarEmpty(injectData) === false && isVarEmpty(injectData.type) === false) {
+        // custom event for sending data to the injected script
+        var injectEvent = document.createEvent('CustomEvent');
+        injectEvent.initCustomEvent('SNAFU_Inject', true, true, injectData);
+        document.dispatchEvent(injectEvent);
+    }
+});
+
+/**
+ * Sets the global settings debug and autoFinish.
+ * @return  {null}
+ */
+function loadSettings() {
     chrome.storage.sync.get(['autoFinish', 'debug'], function(items) {
         if (chrome.runtime.lastError) {
             console.warn('SNAFU Sync Get Error: %s', chrome.runtime.lastError.message);
         } else {
-            if (items.debug === true) {
-                console.info('SNAFU: Received Settings');
-            }
-
-            // get ticket type
-            var ticketType = getTicketType();
-            
-            switch (msg.type) {
-                // query user information
-                case 'userQuery':
-                    injectData = {
-                        type: msg.type
-                    }
-                    break;
-
-                // assign to me
-                case 'assignToMe':
-                    if (ticketType === false) {
-                        sendResponse({success: false, errMsg: 'Unable to detect task or incident.'});
-                    } else {
-                        injectData = {
-                            type: msg.type,
-                            userInfo: msg.userInfo
-                        }
-                        sendResponse({success: true, errMsg: null});
-                    }
-                    break;
-
-                // acknowledge incident
-                case 'ackIncident':
-                    if (ticketType !== 'incident') {
-                        sendResponse({success: false, errMsg: 'Unable to detect an open incident..'});
-                    } else {
-                        // set the data to inject
-                        injectData = {
-                            type: msg.type,
-                            autoFinish: items.autoFinish,
-                            field: 'incident_state',
-                            value: '3', // In Progress
-                            workNotes: 'Acknowledging incident.',
-                            custNotes: null
-                        }
-                        // send the response
-                        sendResponse({success: true, errMsg: null});
-                    }
-                    break;
-
-                case 'ackCallUser':
-                    if (ticketType !== 'incident') {
-                        sendResponse({success: false, errMsg: 'Unable to detect an open incident..'});
-                    } else {
-                        // set the data to inject
-                        injectData = {
-                            type: msg.type,
-                            autoFinish: items.autoFinish,
-                            field: 'incident_state',
-                            value: '3', // In Progress
-                            workNotes: 'Acknowledging Incident.  Calling {INC_CUSTOMER} at {INC_CUR_PHONE}.',
-                            custNotes: null
-                        }
-                        // send the response
-                        sendResponse({success: true, errMsg: null});
-                    }
-                    break;
-            
-                // acknowledge task
-                case 'ackTask':
-                    if (ticketType !== 'task') {
-                        sendResponse({success: false, errMsg: 'Unable to detect an open task.'});
-                    } else {
-                        injectData = {
-                            type: msg.type,
-                            autoFinish: items.autoFinish,
-                            field: 'state',
-                            value: '2', // Work in Progress
-                            workNotes: 'Acknowledging task.',
-                            custNotes: null
-                        }
-                        sendResponse({success: true, errMsg: null});
-                    }
-                    break;
-            
-                // acknowledge build
-                case 'ackHotSwap':
-                    if (ticketType !== 'task') {
-                        sendResponse({success: false, errMsg: 'Unable to detect an open task.'});
-                    } else {
-                        injectData = {
-                            type: msg.type,
-                            autoFinish: items.autoFinish,
-                            field: 'state',
-                            value: '2', // work in progress
-                            workNotes: 'Acknowledging build request.',
-                            custNotes: null
-                        }
-                        sendResponse({success: true, errMsg: null});
-                    }
-                    break;
-                
-                // acknowledge install task
-                case 'ackInstall':
-                    if (ticketType !== 'task') {
-                        sendResponse({success: false, errMsg: 'Unable to detect an open task.'});
-                    } else {
-                        injectData = {
-                            type: msg.type,
-                            autoFinish: items.autoFinish,
-                            field: 'state',
-                            value: '2', // work in progress
-                            workNotes: 'Acknowledging install task.',
-                            custNotes: null
-                        }
-                        sendResponse({success: true, errMsg: null});
-                    }
-                    break;
-
-                // acknowledge equipment move
-                case 'ackMove':
-                    if (ticketType !== 'task') {
-                        sendResponse({success: false, errMsg: 'Unable to detect an open task.'});
-                    } else {
-                        injectData = {
-                            type: msg.type,
-                            autoFinish: items.autoFinish,
-                            field: 'state',
-                            value: '2', // work in progress
-                            workNotes: 'Acknowledging equipment move task.',
-                            custNotes: null
-                        }
-                        sendResponse({success: true, errMsg: null});
-                    }
-                    break;
-
-                // acknowledge quarantine
-                case 'ackQuarantine':
-                    if (ticketType !== 'task') {
-                        sendResponse({success: false, errMsg: 'Unable to detect an open task.'});
-                    } else {
-                        injectData = {
-                            type: msg.type,
-                            autoFinish: items.autoFinish,
-                            field: 'state',
-                            value: '2', // work in progress
-                            workNotes: 'Acknowledging quarantine task.',
-                            custNotes: null
-                        }
-                        sendResponse({success: true, errMsg: null});
-                    }
-                    break;
-
-                // acknowledge reclaim
-                case 'ackReclaim':
-                    if (ticketType !== 'task') {
-                        sendResponse({success: false, errMsg: 'Unable to detect an open task.'});
-                    } else {
-                        injectData = {
-                            type: msg.type,
-                            autoFinish: items.autoFinish,
-                            field: 'state',
-                            value: '2', // work in progress
-                            workNotes: 'Acknowledging reclaim task.',
-                            custNotes: null
-                        }
-                        sendResponse({success: true, errMsg: null});
-                    }
-                    break;
-
-                // acknowledge equipment removal
-                case 'ackRemoval':
-                    if (ticketType !== 'task') {
-                        sendResponse({success: false, errMsg: 'Unable to detect an open task.'});
-                    } else {
-                        injectData = {
-                            type: msg.type,
-                            autoFinish: items.autoFinish,
-                            field: 'state',
-                            value: '2', // work in progress
-                            workNotes: 'Acknowledging equipment removal task.',
-                            custNotes: null
-                        }
-                        sendResponse({success: true, errMsg: null});
-                    }
-                    break;
-                
-                case 'closeHotSwap':
-                    if (ticketType !== 'task') {
-                        sendResponse({success: false, errMsg: 'Unable to detect an open task.'});
-                    } else {
-                        injectData = {
-                            type: msg.type,
-                            autoFinish: items.autoFinish,
-                            field: 'state',
-                            value: '3', // closed complete
-                            workNotes: 'Computer has been built. One {REPLACE_MODEL} has been built {REPLACE_BUILD}. Tag {REPLACE_ASSET} HostName {REPLACE_HOSTNAME}. Resolving Task.',
-                            custNotes: null
-                        }
-                        sendResponse({success: true, errMsg: null});
-                    }
-                    break;
-
-                // close install task
-                case 'closeInstall':
-                    if (ticketType !== 'task') {
-                        sendResponse({success: false, errMsg: 'Unable to detect an open task.'});
-                    } else {
-                        injectData = {
-                            type: msg.type,
-                            autoFinish: items.autoFinish,
-                            field: 'state',
-                            value: '3', // closed complete
-                            workNotes: 'Installed requested equipment and attached signed completion sheet.',
-                            custNotes: null
-                        }
-                        sendResponse({success: true, errMsg: null});
-                    }
-                    break;
-
-                // close equipment move task
-                case 'closeMove':
-                    if (ticketType !== 'task') {
-                        sendResponse({success: false, errMsg: 'Unable to detect an open task.'});
-                    } else {
-                        injectData = {
-                            type: msg.type,
-                            autoFinish: items.autoFinish,
-                            field: 'state',
-                            value: '3', // closed complete
-                            workNotes: 'Equipment has been moved, per the request.',
-                            custNotes: null
-                        }
-                        sendResponse({success: true, errMsg: null});
-                    }
-                    break;
-                
-                // close quarantine task
-                case 'closeQuarantineDecommission':
-                case 'closeQuarantineRepair':
-                case 'closeQuarantineRestock':
-                    if (ticketType !== 'task') {
-                        sendResponse({success: false, errMsg: 'Unable to detect an open task.'});
-                    } else {
-                        injectData = {
-                            type: msg.type,
-                            autoFinish: items.autoFinish,
-                            field: 'state',
-                            value: '3', // closed complete
-                            workNotes: 'Device removed from quarantine.',
-                            custNotes: null
-                        }
-                        sendResponse({success: true, errMsg: null});
-                    }
-                    break;
-
-                // close reclaim task
-                case 'closeReclaim':
-                    if (ticketType !== 'task') {
-                        sendResponse({success: false, errMsg: 'Unable to detect an open task.'});
-                    } else {
-                        injectData = {
-                            type: msg.type,
-                            autoFinish: items.autoFinish,
-                            field: 'state',
-                            value: '3', // closed complete
-                            workNotes: 'Device reclaimed and added to quarantine.',
-                            custNotes: null
-                        }
-                        sendResponse({success: true, errMsg: null});
-                    }
-                    break;
-                
-                // close equipment removal
-                case 'closeRemoval':
-                    if (ticketType !== 'task') {
-                        sendResponse({success: false, errMsg: 'Unable to detect an open task.'});
-                    } else {
-                        injectData = {
-                            type: msg.type,
-                            autoFinish: items.autoFinish,
-                            field: 'state',
-                            value: '3',
-                            workNotes: 'Removed requested equipment.',
-                            custNotes: null
-                        }
-                        sendResponse({success: true, errMsg: null});
-                    }
-                    break;
-
-                // send a ticket update
-                case 'sendUpdate':
-                    // prevent closing incident as incomplete
-                    if (ticketType === 'incident' && msg.tState === '3') msg.tState = '2';
-                    if (ticketType !== false) {
-                        injectData = {
-                            type: msg.type,
-                            autoFinish: items.autoFinish,
-                            field: (ticketType === 'incident') ? 'incident_state' : 'state',
-                            value: (ticketType === 'incident') ? incStates[parseInt(msg.tState)] : taskStates[parseInt(msg.tState)],
-                            workNotes: msg.workNotes || null,
-                            custNotes: msg.custNotes || null
-                        }
-                        sendResponse({success: true, errMsg: null});
-                    } else {
-                        // send error
-                        sendResponse({success: false, errMsg: 'Service Now must be active tab.'});
-                    }
-                    break;
-
-                // send an equipment build
-                case 'sendEquipment':
-                    if (ticketType !== 'task') {
-                        sendResponse({success: false, errMsg: 'Unable to detect an open task.'});
-                    } else {
-                        injectData = {
-                            type: msg.type,
-                            autoFinish: items.autoFinish,
-                            field: 'state',
-                            value: '3',
-                            workNotes: msg.workNotes || null,
-                            custNotes: 'My name is {TECH_NAME} and I have completed the build process for your workstation. The next step is for the system to be delivered to our technicians supporting your campus or ambulatory location so they can schedule an appropriate time to come to your desk and install the system. Please be sure to watch for communication regarding the delivery and installation of your computer at your desk.'
-                        }
-                        sendResponse({success: true, errMsg: null});
-                    }
-                    break;
-
-                default: 
-                    injectData = null;
-                    break;
-            }
-
-            // prevent any shenanigans
-            if (isVarEmpty(injectData) === false && isVarEmpty(injectData.type) === false) {
-                // custom event for sending data to the injected script
-                var injectEvent = document.createEvent('CustomEvent');
-                injectEvent.initCustomEvent('SNAFU_Inject', true, true, injectData);
-                document.dispatchEvent(injectEvent);
+            debug = (isVarEmpty(items.debug) === false) ? items.debug : false;
+            autoFinish = (isVarEmpty(items.autoFinish) === false) ? items.autoFinish : 'none';  
+            if (debug === true) {
+                console.info('SNAFU: Loaded settings.');
             }
         }
     });
-});
+}
 
+/**
+ * Determines the type of ticket that is open.
+ * @return  {String}
+ */
 function getTicketType() {
     if (document.getElementById('incident.incident_state') !== null) {
         // it's an incident
@@ -413,6 +447,23 @@ function getTicketType() {
     }
 }
 
+/**
+ * Checks if a variable is empty (null, undefined, NaN, etc.).
+ * @param   {String}    value
+ * @return  {Boolean}
+ */
 function isVarEmpty(value) {
     return (value === null || value === undefined || value === NaN ) ? true : false
+}
+
+/**
+ * Javascript sprintf function.
+ * @param  {String} template
+ * @param  {String[]} values
+ * @return {String}
+ */
+function sprintf(template, values) {
+  return template.replace(/%s/g, function() {
+    return values.shift();
+  });
 }

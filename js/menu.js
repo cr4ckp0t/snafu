@@ -16,6 +16,16 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  **/
 
+var debug
+
+chrome.storage.sync.get(['debug'], function(items) {
+	if (chrome.runtime.lastError) {
+		console.warn('SNAFU debug Get Error: %s', chrome.runtime.lastError.message);
+	} else {
+		debug = (isVarEmpty(items.debug) === false) ? items.debug : false;
+	}
+});
+
 // uber parent
 chrome.contextMenus.create({
 	title: 'SNAFU',
@@ -350,10 +360,45 @@ chrome.storage.sync.get(['debug', 'userId', 'userName', 'userEmail', 'fullName',
 					});
 				}
 			});
+
+			chrome.contextMenus.create({
+				title: 'Reset User Data',
+				contexts: ['page'],
+				id: 'resetUserData',
+				parentId: 'snafuParent',
+				onclick: function() {
+					chrome.storage.sync.remove(['userId', 'userName', 'userEmail', 'fullName', 'groupName', 'groupId'], function() {
+						if (chrome.runtime.lastError) {
+							console.warn('SNAFU Sync Remove Error: %s', chrome.runtime.lastError.message);
+							chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+								chrome.tabs.sendMessage(tabs[0].id, {
+									type: 'sendErrorMsg',
+									statusMsg: 'Failed to reset your user data.'
+								});
+							});
+						} else {
+							if (debug === true) {
+								console.info('SNAFU: Removed user data.');
+							}
+							chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+								chrome.tabs.sendMessage(tabs[0].id, {
+									type: 'sendSuccessMsg',
+									statusMsg: 'Successfully reset your user data.'
+								});
+							});
+						}
+					});
+				}
+			});
 		}
 	}
 });
 
+/**
+ * Checks if a variable is empty (null, undefined, NaN, etc.).
+ * @param   {String}    value
+ * @return  {Boolean}
+ */
 function isVarEmpty(value) {
     return (value === null || value === undefined || value === NaN || value.toString().trim() === '') ? true : false
 }

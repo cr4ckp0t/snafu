@@ -25,9 +25,6 @@
 
 var snafuRslvComments = "My name is {TECH_NAME} and I was the technician that assisted you with {TICKET}. Thank you for the opportunity to provide you with service today with your {INC_TYPE}. If for any reason, your issue does not appear to be resolved please contact the Service Desk at (864) 455-8000.";
 
-//console.info(window.g_user);
-//console.info(g_form.getValue('rhs_restock_status'));
-
 // listen for triggers on the custom event for passing text
 document.addEventListener('SNAFU_Inject', function(snafuInject) {
 
@@ -38,13 +35,14 @@ document.addEventListener('SNAFU_Inject', function(snafuInject) {
 		// query the user info sent by the options page
 		var snafuQuery = document.createEvent('CustomEvent');
 		snafuQuery.initCustomEvent('SNAFU_UserQuery', true, true, {
-			fullName: ucwords(snafuAssignedTo.name),
+			fullName: snafuUcwords(snafuAssignedTo.name),
 			userId: snafuAssignedTo.sys_id,
 			userName: snafuAssignedTo.user_name,
 			userEmail: snafuAssignedTo.email,
-			groupName: ucwords(snafuAssignmentGroup.name),
+			groupName: snafuUcwords(snafuAssignmentGroup.name),
 			groupId: snafuAssignmentGroup.sys_id
 		});
+		g_form.addInfoMessage('SNAFU: Saved your user information.');
 		document.dispatchEvent(snafuQuery);
 	
 	// assign task or incident to the user
@@ -65,38 +63,46 @@ document.addEventListener('SNAFU_Inject', function(snafuInject) {
 				break;
 		}
 
+	// send success (info) message
+	} else if (snafuInject.detail.type === 'sendSuccessMsg') {
+		g_form.addInfoMessage(snafuInject.detail.statusMsg);
+	
+	// send error message
+	} else if (snafuInject.detail.type === 'sendErrorMsg') {
+		g_form.addErrorMessage(snafuInject.detail.statusMsg);
+
 	// handle everything else
 	} else {
 		var snafuType = snafuInject.detail.type;
 		var snafuField = snafuInject.detail.field;
 		var snafuValue = snafuInject.detail.value;
-		var snafuWorkNotes = (isVarEmpty(snafuInject.detail.workNotes) === false) ? replaceWildcards(snafuInject.detail.workNotes) : null;
-		var snafuCustNotes = (isVarEmpty(snafuInject.detail.custNotes) === false) ? replaceWildcards(snafuInject.detail.custNotes) : null;
+		var snafuWorkNotes = (snafuIsVarEmpty(snafuInject.detail.workNotes) === false) ? snafuReplaceWildcards(snafuInject.detail.workNotes) : null;
+		var snafuCustNotes = (snafuIsVarEmpty(snafuInject.detail.custNotes) === false) ? snafuReplaceWildcards(snafuInject.detail.custNotes) : null;
 
 		// set field with value
-		if (isVarEmpty(snafuField) === false && isVarEmpty(snafuValue) === false) {
+		if (snafuIsVarEmpty(snafuField) === false && snafuIsVarEmpty(snafuValue) === false) {
 			g_form.setValue(snafuField, snafuValue);
 			g_form.flash(snafuField, '#3eb049', 0);
 		}
 
 		// customer notes (comments)
-		if (isVarEmpty(snafuCustNotes) === false) {
+		if (snafuIsVarEmpty(snafuCustNotes) === false) {
 			g_form.setValue('comments', snafuCustNotes);
 			g_form.flash('comments', '#3eb049', 0);
 		}
 
 		// work notes
-		if (isVarEmpty(snafuWorkNotes) === false) {
+		if (snafuIsVarEmpty(snafuWorkNotes) === false) {
 			g_form.setValue('work_notes', snafuWorkNotes);
 			g_form.flash('work_notes', '#3eb049', 0);
 		}
 
 		// set the resolve message if it is a resolved code (incident only)
 		if (snafuField === 'incident_state' && snafuValue === '6') {
-			g_form.setValue('comments', replaceWildcards(snafuRslvComments));
+			g_form.setValue('comments', snafuReplaceWildcards(snafuRslvComments));
 			g_form.flash('comments', '#3eb049', 0);
 
-			if (isVarEmpty(snafuWorkNotes) === false) {
+			if (snafuIsVarEmpty(snafuWorkNotes) === false) {
 				g_form.setValue('close_notes', snafuWorkNotes);
 				g_form.flash('close_notes', '#3eb049', 0);
 			}
@@ -154,66 +160,74 @@ document.addEventListener('SNAFU_Inject', function(snafuInject) {
 	}
 });
 
+/**
+ * Returns string appropriate for Due Date field. XX-XX-XXXX XX:XX:XX
+ * @return	{String}
+ */
 function snafuGetDueDate() {
     var d = new Date();
     return ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2) + '-' + d.getFullYear() + ' 17:00:00';
 }
 
-// replace wildcards in the notes using eval() and regular expressions
-function replaceWildcards(strIn) {
+/**
+ * Replaces wildcards with eval'd strings.
+ * @param	{String}	strIn
+ * @return	{String}
+ */
+function snafuReplaceWildcards(strIn) {
 	// object containing the code to be eval'd as a replacement for the wildcards
 	var wildcards = {
 		// global
-		"{ASSIGN_GROUP}": "g_form.getReference('assignment_group').name || 'UNKNOWN';",									// assignment group
-		"{OPENED}": "g_form.getValue('opened_at') || 'UNKNOWN';",														// date/time ticket opened
-		"{OPENED_BY}": "g_form.getValue('opened_by_label') || 'UNKNOWN';",												// who opened the ticket
-		"{ROOT_CAUSE}": "g_form.getReference('cmdb_ci').name || 'UNKNOWN';",											// root cause ci field
-		"{TECH_NAME}": "ucwords(g_form.getReference('assigned_to').name) || 'UNKNOWN';",								// technician's name
-		"{TICKET}": "g_form.getValue('number') || 'UNKNOWN';",															// task/incident number
+		"{ASSIGN_GROUP}": "g_form.getReference('assignment_group').name || 'UNKNOWN';",										// assignment group
+		"{OPENED}": "g_form.getValue('opened_at') || 'UNKNOWN';",															// date/time ticket opened
+		"{OPENED_BY}": "g_form.getValue('opened_by_label') || 'UNKNOWN';",													// who opened the ticket
+		"{ROOT_CAUSE}": "g_form.getReference('cmdb_ci').name || 'UNKNOWN';",												// root cause ci field
+		"{TECH_NAME}": "snafuUcwords(g_form.getReference('assigned_to').name) || 'UNKNOWN';",								// technician's name
+		"{TICKET}": "g_form.getValue('number') || 'UNKNOWN';",																// task/incident number
 
 		//incident only
-		"{INC_ADDR}": "ucwords(g_form.getReference('u_street_address').u_name) || 'UNKNOWN';",							// incident street address
-		"{INC_ADD_LOC}": "g_form.getValue('u_location_description') || 'UNKNOWN';",										// incident additional location information
-		"{INC_ALT_PHONE}": "g_form.getValue('u_alternate_phone') || 'UNKNOWN';",										// alternative phone number
-		"{INC_CAMPUS}": "g_form.getValue('u_campus') || 'UNKNOWN';",													// campus
-		"{INC_CUR_PHONE}": "g_form.getValue('u_current_phone') || 'UNKNOWN';",											// current phone number
-		"{INC_CUSTOMER}": "ucwords(g_form.getReference('caller_id').name) || 'UNKNOWN';",								// customer who called in the incident
-		"{INC_CUST_FNAME}": "ucwords(g_form.getReference('caller_id').first_name) || 'UNKNOWN';",						// customer's first name
-		"{INC_CUST_LNAME}": "ucwords(g_form.getReference('caller_id').last_name) || 'UNKNOWN';",						// customer's last name
-		"{INC_DETAIL_DESC}": "g_form.getValue('description') || 'UNKNOWN';",											// detailed description
-		"{INC_EMAIL}": "g_form.getValue('email') || 'UNKNOWN';",														// customer's email
-		"{INC_IMPACT}": "g_form.getValue('impact') || 'UNKNOWN';",														// incident impact
-		"{INC_KB}": "g_form.getReference('u_kb_article').number || 'UNKNOWN';",											// knowledgebase article
-		"{INC_LOC_TYPE}": "g_form.getValue('u_location_type') || 'UNKNOWN';",											// location type
-		"{INC_PRACTICE}": "ucwords(g_form.getReference('u_practice_name').name) || 'UNKNOWN';",							// practice name
-		"{INC_PRIORITY}": "g_form.getValue('priority') || 'UNKNOWN';",													// incident priority
-		"{INC_SHORT_DESC}": "g_form.getValue('short_description') || 'UNKNOWN';",										// short description
-		"{INC_STATE}": "g_form.getDisplayValue('incident_state') || 'UNKNOWN';",										// incident state
-		"{INC_TYPE}": "g_form.getValue('u_incident_type') || 'UNKNOWN';",												// incident type
-		"{INC_TYPE_2}": "g_form.getValue('u_incident_type_2') || 'UNKNOWN';",											// incident type 2
-		"{INC_TYPE_3}": "g_form.getValue('u_incident_type_3') || 'UNKNOWN';",											// incident type 3
-		"{INC_URGENCY}": "g_form.getValue('urgency') || 'UNKNOWN';",													// incident urgency
+		"{INC_ADDR}": "snafuUcwords(g_form.getReference('u_street_address').u_name) || 'UNKNOWN';",							// incident street address
+		"{INC_ADD_LOC}": "g_form.getValue('u_location_description') || 'UNKNOWN';",											// incident additional location information
+		"{INC_ALT_PHONE}": "g_form.getValue('u_alternate_phone') || 'UNKNOWN';",											// alternative phone number
+		"{INC_CAMPUS}": "g_form.getValue('u_campus') || 'UNKNOWN';",														// campus
+		"{INC_CUR_PHONE}": "g_form.getValue('u_current_phone') || 'UNKNOWN';",												// current phone number
+		"{INC_CUSTOMER}": "snafuUcwords(g_form.getReference('caller_id').name) || 'UNKNOWN';",								// customer who called in the incident
+		"{INC_CUST_FNAME}": "snafuUcwords(g_form.getReference('caller_id').first_name) || 'UNKNOWN';",						// customer's first name
+		"{INC_CUST_LNAME}": "snafuUcwords(g_form.getReference('caller_id').last_name) || 'UNKNOWN';",						// customer's last name
+		"{INC_DETAIL_DESC}": "g_form.getValue('description') || 'UNKNOWN';",												// detailed description
+		"{INC_EMAIL}": "g_form.getValue('email') || 'UNKNOWN';",															// customer's email
+		"{INC_IMPACT}": "g_form.getValue('impact') || 'UNKNOWN';",															// incident impact
+		"{INC_KB}": "g_form.getReference('u_kb_article').number || 'UNKNOWN';",												// knowledgebase article
+		"{INC_LOC_TYPE}": "g_form.getValue('u_location_type') || 'UNKNOWN';",												// location type
+		"{INC_PRACTICE}": "snafuUcwords(g_form.getReference('u_practice_name').name) || 'UNKNOWN';",						// practice name
+		"{INC_PRIORITY}": "g_form.getValue('priority') || 'UNKNOWN';",														// incident priority
+		"{INC_SHORT_DESC}": "g_form.getValue('short_description') || 'UNKNOWN';",											// short description
+		"{INC_STATE}": "g_form.getDisplayValue('incident_state') || 'UNKNOWN';",											// incident state
+		"{INC_TYPE}": "g_form.getValue('u_incident_type') || 'UNKNOWN';",													// incident type
+		"{INC_TYPE_2}": "g_form.getValue('u_incident_type_2') || 'UNKNOWN';",												// incident type 2
+		"{INC_TYPE_3}": "g_form.getValue('u_incident_type_3') || 'UNKNOWN';",												// incident type 3
+		"{INC_URGENCY}": "g_form.getValue('urgency') || 'UNKNOWN';",														// incident urgency
 
 		// task only	
-		"{CATEGORY_ITEM}": "g_form.getValue('cat_item') || 'UNKNOWN';",													// category item
-		"{DUE_DATE}": "g_form.getValue('due_date') || 'UNKNOWN';",														// due date
-		"{REQUEST_ITEM}": "g_form.getValue('request_item') || 'UNKNOWN';",												// ritm number
-		"{REQUESTED_BY}": "ucwords(g_form.getReference('requested_for').name) || 'UNKNOWN';",							// task requested by
-		"{REQUESTED_FOR}": "ucwords(g_form.getReference('u_requested_for').name) || 'UNKNOWN';",						// task requested for
-		"{TASK_STATE}": "g_form.getDisplayValue('state') || 'UNKNOWN';",												// task state
+		"{CATEGORY_ITEM}": "g_form.getValue('cat_item') || 'UNKNOWN';",														// category item
+		"{DUE_DATE}": "g_form.getValue('due_date') || 'UNKNOWN';",															// due date
+		"{REQUEST_ITEM}": "g_form.getValue('request_item') || 'UNKNOWN';",													// ritm number
+		"{REQUESTED_BY}": "snafuUcwords(g_form.getReference('requested_for').name) || 'UNKNOWN';",							// task requested by
+		"{REQUESTED_FOR}": "snafuUcwords(g_form.getReference('u_requested_for').name) || 'UNKNOWN';",						// task requested for
+		"{TASK_STATE}": "g_form.getDisplayValue('state') || 'UNKNOWN';",													// task state
 
 		// hot swap only
-		"{BROKEN_ASSET}": "g_form.getReference('rhs_comp_name').asset_tag || 'UNKNOWN';",								// broken computer asset tag
-		"{BROKEN_HOSTNAME}": "g_form.getReference('rhs_comp_name').name || 'UNKNOWN';",									// broken computer hostname
-		"{BROKEN_MODEL}": "getComputerModel(g_form.getReference('rhs_comp_name').model_id) || 'UNKNOWN';",				// broken computer model
-		"{BROKEN_SERIAL}": "g_form.getReference('rhs_comp_name').serial_number || 'UNKNOWN';",							// broken computer serial number
-		"{RELATED_INC}": "g_form.getReference('rhs_inc').number || 'UNKNOWN';",											// incident requiring hot swap
-		"{REPLACE_ASSET}": "g_form.getReference('rhs_replacement_computer').asset_tag || 'UNKNOWN';",					// replacement computer asset tag
-		"{REPLACE_BUILD}": "g_form.getValue('rhs_software') || 'UNKNOWN';",												// replacement computer build
-		"{REPLACE_CUSTOMER}": "ucwords(g_form.getReference('rhs_user').name) || 'UNKNOWN';",							// user requiring the hot swap
-		"{REPLACE_HOSTNAME}": "g_form.getReference('rhs_replacement_computer').name || 'UNKNOWN';",						// replacement computer hostname
-		"{REPLACE_MODEL}": "getComputerModel(g_form.getReference('rhs_replacement_computer').model_id) || 'UNKNOWN';",	// replacement computer model
-		"{REPLACE_SERIAL}": "g_form.getReference('rhs_replacement_computer').serial_number || 'UNKNOWN';"				// replacement computer serial number
+		"{BROKEN_ASSET}": "g_form.getReference('rhs_comp_name').asset_tag || 'UNKNOWN';",									// broken computer asset tag
+		"{BROKEN_HOSTNAME}": "g_form.getReference('rhs_comp_name').name || 'UNKNOWN';",										// broken computer hostname
+		"{BROKEN_MODEL}": "snafuGetComputerModel(g_form.getReference('rhs_comp_name').model_id) || 'UNKNOWN';",				// broken computer model
+		"{BROKEN_SERIAL}": "g_form.getReference('rhs_comp_name').serial_number || 'UNKNOWN';",								// broken computer serial number
+		"{RELATED_INC}": "g_form.getReference('rhs_inc').number || 'UNKNOWN';",												// incident requiring hot swap
+		"{REPLACE_ASSET}": "g_form.getReference('rhs_replacement_computer').asset_tag || 'UNKNOWN';",						// replacement computer asset tag
+		"{REPLACE_BUILD}": "g_form.getValue('rhs_software') || 'UNKNOWN';",													// replacement computer build
+		"{REPLACE_CUSTOMER}": "snafuUcwords(g_form.getReference('rhs_user').name) || 'UNKNOWN';",							// user requiring the hot swap
+		"{REPLACE_HOSTNAME}": "g_form.getReference('rhs_replacement_computer').name || 'UNKNOWN';",							// replacement computer hostname
+		"{REPLACE_MODEL}": "snafuGetComputerModel(g_form.getReference('rhs_replacement_computer').model_id) || 'UNKNOWN';",	// replacement computer model
+		"{REPLACE_SERIAL}": "g_form.getReference('rhs_replacement_computer').serial_number || 'UNKNOWN';"					// replacement computer serial number
 	};
 	
 	// use regular expressions to find matches and send them for processing
@@ -224,20 +238,33 @@ function replaceWildcards(strIn) {
 	});	
 }
 
-// use ajax query to get a computer's model id
-function getComputerModel(model_id) {
+/**
+ * Queries cmdb_model Service Now database for model types.
+ * @param	{String}	model_id
+ * @return	{String}
+ */
+function snafuGetComputerModel(model_id) {
 	var model = new GlideRecord('cmdb_model');
 	model.addQuery('sys_id', model_id);
 	model.query();
 	return (model.next()) ? model.name : 'UNKNOWN';
 }
 
-function isVarEmpty(value) {
+/**
+ * Checks if a variable is empty (null, undefined, NaN, etc.).
+ * @param   {String}    value
+ * @return  {Boolean}
+ */
+function snafuIsVarEmpty(value) {
     return (value === null || value === undefined || value === NaN || value.trim() === '') ? true : false
 }
 
-// similar to php's ucwords
-function ucwords(str) {
+/**
+ * Capitalizes the first character of each word.
+ * @param	{String}	str
+ * @return	{String}
+ */
+function snafuUcwords(str) {
 	return str.toLowerCase().replace(/^([a-z\u00E0-\u00FC])|\s+([a-z\u00E0-\u00FC])/g, function(e) {
 		return e.toUpperCase();
 	});

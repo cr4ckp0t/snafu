@@ -31,12 +31,12 @@ $(document).ready(function() {
     getSettings();
 
     // save autoFinish settings
-    $('#autoFinish-save').click(function() { saveSettings('save'); });
-    $('#autoEquipTicket-save').click(function() { saveSettings('save'); });
-    $('#autoFinish-update').click(function() { saveSettings('update'); });
-    $('#autoEquipTicket-update').click(function() { saveSettings('update'); });
-    $('#autoFinish-none').click(function() { saveSettings('none'); });
-    $('#autoEquipTicket-none').click(function() { saveSettings('none'); });
+    $('#autoFinish-save').click(function() { saveAutoFinish('save'); });
+    $('#autoEquipTicket-save').click(function() { saveAutoFinish('save'); });
+    $('#autoFinish-update').click(function() { saveAutoFinish('update'); });
+    $('#autoEquipTicket-update').click(function() { saveAutoFinish('update'); });
+    $('#autoFinish-none').click(function() { saveAutoFinish('none'); });
+    $('#autoEquipTicket-none').click(function() { saveAutoFinish('none'); });
 
     // canned messages
     $('[id$=CannedMsgs]').change(function(event) {
@@ -150,6 +150,10 @@ $(document).ready(function() {
     });
 });
 
+/**
+ * Update autoFinish radio labels.
+ * @param   {String}    autoFinish
+ */
 function updateTicketLabels(autoFinish) {
     // remove active class from each label
     $('[id^=autoFinish]').removeClass('active');
@@ -160,12 +164,20 @@ function updateTicketLabels(autoFinish) {
     $('#autoEquipTicket-' + autoFinish).addClass('active');
 }
 
+/**
+ * Checks if a variable is empty (null, undefined, NaN, etc.).
+ * @param   {String}    value
+ * @return  {Boolean}
+ */
 function isVarEmpty(value) {
     return (value === null || value === undefined || value === NaN || value.toString().trim() === '') ? true : false
 }
 
-// save settings to chrome.storage.sync and update inputs
-function saveSettings(value) {
+/**
+ * Save autoFinish to chrome.storage.sync.
+ * @param   {String}    value
+ */
+function saveAutoFinish(value) {
     chrome.storage.sync.set({autoFinish: value}, function() {
         if (chrome.runtime.lastError) {
             console.warn('Sync Set Error: %s', chrome.runtime.lastError.message);
@@ -183,7 +195,10 @@ function saveSettings(value) {
     $('#autoEquipTicket-' + value).addClass('active');
 }
 
-// pull settings from chrome.storage.sync and process them
+/**
+ * Load settings from chrome.storage.sync.
+ * @return  {Nothing}
+ */
 function getSettings() {
     chrome.storage.sync.get(['autoFinish', 'debug', 'canned'], function(items) {
         if (chrome.runtime.lastError) {
@@ -206,7 +221,10 @@ function getSettings() {
     });
 }
 
-// process the clicks of the dropdown menus
+/**
+ * Process clicks of dropdown menus.
+ * @param   {String}    clickType
+ */
 function processClick(clickType) {
     chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
         chrome.tabs.sendMessage(tabs[0].id, {

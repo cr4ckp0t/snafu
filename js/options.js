@@ -22,25 +22,11 @@ $(document).ready(function() {
 	$('[id$=Success').hide();
 	$('[id$=Failure').hide();
 
-	loadSettings();
-
-	$('#saveSettings').click(function() {
-		chrome.storage.sync.set({
-			debug: ($('#debugMode').val() === 'enable') ? true : false,
-			canned: getCannedMessages(),
-			autoFinish: $('#ticketCompletion').val()
-		}, function() {
-			if (chrome.runtime.lastError) {
-				console.warn('SNAFU Sync Set Error: %s', chrome.runtime.lastError.message);
-				errorMessage('Failed to save settings.');
-			} else {
-				loadSettings();
-				successMessage('Settings saved successfully.');
-			}
-		});
+	$('#saveSettings').click(function() { saveSettings(); })
+	$('#reloadData').click(function() { 
+		loadSettings();
+		successMessage('Reloaded settings successsfully.');
 	});
-
-	$('#reloadData').click(function() { loadSettings(); });
 
 	$('#closeWindow').click(function() {
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
@@ -77,8 +63,34 @@ $(document).ready(function() {
 			}
 		});
 	});
+
+	loadSettings();
 });
 
+/**
+ * Save settings from chrome.storage.sync.
+ * @return	{Nothing}
+ */
+function saveSettings() {
+	chrome.storage.sync.set({
+		debug: ($('#debugMode').val() === 'enable') ? true : false,
+		canned: getCannedMessages(),
+		autoFinish: $('#ticketCompletion').val()
+	}, function() {
+		if (chrome.runtime.lastError) {
+			console.warn('SNAFU Sync Set Error: %s', chrome.runtime.lastError.message);
+			errorMessage('Failed to save settings.');
+		} else {
+			loadSettings();
+			successMessage('Settings saved successfully.');
+		}
+	});
+}
+
+/**
+ * Load settings from chrome.storage.sync.
+ * @return	{Nothing}
+ */
 function loadSettings() {
 	chrome.storage.sync.get(['debug', 'canned', 'autoFinish', 'userId', 'userName', 'userEmail', 'fullName', 'groupName', 'groupId'], function(items) {
 		if (chrome.runtime.lastError) {
@@ -95,6 +107,7 @@ function loadSettings() {
 					}
 				});
 				$('#debugMode').val('disable');
+				debug = false;
 			} else {
 				$('#debugMode').val((items.debug === true) ? 'enable' : 'disable');
 				debug = items.debug;
@@ -149,6 +162,10 @@ function loadSettings() {
 	});
 }
 
+/**
+ * Loads canned messages to an object.
+ * @return	{Object|Boolean}
+ */
 function getCannedMessages() {
 	var msgs = $('#cannedMsgs').val().split('\n');
 	var objMsgs = {};
@@ -160,8 +177,8 @@ function getCannedMessages() {
 				var left = strTemp.substring(0, strTemp.indexOf('|') - 1);
 				var right = strTemp.substring(strTemp.indexOf('|') + 1);
 				objMsgs[left] = right;
-				console.info('SNAFU Left: %s', left);
-				console.info('SNAFU Right: %s', right);
+				//console.info('SNAFU Left: %s', left);
+				//console.info('SNAFU Right: %s', right);
 			}
 		}
 		return objMsgs;
@@ -170,18 +187,31 @@ function getCannedMessages() {
 	}
 }
 
+/**
+ * Checks if a variable is empty (null, undefined, NaN, etc.).
+ * @param   {String}    value
+ * @return  {Boolean}
+ */
 function isVarEmpty(value) {
     return (value === null || value === undefined || value === NaN || value.toString().trim() === '') ? true : false
 }
 
+/**
+ * Set success message.
+ * @param	{String}	msg
+ */
 function successMessage(msg) {
-	$('#alertSuccessMsg').text('Settings saved successfully.');
+	$('#alertSuccessMsg').text(msg);
 	$('#alertSuccess').fadeIn();
 	setTimeout(function() { $('#alertSuccess').fadeOut(); }, 2500);
 }
 
+/**
+ * Set error message.
+ * @param	{String}	msg
+ */
 function errorMessage(msg) {
-	$('#alertFailureMsg').text('Failed to save settings.');
+	$('#alertFailureMsg').text(msg);
 	$('#alertFailure').fadeIn();
 	setTimeout(function() { $('#alertFailure').fadeOut(); }, 2500);
 }
