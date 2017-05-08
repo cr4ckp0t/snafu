@@ -50,7 +50,7 @@ $(document).ready(function() {
                     console.info('SNAFU textArea: %s', textArea);
                 }
             });
-            $(textArea).append(needSpace + msg);
+            $(textArea).text($(textArea).text() + needSpace + msg);
             $(this).val('none');
         }
     });
