@@ -34,6 +34,10 @@ $(document).ready(function() {
 		});
 	});
 
+	$('#openHelp').click(function() {
+		chrome.tabs.create({url: chrome.extension.getURL('help.html')});
+	});
+
 	// reset user data
 	$('#resetUser').click(function() {
 		chrome.storage.sync.remove(['userId', 'userName', 'userEmail', 'fullName', 'groupName', 'groupId'], function() {
