@@ -88,15 +88,22 @@
                 </div>
                 <div class="form-group">
                     <label for="customerNotes">Additional Comments (Viewable By Customer)</label>
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-addon" id="custWildcardsAddon">Wildcards</span>
+                        <select id="custWildcards" name="custWildcards" class="form-control" aria-describedby="custWildcardsAddon"></select>
+                    </div>
                     <textarea class="form-control" id="customerNotes" name="customerNotes" rows="2" cols="35"></textarea>
                     <div class="input-group input-group-sm">
                         <span class="input-group-addon">Messages</span>
-                        <select id="custCannedMsgs" name="cannedMsgs" class="form-control">
-                        </select>
+                        <select id="custCannedMsgs" name="cannedMsgs" class="form-control"></select>
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="workNotes">Work Notes (Not Viewable By Customer)</label>
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-addon" id="workWildcardsAddon">Wildcards</span>
+                        <select id="workWildcards" name="workWildcards" class="form-control" aria-describedby="workWildcardsAddon"></select>
+                    </div>
                     <textarea class="form-control" id="workNotes" name="workNotes" rows="2" cols="35"></textarea>
                     <div class="input-group input-group-sm">
                         <span class="input-group-addon">Messages</span>

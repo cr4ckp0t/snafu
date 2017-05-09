@@ -43,20 +43,6 @@ chrome.contextMenus.create({
 	documentUrlPatterns: ['https://ghsprod.service-now.com/incident.do?*']
 });
 
-// acknowledge incident - call end user
-chrome.contextMenus.create({
-	title: 'Call End User',
-	contexts: ['page'],
-	id: 'ackCallUser',
-	parentId: 'parentAckIncident',
-	documentUrlPatterns: ['https://ghsprod.service-now.com/incident.do?*'],
-	onclick: function() {
-		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-			chrome.tabs.sendMessage(tabs[0].id, {type: 'ackCallUser'}, handleResponse);
-		});
-	}
-});
-
 // acknowledge generic incident
 chrome.contextMenus.create({
 	title: 'Generic Incident',
@@ -67,6 +53,20 @@ chrome.contextMenus.create({
 	onclick: function() {
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
 			chrome.tabs.sendMessage(tabs[0].id, {type: 'ackIncident'}, handleResponse);
+		});
+	}
+});
+
+// acknowledge incident - call end user
+chrome.contextMenus.create({
+	title: 'Call End User',
+	contexts: ['page'],
+	id: 'ackCallUser',
+	parentId: 'parentAckIncident',
+	documentUrlPatterns: ['https://ghsprod.service-now.com/incident.do?*'],
+	onclick: function() {
+		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+			chrome.tabs.sendMessage(tabs[0].id, {type: 'ackCallUser'}, handleResponse);
 		});
 	}
 });
@@ -292,7 +292,12 @@ chrome.contextMenus.create({
 	}
 });
 
-chrome.contextMenus.create({type:'separator', parentId: 'snafuParent'});
+chrome.contextMenus.create({
+	title: 'Assignments',
+	contexts: ['page'],
+	id: 'assignParent',
+	parentId: 'snafuParent'
+});
 
 chrome.storage.sync.get(['debug', 'userId', 'userName', 'userEmail', 'fullName', 'groupName', 'groupId'], function(items) {
 	if (chrome.runtime.lastError) {
@@ -306,7 +311,7 @@ chrome.storage.sync.get(['debug', 'userId', 'userName', 'userEmail', 'fullName',
 				title: 'Query User Info',
 				contexts: ['page'],
 				id: 'userQuery',
-				parentId: 'snafuParent',
+				parentId: 'assignParent',
 				onclick: function() {
 					chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
 						chrome.tabs.sendMessage(tabs[0].id, {type: 'userQuery'}, handleResponse)
@@ -321,7 +326,7 @@ chrome.storage.sync.get(['debug', 'userId', 'userName', 'userEmail', 'fullName',
 				title: 'Assign Incident To Me',
 				contexts: ['page'],
 				id: 'assignIncToMe',
-				parentId: 'snafuParent',
+				parentId: 'assignParent',
 				documentUrlPatterns: ['https://ghsprod.service-now.com/incident.do?*'],
 				onclick: function() {
 					chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
@@ -344,7 +349,7 @@ chrome.storage.sync.get(['debug', 'userId', 'userName', 'userEmail', 'fullName',
 				title: 'Assign Task To Me',
 				contexts: ['page'],
 				id: 'assignTaskToMe',
-				parentId: 'snafuParent',
+				parentId: 'assignParent',
 				documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
 				onclick: function() {
 					chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
@@ -365,7 +370,7 @@ chrome.storage.sync.get(['debug', 'userId', 'userName', 'userEmail', 'fullName',
 				title: 'Reset User Data',
 				contexts: ['page'],
 				id: 'resetUserData',
-				parentId: 'snafuParent',
+				parentId: 'assignParent',
 				onclick: function() {
 					chrome.storage.sync.remove(['userId', 'userName', 'userEmail', 'fullName', 'groupName', 'groupId'], function() {
 						if (chrome.runtime.lastError) {
@@ -374,8 +379,18 @@ chrome.storage.sync.get(['debug', 'userId', 'userName', 'userEmail', 'fullName',
 								chrome.tabs.sendMessage(tabs[0].id, {
 									type: 'sendErrorMsg',
 									statusMsg: 'Failed to reset your user data.'
+								}, handleResponse);
+							});
+						} else {
+							if (items.debug === true) {
+								console.info('SNAFU: Removed user data.');
+							}
+							chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+								chrome.tabs.sendMessage(tabs[0].id, {
+									type: 'sendSuccessMsg',
+									statusMsg: 'Successfully reset your user data.'
 								}, function(response) {
-									chrome.contextMenus.remove('resetUserData');
+									chrome.contextMenus.remove(['resetUserData', 'assignTaskToMe', 'assignIncToMe']);
 									chrome.contextMenus.create({
 										title: 'Query User Info',
 										contexts: ['page'],
@@ -390,22 +405,37 @@ chrome.storage.sync.get(['debug', 'userId', 'userName', 'userEmail', 'fullName',
 									handleResponse(response);
 								});
 							});
-						} else {
-							if (items.debug === true) {
-								console.info('SNAFU: Removed user data.');
-							}
-							chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-								chrome.tabs.sendMessage(tabs[0].id, {
-									type: 'sendSuccessMsg',
-									statusMsg: 'Successfully reset your user data.'
-								}, handleResponse);
-							});
 						}
 					});
 				}
 			});
 		}
 	}
+});
+
+chrome.contextMenus.create({type:'separator', parentId: 'snafuParent'});
+
+chrome.contextMenus.create({
+	title: 'Help',
+	contexts: ['page'],
+	id: 'helpParent',
+	parentId: 'snafuParent'
+});
+
+chrome.contextMenus.create({
+	title: 'Options',
+	contexts: ['page'],
+	id: 'optionsPage',
+	parentId: 'helpParent',
+	onclick: function() { chrome.tabs.create({url: chrome.extension.getURL('options.html')}); }
+});
+
+chrome.contextMenus.create({
+	title: 'Help',
+	contexts: ['page'],
+	id: 'helpPage',
+	parentId: 'helpParent',
+	onclick: function() { chrome.tabs.create({url: chrome.extension.getURL('help.html')}); }
 });
 
 /**
