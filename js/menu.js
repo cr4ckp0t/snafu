@@ -16,16 +16,6 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  **/
 
-var debug
-
-chrome.storage.sync.get(['debug'], function(items) {
-	if (chrome.runtime.lastError) {
-		console.warn('SNAFU debug Get Error: %s', chrome.runtime.lastError.message);
-	} else {
-		debug = (isVarEmpty(items.debug) === false) ? items.debug : false;
-	}
-});
-
 // uber parent
 chrome.contextMenus.create({
 	title: 'SNAFU',
@@ -299,121 +289,60 @@ chrome.contextMenus.create({
 	parentId: 'snafuParent'
 });
 
-chrome.storage.sync.get(['debug', 'userId', 'userName', 'userEmail', 'fullName', 'groupName', 'groupId'], function(items) {
-	if (chrome.runtime.lastError) {
-		console.warn('SNAFU User Sync Error: %s', chrome.runtime.lastError.message);
-	} else {
-		if (isVarEmpty(items.userId) || isVarEmpty(items.userName) || isVarEmpty(items.userEmail) || isVarEmpty(items.fullName) || isVarEmpty(items.groupName) || isVarEmpty(items.groupId)) {
-			if (items.debug === true) {
-				console.info('SNAFU:  User info not found, adding query option.');
-			}
-			chrome.contextMenus.create({
-				title: 'Query User Info',
-				contexts: ['page'],
-				id: 'userQuery',
-				parentId: 'assignParent',
-				onclick: function() {
-					chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-						chrome.tabs.sendMessage(tabs[0].id, {type: 'userQuery'}, handleResponse)
-					});
+chrome.contextMenus.create({
+	title: 'Assign Incident To Me',
+	contexts: ['page'],
+	id: 'assignIncToMe',
+	parentId: 'assignParent',
+	enabled: false,
+	documentUrlPatterns: ['https://ghsprod.service-now.com/incident.do?*'],
+	onclick: function() {
+		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+			chrome.tabs.sendMessage(tabs[0].id, {
+				type: 'assignToMe',
+				userInfo: {
+					userId: items.userId,
+					fullName: items.fullName,
+					groupId: items.groupId,
+					groupName: items.groupName
 				}
-			});
-		} else {
-			if (items.debug === true) {
-				console.info('SNAFU:  User info found, adding Assign To Me menu.');
-			}
-			chrome.contextMenus.create({
-				title: 'Assign Incident To Me',
-				contexts: ['page'],
-				id: 'assignIncToMe',
-				parentId: 'assignParent',
-				documentUrlPatterns: ['https://ghsprod.service-now.com/incident.do?*'],
-				onclick: function() {
-					chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-						chrome.tabs.sendMessage(tabs[0].id, {
-							type: 'assignToMe',
-							userInfo: {
-								userId: items.userId,
-								userName: items.userName,
-								fullName: items.fullName,
-								userEmail: items.userEmail,
-								groupId: items.groupId,
-								groupName: items.groupName
-							}
-						}, handleResponse);
-					});
-				}
-			});
-
-			chrome.contextMenus.create({
-				title: 'Assign Task To Me',
-				contexts: ['page'],
-				id: 'assignTaskToMe',
-				parentId: 'assignParent',
-				documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
-				onclick: function() {
-					chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-						chrome.tabs.sendMessage(tabs[0].id, {
-							type: 'assignToMe',
-							userInfo: {
-								userId: items.userId,
-								fullName: items.fullName,
-								groupId: items.groupId,
-								groupName: items.groupName
-							}
-						}, handleResponse);
-					});
-				}
-			});
-
-			chrome.contextMenus.create({
-				title: 'Reset User Data',
-				contexts: ['page'],
-				id: 'resetUserData',
-				parentId: 'assignParent',
-				onclick: function() {
-					chrome.storage.sync.remove(['userId', 'userName', 'userEmail', 'fullName', 'groupName', 'groupId'], function() {
-						if (chrome.runtime.lastError) {
-							console.warn('SNAFU Sync Remove Error: %s', chrome.runtime.lastError.message);
-							chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-								chrome.tabs.sendMessage(tabs[0].id, {
-									type: 'sendErrorMsg',
-									statusMsg: 'Failed to reset your user data.'
-								}, handleResponse);
-							});
-						} else {
-							if (items.debug === true) {
-								console.info('SNAFU: Removed user data.');
-							}
-							chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-								chrome.tabs.sendMessage(tabs[0].id, {
-									type: 'sendSuccessMsg',
-									statusMsg: 'Successfully reset your user data.'
-								}, function(response) {
-									chrome.contextMenus.remove(['resetUserData', 'assignTaskToMe', 'assignIncToMe']);
-									chrome.contextMenus.create({
-										title: 'Query User Info',
-										contexts: ['page'],
-										id: 'userQuery',
-										parentId: 'snafuParent',
-										onclick: function() {
-											chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-												chrome.tabs.sendMessage(tabs[0].id, {type: 'userQuery'}, handleResponse)
-											});
-										}
-									});
-									handleResponse(response);
-								});
-							});
-						}
-					});
-				}
-			});
-		}
+			}, handleResponse);
+		});
 	}
 });
 
-chrome.contextMenus.create({type:'separator', parentId: 'snafuParent'});
+chrome.contextMenus.create({
+	title: 'Assign Task To Me',
+	contexts: ['page'],
+	id: 'assignTaskToMe',
+	parentId: 'assignParent',
+	enabled: false,
+	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
+	onclick: function() {
+		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+			chrome.tabs.sendMessage(tabs[0].id, {
+				type: 'assignToMe',
+				userInfo: {
+					userId: items.userId,
+					fullName: items.fullName,
+					groupId: items.groupId,
+					groupName: items.groupName
+				}
+			}, handleResponse);
+		});
+	}
+});
+
+chrome.contextMenus.create({type: 'separator', parentId: 'assignParent'});
+
+chrome.contextMenus.create({
+	title: 'Query User Data',
+	contexts: ['page'],
+	id: 'queryOrReset',
+	parentId: 'assignParent'
+});
+
+chrome.contextMenus.create({type: 'separator', parentId: 'snafuParent'});
 
 chrome.contextMenus.create({
 	title: 'Help',
@@ -437,6 +366,66 @@ chrome.contextMenus.create({
 	parentId: 'helpParent',
 	onclick: function() { chrome.tabs.create({url: chrome.extension.getURL('help.html')}); }
 });
+
+chrome.storage.sync.get(['debug', 'userId', 'userName', 'userEmail', 'fullName', 'groupName', 'groupId'], function(items) {
+	if (chrome.runtime.lastError) {
+		console.warn('SNAFU User Sync Error: %s', chrome.runtime.lastError.message);
+	} else {
+		chrome.contextMenus.update('assignIncToMe', {enabled: (isVarEmpty(items.userId) === true) ? false : true});
+		chrome.contextMenus.update('assignTaskToMe', {enabled: (isVarEmpty(items.userId) === true) ? false : true});
+		chrome.contextMenus.update('queryOrReset', {
+			title: (isVarEmpty(items.userId) === true) ? 'Query User Data' : 'Reset User Data',
+			onclick: (isVarEmpty(items.userId) === true) ? queryUserData : resetUserData
+		});
+	}
+});
+
+// monitor user data settings to update the context menu
+chrome.storage.onChanged.addListener(function(changes, area) {
+	if (area === 'sync' && 'userId' in changes) {
+		chrome.contextMenus.update('assignIncToMe', {enabled: (isVarEmpty(changes.userId.newValue) === true) ? false : true});
+		chrome.contextMenus.update('assignTaskToMe', {enabled: (isVarEmpty(changes.userId.newValue) === true) ? false : true});
+		chrome.contextMenus.update('queryOrReset', {
+			title: (isVarEmpty(changes.userId.newValue) === true) ? 'Query User Data' : 'Reset User Data',
+			onclick: (isVarEmpty(changes.userId.newValue) === true) ? queryUserData : resetUserData
+		});
+	}
+});
+
+/**
+ * Queries user data.
+ * @return	{Void}
+ */
+function queryUserData() {
+	chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+		chrome.tabs.sendMessage(tabs[0].id, {type: 'userQuery'}, handleResponse);
+	});
+}
+
+/**
+ * Resets user data.
+ * @return	{Void}
+ */
+function resetUserData() {
+	chrome.storage.sync.remove(['userId', 'userName', 'userEmail', 'fullName', 'groupName', 'groupId'], function() {
+		if (chrome.runtime.lastError) {
+			console.warn('SNAFU Sync Remove Error: %s', chrome.runtime.lastError.message);
+			chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+				chrome.tabs.sendMessage(tabs[0].id, {
+					type: 'sendErrorMsg',
+					statusMsg: 'Failed to reset your user data.'
+				}, handleResponse);
+			});
+		} else {
+			chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+				chrome.tabs.sendMessage(tabs[0].id, {
+					type: 'sendSuccessMsg',
+					statusMsg: 'Successfully reset your user data.'
+				}, handleResponse);
+			});
+		}
+	});
+}
 
 /**
  * Checks if a variable is empty (null, undefined, NaN, etc.).

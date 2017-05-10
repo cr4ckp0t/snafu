@@ -91,21 +91,21 @@ $(document).ready(function() {
     // wildcards
     $('[id$=Wildcards]').change(function(event) {
         if ($(this).val() !== 'none') {
-            var msg = $('#' + event.target.id + ' option[value="' + $(this).val() + '"]').text();
+            var msg = /\{(.+?)\}/.exec($('#' + event.target.id + ' option[value="' + $(this).val() + '"]').text());
             var textArea = (event.target.id === 'custWildcards') ? '#customerNotes' : '#workNotes';
             chrome.storage.sync.get(['debug'], function(items) {
                 if (chrome.runtime.lastError) {
                     console.warn('SNAFU debug Get Error: %s', chrome.runtime.lastError.message);
                 } else {
-                    console.info('SNAFU msg: %s', msg);
-                    console.info('SNAFU textArea: %S', textArea);
+                    console.info('SNAFU msg: %s', msg[0]);
+                    console.info('SNAFU textArea: %s', textArea);
                 }
             });
-            $(textArea).text($(textArea).text() + msg);
+            $(textArea).val(function(i, text) { return text + msg[0]; });
             $(this).val('none');
         }
     });
-
+    
     // canned messages
     $('[id$=CannedMsgs]').change(function(event) {
         if ($(this).val() !== 'none') {
@@ -121,7 +121,7 @@ $(document).ready(function() {
                     }
                 }
             });
-            $(textArea).text($(textArea).text() + msg);
+            $(textArea).val(function(i, text) { return text + msg; });
             $(this).val('none');
         }
     });
@@ -178,11 +178,8 @@ $(document).ready(function() {
             console.warn('SNAFU Error: You must provide valid input.');
         } else {
             // custom closure script
-            var equipWorkNotes = 'Computer has been built. One {MODEL} has been built {BUILD}. Tag {ASSET} HostName {HOSTNAME}. Resolving Task. Placing computer in Deployment Room. Please assign to a tech for install and resolution. Once this ticket is closed, the request will generate another task to have a technician come on site to install the equipment. This is just a ticket to track the build and equipment used. A tech should be calling the customer momentarily to set up a time for installation.';
-            equipWorkNotes = equipWorkNotes.replace('{MODEL}', $('#compModel').val());
-            equipWorkNotes = equipWorkNotes.replace('{BUILD}', $('#compBuild').val());
-            equipWorkNotes = equipWorkNotes.replace('{ASSET}', $('#compAsset').val());
-            equipWorkNotes = equipWorkNotes.replace('{HOSTNAME}', $('#compHost').val());
+            var equipWorkNotes = 'Computer has been built. One %s has been built %s. Tag %s HostName %s. Resolving Task. Placing computer in Deployment Room. Please assign to a tech for install and resolution. Once this ticket is closed, the request will generate another task to have a technician come on site to install the equipment. This is just a ticket to track the build and equipment used. A tech should be calling the customer momentarily to set up a time for installation.';
+            equipWorkNotes = sprintf(equipWorkNotes, [$('#compModel').val(), $('#compBuild').val(), $('#compAsset').val(), $('#compHost').val()]);
             chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
                 chrome.tabs.sendMessage(tabs[0].id, {
                     type: 'sendEquipment',
@@ -241,6 +238,18 @@ function updateTicketLabels(autoFinish) {
     // set the correct label with active
     $('#autoFinish-' + autoFinish).addClass('active');
     $('#autoEquipTicket-' + autoFinish).addClass('active');
+}
+
+/**
+ * Javascript sprintf function.
+ * @param   {String}    template
+ * @param   {String[]}  values
+ * @return  {String}
+ */
+function sprintf(template, values) {
+    return template.replace(/%s/g, function() {
+        return values.shift();
+    });
 }
 
 /**
@@ -331,8 +340,8 @@ function processClick(clickType) {
  * @return  {Void}
  */
 function loadWildcards() {
-    var custWildcards = '<option value="none" selected="selected">---- NONE ----</option>';
-    var workWildcards = '';
+    var custWildcards = '<option value="none" selected="selected">---- None ----</option>';
+    var workWildcards = '<option value="none" selected="selected">---- None ----</option>';
     for (var key in wildcards) {
         custWildcards += ('<option value="{KEY}">{VALUE}</option>').replace('{KEY}', key).replace('{VALUE}', wildcards[key]);
         workWildcards += ('<option value="{KEY}">{VALUE}</option>').replace('{KEY}', key).replace('{VALUE}', wildcards[key]);

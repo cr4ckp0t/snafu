@@ -444,12 +444,12 @@ function isVarEmpty(value) {
 
 /**
  * Javascript sprintf function.
- * @param  {String} template
- * @param  {String[]} values
- * @return {String}
+ * @param   {String}    template
+ * @param   {String[]}  values
+ * @return  {String}
  */
 function sprintf(template, values) {
-  return template.replace(/%s/g, function() {
-    return values.shift();
-  });
+    return template.replace(/%s/g, function() {
+        return values.shift();
+    });
 }
