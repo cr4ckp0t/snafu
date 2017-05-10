@@ -192,7 +192,7 @@ function getCannedMessages() {
 		for (var i = 0; i < msgs.length; i++) {
 			var strTemp = msgs[i];
 			if (strTemp.trim() !== '' && strTemp.indexOf('|') !== -1) {
-				var left = strTemp.substring(0, strTemp.indexOf('|') - 1);
+				var left = strTemp.substring(0, strTemp.indexOf('|'));
 				var right = strTemp.substring(strTemp.indexOf('|') + 1);
 				objMsgs[left] = right;
 				//console.info('SNAFU Left: %s', left);
