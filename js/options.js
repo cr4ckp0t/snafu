@@ -80,7 +80,8 @@ function saveSettings() {
 		debug: ($('#debugMode').val() === 'enable') ? true : false,
 		closePopup: ($('#closePopup').val() === 'enable') ? true: false,
 		canned: getCannedMessages(),
-		autoFinish: $('#ticketCompletion').val()
+		autoFinish: $('#ticketCompletion').val(),
+		finishDelay: $('#finishDelay').val()
 	}, function() {
 		if (chrome.runtime.lastError) {
 			console.warn('SNAFU Sync Set Error: %s', chrome.runtime.lastError.message);
@@ -97,7 +98,7 @@ function saveSettings() {
  * @return	{Void}
  */
 function loadSettings() {
-	chrome.storage.sync.get(['debug', 'closePopup', 'canned', 'autoFinish', 'userId', 'userName', 'userEmail', 'fullName', 'groupName', 'groupId'], function(items) {
+	chrome.storage.sync.get(['debug', 'closePopup', 'canned', 'autoFinish', 'finishDelay', 'userId', 'userName', 'userEmail', 'fullName', 'groupName', 'groupId'], function(items) {
 		if (chrome.runtime.lastError) {
 			console.warn('SNAFU Sync Get Error: %s', chrome.runtime.lastError.message);
 		} else {
@@ -127,6 +128,7 @@ function loadSettings() {
 						console.info('SNAFU: Created closePopup setting.');
 					}
 				});
+				$('#closePopup').val('disable');
 			} else {
 				$('#closePopup').val((items.closePopup === true) ? 'enable' : 'disable');
 			}
@@ -163,8 +165,23 @@ function loadSettings() {
 						console.info('SNAFU: Created autoFinish setting.');
 					}
 				});
+				$('#ticketCompletion').val('none');
 			} else {
 				$('#ticketCompletion').val(items.autoFinish);
+			}
+
+			// finish delay
+			if (isVarEmpty(items.finishDelay) === true) {
+				chrome.storage.sync.set({finishDelay: 1.5}, function() {
+					if (chrome.runtime.lastError) {
+						console.warn('SNAFU finishDelay Set Error: %s', chrome.runtime.lastError.message);
+					} else {
+						console.info('SNAFU: Created finishDelay setting.');
+					}
+				});
+				$('#finishDelay').val(1.5);
+			} else {
+				$('#finishDelay').val(items.finishDelay);
 			}
 
 			// set user info

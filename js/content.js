@@ -56,7 +56,7 @@ document.addEventListener('SNAFU_UserQuery', function(userData) {
 });
 
 chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
-    chrome.storage.sync.get(['autoFinish', 'debug'], function(items) {
+    chrome.storage.sync.get(['autoFinish', 'finishDelay', 'debug'], function(items) {
         if (chrome.runtime.lastError) {
             console.warn('SNAFU Sync Get Error: %s', chrome.runtime.lastError.message);
         } else {
@@ -92,8 +92,9 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                     } else {
                         injectData = {
                             type: msg.type,
-                            userInfo: msg.userInfo,
-                            autoFinish: items.autoFinish
+                            autoFinish: items.autoFinish || 'none',
+                            finishDelay: items.finishDelay || 1.5,
+                            userInfo: msg.userInfo
                         }
                         sendResponse({success: true, errMsg: null});
                     }
@@ -108,6 +109,7 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                         injectData = {
                             type: msg.type,
                             autoFinish: items.autoFinish || 'none',
+                            finishDelay: items.finishDelay || 1.5,
                             field: 'incident_state',
                             value: '3', // In Progress
                             workNotes: 'Acknowledging incident.',
@@ -126,6 +128,7 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                         injectData = {
                             type: msg.type,
                             autoFinish: items.autoFinish || 'none',
+                            finishDelay: items.finishDelay || 1.5,
                             field: 'incident_state',
                             value: '3', // In Progress
                             workNotes: 'Acknowledging Incident.  Calling {INC_CUSTOMER} at {INC_CUR_PHONE}.',
@@ -144,6 +147,7 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                         injectData = {
                             type: msg.type,
                             autoFinish: items.autoFinish || 'none',
+                            finishDelay: items.finishDelay || 1.5,
                             field: 'state',
                             value: '2', // Work in Progress
                             workNotes: 'Acknowledging task.',
@@ -161,6 +165,7 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                         injectData = {
                             type: msg.type,
                             autoFinish: items.autoFinish || 'none',
+                            finishDelay: items.finishDelay || 1.5,
                             field: 'state',
                             value: '2', // work in progress
                             workNotes: 'Acknowledging build request.',
@@ -178,6 +183,7 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                         injectData = {
                             type: msg.type,
                             autoFinish: items.autoFinish || 'none',
+                            finishDelay: items.finishDelay || 1.5,
                             field: 'state',
                             value: '2', // work in progress
                             workNotes: 'Acknowledging install task.',
@@ -195,6 +201,7 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                         injectData = {
                             type: msg.type,
                             autoFinish: items.autoFinish || 'none',
+                            finishDelay: items.finishDelay || 1.5,
                             field: 'state',
                             value: '2', // work in progress
                             workNotes: 'Acknowledging equipment move task.',
@@ -212,6 +219,7 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                         injectData = {
                             type: msg.type,
                             autoFinish: items.autoFinish || 'none',
+                            finishDelay: items.finishDelay || 1.5,
                             field: 'state',
                             value: '2', // work in progress
                             workNotes: 'Acknowledging quarantine task.',
@@ -229,6 +237,7 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                         injectData = {
                             type: msg.type,
                             autoFinish: items.autoFinish || 'none',
+                            finishDelay: items.finishDelay || 1.5,
                             field: 'state',
                             value: '2', // work in progress
                             workNotes: 'Acknowledging reclaim task.',
@@ -246,6 +255,7 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                         injectData = {
                             type: msg.type,
                             autoFinish: items.autoFinish || 'none',
+                            finishDelay: items.finishDelay || 1.5,
                             field: 'state',
                             value: '2', // work in progress
                             workNotes: 'Acknowledging equipment removal task.',
@@ -262,6 +272,7 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                         injectData = {
                             type: msg.type,
                             autoFinish: items.autoFinish || 'none',
+                            finishDelay: items.finishDelay || 1.5,
                             field: 'state',
                             value: '3', // closed complete
                             workNotes: 'Computer has been built. One {REPLACE_MODEL} has been built {REPLACE_BUILD}. Tag {REPLACE_ASSET} HostName {REPLACE_HOSTNAME}. Resolving Task.',
@@ -279,6 +290,7 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                         injectData = {
                             type: msg.type,
                             autoFinish: items.autoFinish || 'none',
+                            finishDelay: items.finishDelay || 1.5,
                             field: 'state',
                             value: '3', // closed complete
                             workNotes: 'Installed requested equipment and attached signed completion sheet.',
@@ -296,6 +308,7 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                         injectData = {
                             type: msg.type,
                             autoFinish: items.autoFinish || 'none',
+                            finishDelay: items.finishDelay || 1.5,
                             field: 'state',
                             value: '3', // closed complete
                             workNotes: 'Equipment has been moved, per the request.',
@@ -315,6 +328,7 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                         injectData = {
                             type: msg.type,
                             autoFinish: items.autoFinish || 'none',
+                            finishDelay: items.finishDelay || 1.5,
                             field: 'state',
                             value: '3', // closed complete
                             workNotes: 'Device removed from quarantine.',
@@ -332,6 +346,7 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                         injectData = {
                             type: msg.type,
                             autoFinish: items.autoFinish || 'none',
+                            finishDelay: items.finishDelay || 1.5,
                             field: 'state',
                             value: '3', // closed complete
                             workNotes: 'Device reclaimed and added to quarantine.',
@@ -349,6 +364,7 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                         injectData = {
                             type: msg.type,
                             autoFinish: items.autoFinish || 'none',
+                            finishDelay: items.finishDelay || 1.5,
                             field: 'state',
                             value: '3',
                             workNotes: 'Removed requested equipment.',
@@ -366,6 +382,7 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                         injectData = {
                             type: msg.type,
                             autoFinish: items.autoFinish || 'none',
+                            finishDelay: items.finishDelay || 1.5,
                             field: (ticketType === 'incident') ? 'incident_state' : 'state',
                             value: (ticketType === 'incident') ? incStates[parseInt(msg.tState)] : taskStates[parseInt(msg.tState)],
                             workNotes: msg.workNotes || null,
@@ -386,6 +403,7 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                         injectData = {
                             type: msg.type,
                             autoFinish: items.autoFinish || 'none',
+                            finishDelay: items.finishDelay || 1.5,
                             field: 'state',
                             value: '3',
                             workNotes: msg.workNotes || null,
