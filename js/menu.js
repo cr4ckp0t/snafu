@@ -297,16 +297,22 @@ chrome.contextMenus.create({
 	enabled: false,
 	documentUrlPatterns: ['https://ghsprod.service-now.com/incident.do?*'],
 	onclick: function() {
-		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-			chrome.tabs.sendMessage(tabs[0].id, {
-				type: 'assignToMe',
-				userInfo: {
-					userId: items.userId,
-					fullName: items.fullName,
-					groupId: items.groupId,
-					groupName: items.groupName
-				}
-			}, handleResponse);
+		chrome.storage.sync.get(['userId', 'fullName', 'groupId', 'groupName'], function(items) {
+			if (chrome.runtime.lastError) {
+				chrome.warn('SNAFU Sync Get Error: %s', chrome.runtime.lastError.message);
+			} else {
+				chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+					chrome.tabs.sendMessage(tabs[0].id, {
+						type: 'assignToMe',
+						userInfo: {
+							userId: items.userId,
+							fullName: items.fullName,
+							groupId: items.groupId,
+							groupName: items.groupName
+						}
+					}, handleResponse);
+				});
+			}
 		});
 	}
 });

@@ -47,6 +47,12 @@
                         <div class="extraInfo">Action to take when you submit an update.</div>
                         <br />
                         <div class="input-group">
+                            <span class="input-group-addon" id="finishDelayAddon">Completion Delay</span>
+                            <input type="number" id="finishDelay" class="form-control" aria-describedby="finishDelayAddon" min="0" max="5" step="0.5" value="1.5" />
+                        </div>
+                        <div class="extraInfo">Delay, in seconds, before executing the action above.</div>
+                        <br />
+                        <div class="input-group">
                             <span class="input-group-addon" id="closePopupAddon">Close Popup</span>
                             <select id="closePopup" class="form-control" aria-describedby="closePopupAddon">
                                 <option value="enable">Enabled</option>

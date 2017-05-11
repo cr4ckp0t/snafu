@@ -65,11 +65,11 @@ document.addEventListener('SNAFU_Inject', function(snafuInject) {
 
 	// send success (info) message
 	} else if (snafuInject.detail.type === 'sendSuccessMsg') {
-		g_form.addInfoMessage(snafuInject.detail.statusMsg);
+		g_form.addInfoMessage(snafuSprintf('SNAFU: %s', [snafuInject.detail.statusMsg]));
 	
 	// send error message
 	} else if (snafuInject.detail.type === 'sendErrorMsg') {
-		g_form.addErrorMessage(snafuInject.detail.statusMsg);
+		g_form.addErrorMessage(snafuSprintf('SNAFU: %s', [snafuInject.detail.statusMsg]));
 
 	// handle everything else
 	} else {
@@ -268,4 +268,16 @@ function snafuUcwords(str) {
 	return str.toLowerCase().replace(/^([a-z\u00E0-\u00FC])|\s+([a-z\u00E0-\u00FC])/g, function(e) {
 		return e.toUpperCase();
 	});
+}
+
+/**
+ * Javascript sprintf function.
+ * @param   {String}    template
+ * @param   {String[]}  values
+ * @return  {String}
+ */
+function snafuSprintf(template, values) {
+    return template.replace(/%s/g, function() {
+        return values.shift();
+    });
 }

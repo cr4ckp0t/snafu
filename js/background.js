@@ -24,7 +24,7 @@ chrome.runtime.onInstalled.addListener(function(details) {
 });
 
 chrome.runtime.onStartup.addListener(function() {
-	chrome.storage.sync.get(['autoFinish', 'debug', 'canned', 'closePopup'], function(items) {
+	chrome.storage.sync.get(['autoFinish', 'finishDelay', 'debug', 'canned', 'closePopup'], function(items) {
 		if (chrome.runtime.lastError) {
 			console.warn('SNAFU: Sync Get Error: %s', chrome.runtime.lastError.message);
 		} else {
@@ -32,6 +32,14 @@ chrome.runtime.onStartup.addListener(function() {
 				chrome.storage.sync.set({autoFinish: 'none'}, function() {
 					if (chrome.runtime.lastError) {
 						console.warn('SNAFU autoFinish Set Error: %s', chrome.runtime.lastError.message);
+					}
+				});
+			}
+
+			if (isVarEmpty(items.finishDelay) === true) {
+				chrome.storage.sync.set({finishDelay: 1.5}, function() {
+					if (chrome.runtime.lastError) {
+						console.warn('SNAFU finishDelay Set Error: %s', chrome.runtime.lastError.message);
 					}
 				});
 			}
