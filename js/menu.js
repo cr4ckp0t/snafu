@@ -294,8 +294,7 @@ chrome.contextMenus.create({
 	contexts: ['page'],
 	id: 'assignIncToMe',
 	parentId: 'assignParent',
-	enabled: false,
-	documentUrlPatterns: ['https://ghsprod.service-now.com/incident.do?*'],
+	documentUrlPatterns: ['https://make/it/hidden'],
 	onclick: function() {
 		chrome.storage.sync.get(['userId', 'fullName', 'groupId', 'groupName'], function(items) {
 			if (chrome.runtime.lastError) {
@@ -322,8 +321,7 @@ chrome.contextMenus.create({
 	contexts: ['page'],
 	id: 'assignTaskToMe',
 	parentId: 'assignParent',
-	enabled: false,
-	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
+	documentUrlPatterns: ['https://make/it/hidden'],
 	onclick: function() {
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
 			chrome.tabs.sendMessage(tabs[0].id, {
@@ -339,7 +337,12 @@ chrome.contextMenus.create({
 	}
 });
 
-chrome.contextMenus.create({type: 'separator', parentId: 'assignParent'});
+chrome.contextMenus.create({
+	id: 'assignSeparator',
+	type: 'separator',
+	parentId: 'assignParent',
+	documentUrlPatterns: ['https://make/it/hidden']
+});
 
 chrome.contextMenus.create({
 	title: 'Query User Data',
@@ -377,8 +380,9 @@ chrome.storage.sync.get(['debug', 'userId', 'userName', 'userEmail', 'fullName',
 	if (chrome.runtime.lastError) {
 		console.warn('SNAFU User Sync Error: %s', chrome.runtime.lastError.message);
 	} else {
-		chrome.contextMenus.update('assignIncToMe', {enabled: (isVarEmpty(items.userId) === true) ? false : true});
-		chrome.contextMenus.update('assignTaskToMe', {enabled: (isVarEmpty(items.userId) === true) ? false : true});
+		chrome.contextMenus.update('assignIncToMe', {documentUrlPatterns: (isVarEmpty(items.userId) === true) ? ['https://make/it/hidden/'] : ['https://ghsprod.service-now.com/incident.do?*']});
+		chrome.contextMenus.update('assignTaskToMe', {documentUrlPatterns: (isVarEmpty(items.userId) === true) ? ['https://make/it/hidden/'] : ['https://ghsprod.service-now.com/sc_task.do?*']});
+		chrome.contextMenus.update('assignSeparator', {documentUrlPatterns: (isVarEmpty(items.userId) === true) ? ['https://make/it/hidden/'] : ['https://ghsprod.service-now.com/incident.do?*', 'https://ghsprod.service-now.com/sc_task.do?*']});
 		chrome.contextMenus.update('queryOrReset', {
 			title: (isVarEmpty(items.userId) === true) ? 'Query User Data' : 'Reset User Data',
 			onclick: (isVarEmpty(items.userId) === true) ? queryUserData : resetUserData
@@ -389,8 +393,9 @@ chrome.storage.sync.get(['debug', 'userId', 'userName', 'userEmail', 'fullName',
 // monitor user data settings to update the context menu
 chrome.storage.onChanged.addListener(function(changes, area) {
 	if (area === 'sync' && 'userId' in changes) {
-		chrome.contextMenus.update('assignIncToMe', {enabled: (isVarEmpty(changes.userId.newValue) === true) ? false : true});
-		chrome.contextMenus.update('assignTaskToMe', {enabled: (isVarEmpty(changes.userId.newValue) === true) ? false : true});
+		chrome.contextMenus.update('assignIncToMe', {documentUrlPatterns: (isVarEmpty(changes.userId.newValue) === true) ? ['https://make/it/hidden/'] : ['https://ghsprod.service-now.com/incident.do?*']});
+		chrome.contextMenus.update('assignTaskToMe', {documentUrlPatterns: (isVarEmpty(changes.userId.newValue) === true) ? ['https://make/it/hidden/'] : ['https://ghsprod.service-now.com/sc_task.do?*']});
+		chrome.contextMenus.update('assignSeparator', {documentUrlPatterns: (isVarEmpty(changes.userId.newValue) === true) ? ['https://make/it/hidden/'] : ['https://ghsprod.service-now.com/incident.do?*', 'https://ghsprod.service-now.com/sc_task.do?*']});
 		chrome.contextMenus.update('queryOrReset', {
 			title: (isVarEmpty(changes.userId.newValue) === true) ? 'Query User Data' : 'Reset User Data',
 			onclick: (isVarEmpty(changes.userId.newValue) === true) ? queryUserData : resetUserData

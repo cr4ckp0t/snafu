@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+### Added
+- [Possibly?] Status messages will be handled by Service Now via g_form's API.
+
+### Fixed
+- Assign To Me context menus will be hidden using documentUrlPattern.
+
 ## 1.0.3 [2017-05-11]
 ### Added
 - finishDelay setting to delay when automatically updating or saving an update.
