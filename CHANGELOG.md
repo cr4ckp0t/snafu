@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## Unreleased
 ### Added
 - [Possibly?] Status messages will be handled by Service Now via g_form's API.
+- Automatic mode for ticket updates. All updates aside from task closures will be saved.  Task closures will be updated.
 
 ### Fixed
 - Assign To Me context menus will be hidden using documentUrlPattern.
