@@ -81,12 +81,19 @@ $(document).ready(function() {
     loadWildcards();
 
     // save autoFinish settings
+    /*
     $('#autoFinish-save').click(function() { saveAutoFinish('save'); });
     $('#autoEquipTicket-save').click(function() { saveAutoFinish('save'); });
     $('#autoFinish-update').click(function() { saveAutoFinish('update'); });
     $('#autoEquipTicket-update').click(function() { saveAutoFinish('update'); });
+    $('#autoFinish-auto
     $('#autoFinish-none').click(function() { saveAutoFinish('none'); });
     $('#autoEquipTicket-none').click(function() { saveAutoFinish('none'); });
+    */
+
+    // save autofinish settings
+    $('[id^=autoFinish').click(function(event) { saveAutoFinish(event.target.id.substring(event.target.id.search('-') + 1)); });
+    $('[id^=autoEquipTicket').click(function(event) { saveAutoFinish(event.target.id.substring(event.target.id.search('-') + 1)); });
 
     // wildcards
     $('[id$=Wildcards]').change(function(event) {

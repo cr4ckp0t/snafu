@@ -64,6 +64,7 @@ $(document).ready(function() {
 					console.info('SNAFU: Cleared all settings.');
 				}
 				successMessage('Successfully cleared all settings.');
+				loadSettings();
 			}
 		});
 	});

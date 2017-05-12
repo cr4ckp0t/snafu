@@ -17,10 +17,10 @@
  **/
 
 /**
- * we have to use Service Now's g_form JavaScript object in order to
- * access fields and inputs correctly.  Chrome extensions do not
- * access to page variables, so we have to inject code and use Custom Events
- * to pass data between the extension and page.
+ *  We have to use Service Now's g_form JavaScript object in order to
+ *  access fields and inputs correctly.  Chrome extensions do not
+ *  access to page variables, so we have to inject code and use Custom Events
+ *  to pass data between the extension and page.
  **/
 
 var snafuRslvComments = "My name is {TECH_NAME} and I was the technician that assisted you with {TICKET}. Thank you for the opportunity to provide you with service today with your {INC_TYPE}. If for any reason, your issue does not appear to be resolved please contact the Service Desk at (864) 455-8000.";
@@ -52,6 +52,7 @@ document.addEventListener('SNAFU_Inject', function(snafuInject) {
 		g_form.setValue('assigned_to', snafuInject.detail.userInfo.userId, snafuInject.detail.userInfo.fullName.toUpperCase());
 		g_form.flash('assigned_to', '#3eb049', 0);
 		switch (snafuInject.detail.autoFinish) {
+			case 'auto':
 			case 'save':
 				setTimeout(function() { g_form.save(); }, 1000);
 				break;
@@ -149,6 +150,17 @@ document.addEventListener('SNAFU_Inject', function(snafuInject) {
 				if (snafuField === 'state' || (snafuField === 'incident_state' && snafuValue !== '6')) {
 					// delay 1.5 seconds
 					setTimeout(function() { g_form.submit(); }, snafuInject.detail.finishDelay * 1000);
+				}
+				break;
+
+			// auto (save all updates except closures, which are updated. incidents are never automatically resolved)
+			case 'auto':
+				// if a closure then update, otherwise save
+				if (snafuField === 'state' && (snafuValue === '3' || snafuValue === '4')) {
+					// update
+					setTimeout(function() { g_form.submit(); }, snafuInject.detail.finishDelay * 1000);
+				} else {
+					setTimeout(function() { g_form.save(); }, snafuInject.detail.finishDelay * 1000);
 				}
 				break;
 			
