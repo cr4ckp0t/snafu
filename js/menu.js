@@ -353,30 +353,82 @@ chrome.contextMenus.create({
 
 chrome.contextMenus.create({type: 'separator', parentId: 'snafuParent'});
 
+/**
+ * ****************************************
+ * Options Parent
+ * ****************************************
+ */
 chrome.contextMenus.create({
-	title: 'Help',
+	title: 'Options',
 	contexts: ['page'],
-	id: 'helpParent',
+	id: 'optionsParent',
 	parentId: 'snafuParent'
 });
 
 chrome.contextMenus.create({
-	title: 'Options',
+	title: 'Ticket Completion',
+	contexts: ['page'],
+	id: 'autoFinishParent',
+	parentId: 'optionsParent'
+});
+
+var ticketCompletion = {'save': 'Save', 'update': 'Update', 'auto': 'Automatic', 'none': 'None'};
+for (var opt in ticketCompletion) {
+	chrome.contextMenus.create({
+		title: ticketCompletion[opt],
+		type: 'radio',
+		contexts: ['page'],
+		id: 'autoFinish-' + opt,
+		parentId: 'autoFinishParent',
+		checked: false,
+		onclick: optionsHandler
+	});
+}
+
+chrome.contextMenus.create({
+	title: 'Close Popup',
+	contexts: ['page'],
+	id: 'closePopupParent',
+	parentId: 'optionsParent'
+});
+
+var closePopup = {'enable': 'Enabled', 'disable': 'Disabled'}
+for (var opt in closePopup) {
+	chrome.contextMenus.create({
+		title: closePopup[opt],
+		type: 'radio',
+		contexts: ['page'],
+		id: 'closePopup-' + opt,
+		parentId: 'closePopupParent',
+		checked: false,
+		onclick: optionsHandler
+	});
+}
+
+chrome.contextMenus.create({type: 'separator', parentId: 'optionsParent'});
+
+chrome.contextMenus.create({
+	title: 'Options Page',
 	contexts: ['page'],
 	id: 'optionsPage',
-	parentId: 'helpParent',
+	parentId: 'optionsParent',
 	onclick: function() { chrome.tabs.create({url: chrome.extension.getURL('options.html')}); }
 });
 
+/**
+ * *****************************************
+ * Help Page
+ * *****************************************
+ */
 chrome.contextMenus.create({
-	title: 'Help',
+	title: 'Help Page',
 	contexts: ['page'],
 	id: 'helpPage',
-	parentId: 'helpParent',
+	parentId: 'snafuParent',
 	onclick: function() { chrome.tabs.create({url: chrome.extension.getURL('help.html')}); }
 });
 
-chrome.storage.sync.get(['debug', 'userId', 'userName', 'userEmail', 'fullName', 'groupName', 'groupId'], function(items) {
+chrome.storage.sync.get(['debug', 'autoFinish', 'closePopup', 'userId', 'userName', 'userEmail', 'fullName', 'groupName', 'groupId'], function(items) {
 	if (chrome.runtime.lastError) {
 		console.warn('SNAFU User Sync Error: %s', chrome.runtime.lastError.message);
 	} else {
@@ -387,21 +439,47 @@ chrome.storage.sync.get(['debug', 'userId', 'userName', 'userEmail', 'fullName',
 			title: (isVarEmpty(items.userId) === true) ? 'Query User Data' : 'Reset User Data',
 			onclick: (isVarEmpty(items.userId) === true) ? queryUserData : resetUserData
 		});
+
+		// set the autofinish radio
+		['save', 'update', 'auto', 'none'].forEach(function(opt) {
+			chrome.contextMenus.update('autoFinish-' + opt, {checked: (items.autoFinish === opt) ? true : false});
+		});
+
+		// set the closePopup radio
+		chrome.contextMenus.update('closePopup-enable', {checked: (items.closePopup === true) ? true : false});
+		chrome.contextMenus.update('closePopup-disable', {checked: (items.closePopup === false) ? true : false});
 	}
 });
 
 // monitor user data settings to update the context menu
 chrome.storage.onChanged.addListener(function(changes, area) {
-	if (area === 'sync' && 'userId' in changes) {
-		chrome.contextMenus.update('assignIncToMe', {documentUrlPatterns: (isVarEmpty(changes.userId.newValue) === true) ? ['https://make/it/hidden/'] : ['https://ghsprod.service-now.com/incident.do?*']});
-		chrome.contextMenus.update('assignTaskToMe', {documentUrlPatterns: (isVarEmpty(changes.userId.newValue) === true) ? ['https://make/it/hidden/'] : ['https://ghsprod.service-now.com/sc_task.do?*']});
-		chrome.contextMenus.update('assignSeparator', {documentUrlPatterns: (isVarEmpty(changes.userId.newValue) === true) ? ['https://make/it/hidden/'] : ['https://ghsprod.service-now.com/incident.do?*', 'https://ghsprod.service-now.com/sc_task.do?*']});
-		chrome.contextMenus.update('queryOrReset', {
-			title: (isVarEmpty(changes.userId.newValue) === true) ? 'Query User Data' : 'Reset User Data',
-			onclick: (isVarEmpty(changes.userId.newValue) === true) ? queryUserData : resetUserData
-		});
+	if (area === 'sync') {
+		if ('userId' in changes) {
+			chrome.contextMenus.update('assignIncToMe', {documentUrlPatterns: (isVarEmpty(changes.userId.newValue) === true) ? ['https://make/it/hidden/'] : ['https://ghsprod.service-now.com/incident.do?*']});
+			chrome.contextMenus.update('assignTaskToMe', {documentUrlPatterns: (isVarEmpty(changes.userId.newValue) === true) ? ['https://make/it/hidden/'] : ['https://ghsprod.service-now.com/sc_task.do?*']});
+			chrome.contextMenus.update('assignSeparator', {documentUrlPatterns: (isVarEmpty(changes.userId.newValue) === true) ? ['https://make/it/hidden/'] : ['https://ghsprod.service-now.com/incident.do?*', 'https://ghsprod.service-now.com/sc_task.do?*']});
+			chrome.contextMenus.update('queryOrReset', {
+				title: (isVarEmpty(changes.userId.newValue) === true) ? 'Query User Data' : 'Reset User Data',
+				onclick: (isVarEmpty(changes.userId.newValue) === true) ? queryUserData : resetUserData
+			});
+		} else if ('autoFinish' in changes) {
+			// set the autofinish radio
+			['save', 'update', 'auto', 'none'].forEach(function(opt) {
+				chrome.contextMenus.update('autoFinish-' + opt, {checked: (changes.autoFinish.newValue === opt) ? true : false});
+			});
+		}
 	}
 });
+
+/**
+ * Onclick handler for autoFinish settings.
+ * @param	{Object}	info
+ * @param	{Object}	tabs
+ * @return	{Void}
+ */
+function optionsHandler(info, tabs) {
+
+}
 
 /**
  * Queries user data.
