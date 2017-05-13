@@ -26,12 +26,12 @@ chrome.runtime.onInstalled.addListener(function(details) {
 chrome.runtime.onStartup.addListener(function() {
 	chrome.storage.sync.get(['autoFinish', 'finishDelay', 'debug', 'canned', 'closePopup'], function(items) {
 		if (chrome.runtime.lastError) {
-			console.warn('SNAFU: Sync Get Error: %s', chrome.runtime.lastError.message);
+			console.error('SNAFU: Sync Get Error: %s', chrome.runtime.lastError.message);
 		} else {
 			if (isVarEmpty(items.autoFinish) === true) {
 				chrome.storage.sync.set({autoFinish: 'none'}, function() {
 					if (chrome.runtime.lastError) {
-						console.warn('SNAFU autoFinish Set Error: %s', chrome.runtime.lastError.message);
+						console.error('SNAFU autoFinish Set Error: %s', chrome.runtime.lastError.message);
 					}
 				});
 			}
@@ -39,7 +39,7 @@ chrome.runtime.onStartup.addListener(function() {
 			if (isVarEmpty(items.finishDelay) === true) {
 				chrome.storage.sync.set({finishDelay: 1.5}, function() {
 					if (chrome.runtime.lastError) {
-						console.warn('SNAFU finishDelay Set Error: %s', chrome.runtime.lastError.message);
+						console.error('SNAFU finishDelay Set Error: %s', chrome.runtime.lastError.message);
 					}
 				});
 			}
@@ -47,7 +47,7 @@ chrome.runtime.onStartup.addListener(function() {
 			if (isVarEmpty(items.debug) === true) {
 				chrome.storage.sync.set({debug: false}, function() {
 					if (chrome.runtime.lastError) {
-						console.warn('SNAFU debug Set Error: %s', chrome.runtime.lastError.message);
+						console.error('SNAFU debug Set Error: %s', chrome.runtime.lastError.message);
 					}
 				});
 			}
@@ -60,7 +60,7 @@ chrome.runtime.onStartup.addListener(function() {
 					}
 				}, function() {
 					if (chrome.runtime.lastError) {
-						console.warn('SNAFU canned Set Error: %s', chrome.runtime.lastError.message);
+						console.error('SNAFU canned Set Error: %s', chrome.runtime.lastError.message);
 					}
 				});
 			}
@@ -68,7 +68,7 @@ chrome.runtime.onStartup.addListener(function() {
 			if (isVarEmpty(items.closePopup) === true) {
 				chrome.storage.sync.set({closePopup: false}, function() {
 					if (chrome.runtime.lastError) {
-						console.warn('SNAFU closePopup Set Error: %s', chrome.runtime.lastError.message);
+						console.error('SNAFU closePopup Set Error: %s', chrome.runtime.lastError.message);
 					}
 				});
 			}

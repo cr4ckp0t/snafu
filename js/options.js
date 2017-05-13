@@ -42,7 +42,7 @@ $(document).ready(function() {
 	$('#resetUser').click(function() {
 		chrome.storage.sync.remove(['userId', 'userName', 'userEmail', 'fullName', 'groupName', 'groupId'], function() {
 			if (chrome.runtime.lastError) {
-				console.warn('SNAFU Sync Remove Error: %s', chrome.runtime.lastError.message);
+				console.error('SNAFU Sync Remove Error: %s', chrome.runtime.lastError.message);
 				errorMessage('Failed to remove user data.');
 			} else {
 				if (debug === true) {
@@ -57,7 +57,7 @@ $(document).ready(function() {
 	$('#resetAll').click(function() {
 		chrome.storage.sync.clear(function() {
 			if (chrome.runtime.lastError) {
-				console.warn('SNAFU Sync Clear Error: %s', chrome.runtime.lastError.message);
+				console.error('SNAFU Sync Clear Error: %s', chrome.runtime.lastError.message);
 				errorMessage('Failed to clear settings.');
 			} else {
 				if (debug === true) {
@@ -85,7 +85,7 @@ function saveSettings() {
 		finishDelay: $('#finishDelay').val()
 	}, function() {
 		if (chrome.runtime.lastError) {
-			console.warn('SNAFU Sync Set Error: %s', chrome.runtime.lastError.message);
+			console.error('SNAFU Sync Set Error: %s', chrome.runtime.lastError.message);
 			errorMessage('Failed to save settings.');
 		} else {
 			successMessage('Settings saved successfully.');
@@ -101,14 +101,14 @@ function saveSettings() {
 function loadSettings() {
 	chrome.storage.sync.get(['debug', 'closePopup', 'canned', 'autoFinish', 'finishDelay', 'userId', 'userName', 'userEmail', 'fullName', 'groupName', 'groupId'], function(items) {
 		if (chrome.runtime.lastError) {
-			console.warn('SNAFU Sync Get Error: %s', chrome.runtime.lastError.message);
+			console.error('SNAFU Sync Get Error: %s', chrome.runtime.lastError.message);
 		} else {
 
 			// debug settings
 			if (isVarEmpty(items.debug) === true) {
 				chrome.storage.sync.set({debug: false}, function() {
 					if (chrome.runtime.lastError) {
-						console.warn('SNAFU debug Set Error: %s', chrome.runtime.lastError.message);
+						console.error('SNAFU debug Set Error: %s', chrome.runtime.lastError.message);
 					} else {
 						console.info('SNAFU: Created debug setting.');
 					}
@@ -124,7 +124,7 @@ function loadSettings() {
 			if (isVarEmpty(items.closePopup) === true) {
 				chrome.storage.sync.set({closePopup: false}, function() {
 					if (chrome.runtime.lastError) {
-						console.warn('SNAFU closePopup Set Error: %s', chrome.runtime.lastError.message);
+						console.error('SNAFU closePopup Set Error: %s', chrome.runtime.lastError.message);
 					} else {
 						console.info('SNAFU: Created closePopup setting.');
 					}
@@ -143,7 +143,7 @@ function loadSettings() {
 					}
 				}, function() {
 					if (chrome.runtime.lastError) {
-						console.warn('SNAFU canned Set Error: %s', chrome.runtime.lastError.message);
+						console.error('SNAFU canned Set Error: %s', chrome.runtime.lastError.message);
 					} else {
 						console.info('SNAFU: Created canned messages.');
 					}
@@ -161,7 +161,7 @@ function loadSettings() {
 			if (isVarEmpty(items.autoFinish) === true) {
 				chrome.storage.sync.set({autoFinish: 'none'}, function() {
 					if (chrome.runtime.lastError) {
-						console.warn('SNAFU autoFinish Set Error: %s', chrome.runtime.lastError.message);
+						console.error('SNAFU autoFinish Set Error: %s', chrome.runtime.lastError.message);
 					} else {
 						console.info('SNAFU: Created autoFinish setting.');
 					}
@@ -175,7 +175,7 @@ function loadSettings() {
 			if (isVarEmpty(items.finishDelay) === true) {
 				chrome.storage.sync.set({finishDelay: 1.5}, function() {
 					if (chrome.runtime.lastError) {
-						console.warn('SNAFU finishDelay Set Error: %s', chrome.runtime.lastError.message);
+						console.error('SNAFU finishDelay Set Error: %s', chrome.runtime.lastError.message);
 					} else {
 						console.info('SNAFU: Created finishDelay setting.');
 					}

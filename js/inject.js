@@ -32,18 +32,23 @@ document.addEventListener('SNAFU_Inject', function(snafuInject) {
 	if (snafuInject.detail.type === 'userQuery') {
 		var snafuAssignedTo = g_form.getReference('assigned_to');
 		var snafuAssignmentGroup = g_form.getReference('assignment_group');
-		// query the user info sent by the options page
-		var snafuQuery = document.createEvent('CustomEvent');
-		snafuQuery.initCustomEvent('SNAFU_UserQuery', true, true, {
-			fullName: snafuUcwords(snafuAssignedTo.name),
-			userId: snafuAssignedTo.sys_id,
-			userName: snafuAssignedTo.user_name,
-			userEmail: snafuAssignedTo.email,
-			groupName: snafuUcwords(snafuAssignmentGroup.name),
-			groupId: snafuAssignmentGroup.sys_id
-		});
-		g_form.addInfoMessage('SNAFU: Saved your user information.');
-		document.dispatchEvent(snafuQuery);
+
+		if (snafuIsVarEmpty(snafuAssignedTo.name) === false && snafuIsVarEmpty(snafuAssignmentGroup.name) === false) {
+			// query the user info sent by the options page
+			var snafuQuery = document.createEvent('CustomEvent');
+			snafuQuery.initCustomEvent('SNAFU_UserQuery', true, true, {
+				fullName: snafuUcwords(snafuAssignedTo.name),
+				userId: snafuAssignedTo.sys_id,
+				userName: snafuAssignedTo.user_name,
+				userEmail: snafuAssignedTo.email,
+				groupName: snafuUcwords(snafuAssignmentGroup.name),
+				groupId: snafuAssignmentGroup.sys_id
+			});
+			g_form.addInfoMessage('SNAFU: Saved your user information.');
+			document.dispatchEvent(snafuQuery);
+		} else {
+			g_form.addErrorMessage('SNAFU: Unable to pull your user information.');
+		}
 	
 	// assign task or incident to the user
 	} else if (snafuInject.detail.type === 'assignToMe') {
@@ -268,7 +273,7 @@ function snafuGetComputerModel(model_id) {
  * @return  {Boolean}
  */
 function snafuIsVarEmpty(value) {
-    return (value === null || value === undefined || value === NaN || value.trim() === '') ? true : false
+    return (value === null || value === undefined || value === NaN) ? true : false
 }
 
 /**

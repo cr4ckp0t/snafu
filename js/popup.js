@@ -102,7 +102,7 @@ $(document).ready(function() {
             var textArea = (event.target.id === 'custWildcards') ? '#customerNotes' : '#workNotes';
             chrome.storage.sync.get(['debug'], function(items) {
                 if (chrome.runtime.lastError) {
-                    console.warn('SNAFU debug Get Error: %s', chrome.runtime.lastError.message);
+                    console.error('SNAFU debug Get Error: %s', chrome.runtime.lastError.message);
                 } else {
                     console.info('SNAFU msg: %s', msg[0]);
                     console.info('SNAFU textArea: %s', textArea);
@@ -121,7 +121,7 @@ $(document).ready(function() {
             chrome.storage.sync.get(['debug'], function(items) {
                 if (items.debug === true) {
                     if (chrome.runtime.lastError) {
-                        console.warn('SNAFU debug Get Error: %s', chrome.runtime.lastError.message);
+                        console.error('SNAFU debug Get Error: %s', chrome.runtime.lastError.message);
                     } else {
                         console.info('SNAFU msg: %s', msg);
                         console.info('SNAFU textArea: %S', textArea);
@@ -142,9 +142,9 @@ $(document).ready(function() {
     // send ticket update
     $('#sendUpdate').click(function() {
         if ($('input[name=tStatus]:checked').val() === '1' && isVarEmpty($('#customerNotes').val()) === '') {
-            console.warn('SNAFU Error: Pending tickets must have customer notes.');
+            console.error('SNAFU Error: Pending tickets must have customer notes.');
         } else if (isVarEmpty($('#customerNotes').val()) === true && isVarEmpty($('#workNotes').val()) === true) {
-            console.warn('SNAFU Error: You must provide customer and/or work notes.');
+            console.error('SNAFU Error: You must provide customer and/or work notes.');
         } else {
             chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
                 chrome.tabs.sendMessage(tabs[0].id, {
@@ -155,17 +155,17 @@ $(document).ready(function() {
                 }, function(response) {
                     chrome.storage.sync.get(['debug', 'closePopup'], function(items) {
                         if (chrome.runtime.lastError) {
-                            console.warn('SNAFU Sync Get Error: %s', chrome.runtime.lastError.message);
+                            console.error('SNAFU Sync Get Error: %s', chrome.runtime.lastError.message);
                         } else {
                             if (items.debug === true) {
                                 if (isVarEmpty(response) === false) {
                                     if (response.success === false) {
-                                        console.warn('SNAFU Error: %s', response.errMsg);
+                                        console.error('SNAFU Error: %s', response.errMsg);
                                     } else {
                                         console.info('SNAFU: Update sent!');
                                     }
                                 } else {
-                                    console.warn('SNAFU Error: Unable to process response to message.');
+                                    console.error('SNAFU Error: Unable to process response to message.');
                                 }
                             }
                         }
@@ -182,7 +182,7 @@ $(document).ready(function() {
     // equipment order update
     $('#sendEquipment').click(function() {
         if (isVarEmpty($('#compHost').val()) === true || isVarEmpty($('#compAsset').val()) === true || isVarEmpty($('#compModel').val()) === true || isVarEmpty($('#compBuild').val()) === true) {
-            console.warn('SNAFU Error: You must provide valid input.');
+            console.error('SNAFU Error: You must provide valid input.');
         } else {
             // custom closure script
             var equipWorkNotes = 'Computer has been built. One %s has been built %s. Tag %s HostName %s. Resolving Task. Placing computer in Deployment Room. Please assign to a tech for install and resolution. Once this ticket is closed, the request will generate another task to have a technician come on site to install the equipment. This is just a ticket to track the build and equipment used. A tech should be calling the customer momentarily to set up a time for installation.';
@@ -196,17 +196,17 @@ $(document).ready(function() {
                 }, function(response) {
                     chrome.storage.sync.get(['debug', 'closePopup'], function(items) {
                         if (chrome.runtime.lastError) {
-                            console.warn('SNAFU Sync Get Error: %s', chrome.runtime.lastError.message);
+                            console.error('SNAFU Sync Get Error: %s', chrome.runtime.lastError.message);
                         } else {
                             if (items.debug === true) {
                                 if (isVarEmpty(response) === false) {
                                     if (response.success === false) {
-                                        console.warn('SNAFU Error: %s', response.errMsg);
+                                        console.error('SNAFU Error: %s', response.errMsg);
                                     } else {
                                         console.info('SNAFU: Update sent!');
                                     }
                                 } else {
-                                    console.warn('SNAFU Error: Unable to process response to message.');
+                                    console.error('SNAFU Error: Unable to process response to message.');
                                 }
                             }
 
@@ -276,7 +276,7 @@ function isVarEmpty(value) {
 function saveAutoFinish(value) {
     chrome.storage.sync.set({autoFinish: value}, function() {
         if (chrome.runtime.lastError) {
-            console.warn('Sync Set Error: %s', chrome.runtime.lastError.message);
+            console.error('Sync Set Error: %s', chrome.runtime.lastError.message);
         } else {
             console.info('SNAFU: Saved settings.');
         }
@@ -291,7 +291,7 @@ function saveAutoFinish(value) {
 function getSettings() {
     chrome.storage.sync.get(['autoFinish', 'debug', 'canned'], function(items) {
         if (chrome.runtime.lastError) {
-            console.warn('SNAFU Sync Get Error: %s', chrome.runtime.lastError.message);
+            console.error('SNAFU Sync Get Error: %s', chrome.runtime.lastError.message);
         } else {
             if (items.debug === true) {
                 console.info('SNAFU: Received settings.');
@@ -321,16 +321,16 @@ function processClick(clickType) {
         }, function(response) {
             chrome.storage.sync.get(['debug', 'closePopup'], function() {
                 if (chrome.runtime.lastError) {
-                    console.warn('SNAFU Error: %s', chrome.runtime.lastError.message);
+                    console.error('SNAFU Error: %s', chrome.runtime.lastError.message);
                 } else if (items.debug === true) {
                     if (isVarEmpty(response) === false) {
                         if (response.success === false) {
-                            console.warn('SNAFU Error: %s', response.errMsg);
+                            console.error('SNAFU Error: %s', response.errMsg);
                         } else {
                             console.info('SNAFU: Update sent!');
                         }
                     } else {
-                        console.warn('SNAFU Error: Unable to process response to message.');
+                        console.error('SNAFU Error: Unable to process response to message.');
                     }
                 }
 

@@ -35,7 +35,7 @@ chrome.contextMenus.create({
 
 // acknowledge generic incident
 chrome.contextMenus.create({
-	title: 'Generic Incident',
+	title: 'Generic Acknowledgement',
 	contexts: ['page'],
 	id: 'ackIncident',
 	parentId: 'parentAckIncident',
@@ -392,14 +392,33 @@ chrome.contextMenus.create({
 	parentId: 'optionsParent'
 });
 
-var closePopup = {'enable': 'Enabled', 'disable': 'Disabled'}
-for (var opt in closePopup) {
+var objToggle = {'enable': 'Enabled', 'disable': 'Disabled'}
+for (var opt in objToggle) {
 	chrome.contextMenus.create({
-		title: closePopup[opt],
+		title: objToggle[opt],
 		type: 'radio',
 		contexts: ['page'],
 		id: 'closePopup-' + opt,
 		parentId: 'closePopupParent',
+		checked: false,
+		onclick: optionsHandler
+	});
+}
+
+chrome.contextMenus.create({
+	title: 'Debug Mode',
+	contexts: ['page'],
+	id: 'debugParent',
+	parentId: 'optionsParent'
+});
+
+for (var opt in objToggle) {
+	chrome.contextMenus.create({
+		title: objToggle[opt],
+		type: 'radio',
+		contexts: ['page'],
+		id: 'debug-' + opt,
+		parentId: 'debugParent',
 		checked: false,
 		onclick: optionsHandler
 	});
@@ -421,16 +440,31 @@ chrome.contextMenus.create({
  * *****************************************
  */
 chrome.contextMenus.create({
+	title: 'Help',
+	contexts: ['page'],
+	id: 'helpParent',
+	parentId: 'snafuParent'
+});
+
+chrome.contextMenus.create({
+	title: 'FAQ',
+	contexts: ['page'],
+	id: 'faqPage',
+	parentId: 'helpParent',
+	onclick: function() { chrome.tabs.create({url: chrome.extension.getURL('faq.html')}) }
+});
+
+chrome.contextMenus.create({
 	title: 'Help Page',
 	contexts: ['page'],
 	id: 'helpPage',
-	parentId: 'snafuParent',
+	parentId: 'helpParent',
 	onclick: function() { chrome.tabs.create({url: chrome.extension.getURL('help.html')}); }
 });
 
 chrome.storage.sync.get(['debug', 'autoFinish', 'closePopup', 'userId', 'userName', 'userEmail', 'fullName', 'groupName', 'groupId'], function(items) {
 	if (chrome.runtime.lastError) {
-		console.warn('SNAFU User Sync Error: %s', chrome.runtime.lastError.message);
+		console.error('SNAFU User Sync Error: %s', chrome.runtime.lastError.message);
 	} else {
 		chrome.contextMenus.update('assignIncToMe', {documentUrlPatterns: (isVarEmpty(items.userId) === true) ? ['https://make/it/hidden/'] : ['https://ghsprod.service-now.com/incident.do?*']});
 		chrome.contextMenus.update('assignTaskToMe', {documentUrlPatterns: (isVarEmpty(items.userId) === true) ? ['https://make/it/hidden/'] : ['https://ghsprod.service-now.com/sc_task.do?*']});
@@ -448,6 +482,10 @@ chrome.storage.sync.get(['debug', 'autoFinish', 'closePopup', 'userId', 'userNam
 		// set the closePopup radio
 		chrome.contextMenus.update('closePopup-enable', {checked: (items.closePopup === true) ? true : false});
 		chrome.contextMenus.update('closePopup-disable', {checked: (items.closePopup === false) ? true : false});
+
+		// set the debug radio
+		chrome.contextMenus.update('debug-enable', {checked: (items.debug === true) ? true : false});
+		chrome.contextMenus.update('debug-disable', {checked: (items.debug === false) ? true : false});
 	}
 });
 
@@ -467,6 +505,14 @@ chrome.storage.onChanged.addListener(function(changes, area) {
 			['save', 'update', 'auto', 'none'].forEach(function(opt) {
 				chrome.contextMenus.update('autoFinish-' + opt, {checked: (changes.autoFinish.newValue === opt) ? true : false});
 			});
+		} else if ('closePopup' in changes) {
+			// set the closePopup radio
+			chrome.contextMenus.update('closePopup-enable', {checked: (changes.closePopup.newValue === true) ? true : false});
+			chrome.contextMenus.update('closePopup-disable', {checked: (changes.closePopup.newValue === false) ? true : false});
+		} else if ('debug' in changes) {
+			// set the debug radio
+			chrome.contextMenus.update('debug-enable', {checked: (changes.debug.newValue === true) ? true : false});
+			chrome.contextMenus.update('debug-disable', {checked: (changes.debug.newValue === false) ? true : false});
 		}
 	}
 });
@@ -477,8 +523,35 @@ chrome.storage.onChanged.addListener(function(changes, area) {
  * @param	{Object}	tabs
  * @return	{Void}
  */
-function optionsHandler(info, tabs) {
+function optionsHandler(info, tab) {
+	var setting = info.menuItemId.substring(0, info.menuItemId.indexOf('-'));
+	var value = info.menuItemId.substring(info.menuItemId.indexOf('-') + 1);
+	switch (setting) {
+		case 'autoFinish':
+			chrome.storage.sync.set({autoFinish: value}, function() {
+				if (chrome.runtime.lastError) {
+					console.error('SNAFU autoFinish Set Error: %s', chrome.runtime.lastError.message);
+				} else {
+					console.info('SNAFU: Updated autoFinish.');
+				}
+			});
+			break;
 
+		case 'closePopup':
+		case 'debug':
+			var newSetting = {}
+			newSetting[setting] = value;
+			chrome.storage.sync.set(newSetting, function() {
+				if (chrome.runtime.lastError) {
+					console.error('SNAFU %s Set Error: %s', setting, chrome.runtime.lastError.message);
+				} else {
+					console.info('SNAFU: Updated %s.', setting);
+				}	
+			});
+			break;
+
+		default: break;
+	}
 }
 
 /**
@@ -498,7 +571,7 @@ function queryUserData() {
 function resetUserData() {
 	chrome.storage.sync.remove(['userId', 'userName', 'userEmail', 'fullName', 'groupName', 'groupId'], function() {
 		if (chrome.runtime.lastError) {
-			console.warn('SNAFU Sync Remove Error: %s', chrome.runtime.lastError.message);
+			console.error('SNAFU Sync Remove Error: %s', chrome.runtime.lastError.message);
 			chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
 				chrome.tabs.sendMessage(tabs[0].id, {
 					type: 'sendErrorMsg',
@@ -533,17 +606,17 @@ function isVarEmpty(value) {
 function handleResponse(response) {
 	chrome.storage.sync.get(['debug'], function(items) {
 		if (chrome.runtime.lastError) {
-			console.warn('SNAFU Sync Get Error: %s', chrome.runtime.lastError.message);
+			console.error('SNAFU Sync Get Error: %s', chrome.runtime.lastError.message);
 		} else {
 			if (items.debug === true) {
 				if (isVarEmpty(response) === false) {
 					if (response.success === false) {
-						console.warn('SNAFU Error: %s', response.errMsg);
+						console.error('SNAFU Error: %s', response.errMsg);
 					} else {
 						console.info('SNAFU: Update sent!');
 					}
 				} else {
-					console.warn('SNAFU Error: Unable to process response to message.');
+					console.error('SNAFU Error: Unable to process response to message.');
 				}
 			}
 		}

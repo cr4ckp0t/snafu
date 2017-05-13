@@ -36,7 +36,7 @@ injectScript.onload = function() { this.remove(); };
 // listen for triggers on the custom event for passing text
 document.addEventListener('SNAFU_UserQuery', function(userData) {
     if (isVarEmpty(userData.detail.fullName) || isVarEmpty(userData.detail.userName) || isVarEmpty(userData.detail.userId) || isVarEmpty(userData.detail.userEmail) || isVarEmpty(userData.detail.groupName) || isVarEmpty(userData.detail.groupId)) {
-        console.warn('SNAFU: Received incomplete user data.');
+        console.error('SNAFU: Received incomplete user data.');
     } else {
         chrome.storage.sync.set({
             fullName: userData.detail.fullName,
@@ -47,7 +47,7 @@ document.addEventListener('SNAFU_UserQuery', function(userData) {
             groupId: userData.detail.groupId
         }, function() {
             if (chrome.runtime.lastError) {
-                console.warn('SNAFU Sync Set Error: %s', chrome.runtime.lastError.message);
+                console.error('SNAFU Sync Set Error: %s', chrome.runtime.lastError.message);
             } else {
                 console.info('SNAFU: Received user data.');
             }
@@ -58,7 +58,7 @@ document.addEventListener('SNAFU_UserQuery', function(userData) {
 chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
     chrome.storage.sync.get(['autoFinish', 'finishDelay', 'debug'], function(items) {
         if (chrome.runtime.lastError) {
-            console.warn('SNAFU Sync Get Error: %s', chrome.runtime.lastError.message);
+            console.error('SNAFU Sync Get Error: %s', chrome.runtime.lastError.message);
         } else {
 
             if (items.debug === true) {
@@ -74,6 +74,7 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                     injectData = {
                         type: msg.type
                     }
+                    sendResponse({success: true, errMsg: null});
                     break;
                 
                 // send info message
@@ -83,6 +84,7 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                         type: msg.type,
                         statusMsg: msg.statusMsg
                     }
+                    sendResponse({success: true, errMsg: null});
                     break;
 
                 // assign to me
@@ -427,8 +429,8 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
             document.dispatchEvent(injectEvent);
         } else {
             if (items.debug === true) {
-                console.warn('SNAFU: Incomplete injectData object.');
-                console.warn(injectData);
+                console.error('SNAFU: Incomplete injectData object.');
+                console.error(injectData);
             }
         }
     });
