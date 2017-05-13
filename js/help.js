@@ -25,6 +25,9 @@ $(document).ready(function() {
 	$('#openOptions').click(function() {
 		chrome.tabs.create({url: chrome.extension.getURL('options.html')});
 	});
+	$('#openFaq').click(function() {
+		chrome.tabs.create({url: chrome.extension.getURL('faq.html')});
+	});
 	$('#closeWindow').click(function() {
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
 			chrome.tabs.remove(tabs[0].id);

@@ -15,3 +15,33 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  **/
+
+ body {
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size: 14px;
+    padding: 5px;
+}
+
+a:link, a:active, a:visited {
+	color: #3eb049;
+	text-decoration: none;
+}
+
+a:hover {
+	color: #3eb049;
+	text-decoration: underline;
+}
+
+div#content {
+	width: 50%;
+	margin: 0 auto;
+}
+
+h1#header {
+	color: #3eb049;
+	font-weight: bold;
+}
+
+h1#header small {
+	font-style: italic;
+}
