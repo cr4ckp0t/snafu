@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## 1.0.4 [2017-05-14]
 ### Added
 - Automatic mode for ticket updates. All updates aside from task closures will be saved.  Task closures will be updated.
 - Options context menu to quickly change certain settings.
