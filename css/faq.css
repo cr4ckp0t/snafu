@@ -32,8 +32,20 @@ a:hover {
 	text-decoration: underline;
 }
 
+a.faq:link, a.faq:active, a.faq:link {
+	color: #fff;
+	text-decoration: none;
+	cursor: pointer;
+}
+
+a.faq:hover {
+	color: #fff;
+	text-decoration: underline;
+	cursor: pointer;
+}
+
 div#content {
-	width: 50%;
+	width: 35%;
 	margin: 0 auto;
 }
 
