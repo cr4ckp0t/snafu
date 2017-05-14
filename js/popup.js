@@ -221,16 +221,13 @@ $(document).ready(function() {
     });
     
     // open help page
-    $('[id^=getHelp]').click(function() {
-        var helpUrl = chrome.extension.getURL('help.html');
-        chrome.tabs.create({ url: helpUrl });
-    });
+    $('[id^=getHelp]').click(function() { chrome.tabs.create({url: chrome.extension.getURL('help.html')}); });
 
     // open options page
-    $('[id^=openOptions]').click(function() {
-        var optionsUrl = chrome.extension.getURL('options.html');
-        chrome.tabs.create({ url: optionsUrl });
-    });
+    $('[id^=openOptions]').click(function() { chrome.tabs.create({url: chrome.extension.getURL('options.html')}); });
+    
+    // open faq page
+    $('[id^=openFaq]').click(function() { chrome.tabs.create({url: chrome.extension.getURL('faq.html')}); }); 
 });
 
 /**
