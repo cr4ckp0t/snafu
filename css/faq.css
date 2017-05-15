@@ -44,6 +44,11 @@ a.faq:hover {
 	cursor: pointer;
 }
 
+span.answer {
+	font-weight: bold;
+	font-size: 16px;
+}
+
 div#content {
 	width: 35%;
 	margin: 0 auto;

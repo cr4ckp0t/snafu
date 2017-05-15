@@ -393,7 +393,7 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                         sendResponse({success: true, errMsg: null});
                     } else {
                         // send error
-                        sendResponse({success: false, errMsg: 'Service Now must be active tab.'});
+                        sendResponse({success: false, errMsg: 'ServiceNow must be active tab.'});
                     }
                     break;
 

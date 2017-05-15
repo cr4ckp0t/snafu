@@ -46,7 +46,7 @@
 				<p class="navbar-text navbar-right">Version <span id="version"></span></p>
 			</div>
 		</nav>
-		<h1 id="header"><img src="images/icon-64.png" alt="Logo" style="height:50px;width:50px;" /> SNAFU <small>SNow Automated Form Utilizer</small></h1>
+		<h1 id="header"><img src="images/icon-64.png" alt="Logo" style="height:50px;width:50px;" /> SNAFU <small>Help!</small></h1>
 		<a name="thanks">&nbsp;</a>
 		<blockquote id="thanks">
 			<p>Thank you for installing this Chrome extension!  It has actually been quite fun to write, as well as filling a need created when we all moved over to GHS and lost the use of SNAP (a Dell product).  I am confident that this will perform above and beyond anything that SNAP could have ever hoped for, though to be fair it's not SNAP's fault.</p>
@@ -56,14 +56,14 @@
 		<a name="troubleshooting">&nbsp;</a>
 		<div class="panel panel-danger">
 			<div class="panel-heading">Troubleshooting</div>
-			<em>Note: Because of how this extension is forced to inject scripts in to Serivce Now in order to get it to work sometimes things don't get refreshed correctly when the page changes.  If you notice when you try to send an update that it isn't being sent to Service Now just refresh the Service Now tab, or at the very least Right Click on Service Now to bring up the Context Menu and then select "Reload Frame".  Service now operates with an <a href="https://www.w3schools.com/html/html_iframe.asp" target="_blank">Iframe</a>, so the ticket displays are actually full webpages being displayed inside of the navigation, shortcuts, etc. wrapper.</em>
+			<em>Note: Because of how this extension is forced to inject scripts in to Serivce Now in order to get it to work sometimes things don't get refreshed correctly when the page changes.  If you notice when you try to send an update that it isn't being sent to ServiceNow just refresh the ServiceNow tab, or at the very least Right Click on ServiceNow to bring up the Context Menu and then select "Reload Frame".  Service now operates with an <a href="https://www.w3schools.com/html/html_iframe.asp" target="_blank">Iframe</a>, so the ticket displays are actually full webpages being displayed inside of the navigation, shortcuts, etc. wrapper.</em>
 		</div>
 		<br />
 		<a name="howItWorks">&nbsp;</a>
 		<h3>How It Works</h3>
-		<p>Without going in to too much detail this basically injects a script (<code>js/inject.js</code>) in to the Service Now main frame.  This script houses all of the code that manipulates the various forms using Service Now's provided API aka <a href="http://wiki.servicenow.com/index.php?title=GlideForm_(g_form)#gsc.tab=0" target="_blank">GlideForm</a>.  Since webpages and Chrome extensions operate in separate worlds we have to use a JavaScript CustomEvent <code>SNAFU_Inject</code> in order to pass data to the page to then be submitted to the form.</p>
+		<p>Without going in to too much detail this basically injects a script (<code>js/inject.js</code>) in to the ServiceNow main frame.  This script houses all of the code that manipulates the various forms using ServiceNow's provided API aka <a href="http://wiki.servicenow.com/index.php?title=GlideForm_(g_form)#gsc.tab=0" target="_blank">GlideForm</a>.  Since webpages and Chrome extensions operate in separate worlds we have to use a JavaScript CustomEvent <code>SNAFU_Inject</code> in order to pass data to the page to then be submitted to the form.</p>
 		<p>Because I don't have to worry about the other contracts that the developers of SNAP had to, I am able to automate a lot of the processes that we have to follow in order to properly handle the incidents and tasks that come our way.  This is why I am able to include code that can automatically acknowledge incidents/tasks, or close a build request by pulling the replacement device's information directly from the page.</p>
-		<p>The truth is that SNAP wasn't really all that bad of a program.  It was written quite well.  It's just they tried to cram so many different contracts, all using different customized versions of Service Now, into one program using various JavaScript hacks that it eventually severely impeded the performance of the program and caused Service Now to be sluggish as well.  In this extension there isn't any of that!</p> 
+		<p>The truth is that SNAP wasn't really all that bad of a program.  It was written quite well.  It's just they tried to cram so many different contracts, all using different customized versions of ServiceNow, into one program using various JavaScript hacks that it eventually severely impeded the performance of the program and caused ServiceNow to be sluggish as well.  In this extension there isn't any of that!</p> 
 		<br />
 		<h3>Layout</h3>
 		<h4>Toolbar Button</h4>
@@ -231,7 +231,7 @@
 		<h3><a name="techInfo">Technician Info/Assign To Me</a></h3>
 		<p>
 			<div class="alert alert-info"><em>Note: Make sure the group you want to be saved is the one that is used in the ticket you have open when you click "Query User Info".  It pulls the information straight from the ticket.</em></div>
-			Beginning in version 1.0.1 (2017-05-05) I added the ability to have the extension pull your user data from Service Now.  It will pull your name, user ID, user name (GHS username basically), Assignment Group ID, and Assignment Group Name.  You can do this by right-clicking in Serivce Now to bring up the context menu and then selecting <code>Query User Info</code>.  This will pull your information and then save it for use later.  If it is able to pull your information when you right-click to bring up the context menu it will now say <code>Assign To Me</code>.  That's why we need your information, so we can properly assign the ticket to you, in the correct group.  You can view what it has saved by going to the <a href="#" id="openOptions">Options</a>.
+			Beginning in version 1.0.1 (2017-05-05) I added the ability to have the extension pull your user data from ServiceNow.  It will pull your name, user ID, user name (GHS username basically), Assignment Group ID, and Assignment Group Name.  You can do this by right-clicking in Serivce Now to bring up the context menu and then selecting <code>Query User Info</code>.  This will pull your information and then save it for use later.  If it is able to pull your information when you right-click to bring up the context menu it will now say <code>Assign To Me</code>.  That's why we need your information, so we can properly assign the ticket to you, in the correct group.  You can view what it has saved by going to the <a href="#" id="openOptions">Options</a>.
 		</p>
 		<br />
 		<a name="about">&nbsp;</a>

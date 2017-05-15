@@ -19,11 +19,11 @@
 $(document).ready(function() {
 
 	// open all questions
-	$('#openAll').click(function() { $('div[id^=collapse]').collapse('show'); });
+	$('#openAll').click(function() { $('[id^=collapse]').collapse('show'); });
 
 	// close all questions
-	$('#closeAll').click(function() { $('div[id^=collapse]').collapse('hide'); });
+	$('#closeAll').click(function() { $('[id^=collapse]').collapse('hide'); });
 
 	// toggle all questions
-	$('#toggleAll').click(function() { $('div[id^=collapse]').collapse('toggle'); });
+	$('#toggleAll').click(function() { $('[id^=collapse]').collapse('toggle'); });
 });

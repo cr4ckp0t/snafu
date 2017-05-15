@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+### Fixed
+- Incidents will now save with autoFinish set to auto, but not if being resolved.
+- Clarified error if unable to pull user information from a ticket.
+
 ## 1.0.4 [2017-05-14]
 ### Added
 - Automatic mode for ticket updates. All updates aside from task closures will be saved.  Task closures will be updated.
@@ -14,7 +19,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Assign To Me context menus will be hidden using documentUrlPattern.
 
 ### Planned
-- Status messages will be handled by Service Now via g_form's API.
+- Status messages will be handled by ServiceNow via g_form's API.
 
 ## 1.0.3 [2017-05-11]
 ### Added

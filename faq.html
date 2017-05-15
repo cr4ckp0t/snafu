@@ -27,7 +27,7 @@
 
 <body>
     <div id="content">
-        <h1 id="header"><img src="images/icon-64.png" alt="Logo" style="height:50px;width:50px;" /> SNAFU <small>SNow Automated Form Utilizer</small></h1>
+        <h1 id="header"><img src="images/icon-64.png" alt="Logo" style="height:50px;width:50px;" /> SNAFU <small>Frequently Asked Questions</small></h1>
         <br />
         <div class="input-group">
             <button type="button" class="btn btn-default" id="openAll">Open All</button>&nbsp;
@@ -37,114 +37,117 @@
         <br />
         <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
             <div class="panel panel-primary">
-                <div class="panel-heading" role="tab" id="headingOne">
+                <div class="panel-heading" role="tab" id="headingWhatIsIt">
                     <h4 class="panel-title">
-                        <a class="faq" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-                            What is SNAFU?
+                        <a class="faq" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseWhatIsIt" aria-expanded="false" aria-controls="collapseWhatIsIt">
+                            Question: <em>What is SNAFU?</em>
                         </a>
                     </h4>
                 </div>
-                <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+                <div id="collapseWhatIsIt" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingWhatIsIt">
                     <div class="panel-body">
-                        <p>SNAFU stands for <em>Service Now Automated Form Utilizer</em>.  This is an extension for <a href="https://google.com/chrome" target="_blank">Google Chrome</a> that is designed to be a replacement to the Service Now Automation Program (SNAP) we used as Dell/NTT DATA employees to streamline some of the mundane tasks that needed to be done to properly track our tickets.  After Desktop Services were brought in-house by <acronym title="Greenville Health System">GHS</acronym> we lost access to SNAP since it was developed by Dell.  I spoke our manager, and got his approval, so I did some research in to the feasability of a Chrome Extension as a replacement.  Once I discovered it was technically possible I started learning how to write extensions, as well as Service Now's powerful API to interact with the page.  SNAFU is the result.</p>
+                        <p><span class="answer">Answer:</span> SNAFU stands for <em>ServiceNow Automated Form Utilizer</em>.  This is an extension for <a href="https://google.com/chrome" target="_blank">Google Chrome</a> that is designed to be a replacement to the ServiceNow Automation Program (SNAP) we used as Dell/NTT DATA employees to streamline some of the mundane tasks that needed to be done to properly track our tickets.  After Desktop Services were brought in-house by <acronym title="Greenville Health System">GHS</acronym> we lost access to SNAP since it was developed by Dell.  I spoke our manager, and got his approval, so I did some research in to the feasability of a Chrome Extension as a replacement.  Once I discovered it was technically possible I started learning how to write extensions, as well as ServiceNow's powerful API to interact with the page.  SNAFU is the result.</p>
                     </div>
                 </div>
             </div>
             <div class="panel panel-primary">
-                <div class="panel-heading" role="tab" id="headingTwo">
+                <div class="panel-heading" role="tab" id="headingHowWork">
                     <h4 class="panel-title">
-                        <a class="faq" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
-                            How does it work?
+                        <a class="faq" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseHowWork" aria-expanded="true" aria-controls="collapseHowWork">
+                            Question: <em>How does it work?</em>
                         </a>
                     </h4>
                 </div>
-                <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+                <div id="collapseHowWork" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingHowWork">
                     <div class="panel-body">
-                        Coming Soon!
+                        <p><span class="answer">Answer:</span> SNAFU uses a <a href="https://developer.chrome.com/extensions/content_scripts" target="_blank">content script</a>, <code>js/content.js</code>, that acts as a "central hub" in which all requests are passed through.  The requests come from the context menu, via <code>js/menu.js</code>, or the <a href="https://developer.chrome.com/extensions/browserAction" target="_blank">browser action</a>, via <code>./popup.html</code> and <code>js/popup.js</code>, aka the button up in the toolbar that you click to send an update.</p>
+                        <p>Another responsibility of the content script is to inject our custom JavaScript file, <code>js/inject.js</code>, in to the actual page in order to be able to manipulate the page itself.  The reason this is hack is necessary is because by design extensions and pages are executed in their own isolated environment.  This means the extension does not have access to any Javascript variables used in the page.  The only part the extension can "see" is the <acronym title="Document Object Model">DOM</acronym>, which unfortunately isn't quite enough.</p>
+                        <p>The injected script is what actually manipulates ServiceNow via its <acronym title="Application Programming Interface">API</acronym>, which is quite good.  By using <a href="http://wiki.servicenow.com/index.php?title=GlideForm_(g_form)#gsc.tab=0" target="_blank">GlideForm</a> in the form of a variable <code>g_form</code>, we are able to do the things we do.</p>
                     </div>
                 </div>
             </div>
             <div class="panel panel-primary">
-                <div class="panel-heading" role="tab" id="headingThree">
+                <div class="panel-heading" role="tab" id="headingBetterThanSnap">
                     <h4 class="panel-title">
-                        <a class="faq" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="true" aria-controls="collapseThree">
-                            How is it better than SNAP?
+                        <a class="faq" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseBetterThanSnap" aria-expanded="true" aria-controls="collapseBetterThanSnap">
+                            Question: <em>How is it better than SNAP?</em>
                         </a>
                     </h4>
                 </div>
-                <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+                <div id="collapseBetterThanSnap" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingBetterThanSnap">
                     <div class="panel-body">
-                        Coming Soon!
+                        <p><span class="answer">Answer:</span> <acronym title="ServiceNow Automation Program">SNAP</acronym> was fine for what it was intended to do.  The problem was that it was designed to support all of the contracts currently held by Dell Services, and so had to accommodate all of the custom additions/changes/whatever for each version of ServiceNow being used.  This meant that many scripts had to be injected in to ServiceNow to make it work as intended.  SNAP itself is nothing more than a wrapper for Internet Explorer via Visual Basic's IE control.  What actually did the work were the countless CoreScripts that were included in the install.  As far as I can tell it was because of these scripts that left SNAP to be a pain to use, as well as slow ServiceNow down to the point where it was basically unsable most times.  SNAFU works the same, except for the key difference that we're injecting one small script and even bigger than that everything is running within Google Chrome, which is fast to begin with.  Combining these factors is why SNAFU is able to perform as well as it does.</p> 
                     </div>
                 </div>
             </div>
             <div class="panel panel-primary">
-                <div class="panel-heading" role="tab" id="headingFour">
+                <div class="panel-heading" role="tab" id="headingWhatCanItDo">
                     <h4 class="panel-title">
-                        <a class="faq" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseFour" aria-expanded="true" aria-controls="collapseFour">
-                            What sort of things can it do?
+                        <a class="faq" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseWhatCanItDo" aria-expanded="true" aria-controls="collapseWhatCanItDo">
+                            Question: <em>What sort of things can it do?</em>
                         </a>
                     </h4>
                 </div>
-                <div id="collapseFour" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingFour">
+                <div id="collapseWhatCanItDo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingWhatCanItDo">
                     <div class="panel-body">
-                        Coming Soon!
+                        <p><span class="answer">Answer:</span> In the simplest sense it will let you choose the status, type in some notes, click one button and it will perform all of the necessary updates.  Where it really shines is with some of the automation I've been able to include.  This includes clicking a single button and it will acknowledge incidents or tasks, tickets can be auto saved or updated.  Closure scripts for Hot Swaps, and Equipment Orders will be generated automatically based on information pulled from the ticket (Hot Swaps) or the extension itself (Equipment Orders).</p>
                     </div>
                 </div>
             </div>
             <div class="panel panel-primary">
-                <div class="panel-heading" role="tab" id="headingFive">
+                <div class="panel-heading" role="tab" id="headingReportBug">
                     <h4 class="panel-title">
-                        <a class="faq" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseFive" aria-expanded="true" aria-controls="collapseFive">
-                            How can I report a bug or feature request?
+                        <a class="faq" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseReportBug" aria-expanded="true" aria-controls="collapseReportBug">
+                            Question: <em>How can I report a bug or feature request?</em>
                         </a>
                     </h4>
                 </div>
-                <div id="collapseFive" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingFive">
+                <div id="collapseReportBug" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingReportBug">
                     <div class="panel-body">
-                        Coming Soon!
+                        <p><span class="answer">Answer:</span> Please <a href="mailto:akoch@ghs.org">email me</a> or post a reply on the extension's <a href="http://share.ghs.org/SiteDirectory/IS/DS/Lists/Team%20Discussion/Flat.aspx?RootFolder=%2fSiteDirectory%2fIS%2fDS%2fLists%2fTeam%20Discussion%2fSNAFU%20Service%20Now%20Automated%20Form%20Utilizer&FolderCTID=0x01200200061017D22DF2184B91B6AEA5AFFD9EB4&TopicsView=http%3A%2F%2Fshare%2Eghs%2Eorg%2FSiteDirectory%2FIS%2FDS%2FLists%2FTeam%2520Discussion%2FAllItems%2Easpx" target="_blank">discussions page</a> on our <a href="http://share.ghs.org/SiteDirectory/IS/DS/default.aspx" target="_blank">SharePoint</a>.</p>
                     </div>
                 </div>
             </div>
             <div class="panel panel-primary">
-                <div class="panel-heading" role="tab" id="headingSix">
+                <div class="panel-heading" role="tab" id="headingViewSource">
                     <h4 class="panel-title">
-                        <a class="faq" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseSix" aria-expanded="true" aria-controls="collapseSix">
-                            Can I look at the source code?
+                        <a class="faq" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseViewSource" aria-expanded="true" aria-controls="collapseViewSource">
+                            Question: <em>Can I look at the source code?</em>
                         </a>
                     </h4>
                 </div>
-                <div id="collapseSix" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingSix">
+                <div id="collapseViewSource" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingViewSource">
                     <div class="panel-body">
-                        Coming Soon!
+                        <p><span class="answer">Answer:</span> Of course!  This extension is released under the <a href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank">GNU General Public License v3.0</a>, and so the source code is open source.  Google Chrome actually saves each extension in plain text for anyone to view when you install it from the Web Store.  Check out this <a href="https://www.howtogeek.com/198964/how-to-view-the-source-code-of-a-chrome-extension/" target="_blank">article</a> by HowToGeek for more information.</p>
+                        <p>Alternatively, I can give you access to the extension's Git repository stored on <a href="https://github.com/akoch-ghs/snafu" target="_blank">GitHub</a>.  <a href="mailto:akoch@ghs.org">Email me</a> your GitHub username or email and I'll add you to the list.  The repository is private because I don't want the general public to be able to access the extension since it is for our people only.</p>
                     </div>
                 </div>
             </div>
             <div class="panel panel-primary">
-                <div class="panel-heading" role="tab" id="headingSeven">
+                <div class="panel-heading" role="tab" id="headingContribute">
                     <h4 class="panel-title">
-                        <a class="faq" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseSeven" aria-expanded="true" aria-controls="collapseSeven">
-                            How can I contribute to the code?
+                        <a class="faq" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseContribute" aria-expanded="true" aria-controls="collapseContribute">
+                            Question: <em>How can I contribute to the code?</em>
                         </a>
                     </h4>
                 </div>
-                <div id="collapseSeven" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingSeven">
+                <div id="collapseContribute" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingContribute">
                     <div class="panel-body">
-                        Coming Soon!
+                        <p><span class="answer">Answer:</span> <a href="mailto:akoch@ghs.org">Email me</a> your GitHub email/username and I'll add you to the contributer list on the extension's <a href="https://github.com/akoch-ghs/snafu" target="_blank">GitHub</a> page.</p>
                     </div>
                 </div>
             </div>
             <div class="panel panel-primary">
-                <div class="panel-heading" role="tab" id="headingEight">
+                <div class="panel-heading" role="tab" id="headingOtherQuestion">
                     <h4 class="panel-title">
-                        <a class="faq" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseEight" aria-expanded="true" aria-controls="collapseEight">
-                            But I have another question...
+                        <a class="faq" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOtherQuestion" aria-expanded="true" aria-controls="collapseOtherQuestion">
+                            Question: <em>What if I have another question?</em>
                         </a>
                     </h4>
                 </div>
-                <div id="collapseEight" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingEight">
+                <div id="collapseOtherQuestion" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOtherQuestion">
                     <div class="panel-body">
-                        Coming Soon!
+                        <p><span class="answer">Answer:</span> Please message me on Skype, or <a href="mailto:akoch@ghs.org?subject=SNAFU">email me</a>.</p>
                     </div>
                 </div>
             </div>

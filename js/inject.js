@@ -17,7 +17,7 @@
  **/
 
 /**
- *  We have to use Service Now's g_form JavaScript object in order to
+ *  We have to use ServiceNow's g_form JavaScript object in order to
  *  access fields and inputs correctly.  Chrome extensions do not
  *  access to page variables, so we have to inject code and use Custom Events
  *  to pass data between the extension and page.
@@ -47,7 +47,7 @@ document.addEventListener('SNAFU_Inject', function(snafuInject) {
 			g_form.addInfoMessage('SNAFU: Saved your user information.');
 			document.dispatchEvent(snafuQuery);
 		} else {
-			g_form.addErrorMessage('SNAFU: Unable to pull your user information.');
+			g_form.addErrorMessage('SNAFU: Unable to pull your user information or incomplete information found.');
 		}
 	
 	// assign task or incident to the user
@@ -164,7 +164,7 @@ document.addEventListener('SNAFU_Inject', function(snafuInject) {
 				if (snafuField === 'state' && (snafuValue === '3' || snafuValue === '4')) {
 					// update
 					setTimeout(function() { g_form.submit(); }, snafuInject.detail.finishDelay * 1000);
-				} else {
+				} else if (snafuField === 'state' || (snafuField === 'incident_state' && snafuField !== '6')) {
 					setTimeout(function() { g_form.save(); }, snafuInject.detail.finishDelay * 1000);
 				}
 				break;
@@ -256,7 +256,7 @@ function snafuReplaceWildcards(strIn) {
 }
 
 /**
- * Queries cmdb_model Service Now database for model types.
+ * Queries cmdb_model ServiceNow database for model types.
  * @param	{String}	model_id
  * @return	{String}
  */
