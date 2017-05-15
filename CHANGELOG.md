@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
+### Added
+- Finished Frequently Asked Questions page.
+
 ### Fixed
 - Incidents will now save with autoFinish set to auto, but not if being resolved.
 - Clarified error if unable to pull user information from a ticket.
