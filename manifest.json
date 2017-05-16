@@ -12,7 +12,7 @@
     "background": {
         "scripts": ["js/menu.js", "js/background.js"]
     },
-    "browser_action": {
+    "page_action": {
         "default_icon": "images/icon-64.png",
         "default_title": "SNAFU: SNow Automated Form Utilizer",
         "default_popup": "popup.html"
@@ -21,8 +21,7 @@
         "tabs",
         "contextMenus",
         "storage",
-        "http://*/*",
-        "https://*/*"
+        "declarativeContent"
     ],
     "content_scripts": [{
         "matches": ["https://ghsprod.service-now.com/*"],

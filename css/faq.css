@@ -20,6 +20,7 @@
     font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
     font-size: 14px;
     padding: 5px;
+	padding-top: 40px;
 }
 
 a:link, a:active, a:visited {
@@ -50,7 +51,7 @@ span.answer {
 }
 
 div#content {
-	width: 35%;
+	width: 40%;
 	margin: 0 auto;
 }
 
@@ -61,4 +62,8 @@ h1#header {
 
 h1#header small {
 	font-style: italic;
+}
+
+ul.navbar-nav li a {
+	cursor: pointer;
 }

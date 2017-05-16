@@ -20,6 +20,7 @@ body {
 	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
     font-size: 14px;
     padding: 5px;
+	padding-top: 25px;
 }
 
 a:link, a:active, a:visited {
@@ -44,6 +45,16 @@ div.extraInfo {
 	font-size: 12px;
 }
 
+h1#header {
+	color: #3eb049;
+	font-weight: bold;
+	text-align: center;
+}
+
+h1#header small {
+	font-style: italic;
+}
+
 textarea {
 	width: 100%;
 }
@@ -51,4 +62,8 @@ textarea {
 label {
 	color: #3eb049;
 	font-weight: bold;
+}
+
+ul.navbar-nav li a {
+	cursor: pointer;
 }

@@ -69,7 +69,7 @@ document.addEventListener('SNAFU_Inject', function(snafuInject) {
 				break;
 		}
 
-	// send success (info) message
+	// send success (info) messagea
 	} else if (snafuInject.detail.type === 'sendSuccessMsg') {
 		g_form.addInfoMessage(snafuSprintf('SNAFU: %s', [snafuInject.detail.statusMsg]));
 	
@@ -164,7 +164,7 @@ document.addEventListener('SNAFU_Inject', function(snafuInject) {
 				if (snafuField === 'state' && (snafuValue === '3' || snafuValue === '4')) {
 					// update
 					setTimeout(function() { g_form.submit(); }, snafuInject.detail.finishDelay * 1000);
-				} else if (snafuField === 'state' || (snafuField === 'incident_state' && snafuField !== '6')) {
+				} else if (snafuField === 'state' || (snafuField === 'incident_state' && snafuValue !== '6')) {
 					setTimeout(function() { g_form.save(); }, snafuInject.detail.finishDelay * 1000);
 				}
 				break;

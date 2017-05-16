@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## Unreleased
 ### Added
 - Finished Frequently Asked Questions page.
+- Extension's popup will only be available while GHS' ServiceNow is the active tab.
+- Options and Close Window button to the FAQ page.
+- FAQ and Help button to the options page.
+- Navigation bar to FAQ and Options pages for standardization.
 
 ### Fixed
 - Incidents will now save with autoFinish set to auto, but not if being resolved.
@@ -20,9 +24,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 - Assign To Me context menus will be hidden using documentUrlPattern.
-
-### Planned
-- Status messages will be handled by ServiceNow via g_form's API.
 
 ## 1.0.3 [2017-05-11]
 ### Added

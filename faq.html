@@ -27,13 +27,24 @@
 
 <body>
     <div id="content">
+        <nav class="navbar navbar-default navbar-fixed-top">
+			<div class="container-fluid">
+				<div class="navbar-header">
+					<a class="navbar-brand" href="#"><img src="images/icon-16.png" /></a>
+				</div>
+				<p class="navbar-text"><strong>Navigation:</strong></p>
+				<ul class="nav navbar-nav">
+					<li><a id="openAll">Open All</a></li>
+                    <li><a id="closeAll">Close All</a></li>
+                    <li><a id="toggleAll">Toggle All</a></li>
+                    <li><a id="openHelp">Help</a></li>
+                    <li><a id="openOptions">Options</a></li>
+                    <li><a id="closeWindow">Close Window</a></li>
+				</ul>
+				<p class="navbar-text navbar-right">Version <span id="version"></span></p>
+			</div>
+		</nav>
         <h1 id="header"><img src="images/icon-64.png" alt="Logo" style="height:50px;width:50px;" /> SNAFU <small>Frequently Asked Questions</small></h1>
-        <br />
-        <div class="input-group">
-            <button type="button" class="btn btn-default" id="openAll">Open All</button>&nbsp;
-            <button type="button" class="btn btn-default" id="closeAll">Close All</button>&nbsp;
-            <button type="button" class="btn btn-default" id="toggleAll">Toggle All</button>
-        </div>
         <br />
         <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
             <div class="panel panel-primary">

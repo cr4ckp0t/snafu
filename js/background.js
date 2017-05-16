@@ -16,6 +16,19 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  **/
 
+chrome.runtime.onInstalled.addListener(function() {
+    chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
+        chrome.declarativeContent.onPageChanged.addRules([{
+            conditions: [
+                new chrome.declarativeContent.PageStateMatcher({
+                    pageUrl: {hostEquals: 'ghsprod.service-now.com'}
+                })
+            ],
+            actions: [new chrome.declarativeContent.ShowPageAction()]
+        }]);
+    });
+});
+
 chrome.runtime.onInstalled.addListener(function(details) {
 	if (details.reason === 'install') {
 		// show help page

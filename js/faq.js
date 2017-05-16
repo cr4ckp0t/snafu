@@ -17,6 +17,7 @@
  **/
 
 $(document).ready(function() {
+	$('#version').html(chrome.app.getDetails().version);
 
 	// open all questions
 	$('#openAll').click(function() { $('[id^=collapse]').collapse('show'); });
@@ -26,4 +27,13 @@ $(document).ready(function() {
 
 	// toggle all questions
 	$('#toggleAll').click(function() { $('[id^=collapse]').collapse('toggle'); });
+
+	// open help
+	$('#openHelp').click(function() { chrome.tabs.create({url: chrome.extension.getURL('help.html')}); });
+
+	// options page
+	$('#openOptions').click(function() { chrome.tabs.create({url: chrome.extension.getURL('options.html')}); });
+
+	// close window
+	$('#closeWindow').click(function() { window.close(); });
 });

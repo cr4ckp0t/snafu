@@ -20,7 +20,7 @@ body {
     font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
     font-size: 14px;
     padding: 5px;
-	padding-top: 70px;
+	padding-top: 40px;
 }
 
 a:link, a:active, a:visited {
@@ -34,7 +34,7 @@ a:hover {
 }
 
 div#content {
-	width: 50%;
+	width: 40%;
 	margin: 0 auto;
 }
 
@@ -43,7 +43,7 @@ div#ui-image {
 }
 
 div#aboutExtension {
-	width: 50%;
+	width: 60%;
 	margin: 0 auto;
 }
 

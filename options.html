@@ -26,6 +26,34 @@
 
 <body>
     <br />
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#"><img src="images/icon-16.png" /></a>
+            </div>
+            <p class="navbar-text"><strong>Navigation:</strong></p>
+            <ul class="nav navbar-nav">
+                <li><a id="saveSettings">Save Settings</a></li>
+                <li><a id="reloadData">Reload Settings</a></li>
+                <li><a id="resetUser">Reset User</a></li>
+                <li><a id="resetAll">Reset All</a></li>
+                <li><a id="openFaq">FAQ</a></li>
+                <li><a id="openHelp">Help</a></li>
+                <li><a id="closeWindow">Close Window</a></li>
+            </ul>
+            <p class="navbar-text navbar-right">Version <span id="version"></span></p>
+        </div>
+    </nav>
+    <h1 id="header" ><img src="images/icon-64.png" alt="Logo" style="height:50px;width:50px;" /> SNAFU <small>Options</small></h1>
+    <div id="alertSuccess" style="margin: 0 auto;text-align:center;width:75%" class="alert alert-success alert-dismissible" role="alert">
+        <span id="alertSuccessMsg"></span>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    </div>
+    <div id="alertFailure" style="margin: 0 auto;text-align:center;width:75%;" class="alert alert-danger alert-dismissible" role="alert">
+        <span id="alertFailureMsg"></span>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    </div>
+    <br />
     <table style="width:100%">
         <tr>
             <td width="50%" style="vertical-align:top;padding-right:10px;" align="right">
@@ -123,28 +151,6 @@
                             <input type="text" class="form-control" id="groupId" aria-describedby="groupIdAddon" readonly />
                         </div>
                     </div>
-                </div>
-            </td>
-        </tr>
-        <tr>
-            <td colspan="2">
-                <br />
-                <div style="margin:0 auto;text-align:center;" class="form-group">
-                    <div id="alertSuccess" style="margin: 0 auto;text-align:center;width:75%" class="alert alert-success alert-dismissible" role="alert">
-                        <span id="alertSuccessMsg"></span>
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    </div>
-                    <div id="alertFailure" style="margin: 0 auto;text-align:center;width:75%;" class="alert alert-danger alert-dismissible" role="alert">
-                        <span id="alertFailureMsg"></span>
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    </div>
-                    <br />
-                    <button type="button" class="btn btn-lg btn-primary" id="saveSettings">Save Settings</button>
-                    <button type="button" class="btn btn-lg btn-warning" id="reloadData">Reload Settings</button>
-                    <button type="button" class="btn btn-lg btn-danger" id="resetUser">Reset User Data</button>
-                    <button type="button" class="btn btn-lg btn-danger" id="resetAll">Reset ALL Data</button>
-                    <button type="button" class="btn btn-lg btn-default" id="openHelp">Open Help Page</button>
-                    <button type="button" class="btn btn-lg btn-default" id="closeWindow">Close Window</button>
                 </div>
             </td>
         </tr>

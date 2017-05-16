@@ -33,10 +33,9 @@ $(document).ready(function() {
 			chrome.tabs.remove(tabs[0].id);
 		});
 	});
-
-	$('#openHelp').click(function() {
-		chrome.tabs.create({url: chrome.extension.getURL('help.html')});
-	});
+	$('#version').html(chrome.app.getDetails().version);
+	$('#openFaq').click(function() { chrome.tabs.create({url: chrome.extension.getURL('faq.html')}); });
+	$('#openHelp').click(function() { chrome.tabs.create({url: chrome.extension.getURL('help.html')}); });
 
 	// reset user data
 	$('#resetUser').click(function() {
