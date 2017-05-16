@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## 1.0.5 [2017-05-15]
 ### Added
 - Finished Frequently Asked Questions page.
 - Extension's popup will only be available while GHS' ServiceNow is the active tab.
