@@ -32,18 +32,12 @@
 				<div class="navbar-header">
 					<a class="navbar-brand" href="#"><img src="images/icon-16.png" /></a>
 				</div>
-				<p class="navbar-text"><strong>Navigation:</strong></p>
-				<ul class="nav navbar-nav">
-					<li><a href="#thanks">Thanks</a></li>
-					<li><a href="#troubleshooting">Troubleshooting</a></li>
-					<li><a href="#howItWorks">How It Works</a></li>
-					<li><a href="#wildcards">Wildcards</a></li>
-					<li><a href="#automation">Automation</a></li>
-					<li><a href="#techInfo">Assign To Me</a></li>
-					<li><a href="#" id="openFaq">FAQ</a></li>
-					<li><a href="#about">About</a></li>
-				</ul>
-				<p class="navbar-text navbar-right">Version <span id="version"></span></p>
+				<div class="btn-group btn-group-sm navbar-right" role="group" style="padding-right:5px;padding-top:2px;">
+                    <button type="button" class="btn btn-default navbar-btn" data-toggle="modal" data-target="#aboutModal"><span class="glyphicon glyphicon-modal-window" aria-hidden="true"></span></button>
+                    <button type="button" class="btn btn-default navbar-btn" id="openFaq"><span class="glyphicon glyphicon-tasks" aria-hidden="true"></span></button>
+                    <button type="button" class="btn btn-primary navbar-btn" id="openOptions"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span></button>
+                    <button type="button" class="btn btn-danger navbar-btn" id="closeWindow"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
+                </div>
 			</div>
 		</nav>
 		<h1 id="header"><img src="images/icon-64.png" alt="Logo" style="height:50px;width:50px;" /> SNAFU <small>Help!</small></h1>
@@ -234,78 +228,82 @@
 			Beginning in version 1.0.1 (2017-05-05) I added the ability to have the extension pull your user data from ServiceNow.  It will pull your name, user ID, user name (GHS username basically), Assignment Group ID, and Assignment Group Name.  You can do this by right-clicking in Serivce Now to bring up the context menu and then selecting <code>Query User Info</code>.  This will pull your information and then save it for use later.  If it is able to pull your information when you right-click to bring up the context menu it will now say <code>Assign To Me</code>.  That's why we need your information, so we can properly assign the ticket to you, in the correct group.  You can view what it has saved by going to the <a href="#" id="openOptions">Options</a>.
 		</p>
 		<br />
-		<a name="about">&nbsp;</a>
-		<div id="aboutExtension" class="panel panel-primary">
-			<div class="panel-heading"><strong>SNAFU: SNow Automated Form Utilizer</strong></div>
-			<table class="table">
-				<tbody>
-					<tr>
-						<td id="about-label">Version:</td>
-						<td id="about-value"><span id="versionAbout"></span></td>
-					</tr>
-					<tr>
-						<td id="about-label">Author:</td>
-						<td id="about-value">Adam Koch</td>
-					</tr>
-					<tr>
-						<td id="about-label">E-Mail:</td>
-						<td id="about-value">
-							<a href="mailto:me@adamko.ch">me@adamko.ch</a> (Personal)<br />
-							<a href="mailto:akoch@ghs.org">akoch@ghs.org</a> (Work)
-						</td>
-					</tr>
-					<tr>
-						<td id="about-label">Website:</td>
-						<td id="about-value"><a href="https://adamko.ch" target="_blank">https://adamko.ch</a></td>
-					</tr>
-					<tr>
-						<td id="about-label">Web Store:</td>
-						<td id="about-value"><a href="https://chrome.google.com/webstore/detail/snafu-snow-automated-form/hnnbkmfkgnjngnkijdmfijmbkpjmmmpd?hl=en-US&gl=US" target="_blank">Click Here</a></td>
-					</tr>
-					<tr>
-						<td id="about-label">License:</td>
-						<td id="about-value"><a id="licenseLink" href="#">GNU General Public License v3</a></td>
-					</tr>
-					<tr>
-						<td id="about-label">Git Repository:</td>
-						<td id="about-value"><a href="https://github.com/akoch-ghs/snafu" target="_blank" title="Email me to be given access.">Click Here</a> (Private)</td>
-					</tr>
-					<tr>
-						<td id="about-label">Changelog:</td>
-						<td id="about-value"><a href="https://adamko.ch/snafu" target="_blank">Here</a> or <a href="https://adamkoch.squarespace.com/snafu/" target="_blank">Here</a> (GHS Safe)</td>
-					</tr>
-					<tr>
-						<td id="about-label">Tools Used:</td>
-						<td id="about-value">
-							<a href="https://code.visualstudio.com/" target="_blank" title="IDE">Microsoft Visual Studio Code</a><br />
-							<a href="https://github.com" target="_blank" title="Git repository host.">GitHub</a>
-						</td>
-					</tr>
-					<tr>
-						<td id="about-label">Icons:</td>
-						<td id="about-value"><a href="http://www.flaticon.com/authors/dave-gandy" target="_blank">Dave Gandy</a> from <a href="http://www.flaticon.com" target="_blank">FlatIcon.com</a></td>
-					</tr>
-					<tr>
-						<td id="about-label">Languages Used:</td>
-						<td id="about-value">JavaScript, <acronym title="Hypertext Markup Language">HTML</acronym>, <acronym title="Cascading Stylesheets">CSS</acronym></td>
-					</tr>
-					<tr>
-						<td id="about-label">JavaScript Libraries:</td>
-						<td id="about-value">
-							<a href="https://jquery.com/" target="_blank">jQuery</a><br />
-							<a href="http://getbootrap.com/" target="_blank">Bootstrap</a>
-						</td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
-		<br />
 		<p><em>If you would like to request additions, changes, or submit a bug report please use the thread on our <a href="http://share.ghs.org/SiteDirectory/IS/DS/Lists/Team%20Discussion/Flat.aspx?RootFolder=%2fSiteDirectory%2fIS%2fDS%2fLists%2fTeam%20Discussion%2fSNAFU%20Service%20Now%20Automated%20Form%20Utilizer&FolderCTID=0x01200200061017D22DF2184B91B6AEA5AFFD9EB4&TopicsView=http%3A%2F%2Fshare%2Eghs%2Eorg%2FSiteDirectory%2FIS%2FDS%2FLists%2FTeam%2520Discussion%2FAllItems%2Easpx" target="_blank">SharePoint</a>.  That way I'll have a written record of requests/bugs and can keep track.</em></p>
-		<br />
-		<div style="margin: 0 auto;text-align:center;">
-			<button type="button" class="btn btn-lg btn-primary" id="closeWindow">Close Window</button>
+	</div>
+
+	<!-- About Modal -->
+	<div class="modal fade" id="aboutModal" tabindex="-1" role="dialog" aria-describedby="aboutModalLabel">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title" id="aboutModalLabel">About SNAFU v<span id="versionAbout"></span></h4>
+				</div>
+				<div class="modal-body">
+					<table id="aboutTable" cellspacing="5">
+						<tr>
+							<td id="about-label">Author:</td>
+							<td id="about-value">Adam Koch</td>
+						</tr>
+						<tr>
+							<td id="about-label">E-Mail:</td>
+							<td id="about-value">
+								<a href="mailto:me@adamko.ch">me@adamko.ch</a> (Personal)<br />
+								<a href="mailto:akoch@ghs.org">akoch@ghs.org</a> (Work)
+							</td>
+						</tr>
+						<tr>
+							<td id="about-label">Website:</td>
+							<td id="about-value"><a href="https://adamko.ch" target="_blank">https://adamko.ch</a></td>
+						</tr>
+						<tr>
+							<td id="about-label">Web Store:</td>
+							<td id="about-value"><a href="https://chrome.google.com/webstore/detail/snafu-snow-automated-form/hnnbkmfkgnjngnkijdmfijmbkpjmmmpd?hl=en-US&gl=US" target="_blank">Click Here</a></td>
+						</tr>
+						<tr>
+							<td id="about-label">License:</td>
+							<td id="about-value"><a id="licenseLink" href="#">GNU General Public License v3</a></td>
+						</tr>
+						<tr>
+							<td id="about-label">Git Repository:</td>
+							<td id="about-value"><a href="https://github.com/akoch-ghs/snafu" target="_blank" title="Email me to be given access.">Click Here</a> (Private)</td>
+						</tr>
+						<tr>
+							<td id="about-label">Changelog:</td>
+							<td id="about-value"><a href="https://adamko.ch/snafu" target="_blank">Here</a> or <a href="https://adamkoch.squarespace.com/snafu/" target="_blank">Here</a> (GHS Safe)</td>
+						</tr>
+						<tr>
+							<td id="about-label">Tools Used:</td>
+							<td id="about-value">
+								<a href="https://code.visualstudio.com/" target="_blank" title="IDE">Microsoft Visual Studio Code</a><br />
+								<a href="https://github.com" target="_blank" title="Git repository host.">GitHub</a>
+							</td>
+						</tr>
+						<tr>
+							<td id="about-label">Icons:</td>
+							<td id="about-value"><a href="http://www.flaticon.com/authors/dave-gandy" target="_blank">Dave Gandy</a> from <a href="http://www.flaticon.com" target="_blank">FlatIcon.com</a></td>
+						</tr>
+						<tr>
+							<td id="about-label">Languages:</td>
+							<td id="about-value">JavaScript<br/><acronym title="Hypertext Markup Language">HTML</acronym><br/><acronym title="Cascading Stylesheets">CSS</acronym></td>
+						</tr>
+						<tr>
+							<td id="about-label">JavaScript Libraries:</td>
+							<td id="about-value">
+								<a href="https://jquery.com/" target="_blank">jQuery</a><br />
+								<a href="http://getbootrap.com/" target="_blank">Bootstrap</a>
+							</td>
+						</tr>
+					</table>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close Dialog</button>
+				</div>
+			</div>
 		</div>
 	</div>
+    <!-- END About Modal -->
+
 	<script src="js/jquery.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
 	<script src="js/help.js"></script>

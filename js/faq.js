@@ -18,6 +18,7 @@
 
 $(document).ready(function() {
 	$('#version').html(chrome.app.getDetails().version);
+	$('#versionAbout').html(chrome.app.getDetails().version);
 
 	// open all questions
 	$('#openAll').click(function() { $('[id^=collapse]').collapse('show'); });
@@ -35,5 +36,9 @@ $(document).ready(function() {
 	$('#openOptions').click(function() { chrome.tabs.create({url: chrome.extension.getURL('options.html')}); });
 
 	// close window
-	$('#closeWindow').click(function() { window.close(); });
+	$('#closeWindow').click(function() {
+		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+			chrome.tabs.remove(tabs[0].id);
+		});
+	});
 });

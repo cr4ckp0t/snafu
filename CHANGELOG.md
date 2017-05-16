@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+### Added
+- Additional note to quarantine closure script.
+- About dialogs to the Help and FAQ pages.
+- Glyph icons provided by Bootstrap.
+
+### Fixed
+- Standarized the navigation bars on the Help, FAQ, and Options pages.
+- {INC_EMAIL} now pulls the correct information from the page.
+
 ## 1.0.5 [2017-05-15]
 ### Added
 - Finished Frequently Asked Questions page.

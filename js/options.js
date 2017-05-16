@@ -16,8 +16,6 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  **/
 
-var debug;
-
 $(document).ready(function() {
 	$('[id$=Success').hide();
 	$('[id$=Failure').hide();
@@ -33,7 +31,7 @@ $(document).ready(function() {
 			chrome.tabs.remove(tabs[0].id);
 		});
 	});
-	$('#version').html(chrome.app.getDetails().version);
+	$('#versionAbout').html(chrome.app.getDetails().version);
 	$('#openFaq').click(function() { chrome.tabs.create({url: chrome.extension.getURL('faq.html')}); });
 	$('#openHelp').click(function() { chrome.tabs.create({url: chrome.extension.getURL('help.html')}); });
 
@@ -68,6 +66,9 @@ $(document).ready(function() {
 		});
 	});
 
+	// generate the html for monitorGroups select
+	//$('#monitorGroup').html(generateAssignmentGroups());
+	
 	loadSettings();
 });
 
@@ -223,12 +224,51 @@ function getCannedMessages() {
 }
 
 /**
+ * Generates innerHTML of monitorGroups.
+ * @return	{String}
+ */
+function generateAssignmentGroups() {
+	var innerHTML = '<option value="disabled">---- DISABLED ----</option>', assignmentGroups = {
+		'7d8ea2206fcaf60449bfd4a21c3ee406': 'Desktop Support',
+		'49eeaee06f8af60449bfd4a21c3ee4b6': 'Desktop Support Asset Management',
+		'4b44b2206f46720c7839d4a21c3ee45b': 'Desktop Support Coordinators',
+		'dbaf2e206fcaf60449bfd4a21c3ee463': 'Desktop Support Engineers',
+		'200fa2ec6f8af60449bfd4a21c3ee443': 'Desktop Support Greenville Campus',
+		'404faeec6f8af60449bfd4a21c3ee41d': 'Desktop Support Greenville Staging',
+		'c85fe6686f8af60449bfd4a21c3ee415': 'Desktop Support Greer Campus',
+		'275fe2206fcaf60449bfd4a21c3ee452': 'Desktop Support Hillcrest Campus',
+		'566f6aac6f8af60449bfd4a21c3ee4e9': 'Desktop Support Laurens Campus',
+		'057faa206fcaf60449bfd4a21c3ee444': 'Desktop Support MDC Campus',
+		'488faa206fcaf60449bfd4a21c3ee4bb': 'Desktop Support MDC Delivery',
+		'da8fea206fcaf60449bfd4a21c3ee447': 'Desktop Support MDC Staging',
+		'759f2a206fcaf60449bfd4a21c3ee4a4': 'Desktop Support Oconee Campus',
+		'38afaaec6f8af60449bfd4a21c3ee420': 'Desktop Support Patewood Campus'
+	};
+	for (var key in assignmentGroups) {
+		innerHTML += sprintf('<option value="%s">%s</option>', [key, assignmentGroups[key]]);
+	}
+	return innerHTML;
+}
+
+/**
  * Checks if a variable is empty (null, undefined, NaN, etc.).
  * @param   {String}    value
  * @return  {Boolean}
  */
 function isVarEmpty(value) {
     return (value === null || value === undefined || value === NaN || value.toString().trim() === '') ? true : false
+}
+
+/**
+ * Javascript sprintf function.
+ * @param   {String}    template
+ * @param   {String[]}  values
+ * @return  {String}
+ */
+function sprintf(template, values) {
+    return template.replace(/%s/g, function() {
+        return values.shift();
+    });
 }
 
 /**

@@ -327,13 +327,22 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                     if (ticketType !== 'task') {
                         sendResponse({success: false, errMsg: 'Unable to detect an open task.'});
                     } else {
+                        // add the additional message to the quarantine notes
+                        if (msg.type === 'closeQuarantineDecommission') {
+                            var addToNotes = ['and added to the quarantine workflow.'];
+                        } else if (msg.type === 'closeQuarantineRepair') {
+                            var addToNotes = ['and added to the repair workflow.'];
+                        } else {
+                            var addToNotes = ['and return to stock for redeployment.'];
+                        }
+
                         injectData = {
                             type: msg.type,
                             autoFinish: items.autoFinish || 'none',
                             finishDelay: items.finishDelay || 1.5,
                             field: 'state',
                             value: '3', // closed complete
-                            workNotes: 'Device removed from quarantine.',
+                            workNotes: sprintf('Device removed from quarantine %s', addToNotes),
                             custNotes: null
                         }
                         sendResponse({success: true, errMsg: null});

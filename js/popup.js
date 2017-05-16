@@ -221,7 +221,7 @@ $(document).ready(function() {
     });
     
     // open help page
-    $('[id^=getHelp]').click(function() { chrome.tabs.create({url: chrome.extension.getURL('help.html')}); });
+    $('[id^=openHelp]').click(function() { chrome.tabs.create({url: chrome.extension.getURL('help.html')}); });
 
     // open options page
     $('[id^=openOptions]').click(function() { chrome.tabs.create({url: chrome.extension.getURL('options.html')}); });

@@ -134,7 +134,6 @@ document.addEventListener('SNAFU_Inject', function(snafuInject) {
 			// set quarantine select, if needed
 			if (snafuType.indexOf('closeQuarantine') !== -1) {
 				g_form.setValue('rhs_restock_status', snafuType.replace('closeQuarantine', '').toLowerCase());
-				//g_form.flash('rhs_restock_status', '#3eb049', 0);
 			}
 		}
 
@@ -212,7 +211,7 @@ function snafuReplaceWildcards(strIn) {
 		"{INC_CUST_FNAME}": "snafuUcwords(g_form.getReference('caller_id').first_name) || 'UNKNOWN';",						// customer's first name
 		"{INC_CUST_LNAME}": "snafuUcwords(g_form.getReference('caller_id').last_name) || 'UNKNOWN';",						// customer's last name
 		"{INC_DETAIL_DESC}": "g_form.getValue('description') || 'UNKNOWN';",												// detailed description
-		"{INC_EMAIL}": "g_form.getValue('email') || 'UNKNOWN';",															// customer's email
+		"{INC_EMAIL}": "g_form.getReference('caller_id').email.toLowerCase() || 'UNKNOWN';",								// customer's email
 		"{INC_IMPACT}": "g_form.getValue('impact') || 'UNKNOWN';",															// incident impact
 		"{INC_KB}": "g_form.getReference('u_kb_article').number || 'UNKNOWN';",												// knowledgebase article
 		"{INC_LOC_TYPE}": "g_form.getValue('u_location_type') || 'UNKNOWN';",												// location type

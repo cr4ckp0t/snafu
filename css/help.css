@@ -43,7 +43,6 @@ div#ui-image {
 }
 
 div#aboutExtension {
-	width: 60%;
 	margin: 0 auto;
 }
 
@@ -71,9 +70,15 @@ blockquote#thanks footer {
 	font-size: 12px;
 }
 
+table#aboutTable td {
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
 td#about-label {
 	text-align: left;
 	font-weight: bold;
+	vertical-align: text-top;
 }
 
 td#about-value {
