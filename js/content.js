@@ -329,7 +329,7 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                     } else {
                         // add the additional message to the quarantine notes
                         if (msg.type === 'closeQuarantineDecommission') {
-                            var addToNotes = ['and added to the quarantine workflow.'];
+                            var addToNotes = ['and added to the decommission workflow.'];
                         } else if (msg.type === 'closeQuarantineRepair') {
                             var addToNotes = ['and added to the repair workflow.'];
                         } else {
