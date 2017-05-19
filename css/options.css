@@ -67,3 +67,18 @@ label {
 ul.navbar-nav li a {
 	cursor: pointer;
 }
+
+table#aboutTable td {
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
+td#about-label {
+	text-align: left;
+	font-weight: bold;
+	vertical-align: text-top;
+}
+
+td#about-value {
+	text-align: left;
+}
