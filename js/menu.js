@@ -462,6 +462,16 @@ for (var opt in objToggle) {
 	});
 }
 
+chrome.contextMenus.create({type: 'separator', parentId: 'monitorParent'});
+
+chrome.contextMenus.create({
+	title: 'Force Refresh',
+	contexts: ['page'],
+	id: 'monitorForceRefresh',
+	parentId: 'monitorParent',
+	onclick: function() { alert('Coming Soon!'); }
+});
+
 chrome.contextMenus.create({type: 'separator', parentId: 'optionsParent'});
 
 chrome.contextMenus.create({

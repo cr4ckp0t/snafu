@@ -83,6 +83,7 @@ function saveSettings() {
 		finishDelay: $('#finishDelay').val(),
 		monitorGroup: ($('#monitorGroup').val() === 'enable') ? true : false,
 		assignGroup: $('#assignGroup').val(),
+		monitorIcon: ($('#monitorIcon').val() === 'enable') ? true : false,
 		monitorInterval: $('#monitorInterval').val()
 	}, function() {
 		if (chrome.runtime.lastError) {
@@ -100,7 +101,7 @@ function saveSettings() {
  * @return	{Void}
  */
 function loadSettings() {
-	chrome.storage.sync.get(['debug', 'closePopup', 'canned', 'autoFinish', 'finishDelay', 'sendEnter', 'userId', 'userName', 'userEmail', 'fullName', 'groupName', 'groupId', 'monitorGroup', 'assignGroup', 'monitorInterval'], function(items) {
+	chrome.storage.sync.get(['debug', 'closePopup', 'canned', 'autoFinish', 'finishDelay', 'sendEnter', 'userId', 'userName', 'userEmail', 'fullName', 'groupName', 'groupId', 'monitorGroup', 'assignGroup', 'monitorInterval', 'monitorIcon'], function(items) {
 		if (chrome.runtime.lastError) {
 			console.error('SNAFU Sync Get Error: %s', chrome.runtime.lastError.message);
 		} else {
@@ -227,6 +228,20 @@ function loadSettings() {
 				$('#monitorInterval').val(items.monitorInterval);
 			}
 
+			// show ticket count on toolbar icon
+			if (isVarEmpty(items.monitorIcon) === true) {
+				chrome.storage.sync.set({monitorIcon: true}, function() {
+					if (chrome.runtime.lastError) {
+						console.error('SNAFU monitorIcon Set Error: %s', chrome.runtime.lastError.message);
+					} else {
+						console.info('SNAFU: Create monitorIcon setting.');
+					}
+				});
+				$('#monitorIcon').val('enable');
+			} else {
+				$('#monitorIcon').val((items.monitorIcon === true) ? 'enable' : 'disable');
+			}
+
 			// send on enter
 			if (isVarEmpty(items.sendEnter) === true) {
 				chrome.storage.sync.set({sendEnter: true}, function() {
@@ -249,7 +264,7 @@ function loadSettings() {
 			$('#groupName').val((!isVarEmpty(items.groupName)) ? items.groupName : '');
 			$('#groupId').val((!isVarEmpty(items.groupId)) ? items.groupId : '');
 
-			console.info('SNAFU: Loaded settings.');
+			if (items.debug === true) console.info('SNAFU: Loaded settings.');
 		}
 	});
 }
