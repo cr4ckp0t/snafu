@@ -37,7 +37,7 @@ chrome.runtime.onInstalled.addListener(function(details) {
 });
 
 chrome.runtime.onStartup.addListener(function() {
-	chrome.storage.sync.get(['autoFinish', 'finishDelay', 'debug', 'canned', 'closePopup'], function(items) {
+	chrome.storage.sync.get(['autoFinish', 'finishDelay', 'debug', 'canned', 'closePopup', 'sendEnter', 'monitorGroup', 'assignGroup', 'monInterval'], function(items) {
 		if (chrome.runtime.lastError) {
 			console.error('SNAFU: Sync Get Error: %s', chrome.runtime.lastError.message);
 		} else {
@@ -82,6 +82,38 @@ chrome.runtime.onStartup.addListener(function() {
 				chrome.storage.sync.set({closePopup: false}, function() {
 					if (chrome.runtime.lastError) {
 						console.error('SNAFU closePopup Set Error: %s', chrome.runtime.lastError.message);
+					}
+				});
+			}
+
+			if (isVarEmpty(items.sendEnter) === true) {
+				chrome.storage.sync.set({sendEnter: true}, function() {
+					if (chrome.runtime.lastError) {
+						console.error('SNAFU sendEnter Set Error: %s', chrome.runtime.lastError.message);
+					}
+				});
+			}
+
+			if (isVarEmpty(items.monitorGroup) === true) {
+				chrome.storage.sync.set({monitorGroup: false}, function() {
+					if (chrome.runtime.lastError) {
+						console.error('SNAFU monitorGroup Set Error: %s', chrome.runtime.lastError.message);
+					}
+				});
+			}
+
+			if (isVarEmpty(items.assignGroup) === true) {
+				chrome.storage.sync.set({assignGroup: '7d8ea2206fcaf60449bfd4a21c3ee406'}, function() {
+					if (chrome.runtime.lastError) {
+						console.error('SNAFU assignGroup Set Error: %s', chrome.runtime.lastError.message);
+					}
+				});
+			}
+
+			if (isVarEmpty(items.monitorInterval) === true) {
+				chrome.storage.sync.set({monitorInterval: 3}, function() {
+					if (chrome.runtime.lastError) {
+						console.error('SNAFU monitorInterval Set Error: %s', chrome.runtime.lastError.message);
 					}
 				});
 			}

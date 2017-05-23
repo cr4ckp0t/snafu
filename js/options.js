@@ -66,9 +66,6 @@ $(document).ready(function() {
 		});
 	});
 
-	// generate the html for monitorGroups select
-	//$('#monitorGroup').html(generateAssignmentGroups());
-	
 	loadSettings();
 });
 
@@ -80,9 +77,13 @@ function saveSettings() {
 	chrome.storage.sync.set({
 		debug: ($('#debugMode').val() === 'enable') ? true : false,
 		closePopup: ($('#closePopup').val() === 'enable') ? true: false,
+		sendEnter: ($('#sendEnter').val() === 'enable') ? true : false,
 		canned: getCannedMessages(),
 		autoFinish: $('#ticketCompletion').val(),
-		finishDelay: $('#finishDelay').val()
+		finishDelay: $('#finishDelay').val(),
+		monitorGroup: ($('#monitorGroup').val() === 'enable') ? true : false,
+		assignGroup: $('#assignGroup').val(),
+		monitorInterval: $('#monitorInterval').val()
 	}, function() {
 		if (chrome.runtime.lastError) {
 			console.error('SNAFU Sync Set Error: %s', chrome.runtime.lastError.message);
@@ -99,11 +100,10 @@ function saveSettings() {
  * @return	{Void}
  */
 function loadSettings() {
-	chrome.storage.sync.get(['debug', 'closePopup', 'canned', 'autoFinish', 'finishDelay', 'userId', 'userName', 'userEmail', 'fullName', 'groupName', 'groupId'], function(items) {
+	chrome.storage.sync.get(['debug', 'closePopup', 'canned', 'autoFinish', 'finishDelay', 'sendEnter', 'userId', 'userName', 'userEmail', 'fullName', 'groupName', 'groupId', 'monitorGroup', 'assignGroup', 'monitorInterval'], function(items) {
 		if (chrome.runtime.lastError) {
 			console.error('SNAFU Sync Get Error: %s', chrome.runtime.lastError.message);
 		} else {
-
 			// debug settings
 			if (isVarEmpty(items.debug) === true) {
 				chrome.storage.sync.set({debug: false}, function() {
@@ -185,6 +185,62 @@ function loadSettings() {
 				$('#finishDelay').val(items.finishDelay);
 			}
 
+			// monitor group
+			if (isVarEmpty(items.monitorGroup) === true) {
+				chrome.storage.sync.set({monitorGroup: false}, function() {
+					if (chrome.runtime.lastError) {
+						console.error('SNAFU monitorGroup Set Error: %s', chrome.runtime.lastError.message);
+					} else {
+						console.info('SNAFU: Created monitorGroup setting.');
+					}
+				});
+				$('#monitorGroup').val('disable');
+			} else {
+				$('#monitorGroup').val((items.monitorGroup === true) ? 'enable' : 'disable');
+			}
+
+			// assignment group
+			if (isVarEmpty(items.assignGroup) === true) {
+				chrome.storage.sync.set({assignGroup: '7d8ea2206fcaf60449bfd4a21c3ee406'}, function() {
+					if (chrome.runtime.lastError) {
+						console.error('SNAFU assignGroup Set Error: %s', chrome.runtime.lastError.message);
+					} else {
+						console.info('SNAFU: Created assignGroup setting.');
+					}
+				});
+				$('#assignGroup').val('7d8ea2206fcaf60449bfd4a21c3ee406');
+			} else {
+				$('#assignGroup').val(items.assignGroup);
+			}
+
+			// monitor interval
+			if (isVarEmpty(items.monitorInterval) === true) {
+				chrome.storage.sync.set({monitorInterval: 3}, function() {
+					if (chrome.runtime.lastError) {
+						console.error('SNAFU monitorInterval Set Error: %s', chrome.runtime.lastError.message);
+					} else {
+						console.info('SNAFU: Created monitorInterval setting.');
+					}
+				});
+				$('#monitorInterval').val(3);
+			} else {
+				$('#monitorInterval').val(items.monitorInterval);
+			}
+
+			// send on enter
+			if (isVarEmpty(items.sendEnter) === true) {
+				chrome.storage.sync.set({sendEnter: true}, function() {
+					if (chrome.runtime.lastError) {
+						console.error('SNAFU sendEnter Set Error: %s', chrome.runtime.lastError.message);
+					} else {
+						console.info('SNAFU: Create sendEnter setting.');
+					}
+				});
+				$('#sendEnter').val('enable');
+			} else {
+				$('#sendEnter').val((items.sendEnter === true) ? 'enable' : 'disable');
+			}
+
 			// set user info
 			$('#fullName').val((!isVarEmpty(items.fullName)) ? items.fullName : '');
 			$('#userName').val((!isVarEmpty(items.userName)) ? items.userName : '');
@@ -213,41 +269,12 @@ function getCannedMessages() {
 				var left = strTemp.substring(0, strTemp.indexOf('|'));
 				var right = strTemp.substring(strTemp.indexOf('|') + 1);
 				objMsgs[left] = right;
-				//console.info('SNAFU Left: %s', left);
-				//console.info('SNAFU Right: %s', right);
 			}
 		}
 		return objMsgs;
 	} else {
 		return false;
 	}
-}
-
-/**
- * Generates innerHTML of monitorGroups.
- * @return	{String}
- */
-function generateAssignmentGroups() {
-	var innerHTML = '<option value="disabled">---- DISABLED ----</option>', assignmentGroups = {
-		'7d8ea2206fcaf60449bfd4a21c3ee406': 'Desktop Support',
-		'49eeaee06f8af60449bfd4a21c3ee4b6': 'Desktop Support Asset Management',
-		'4b44b2206f46720c7839d4a21c3ee45b': 'Desktop Support Coordinators',
-		'dbaf2e206fcaf60449bfd4a21c3ee463': 'Desktop Support Engineers',
-		'200fa2ec6f8af60449bfd4a21c3ee443': 'Desktop Support Greenville Campus',
-		'404faeec6f8af60449bfd4a21c3ee41d': 'Desktop Support Greenville Staging',
-		'c85fe6686f8af60449bfd4a21c3ee415': 'Desktop Support Greer Campus',
-		'275fe2206fcaf60449bfd4a21c3ee452': 'Desktop Support Hillcrest Campus',
-		'566f6aac6f8af60449bfd4a21c3ee4e9': 'Desktop Support Laurens Campus',
-		'057faa206fcaf60449bfd4a21c3ee444': 'Desktop Support MDC Campus',
-		'488faa206fcaf60449bfd4a21c3ee4bb': 'Desktop Support MDC Delivery',
-		'da8fea206fcaf60449bfd4a21c3ee447': 'Desktop Support MDC Staging',
-		'759f2a206fcaf60449bfd4a21c3ee4a4': 'Desktop Support Oconee Campus',
-		'38afaaec6f8af60449bfd4a21c3ee420': 'Desktop Support Patewood Campus'
-	};
-	for (var key in assignmentGroups) {
-		innerHTML += sprintf('<option value="%s">%s</option>', [key, assignmentGroups[key]]);
-	}
-	return innerHTML;
 }
 
 /**

@@ -406,6 +406,25 @@ for (var opt in objToggle) {
 }
 
 chrome.contextMenus.create({
+	title: 'Send On Enter',
+	contexts: ['page'],
+	id: 'sendEnterParent',
+	parentId: 'optionsParent'
+});
+
+for (var opt in objToggle) {
+	chrome.contextMenus.create({
+		title: objToggle[opt],
+		type: 'radio',
+		contexts: ['page'],
+		id: 'sendError-' + opt,
+		parentId: 'sendEnterParent',
+		checked: false,
+		onclick: optionsHandler
+	});
+}
+
+chrome.contextMenus.create({
 	title: 'Debug Mode',
 	contexts: ['page'],
 	id: 'debugParent',
@@ -419,6 +438,25 @@ for (var opt in objToggle) {
 		contexts: ['page'],
 		id: 'debug-' + opt,
 		parentId: 'debugParent',
+		checked: false,
+		onclick: optionsHandler
+	});
+}
+
+chrome.contextMenus.create({
+	title: 'Monitor Group',
+	contexts: ['page'],
+	id: 'monitorParent',
+	parentId: 'optionsParent'
+});
+
+for (var opt in objToggle) {
+	chrome.contextMenus.create({
+		title: objToggle[opt],
+		type: 'radio',
+		contexts: ['page'],
+		id: 'monitorGroup-' + opt,
+		parentId: 'monitorParent',
 		checked: false,
 		onclick: optionsHandler
 	});
@@ -462,7 +500,7 @@ chrome.contextMenus.create({
 	onclick: function() { chrome.tabs.create({url: chrome.extension.getURL('help.html')}); }
 });
 
-chrome.storage.sync.get(['debug', 'autoFinish', 'closePopup', 'userId', 'userName', 'userEmail', 'fullName', 'groupName', 'groupId'], function(items) {
+chrome.storage.sync.get(['debug', 'autoFinish', 'closePopup', 'sendEnter', 'monitorGroup', 'userId', 'userName', 'userEmail', 'fullName', 'groupName', 'groupId'], function(items) {
 	if (chrome.runtime.lastError) {
 		console.error('SNAFU User Sync Error: %s', chrome.runtime.lastError.message);
 	} else {
@@ -486,6 +524,14 @@ chrome.storage.sync.get(['debug', 'autoFinish', 'closePopup', 'userId', 'userNam
 		// set the debug radio
 		chrome.contextMenus.update('debug-enable', {checked: (items.debug === true) ? true : false});
 		chrome.contextMenus.update('debug-disable', {checked: (items.debug === false) ? true : false});
+
+		// set the monitor group radio
+		chrome.contextMenus.update('monitorGroup-enable', {checked: (items.monitorGroup === true) ? true : false});
+		chrome.contextMenus.update('monitorGroup-disable', {checked: (items.monitorGroup === false) ? true : false});
+
+		// set the send on enter radio
+		chrome.contextMenus.update('sendEnter-enable', {checked: (items.sendEnter === true) ? true : false});
+		chrome.contextMenus.update('sendEnter-disable', {checked: (items.sendEnter === false) ? true : false});
 	}
 });
 
@@ -513,6 +559,14 @@ chrome.storage.onChanged.addListener(function(changes, area) {
 			// set the debug radio
 			chrome.contextMenus.update('debug-enable', {checked: (changes.debug.newValue === true) ? true : false});
 			chrome.contextMenus.update('debug-disable', {checked: (changes.debug.newValue === false) ? true : false});
+		} else if ('monitorGroup' in changes) {
+			// set the monitor group radio
+			chrome.contextMenus.update('monitorGroup-enable', {checked: (changes.monitorGroup.newValue === true) ? true : false});
+			chrome.contextMenus.update('monitorGroup-disable', {checked: (changes.monitorGroup.newValue === false) ? true : false});
+		} else if ('sendEnter' in changes) {
+			// set the send on enter radio
+			chrome.contextMenus.update('sendEnter-enable', {checked: (changes.sendEnter.newValue === true) ? true : false});
+			chrome.contextMenus.update('sendEnter-disable', {checked: (changes.sendEnter.newValue === false) ? true : false});
 		}
 	}
 });
@@ -536,7 +590,8 @@ function optionsHandler(info, tab) {
 				}
 			});
 			break;
-
+		
+		case 'monitorGroup':;
 		case 'closePopup':
 		case 'debug':
 			var newSetting = {}

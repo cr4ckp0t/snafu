@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Additional note to quarantine closure script.
 - About dialogs to the Help and FAQ pages.
 - Glyph icons provided by Bootstrap.
+- Added option to send the update by pressing Enter.
+- Added titles to buttons for descriptions.
 
 ### Fixed
 - Standarized the navigation bars on the Help, FAQ, and Options pages.

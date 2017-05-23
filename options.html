@@ -31,16 +31,16 @@
                 <a class="navbar-brand" href="#"><img src="images/icon-16.png" /></a>
             </div>
             <div class="navbar-left">
-                <button type="button" class="btn btn-sm btn-primary navbar-btn" id="saveSettings"><span class="glyphicon glyphicon-save"></span> Save</button>
-                <button type="button" class="btn btn-sm btn-warning navbar-btn" id="reloadData"><span class="glyphicon glyphicon-refresh"></span> Reload</button>
-                <button type="button" class="btn btn-sm btn-danger navbar-btn" id="resetUser"><span class="glyphicon glyphicon-user"></span> Reset User</button>
-                <button type="button" class="btn btn-sm btn-danger navbar-btn" id="resetAll"><span class="glyphicon glyphicon-exclamation-sign"></span> Reset All</button>
+                <button type="button" class="btn btn-sm btn-primary navbar-btn" id="saveSettings" title="Save Settings"><span class="glyphicon glyphicon-save"></span> Save</button>
+                <button type="button" class="btn btn-sm btn-warning navbar-btn" id="reloadData" title="Reload Settings"><span class="glyphicon glyphicon-refresh"></span> Reload</button>
+                <button type="button" class="btn btn-sm btn-danger navbar-btn" id="resetUser" title="Reset User Info"><span class="glyphicon glyphicon-user"></span> Reset User</button>
+                <button type="button" class="btn btn-sm btn-danger navbar-btn" id="resetAll" title="Reset All Settings"><span class="glyphicon glyphicon-exclamation-sign"></span> Reset All</button>
             </div>
             <div class="btn-group btn-group-sm navbar-right" role="group" style="padding-right:5px;padding-top:2px;">
-                <button type="button" class="btn btn-default navbar-btn" data-toggle="modal" data-target="#aboutModal"><span class="glyphicon glyphicon-modal-window" aria-hidden="true"></span></button>
-                <button type="button" class="btn btn-default navbar-btn" id="openHelp"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span></button>
-                <button type="button" class="btn btn-default navbar-btn" id="openFaq"><span class="glyphicon glyphicon-tasks" aria-hidden="true"></span></button>
-                <button type="button" class="btn btn-danger navbar-btn" id="closeWindow"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
+                <button type="button" class="btn btn-default navbar-btn" data-toggle="modal" data-target="#aboutModal" title="About SNAFU"><span class="glyphicon glyphicon-modal-window" aria-hidden="true"></span></button>
+                <button type="button" class="btn btn-default navbar-btn" id="openHelp" title="Help Page"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span></button>
+                <button type="button" class="btn btn-default navbar-btn" id="openFaq" title="Frequently Asked Questions"><span class="glyphicon glyphicon-tasks" aria-hidden="true"></span></button>
+                <button type="button" class="btn btn-danger navbar-btn" id="closeWindow" title="Close Window"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
             </div>
         </div>
     </nav>
@@ -90,6 +90,15 @@
                         </div>
                         <div class="extraInfo">When sending an update do you want the popup window to close?</div>
                         <br />
+                        <div class="input-group">
+                            <span class="input-group-addon" id="sendEnterAddon">Send On Enter</span>
+                            <select id="sendEnter" class="form-control" aria-describedby="sendEnterAddon">
+                                <option value="enable">Enabled</option>
+                                <option value="disable">Disabled</option>
+                            </select>
+                        </div>
+                        <div class="extraInfo">Pressing enter when typing a note will send the update.</div>
+                        <br />
                         <div class="form-group">
                             <label for="cannedMsgs" class="textareaLabel">Canned Messages</label>
                             <textarea id="cannedMsgs" class="form-control" rows="6" cols="50"></textarea>
@@ -115,8 +124,8 @@
                     <div class="panel-body">
                         <p><em>This will check every X minutes for new incidents and tasks that have been assigned to the groups you designate.  If it finds a new one you will receive a Google Chrome notification.</em></p>
                         <div class="input-group">
-                            <span class="input-group-addon" id="monitorGroupsAddon">Monitor Group</span>
-                            <select id="monitorGroups" class="form-control" aria-describedby="monitorGroupsAddon">
+                            <span class="input-group-addon" id="monitorGroupAddon">Monitor Group</span>
+                            <select id="monitorGroup" class="form-control" aria-describedby="monitorGroupAddon">
                                 <option value="enable">Enabled</option>
                                 <option value="disable">Disabled</option>
                             </select>

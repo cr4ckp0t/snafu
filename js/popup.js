@@ -139,6 +139,10 @@ $(document).ready(function() {
     // closure clicks
     $('a[id^=close]').click(function(event) { processClick(event.target.id); });
 
+    // keyup events
+    $('textarea[id$=Notes]').keyup(processKeyUpUpdate);
+    $('input[id^=comp').keyup(processKeyUpEquipOrder);
+
     // send ticket update
     $('#sendUpdate').click(function() {
         if ($('input[name=tStatus]:checked').val() === '1' && isVarEmpty($('#customerNotes').val()) === '') {
@@ -219,6 +223,9 @@ $(document).ready(function() {
             });
         }
     });
+
+    // create new incident
+    $('[id^=newIncident]').click(function() { chrome.tabs.create({url: 'https://ghsprod.service-now.com/incident.do?sysparm_stack=incident_list.do&sys_id=-1'}); });
     
     // open help page
     $('[id^=openHelp]').click(function() { chrome.tabs.create({url: chrome.extension.getURL('help.html')}); });
@@ -337,6 +344,38 @@ function processClick(clickType) {
             });
         });
     });
+}
+
+/**
+ * Process KeyUp event from main tab.
+ * @param   {Object}    event
+ * @return  {Void}
+ */
+function processKeyUpUpdate(event) {
+    chrome.storage.sync.get(['debug', 'sendEnter'], function(items) {
+        if (items.sendEnter === true && event.keyCode === 13) {
+            if (items.debug === true) {
+                console.info('SNAFU: Proccessed KeyUp event.');
+            }
+            $('#sendUpdate').click();
+        }
+    });
+}
+
+/**
+ * Process KeyUp event from Equipment Orders tab.
+ * @param   {Object}    event
+ * @return  {Void}
+ */
+function processKeyUpEquipOrder(event) {
+    chrome.storage.sync.get(['debug', 'sendEnter'], function(items) {
+        if (items.sendEnter === true && event.keyCode === 13) {
+            if (items.debug === true) {
+                console.info('SNAFU: Proccessed KeyUp event.');
+            }
+            $('#sendEquipment').click();
+        }
+    }); 
 }
 
 /**
