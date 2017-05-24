@@ -9,8 +9,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Additional note to quarantine closure script.
 - About dialogs to the Help and FAQ pages.
 - Glyph icons provided by Bootstrap.
-- Added option to send the update by pressing Enter.
-- Added titles to buttons for descriptions.
+- Option to send the update by pressing Enter.
+- Titles to buttons for descriptions.
+- New context menus for acknowledgements and closures.
+- Sets Close Codes and Customer Communication fields when resolving incidents.
+
+### Changed
+- Changed how context menus are handled.  All are now sent through one handler function to make modifying the menus easier for me.
 
 ### Fixed
 - Standarized the navigation bars on the Help, FAQ, and Options pages.

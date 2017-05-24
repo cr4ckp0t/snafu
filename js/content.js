@@ -249,6 +249,25 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                     }
                     break;
 
+                // acknowledge reimage only build
+                case 'ackReimage':
+                    if (ticketType !== 'task') {
+                        sendResponse({success: false, errMsg: 'Unable to detect an open task.'});
+                    } else {
+                        injectData = {
+                            type: msg.type,
+                            autoFinish: items.autoFinish || 'none',
+                            finishDelay: items.finishDelay || 1.5,
+                            field: 'state',
+                            value: '2', // work in progress
+                            workNotes: 'Acknowledging reimage only build task.',
+                            custNotes: null
+                        }
+                        sendResponse({success: true, errMsg: null});
+                    }
+                    break;
+
+
                 // acknowledge equipment removal
                 case 'ackRemoval':
                     if (ticketType !== 'task') {
@@ -267,7 +286,8 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                     }
                     break;
                 
-                case 'closeHotSwap':
+                case 'closeHotSwapNew':
+                case 'closeHotSwapRepurposed':
                     if (ticketType !== 'task') {
                         sendResponse({success: false, errMsg: 'Unable to detect an open task.'});
                     } else {
@@ -349,8 +369,8 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                     }
                     break;
 
-                // close reclaim task
-                case 'closeReclaim':
+                // close reclaim task (hot swap)
+                case 'closeReclaimHotSwap':
                     if (ticketType !== 'task') {
                         sendResponse({success: false, errMsg: 'Unable to detect an open task.'});
                     } else {
@@ -361,6 +381,42 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                             field: 'state',
                             value: '3', // closed complete
                             workNotes: 'Device reclaimed and added to quarantine.',
+                            custNotes: null
+                        }
+                        sendResponse({success: true, errMsg: null});
+                    }
+                    break;
+                
+                // close reclaim task (reimage only)
+                case 'closeReclaimReimage':
+                    if (ticketType !== 'task') {
+                        sendResponse({success: false, errMsg: 'Unable to detect an open task.'});
+                    } else {
+                        injectData = {
+                            type: msg.type,
+                            autoFinish: items.autoFinish || 'none',
+                            finishDelay: items.finishDelay || 1.5,
+                            field: 'state',
+                            value: '3', // closed complete
+                            workNotes: 'Device reclaimed for reimage.',
+                            custNotes: null
+                        }
+                        sendResponse({success: true, errMsg: null});
+                    }
+                    break;
+
+                // close reimage only build
+                case 'closeReimage':
+                    if (ticketType !== 'task') {
+                        sendResponse({success: false, errMsg: 'Unable to detect an open task.'});
+                    } else {
+                        injectData = {
+                            type: msg.type,
+                            autoFinish: items.autoFinish || 'none',
+                            finishDelay: items.finishDelay || 1.5,
+                            field: 'state',
+                            value: '3', // closed complete
+                            workNotes: 'Computer has been built. One {BROKEN_MODEL} has been built {REPLACE_BUILD}. Tag {BROKEN_ASSET} HostName {BROKEN_HOSTNAME}. Resolving Task.',
                             custNotes: null
                         }
                         sendResponse({success: true, errMsg: null});

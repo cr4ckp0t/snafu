@@ -40,11 +40,7 @@ chrome.contextMenus.create({
 	id: 'ackIncident',
 	parentId: 'parentAckIncident',
 	documentUrlPatterns: ['https://ghsprod.service-now.com/incident.do?*'],
-	onclick: function() {
-		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-			chrome.tabs.sendMessage(tabs[0].id, {type: 'ackIncident'}, handleResponse);
-		});
-	}
+	onclick: actionHandler
 });
 
 // acknowledge incident - call end user
@@ -54,11 +50,7 @@ chrome.contextMenus.create({
 	id: 'ackCallUser',
 	parentId: 'parentAckIncident',
 	documentUrlPatterns: ['https://ghsprod.service-now.com/incident.do?*'],
-	onclick: function() {
-		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-			chrome.tabs.sendMessage(tabs[0].id, {type: 'ackCallUser'}, handleResponse);
-		});
-	}
+	onclick: actionHandler
 });
 
 // parent for acknowledge tasks
@@ -76,11 +68,7 @@ chrome.contextMenus.create({
 	id: 'ackTask',
 	parentId: 'parentAckTask',
 	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
-	onclick: function() {
-		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-			chrome.tabs.sendMessage(tabs[0].id, {type: 'ackTask'}, handleResponse);
-		});
-	}
+	onclick: actionHandler
 });
 
 chrome.contextMenus.create({
@@ -89,11 +77,7 @@ chrome.contextMenus.create({
 	id: 'ackMove',
 	parentId: 'parentAckTask',
 	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
-	onclick: function() {
-		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-			chrome.tabs.sendMessage(tabs[0].id, {type: 'ackMove'}, handleResponse);
-		});
-	}
+	onclick: actionHandler
 });
 
 chrome.contextMenus.create({
@@ -102,11 +86,7 @@ chrome.contextMenus.create({
 	id: 'ackRemoval',
 	parentId: 'parentAckTask',
 	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
-	onclick: function() {
-		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-			chrome.tabs.sendMessage(tabs[0].id, {type: 'ackRemoval'}, handleResponse);
-		});
-	}
+	onclick: actionHandler
 });
 
 chrome.contextMenus.create({
@@ -115,50 +95,43 @@ chrome.contextMenus.create({
 	id: 'ackHotSwap',
 	parentId: 'parentAckTask',
 	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
-	onclick: function() {
-		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-			chrome.tabs.sendMessage(tabs[0].id, {type: 'ackHotSwap'}, handleResponse);
-		});
-	}
+	onclick: actionHandler
 });
 
 chrome.contextMenus.create({
-	title: 'Install Task',
+	title: 'Installation',
 	contexts: ['page'],
 	id: 'ackInstall',
 	parentId: 'parentAckTask',
 	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
-	onclick: function() {
-		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-			chrome.tabs.sendMessage(tabs[0].id, {type: 'ackInstall'}, handleResponse);
-		});
-	}
+	onclick: actionHandler
 });
 
 chrome.contextMenus.create({
-	title: 'Quarantine Task',
+	title: 'Quarantine',
 	contexts: ['page'],
 	id: 'ackQuarantine',
 	parentId: 'parentAckTask',
 	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
-	onclick: function() {
-		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-			chrome.tabs.sendMessage(tabs[0].id, {type: 'ackQuarantine'}, handleResponse);
-		});
-	}
+	onclick: actionHandler
 });
 
 chrome.contextMenus.create({
-	title: 'Reclaim Task',
+	title: 'Reclaim',
 	contexts: ['page'],
 	id: 'ackReclaim',
 	parentId: 'parentAckTask',
 	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
-	onclick: function() {
-		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-			chrome.tabs.sendMessage(tabs[0].id, {type: 'ackReclaim'}, handleResponse);
-		});
-	}
+	onclick: actionHandler
+});
+
+chrome.contextMenus.create({
+	title: 'Reimage Only',
+	contexts: ['page'],
+	id: 'ackReimage',
+	parentId: 'parentAckTask',
+	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
+	onclick: actionHandler
 });
 
 // closure tasks
@@ -176,11 +149,7 @@ chrome.contextMenus.create({
 	id: 'closeMove',
 	parentId: 'parentCloseTask',
 	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
-	onclick: function() {
-		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-			chrome.tabs.sendMessage(tabs[0].id, {type: 'closeMove'}, handleResponse);
-		});
-	}
+	onclick: actionHandler
 });
 
 chrome.contextMenus.create({
@@ -189,41 +158,46 @@ chrome.contextMenus.create({
 	id: 'closeRemoval',
 	parentId: 'parentCloseTask',
 	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
-	onclick: function() {
-		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-			chrome.tabs.sendMessage(tabs[0].id, {type: 'closeRemoval'}, handleResponse);
-		});
-	}
+	onclick: actionHandler
 });
 
 chrome.contextMenus.create({
 	title: 'Hot Swap',
 	contexts: ['page'],
-	id: 'closeHotSwap',
+	id: 'closeHotSwapParent',
 	parentId: 'parentCloseTask',
-	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
-	onclick: function() {
-		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-			chrome.tabs.sendMessage(tabs[0].id, {type: 'closeHotSwap'}, handleResponse);
-		});
-	}
+	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*']
 });
 
 chrome.contextMenus.create({
-	title: 'Install Task',
+	title: 'New Device (Out of Box)',
+	contexts: ['page'],
+	id: 'closeHotSwapNew',
+	parentId: 'closeHotSwapParent',
+	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
+	onclick: actionHandler
+});
+
+chrome.contextMenus.create({
+	title: 'Repurposed In Stock',
+	contexts: ['page'],
+	id: 'closeHotSwapRepurposed',
+	parentId: 'closeHotSwapParent',
+	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
+	onclick: actionHandler
+});
+
+chrome.contextMenus.create({
+	title: 'Installation',
 	contexts: ['page'],
 	id: 'closeInstall',
 	parentId: 'parentCloseTask',
 	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
-	onclick: function() {
-		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-			chrome.tabs.sendMessage(tabs[0].id, {type: 'closeInstall'}, handleResponse);
-		});
-	}
+	onclick: actionHandler
 });
 
 chrome.contextMenus.create({
-	title: 'Quarantine Task',
+	title: 'Quarantine',
 	contexts: ['page'],
 	id: 'closeQuarantineParent',
 	parentId: 'parentCloseTask',
@@ -233,14 +207,10 @@ chrome.contextMenus.create({
 chrome.contextMenus.create({
 	title: 'Decommission Device',
 	contexts: ['page'],
-	id: 'closeQuarantineDecom',
+	id: 'closeQuarantineDecommission',
 	parentId: 'closeQuarantineParent',
 	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
-	onclick: function() {
-		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-			chrome.tabs.sendMessage(tabs[0].id, {type: 'closeQuarantineDecommission'}, handleResponse);
-		});
-	}
+	onclick: actionHandler
 });
 
 chrome.contextMenus.create({
@@ -249,11 +219,7 @@ chrome.contextMenus.create({
 	id: 'closeQuarantineRepair',
 	parentId: 'closeQuarantineParent',
 	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
-	onclick: function() {
-		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-			chrome.tabs.sendMessage(tabs[0].id, {type: 'closeQuarantineRepair'}, handleResponse);
-		});
-	}
+	onclick: actionHandler
 });
 
 chrome.contextMenus.create({
@@ -262,24 +228,42 @@ chrome.contextMenus.create({
 	id: 'closeQuarantineRestock',
 	parentId: 'closeQuarantineParent',
 	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
-	onclick: function() {
-		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-			chrome.tabs.sendMessage(tabs[0].id, {type: 'closeQuarantineRestock'}, handleResponse);
-		});
-	}
+	onclick: actionHandler
 });
 
 chrome.contextMenus.create({
-	title: 'Reclaim Task',
+	title: 'Reclaim',
 	contexts: ['page'],
-	id: 'closeReclaim',
+	id: 'closeReclaimParent',
+	parentId: 'parentCloseTask',
+	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*']
+});
+
+chrome.contextMenus.create({
+	title: 'Hot Swap Reclaim',
+	contexts: ['page'],
+	id: 'closeReclaimHotSwap',
+	parentId: 'closeReclaimParent',
+	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
+	onclick: actionHandler
+});
+
+chrome.contextMenus.create({
+	title: 'Reimage Only Reclaim',
+	contexts: ['page'],
+	id: 'closeReclaimReimage',
+	parentId: 'closeReclaimParent',
+	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
+	onclick: actionHandler
+});
+
+chrome.contextMenus.create({
+	title: 'Reimage Only Build',
+	contexts: ['page'],
+	id: 'closeReimage',
 	parentId: 'parentCloseTask',
 	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
-	onclick: function() {
-		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-			chrome.tabs.sendMessage(tabs[0].id, {type: 'closeReclaim'}, handleResponse);
-		});
-	}
+	onclick: actionHandler
 });
 
 chrome.contextMenus.create({
@@ -417,7 +401,7 @@ for (var opt in objToggle) {
 		title: objToggle[opt],
 		type: 'radio',
 		contexts: ['page'],
-		id: 'sendError-' + opt,
+		id: 'sendEnter-' + opt,
 		parentId: 'sendEnterParent',
 		checked: false,
 		onclick: optionsHandler
@@ -582,7 +566,19 @@ chrome.storage.onChanged.addListener(function(changes, area) {
 });
 
 /**
- * Onclick handler for autoFinish settings.
+ * Onclick handler for actions
+ * @param	{Object}	info
+ * @param	{Object}	tab
+ * @return	{Void}
+ */
+function actionHandler(info, tab) {
+	chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+		chrome.tabs.sendMessage(tabs[0].id, {type: info.menuItemId}, handleResponse);
+	});
+}
+
+/**
+ * Onclick handler for option menus.
  * @param	{Object}	info
  * @param	{Object}	tabs
  * @return	{Void}
@@ -601,6 +597,7 @@ function optionsHandler(info, tab) {
 			});
 			break;
 		
+		case 'sendEnter':
 		case 'monitorGroup':;
 		case 'closePopup':
 		case 'debug':

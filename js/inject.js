@@ -108,6 +108,14 @@ document.addEventListener('SNAFU_Inject', function(snafuInject) {
 			g_form.setValue('comments', snafuReplaceWildcards(snafuRslvComments));
 			g_form.flash('comments', '#3eb049', 0);
 
+			// set to Problem Resolved
+			g_form.setValue('close_code', 'Problem Resolved');
+			g_form.flash('close_code', '#3eb049', 0);
+
+			// spoke to customer
+			g_form.setValue('u_customer_communication', 'Spoke to Customer');
+			g_form.flash('u_customer_communication', '#3eb049', 0);
+
 			if (snafuIsVarEmpty(snafuWorkNotes) === false) {
 				g_form.setValue('close_notes', snafuWorkNotes);
 				g_form.flash('close_notes', '#3eb049', 0);
@@ -134,6 +142,8 @@ document.addEventListener('SNAFU_Inject', function(snafuInject) {
 			// set quarantine select, if needed
 			if (snafuType.indexOf('closeQuarantine') !== -1) {
 				g_form.setValue('rhs_restock_status', snafuType.replace('closeQuarantine', '').toLowerCase());
+			} else if (snafuType.indexOf('closeHotSwap') !== -1) {
+				g_form.setValue('rhs_replacement_type', snafuType.replace('closeHotSwap', '').toLowerCase());
 			}
 		}
 
