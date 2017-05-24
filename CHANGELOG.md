@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## 1.0.6 [2017-05-24]
 ### Added
 - Additional note to quarantine closure script.
 - About dialogs to the Help and FAQ pages.
