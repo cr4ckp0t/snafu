@@ -67,6 +67,7 @@ var wildcards = {
 $(document).ready(function() {
     $('div[id^=alert]').hide();
     $('span[id^=comp]').hide();
+    $('div[id=schedApptWrapper]').hide();
     $('[data-toggle="tooltip"]').tooltip();
 
     // close quarantine submenu
@@ -76,20 +77,21 @@ $(document).ready(function() {
         event.preventDefault();
     });
 
+    // monitor tStatus to show/hide the scheduled input
+    var now = new Date();
+    $('input[type=datetime-local]').attr('min', new Date(now.getTime()-now.getTimezoneOffset()*60000).toISOString().substring(0,19));
+    $('input[type=datetime-local]').val(new Date(now.getTime()-now.getTimezoneOffset()*60000).toISOString().substring(0,19));
+    $('input[name=tStatus]').change(function() {
+        if ($('input[name=tStatus]:checked').val() === '4') {
+            $('#schedApptWrapper').fadeIn();
+        } else {
+            $('#schedApptWrapper').fadeOut();
+        }
+    });
+
     // load settings and wildcards
     getSettings();
     loadWildcards();
-
-    // save autoFinish settings
-    /*
-    $('#autoFinish-save').click(function() { saveAutoFinish('save'); });
-    $('#autoEquipTicket-save').click(function() { saveAutoFinish('save'); });
-    $('#autoFinish-update').click(function() { saveAutoFinish('update'); });
-    $('#autoEquipTicket-update').click(function() { saveAutoFinish('update'); });
-    $('#autoFinish-auto
-    $('#autoFinish-none').click(function() { saveAutoFinish('none'); });
-    $('#autoEquipTicket-none').click(function() { saveAutoFinish('none'); });
-    */
 
     // save autofinish settings
     $('[id^=autoFinish').click(function(event) { saveAutoFinish(event.target.id.substring(event.target.id.search('-') + 1)); });

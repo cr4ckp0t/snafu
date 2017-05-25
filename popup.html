@@ -79,12 +79,22 @@
                             <input type="radio" name="tStatus" id="1" value="1" autocomplete="off" /> On Hold
                         </label>
                         <label class="btn btn-primary btn-sm">
+                            <input type="radio" name="tStatus" id="4" value="4" autocomplete="off" /> Scheduled
+                        </label>
+                        <label class="btn btn-primary btn-sm">
                             <input type="radio" name="tStatus" id="2" value="2" autocomplete="off" /> Resolved
                         </label>
                         <label class="btn btn-primary btn-sm">
                             <input type="radio" name="tStatus" id="3" value="3" autocomplete="off" /> Incomplete
                         </label>
                     </div>
+                </div>
+                <div id="schedApptWrapper">
+                    <div class="input-group">
+                        <span class="input-group-addon" id="schedApptAddon">Appointment</span>
+                        <input type="datetime-local" id="schedAppt" class="form-control" aria-describedby="schedApptAddon" />
+                    </div>
+                    <br />
                 </div>
                 <div class="form-group">
                     <label for="customerNotes">Additional Comments (Viewable By Customer)</label>

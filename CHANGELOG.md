@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+- Added scheduled option to put a ticket on hold with an appointment message.
+
+### TODO
+- Make popup persistent, or save typed notes.
+
 ## 1.0.6 [2017-05-24]
 ### Added
 - Additional note to quarantine closure script.
