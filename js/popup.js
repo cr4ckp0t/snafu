@@ -16,6 +16,8 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  **/
 
+// branch test
+
 var wildcards = {
     "{ASSIGN_GROUP}": "{ASSIGN_GROUP} - Current assignment group.",
     "{OPENED}": "{OPENED} - Date and time the incident or task was opened.",
