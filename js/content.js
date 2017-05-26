@@ -441,11 +441,30 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                     }
                     break;
 
+                // scheduled ticket
+                case 'scheduled':
+                    if (ticketType === false) {
+                        sendResponse({success: false, errMsg: 'Unable to detect task or incident.'});
+                    } else {
+                        injectData = {
+                            type: msg.type,
+                            autoFinish: items.autoFinish || 'none',
+                            finishDelay: items.finishDelay || 1.5,
+                            field: (ticketType === 'incident') ? 'incident_state' : 'state',
+                            value: (ticketType === 'incident') ? '4' : '-5',    // on hold or pending
+                            workNotes: (ticketType === 'incident') ? 'Scheduled appointment with {INC_CUSTOMER} for {SCHED_DATE} at {SCHED_TIME}.' : 'Scheduled appointment with {REQUESTED_FOR} for {SCHED_DATE} at {SCHED_TIME}.'
+                        }
+                        sendResponse({success: true, errMsg: null});
+                    }
+                    break;
+
                 // send a ticket update
                 case 'sendUpdate':
                     // prevent closing incident as incomplete
                     if (ticketType === 'incident' && msg.tState === '3') msg.tState = '2';
-                    if (ticketType !== false) {
+                    if (ticketType === false) {
+                        sendResponse({success: false, errMsg: 'ServiceNow must be active tab.'});
+                    } else {
                         injectData = {
                             type: msg.type,
                             autoFinish: items.autoFinish || 'none',
@@ -456,9 +475,6 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                             custNotes: msg.custNotes || null
                         }
                         sendResponse({success: true, errMsg: null});
-                    } else {
-                        // send error
-                        sendResponse({success: false, errMsg: 'ServiceNow must be active tab.'});
                     }
                     break;
 
