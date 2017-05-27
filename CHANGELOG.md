@@ -5,9 +5,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
-- Added scheduled option to put a ticket on hold with an appointment message.
+### Added
+- Scheduled option to put a ticket on hold with an appointment message.
+- Keybinds to save and update the page.  Alt+S (Save) and Alt+U (Update) are the default keys.
 
-### TODO
+### ToDo
 - Make popup persistent, or save typed notes.
 
 ## 1.0.6 [2017-05-24]

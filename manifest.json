@@ -29,6 +29,20 @@
         "all_frames": true,
         "run_at": "document_end"
     }],
+    "commands": {
+        "savePage": {
+            "description": "Save the ticket.",
+            "suggested_key": {
+                "default": "Alt+S"
+            }
+        },
+        "updatePage": {
+            "description": "Update the ticket.",
+            "suggested_key": {
+                "default": "Alt+U"
+            }
+        }
+    },
     "options_page": "options.html",
     "web_accessible_resources": ["js/inject.js"],
     "manifest_version": 2

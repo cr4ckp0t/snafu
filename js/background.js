@@ -16,6 +16,23 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  **/
 
+// keyboard shortcuts
+chrome.commands.onCommand.addListener(function(command) {
+	if (command === 'savePage' || command === 'updatePage') {
+		chrome.storage.sync.get(['debug', 'finishDelay'], function(items) {
+			if (chrome.runtime.lastError) {
+				console.warn('SNAFU Sync Get Errror: %s', chrome.runtime.lastError.message);
+			} else {
+				// send the request to content.js for processing
+				chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+					chrome.tabs.sendMessage(tabs[0].id, {type: command, finishDelay: items.finishDelay}, handleResponse);
+				});
+			}
+		});
+	}
+});
+
+// only activate the icon if service now is the active tab
 chrome.runtime.onInstalled.addListener(function() {
     chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
         chrome.declarativeContent.onPageChanged.addRules([{
@@ -29,6 +46,7 @@ chrome.runtime.onInstalled.addListener(function() {
     });
 });
 
+// show help page the when the extension is installed
 chrome.runtime.onInstalled.addListener(function(details) {
 	if (details.reason === 'install') {
 		// show help page
@@ -36,8 +54,9 @@ chrome.runtime.onInstalled.addListener(function(details) {
 	}
 });
 
+// create settings on startup, if they don't exist
 chrome.runtime.onStartup.addListener(function() {
-	chrome.storage.sync.get(['autoFinish', 'finishDelay', 'debug', 'canned', 'closePopup', 'sendEnter', 'monitorGroup', 'assignGroup', 'monInterval'], function(items) {
+	chrome.storage.sync.get(['autoFinish', 'finishDelay', 'debug', 'canned', 'closePopup', 'sendEnter', 'monitorGroup', 'assignGroup', 'monitorInterval'], function(items) {
 		if (chrome.runtime.lastError) {
 			console.error('SNAFU: Sync Get Error: %s', chrome.runtime.lastError.message);
 		} else {
@@ -128,4 +147,29 @@ chrome.runtime.onStartup.addListener(function() {
  */
 function isVarEmpty(value) {
     return (value === null || value === undefined || value === NaN || value.toString().trim() === '') ? true : false
+}
+
+/**
+ * Handle the response from the sendMessage call for debugging purposes.
+ * @param	{Object}	response
+ * @return	{Void}
+ */
+function handleResponse(response) {
+	chrome.storage.sync.get(['debug'], function(items) {
+		if (chrome.runtime.lastError) {
+			console.error('SNAFU Sync Get Error: %s', chrome.runtime.lastError.message);
+		} else {
+			if (items.debug === true) {
+				if (isVarEmpty(response) === false) {
+					if (response.success === false) {
+						console.error('SNAFU Error: %s', response.errMsg);
+					} else {
+						console.info('SNAFU: Update sent!');
+					}
+				} else {
+					console.error('SNAFU Error: Unable to process response to message.');
+				}
+			}
+		}
+	});
 }

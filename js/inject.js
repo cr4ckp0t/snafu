@@ -77,6 +77,16 @@ document.addEventListener('SNAFU_Inject', function(snafuInject) {
 	} else if (snafuInject.detail.type === 'sendErrorMsg') {
 		g_form.addErrorMessage(snafuSprintf('SNAFU: %s', [snafuInject.detail.statusMsg]));
 
+	// save the page (via keybinding)
+	} else if (snafuInject.detail.type === 'savePage') {
+		g_form.addInfoMessage(snafuSprintf('SNAFU: Saving page in %s seconds.  Please wait...', [snafuInject.detail.finishDelay]));
+		setTimeout(function() { g_form.save(); }, snafuInject.detail.finishDelay * 1000);
+
+	// update the page (via keybinding)
+	} else if (snafuInject.detail.type === 'updatePage') {
+		g_form.addInfoMessage(snafuSprintf('SNAFU: Updating page in %s seconds.  Please wait...', [snafuInject.detail.finishDelay]));
+		setTimeout(function() { g_form.submit(); }, snafuInject.detail.finishDelay * 1000);
+
 	// handle everything else
 	} else {
 		var snafuType = snafuInject.detail.type;

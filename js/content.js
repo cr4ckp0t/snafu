@@ -69,12 +69,19 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
             var ticketType = getTicketType();
             
             switch (msg.type) {
-                // query user information
+                // queries that don't require anything special are handled here
                 case 'userQuery':
-                    injectData = {
-                        type: msg.type
+                case 'savePage':
+                case 'updatePage':
+                    if (ticketType === false) {
+                        sendResponse({success: false, errMsg: 'Unable to detect an open task or incident.'});
+                    } else {
+                        injectData = {
+                            type: msg.type,
+                            finishDelay: msg.finishDelay || null
+                        }
+                        sendResponse({success: true, errMsg: null});
                     }
-                    sendResponse({success: true, errMsg: null});
                     break;
                 
                 // send info message
@@ -90,7 +97,7 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                 // assign to me
                 case 'assignToMe':
                     if (ticketType === false) {
-                        sendResponse({success: false, errMsg: 'Unable to detect task or incident.'});
+                        sendResponse({success: false, errMsg: 'Unable to detect an open task or incident.'});
                     } else {
                         injectData = {
                             type: msg.type,
@@ -105,7 +112,7 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                 // acknowledge incident
                 case 'ackIncident':
                     if (ticketType !== 'incident') {
-                        sendResponse({success: false, errMsg: 'Unable to detect an open incident..'});
+                        sendResponse({success: false, errMsg: 'Unable to detect an open incident.'});
                     } else {
                         // set the data to inject
                         injectData = {
