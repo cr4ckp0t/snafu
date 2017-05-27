@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### ToDo
 - Make popup persistent, or save typed notes.
+- Add keybind for assigning ticket to oneself.
 
 ## 1.0.6 [2017-05-24]
 ### Added
