@@ -459,7 +459,8 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                             finishDelay: items.finishDelay || 1.5,
                             field: (ticketType === 'incident') ? 'incident_state' : 'state',
                             value: (ticketType === 'incident') ? '4' : '-5',    // on hold or pending
-                            workNotes: (ticketType === 'incident') ? 'Scheduled appointment with {INC_CUSTOMER} for {SCHED_DATE} at {SCHED_TIME}.' : 'Scheduled appointment with {REQUESTED_FOR} for {SCHED_DATE} at {SCHED_TIME}.'
+                            custNotes: (ticketType === 'incident') ? sprintf('Scheduled appointment with {INC_CUSTOMER} for %s at %s.', msg.custNotes.split('T')) : sprintf('Scheduled appointment with {REQUESTED_FOR} for %s at %s.', msg.custNotes.split('T')),
+                            workNotes: msg.workNotes || null
                         }
                         sendResponse({success: true, errMsg: null});
                     }

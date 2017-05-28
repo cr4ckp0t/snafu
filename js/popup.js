@@ -254,6 +254,41 @@ $(document).ready(function() {
         }
     });
 
+    // send scheduled appointment update
+    $('#sendAppointment').click(function() {
+        //alert($('#schedAppt').val());
+        if (isVarEmpty($('#schedAppt').val()) === true) {
+            console.error('SNAFU Error: You must provide a date and time for the appointment.');
+        } else {
+            chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+                chrome.tabs.sendMessage(tabs[0].id, {
+                    type: 'scheduled',
+                    custNotes: $('#schedAppt').val().slice(0, -3),
+                    workNotes: $('#customerNotes').val()
+                }, function(response) {
+                    chrome.storage.sync.get(['debug', 'closePopup'], function(items) {
+                        if (chrome.runtime.lastError) {
+                            console.error('SNAFU Sync Get Error: %s', chrome.runtime.lastError.message);
+                        } else {
+                            if (items.debug === true) {
+                                if (isVarEmpty(response) === false) {
+                                    if (response.success === false) {
+                                        console.error('SNAFU Error: %s', response.errMsg);
+                                    } else {
+                                        console.info('SNAFU: Appointment update sent.');
+                                    }
+                                } else {
+                                    console.error('SNAFU Error: Unable to process message response.');
+                                }
+                            }
+                            if (items.closePopup === true) setTimeout(function() { window.close(); }, 500);
+                        }
+                    });
+                });
+            });
+        }
+    });
+
     // create new incident
     $('[id^=newIncident]').click(function() { chrome.tabs.create({url: 'https://ghsprod.service-now.com/incident.do?sysparm_stack=incident_list.do&sys_id=-1'}); });
     
