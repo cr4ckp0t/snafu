@@ -8,10 +8,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Scheduled option to put a ticket on hold with an appointment message.
 - Keybinds to save and update the page.  Alt+S (Save) and Alt+U (Update) are the default keys.
+- Keybind to query user info and assign to technician.  Alt+A is default.
 
 ### ToDo
 - Make popup persistent, or save typed notes.
-- Add keybind for assigning ticket to oneself.
 
 ## 1.0.6 [2017-05-24]
 ### Added

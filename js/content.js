@@ -37,6 +37,9 @@ injectScript.onload = function() { this.remove(); };
 document.addEventListener('SNAFU_UserQuery', function(userData) {
     if (isVarEmpty(userData.detail.fullName) || isVarEmpty(userData.detail.userName) || isVarEmpty(userData.detail.userId) || isVarEmpty(userData.detail.userEmail) || isVarEmpty(userData.detail.groupName) || isVarEmpty(userData.detail.groupId)) {
         console.error('SNAFU: Received incomplete user data.');
+        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+            chrome.tabs.sendMessage(tabs[0].id, {type: 'sendErrorMsg', statusMsg: 'Received incomplete user data.'}, handleResponse);
+        });
     } else {
         chrome.storage.sync.set({
             fullName: userData.detail.fullName,
@@ -50,6 +53,9 @@ document.addEventListener('SNAFU_UserQuery', function(userData) {
                 console.error('SNAFU Sync Set Error: %s', chrome.runtime.lastError.message);
             } else {
                 console.info('SNAFU: Received user data.');
+                chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+                    chrome.tabs.sendMessage(tabs[0].id, {type: 'sendSuccessMsg', statusMsg: 'Received technician information.'}, handleResponse);
+                });
             }
         });
     }
@@ -78,7 +84,7 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                     } else {
                         injectData = {
                             type: msg.type,
-                            finishDelay: msg.finishDelay || null
+                            finishDelay: items.finishDelay || null
                         }
                         sendResponse({success: true, errMsg: null});
                     }

@@ -30,6 +30,12 @@
         "run_at": "document_end"
     }],
     "commands": {
+        "assignToMe": {
+            "description": "Query technician info or assign to technician.",
+            "suggested_key": {
+                "default": "Alt+A"
+            }
+        },
         "savePage": {
             "description": "Save the ticket.",
             "suggested_key": {

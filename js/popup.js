@@ -152,66 +152,34 @@ $(document).ready(function() {
         } else if (isVarEmpty($('#customerNotes').val()) === true && isVarEmpty($('#workNotes').val()) === true) {
             console.error('SNAFU Error: You must provide customer and/or work notes.');
         } else {
-
-            // scheduled task
-            if ($('input[name=tStatus]:checked').val() === '4') {
-                chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-                    chrome.tabs.sendMessage(tabs[0].id, {
-                        type: 'scheduled',
-                        custNotes: $('#schedAppt').val(),
-                        workNotes: $('#workNotes').val()
-                    }, function(response) {
-                        chrome.storage.sync.get(['debug', 'closePopup'], function(items) {
-                            if (chrome.runtime.lastError) {
-                                console.error('SNAFU Sync Get Error: %s', chrome.runtime.lastError.message);
-                            } else {
-                                if (items.debug === true) {
-                                    if (isVarEmpty(response) === false) {
-                                        if (response.success === false) {
-                                            console.error('SNAFU Error: %s', response.errMsg);
-                                        } else {
-                                            console.info('SNAFU: Scheduled update sent!');
-                                        }
+            chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+                chrome.tabs.sendMessage(tabs[0].id, {
+                    type: 'sendUpdate',
+                    tState: $('input[name=tStatus]:checked').val(),
+                    workNotes: $('#workNotes').val(),
+                    custNotes: $('#customerNotes').val()
+                }, function(response) {
+                    chrome.storage.sync.get(['debug', 'closePopup', 'keepNotes'], function(items) {
+                        if (chrome.runtime.lastError) {
+                            console.error('SNAFU Sync Get Error: %s', chrome.runtime.lastError.message);
+                        } else {
+                            if (items.debug === true) {
+                                if (isVarEmpty(response) === false) {
+                                    if (response.success === false) {
+                                        console.error('SNAFU Error: %s', response.errMsg);
                                     } else {
-                                        console.error('SNAFU Error: Unable to process message response.');
+                                        console.info('SNAFU: Update sent!');
                                     }
+                                } else {
+                                    console.error('SNAFU Error: Unable to process response to message.');
                                 }
                             }
-
-                            if (items.closePopup === true) setTimeout(function() { window.close(); }, 500);
-                        });
+                        }
+                        if (items.keepNotes === true) chrome.storage.local.remove(['custNotes', 'workNotes']);
+                        if (items.closePopup === true) setTimeout(function() { window.close(); }, 500);
                     });
                 });
-            } else {
-                chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-                    chrome.tabs.sendMessage(tabs[0].id, {
-                        type: 'sendUpdate',
-                        tState: $('input[name=tStatus]:checked').val(),
-                        workNotes: $('#workNotes').val(),
-                        custNotes: $('#customerNotes').val()
-                    }, function(response) {
-                        chrome.storage.sync.get(['debug', 'closePopup'], function(items) {
-                            if (chrome.runtime.lastError) {
-                                console.error('SNAFU Sync Get Error: %s', chrome.runtime.lastError.message);
-                            } else {
-                                if (items.debug === true) {
-                                    if (isVarEmpty(response) === false) {
-                                        if (response.success === false) {
-                                            console.error('SNAFU Error: %s', response.errMsg);
-                                        } else {
-                                            console.info('SNAFU: Update sent!');
-                                        }
-                                    } else {
-                                        console.error('SNAFU Error: Unable to process response to message.');
-                                    }
-                                }
-                            }
-
-                            if (items.closePopup === true) setTimeout(function() { window.close(); }, 500);
-                        });
-                    });
-                });
-            }
+            });
         }
     });
 
@@ -289,17 +257,46 @@ $(document).ready(function() {
         }
     });
 
-    // create new incident
     $('[id^=newIncident]').click(function() { chrome.tabs.create({url: 'https://ghsprod.service-now.com/incident.do?sysparm_stack=incident_list.do&sys_id=-1'}); });
-    
-    // open help page
     $('[id^=openHelp]').click(function() { chrome.tabs.create({url: chrome.extension.getURL('help.html')}); });
-
-    // open options page
     $('[id^=openOptions]').click(function() { chrome.tabs.create({url: chrome.extension.getURL('options.html')}); });
-    
-    // open faq page
-    $('[id^=openFaq]').click(function() { chrome.tabs.create({url: chrome.extension.getURL('faq.html')}); }); 
+    $('[id^=openFaq]').click(function() { chrome.tabs.create({url: chrome.extension.getURL('faq.html')}); });
+
+    // load the saved notes
+    chrome.storage.sync.get(['debug', 'keepNotes'], function(items) {
+        console.info(items);
+        if (items.keepNotes === true) {
+            chrome.storage.local.get(['custNotes', 'workNotes'], function(notes) {
+                console.info(notes);
+                // customer notes
+                if (isVarEmpty(notes.custNotes) === false) {
+                    if (items.debug === true) console.info('SNAFU: Loaded saved customer notes.');
+                    $('#customerNotes').val(notes.custNotes);
+                }
+                // work notes
+                if (isVarEmpty(notes.workNotes) === false) {
+                    if (items.debug === true) console.info('SNAFU: Loaded saved work notes.');
+                    $('#workNotes').val(notes.workNotes);
+                }
+            });
+        }
+    });
+});
+
+// save the notes for later use
+$(document).bind('beforeunload', function() {
+    chrome.storage.sync.get(['debug', 'keepNotes'], function(items) {
+        if (items.keepNotes === true) {
+            chrome.storage.local.set({
+                custNotes: $('#customerNotes').val() || null,
+                workNotes: $('#workNotes').val() || null
+            }, function() {
+                if (items.debug === true) {
+                    console.info('SNAFU: Saved customer and work notes for later use.');
+                }
+            });
+        }
+    });
 });
 
 /**

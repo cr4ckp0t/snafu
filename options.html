@@ -91,6 +91,15 @@
                         <div class="extraInfo">When sending an update do you want the popup window to close?</div>
                         <br />
                         <div class="input-group">
+                            <span class="input-group-addon" id="keepNotesAddon">Persistent Notes</span>
+                            <select id="keepNotes" class="form-control" aria-describedby="keepNotesAddon">
+                                <option value="enable">Enabled</option>
+                                <option value="disable">Disabled</option>
+                            </select>
+                        </div>
+                        <div class="extraInfo">Persist notes between popup closures until update it sent.</div>
+                        <br />
+                        <div class="input-group">
                             <span class="input-group-addon" id="sendEnterAddon">Send On Enter</span>
                             <select id="sendEnter" class="form-control" aria-describedby="sendEnterAddon">
                                 <option value="enable">Enabled</option>
