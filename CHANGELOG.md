@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### ToDo
 - Make popup persistent, or save typed notes.
+- Make acknowledgements and closures automatically detect the type of ticket and respond accordingly.
 
 ## 1.0.6 [2017-05-24]
 ### Added
