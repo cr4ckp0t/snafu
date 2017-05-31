@@ -307,16 +307,18 @@ chrome.contextMenus.create({
 	parentId: 'assignParent',
 	documentUrlPatterns: ['https://make/it/hidden'],
 	onclick: function() {
-		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-			chrome.tabs.sendMessage(tabs[0].id, {
-				type: 'assignToMe',
-				userInfo: {
-					userId: items.userId,
-					fullName: items.fullName,
-					groupId: items.groupId,
-					groupName: items.groupName
-				}
-			}, handleResponse);
+		chrome.storage.sync.get(['userId', 'fullName', 'groupId', 'groupName'], function(items) {
+			chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+				chrome.tabs.sendMessage(tabs[0].id, {
+					type: 'assignToMe',
+					userInfo: {
+						userId: items.userId,
+						fullName: items.fullName,
+						groupId: items.groupId,
+						groupName: items.groupName
+					}
+				}, handleResponse);
+			});
 		});
 	}
 });
