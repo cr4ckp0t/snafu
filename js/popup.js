@@ -413,7 +413,7 @@ function processClick(clickType) {
  */
 function processKeyUpUpdate(event) {
     chrome.storage.sync.get(['debug', 'sendEnter'], function(items) {
-        if (items.sendEnter === true && event.keyCode === 13) {
+        if (items.sendEnter === true && event.keyCode === 13 && !event.shiftKey && !event.ctrlKey && !event.altKey) {
             if (items.debug === true) {
                 console.info('SNAFU: Proccessed KeyUp event.');
             }
@@ -429,7 +429,7 @@ function processKeyUpUpdate(event) {
  */
 function processKeyUpEquipOrder(event) {
     chrome.storage.sync.get(['debug', 'sendEnter'], function(items) {
-        if (items.sendEnter === true && event.keyCode === 13) {
+        if (items.sendEnter === true && event.keyCode === 13 && !event.shiftKey && !event.ctrlKey && !event.altKey) {
             if (items.debug === true) {
                 console.info('SNAFU: Proccessed KeyUp event.');
             }

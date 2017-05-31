@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Keybinds to save and update the page.  Alt+S (Save) and Alt+U (Update) are the default keys.
 - Keybind to query user info and assign to technician.  Alt+A is default.
 
+### Fixed
+- Send on Enter will be ignored if holding Shift, Ctrl, or Alt.
+
 ### ToDo
 - Make popup persistent, or save typed notes.
 - Make acknowledgements and closures automatically detect the type of ticket and respond accordingly.
