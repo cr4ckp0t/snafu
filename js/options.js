@@ -208,6 +208,14 @@ function loadSettings() {
 				$('#sendEnter').val((items.sendEnter === true) ? 'enable' : 'disable');
 			}
 
+			// keep notes
+			if (isVarEmpty(items.keepNotes) === true) {
+				settingsToCreate['keepNotes'] = false;
+				$('#keepNotes').val('disable');
+			} else {
+				$('#keepNotes').val((items.keepNotes === true) ? 'enable' : 'disable');
+			}
+
 			// send the settings to sync storage
 			if (isVarEmpty(settingsToCreate) === false) {
 				chrome.storage.sync.set(settingsToCreate, function() {

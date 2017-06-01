@@ -113,9 +113,9 @@ chrome.runtime.onStartup.addListener(function() {
 			if (isVarEmpty(settingsToCreate) === false) {
 				chrome.storage.sync.set(settingsToCreate, function() {
 					if (chrome.runtime.lastError) {
-						chrome.warn('SNAFU Sync Set Error: %s', chrome.runtime.lastError.message);
+						console.warn('SNAFU Sync Set Error: %s', chrome.runtime.lastError.message);
 					} else {
-						chrome.info('SNAFU: Created settings successfully.');
+						console.info('SNAFU: Created settings successfully.');
 					}
 				});
 			}

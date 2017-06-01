@@ -31,44 +31,15 @@
         <!-- Navigation -->
         <ul class="nav nav-tabs" role="tablist">
             <li role="presentation" class="active"><a href="#main" aria-controls="main" role="tab" data-toggle="tab">Main</a></li>
-            <li role="presentation"><a href="#equipment" aria-controls="main" role="tab" data-toggle="tab">Equipment Orders</a></li>
-            <li role="presentation">
-                <a href="#" id="ackTicket" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Acknowledge<span class="caret"></span></a>
-                <ul class="dropdown-menu" aria-labelledby="ackTicket">
-                    <li><a style="cursor:pointer;" id="ackIncident">Incident</a></li>
-                    <li><a style="cursor:pointer;" id="ackCallUser">Incident (Call EU)</a></li>
-                    <li role="separator" class="divider"></li>
-                    <li><a style="cursor:pointer;" id="ackTask">Generic Task</a></li>
-                    <li><a style="cursor:pointer;" id="ackMove">Equipment Move</a></li>
-                    <li><a style="cursor:pointer;" id="ackRemoval">Equipment Removal</a></li>
-                    <li><a style="cursor:pointer;" id="ackHotSwap">Hot Swap</a></li>
-                    <li><a style="cursor:pointer;" id="ackInstall">Install Task</a></li>
-                    <li><a style="cursor:pointer;" id="ackQuarantine">Quarantine Task</a></li>
-                    <li><a style="cursor:pointer;" id="ackReclaim">Reclaim Task</a></li>
-                </ul>
-            </li>
-            <li role="presentation">
-                <a href="#" id="closeTicket" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Closures<span class="caret"></span></a>
-                <ul class="dropdown-menu" aria-labelledby="closeTicket">
-                    <li><a style="cursor:pointer;" id="closeMove">Equipment Move</a></li>
-                    <li><a style="cursor:pointer;" id="closeRemoval">Equipment Removal</a></li>
-                    <li><a style="cursor:pointer;" id="closeHotSwap">Hot Swap</a></li>
-                    <li><a style="cursor:pointer;" id="closeInstall">Install Task</a></li>
-                    <li class="dropdown-submenu">
-                        <a style="cursor:pointer;" id="closeQuarantine">Quarantine Task <span class="caret"></span></a>
-                        <ul class="dropdown-menu">
-                            <li><a style="cursor:pointer;" id="closeQuarantineDecommission">Decommission</a></li>
-                            <li><a style="cursor:pointer;" id="closeQuarantineRepair">Repair</a></li>
-                            <li><a style="cursor:pointer;" id="closeQuarantineRestock">Restock</a></li>
-                        </ul>
-                    </li>
-                    <li><a style="cursor:pointer;" id="closeReclaim">Reclaim Task</a></li>
-                </ul>
-            </li>
+            <li role="presentation"><a href="#equipment" aria-controls="equipment" role="tab" data-toggle="tab">Equipment Orders</a></li>
+            <li role="presentation"><a href="#automation" aria-controls="automation" role="tab" data-toggle="tab">Automation</a></li>
+            <li role="presentation"><a href="#timeCalc" aria-controls="timeCalc" role="tab" data-toggle="tab">Time Calculator</a></li>
         </ul>
 
         <!-- Tab Panes -->
         <div class="tab-content">
+
+            <!-- Main Panel -->
             <div role="tabpanel" class="tab-pane active" id="main">
                 <div class="form-group" style="padding-top:10px;">
                     <div class="btn-group" data-toggle="buttons">
@@ -152,6 +123,8 @@
                     </span>
                 </div>
             </div>
+
+            <!-- Equipment Order Panel -->
             <div role="tabpanel" class="tab-pane" id="equipment">
                 <div id="compHostGroup" class="form-group" style="padding-top:10px;">
                     <label for="compHost">Hostname</label>
@@ -194,6 +167,22 @@
                         <button type="button" class="btn btn-warning" id="openOptions2" title="Options"><span class="glyphicon glyphicon-cog"></span></button>
                     </span>
                 </div>
+            </div>
+
+            <!-- Automation Panel -->
+            <div role="tabpanel" class="tab-pane" id="automation">
+                <br />
+                <div class="alert alert-info"><em>Note: Certain tasks that require additional input can't be automatically detected and closed.  For example, quarantine tasks that require you to select quarantine, restock, or repair can't be automated.  Same goes for Hot Swap builds that require selecting new or repurposed.  All other tasks and incidents can be auto-detected.</em></div>
+                <div class="form-group">
+                    <strong>Automatic Ticket Detection:</strong>&nbsp;
+                    <button type="button" class="btn btn-primary btn-xs" id="autoAcknowledge" title="Auto-acknowledge ticket."><span class="glyphicon glyphicon-ok"></span> Acknowledge</button>
+                    <button type="button" class="btn btn-danger btn-xs" id="autoClosure" title="Auto-close ticket."><span class="glyphicon glyphicon-remove"></span> Close</button>
+                </div>
+            </div>
+
+            <!-- Time Calculator Panel -->
+            <div role="tabpanel" class="tab-pane" id="timeCalc">
+
             </div>
         </div>
     </div>

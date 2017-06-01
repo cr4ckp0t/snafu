@@ -175,7 +175,7 @@ $(document).ready(function() {
                                 }
                             }
                         }
-                        if (items.keepNotes === true) chrome.storage.local.remove(['custNotes', 'workNotes']);
+                        if (items.keepNotes === true) chrome.storage.local.clear();
                         if (items.closePopup === true) setTimeout(function() { window.close(); }, 500);
                     });
                 });
@@ -264,10 +264,8 @@ $(document).ready(function() {
 
     // load the saved notes
     chrome.storage.sync.get(['debug', 'keepNotes'], function(items) {
-        console.info(items);
         if (items.keepNotes === true) {
             chrome.storage.local.get(['custNotes', 'workNotes'], function(notes) {
-                console.info(notes);
                 // customer notes
                 if (isVarEmpty(notes.custNotes) === false) {
                     if (items.debug === true) console.info('SNAFU: Loaded saved customer notes.');
@@ -277,22 +275,6 @@ $(document).ready(function() {
                 if (isVarEmpty(notes.workNotes) === false) {
                     if (items.debug === true) console.info('SNAFU: Loaded saved work notes.');
                     $('#workNotes').val(notes.workNotes);
-                }
-            });
-        }
-    });
-});
-
-// save the notes for later use
-$(document).bind('beforeunload', function() {
-    chrome.storage.sync.get(['debug', 'keepNotes'], function(items) {
-        if (items.keepNotes === true) {
-            chrome.storage.local.set({
-                custNotes: $('#customerNotes').val() || null,
-                workNotes: $('#workNotes').val() || null
-            }, function() {
-                if (items.debug === true) {
-                    console.info('SNAFU: Saved customer and work notes for later use.');
                 }
             });
         }
@@ -412,14 +394,24 @@ function processClick(clickType) {
  * @return  {Void}
  */
 function processKeyUpUpdate(event) {
-    chrome.storage.sync.get(['debug', 'sendEnter'], function(items) {
-        if (items.sendEnter === true && event.keyCode === 13 && !event.shiftKey && !event.ctrlKey && !event.altKey) {
-            if (items.debug === true) {
-                console.info('SNAFU: Proccessed KeyUp event.');
+    if (event.keyCode === 13 && !event.shiftKey && !event.ctrlKey && !event.altKey) {
+        chrome.storage.sync.get('sendEnter', function(items) {
+            if (items.sendEnter === true) $('#sendUpdate').click();
+        });
+    } else if ($.inArray(event.keyCode, [48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 186, 187, 188, 189, 190, 191, 219, 220, 221, 222]) !== -1) {
+        chrome.storage.sync.get(['debug', 'keepNotes'], function(items) {
+            console.info(items);
+            if (items.keepNotes === true) {
+                chrome.storage.local.set({
+                    custNotes: $('#customerNotes').val(),
+                    workNotes: $('#workNotes').val()
+                }, function() {
+                    if (chrome.runtime.lastError) console.warn('SNAFU Persistent Notes Error: %s', chrome.runtime.lastError.message);
+                    else if (items.debug === true) console.info('SNAFU: Saved persistent notes.');
+                });
             }
-            $('#sendUpdate').click();
-        }
-    });
+        });
+    }
 }
 
 /**
@@ -428,14 +420,11 @@ function processKeyUpUpdate(event) {
  * @return  {Void}
  */
 function processKeyUpEquipOrder(event) {
-    chrome.storage.sync.get(['debug', 'sendEnter'], function(items) {
-        if (items.sendEnter === true && event.keyCode === 13 && !event.shiftKey && !event.ctrlKey && !event.altKey) {
-            if (items.debug === true) {
-                console.info('SNAFU: Proccessed KeyUp event.');
-            }
-            $('#sendEquipment').click();
-        }
-    }); 
+    if (event.keyCode === 13 && !event.shiftKey && !event.ctrlKey && !event.altKey) {
+        chrome.storage.sync.get('sendEnter', function(items) {
+            if (items.sendEnter === true) $('#sendEquipment').click();
+        });
+    }
 }
 
 /**
