@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### ToDo
 - Make acknowledgements and closures automatically detect the type of ticket and respond accordingly.
+- Auto acknowledge the Epic Hyperspace and BCA Device popups. (if possible)
 
 ## 1.0.6 [2017-05-24]
 ### Added
