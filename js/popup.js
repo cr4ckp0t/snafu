@@ -175,7 +175,7 @@ $(document).ready(function() {
                                 }
                             }
                         }
-                        if (items.keepNotes === true) chrome.storage.local.clear();
+                        chrome.storage.local.clear();
                         if (items.closePopup === true) setTimeout(function() { window.close(); }, 500);
                     });
                 });

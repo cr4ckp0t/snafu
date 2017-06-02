@@ -255,9 +255,96 @@ document.addEventListener('SNAFU_Inject', function(snafuInject) {
 
 	// auto acknowledge
 	} else if (snafuInject.detail.type === 'autoAcknowledge') {
+		var snafuTicketType = snafuGetTicketType();
+		if (snafuTicketType === false) {
+			snafuErrorMessage('No task or incident detected.');
+		} else {
+			if (snafuTicketType in snafuAutoTickets) {
+				var snafuTicket = snafuAutoTickets[snafuTicketType];
+				
+				// set the field with value
+				if (snafuIsVarEmpty(snafuTicket.field) === false && snafuIsVarEmpty(snafuTicket.ack.value) === false) {
+					snafuSetValue(snafuTicket.field, snafuTicket.ack.value);
+					snafuFlash(snafuTicket.field);
+				}
+
+				// set the work notes
+				if (snafuIsVarEmpty(snafuTicket.ack) === false) {
+					snafuSetValue('work_notes', snafuTicket.ack.script);
+					snafuFlash('work_notes');
+				}
+
+				// if a task, set root cause ci and due date
+				if (snafuTicket.field === 'state') {
+					var snafuDueDate = snafuGetDueDate();
+
+					// due date
+					if (g_form.getValue('due_date') !== snafuDueDate) {
+						snafuSetValue('due_date', snafuDueDate);
+						snafuFlash('due_date');
+					}
+
+					// root cause ci
+					// desktop services value is 5a8d6816a1cf38003a42245d1035d56e
+					if (g_form.getValue('cmdb_ci') !== '5a8d6816a1cf38003a42245d1035d56e') {
+						snafuSetDisplayValue('cmdb_ci', '5a8d6816a1cf38003a42245d1035d56e', 'Desktop Services');
+						snafuFlash('cmdb_ci');
+					}
+				}
+
+				// autofinish
+				switch (snafuInject.detail.autoFinish) {
+					// save (stay on ticket's page)
+					case 'save':
+						// not going to let incidents be autosaved
+						if (snafuTicket.field === 'state' || (snafuTicket.field === 'incident_state' && snafuTicket.ack.value !== '6')) {
+							// delay 1.5 seconds
+							setTimeout(function() { g_form.save(); }, snafuInject.detail.finishDelay * 1000);
+						}
+						break;
+					
+					// update (go back to last page)
+					case 'update':
+						// not going to let incident be autoupdated
+						if (snafuTicket.field === 'state' || (snafuTicket.field === 'incident_state' && snafuTicket.ack.value !== '6')) {
+							// delay 1.5 seconds
+							setTimeout(function() { g_form.submit(); }, snafuInject.detail.finishDelay * 1000);
+						}
+						break;
+
+					// auto (save all updates except closures, which are updated. incidents are never automatically resolved)
+					case 'auto':
+						// if a closure then update, otherwise save
+						if (snafuTicket.field === 'state' && (snafuTicket.ack.value === '3' || snafuTicket.ack.value === '4')) {
+							// update
+							setTimeout(function() { g_form.submit(); }, snafuInject.detail.finishDelay * 1000);
+						} else if (snafuTicket.field === 'state' || (snafuTicket.field === 'incident_state' && snafuTicket.ack.value !== '6')) {
+							setTimeout(function() { g_form.save(); }, snafuInject.detail.finishDelay * 1000);
+						}
+						break;
+					
+					// neither
+					case 'none':
+					default:
+						break;
+				}
+			} else {
+				snafuErrorMessage('Task name not found.');
+			}
+		}
 	
 	// auto closure
 	} else if (snafuInject.detail.type === 'autoClosure') {
+		var snafuTicketType = snafuGetTicketType();
+		if (snafuTicketType === false) {
+			snafuErrorMessage('No task or incident detected.');
+		} else {
+			if (snafuTicketType in snafuAutoTickets) {
+				var snafuTicket = snafuAutoTickets[snafuTicketType];
+			} else {
+				snafuErrorMessage('Task name not found.');
+			}
+		}
 
 	// handle everything else
 	} else {
@@ -274,7 +361,7 @@ document.addEventListener('SNAFU_Inject', function(snafuInject) {
 			// set field with value
 			if (snafuIsVarEmpty(snafuField) === false && snafuIsVarEmpty(snafuValue) === false) {
 				snafuSetValue(snafuField, snafuValue);
-				g_form.flash(snafuField, '#3eb049', 0);
+				snafuFlash(snafuField)
 			}
 
 			// customer notes (comments)
@@ -550,10 +637,10 @@ function snafuErrorMessage(msg) {
 function snafuGetTicketType() {
     if (document.getElementById('incident.incident_state') !== null) {
         // it's an incident
-        return 'incident';
+        return 'generic_incident';
     } else if (document.getElementById('sc_task.state') !== null) {
         // it's a task
-        return 'task';
+        return (g_form.getValue('u_task_name') !== '') ? g_form.getValue('u_task_name') : 'generic_task';
     } else {
         // it's neither
         return false;
