@@ -378,18 +378,12 @@ chrome.contextMenus.create({
 	parentId: 'optionsParent'
 });
 
-var objToggle = {'enable': 'Enabled', 'disable': 'Disabled'}
-for (var opt in objToggle) {
-	chrome.contextMenus.create({
-		title: objToggle[opt],
-		type: 'radio',
-		contexts: ['page'],
-		id: 'closePopup-' + opt,
-		parentId: 'closePopupParent',
-		checked: false,
-		onclick: optionsHandler
-	});
-}
+chrome.contextMenus.create({
+	title: 'Persistent Notes',
+	contexts: ['page'],
+	id: 'keepNotesParent',
+	parentId: 'optionsParent'
+});
 
 chrome.contextMenus.create({
 	title: 'Send On Enter',
@@ -398,18 +392,6 @@ chrome.contextMenus.create({
 	parentId: 'optionsParent'
 });
 
-for (var opt in objToggle) {
-	chrome.contextMenus.create({
-		title: objToggle[opt],
-		type: 'radio',
-		contexts: ['page'],
-		id: 'sendEnter-' + opt,
-		parentId: 'sendEnterParent',
-		checked: false,
-		onclick: optionsHandler
-	});
-}
-
 chrome.contextMenus.create({
 	title: 'Debug Mode',
 	contexts: ['page'],
@@ -417,44 +399,37 @@ chrome.contextMenus.create({
 	parentId: 'optionsParent'
 });
 
-for (var opt in objToggle) {
-	chrome.contextMenus.create({
-		title: objToggle[opt],
-		type: 'radio',
-		contexts: ['page'],
-		id: 'debug-' + opt,
-		parentId: 'debugParent',
-		checked: false,
-		onclick: optionsHandler
-	});
-}
-
 chrome.contextMenus.create({
 	title: 'Monitor Group',
 	contexts: ['page'],
-	id: 'monitorParent',
+	id: 'monitorGroupParent',
 	parentId: 'optionsParent'
 });
 
-for (var opt in objToggle) {
-	chrome.contextMenus.create({
-		title: objToggle[opt],
-		type: 'radio',
-		contexts: ['page'],
-		id: 'monitorGroup-' + opt,
-		parentId: 'monitorParent',
-		checked: false,
-		onclick: optionsHandler
-	});
+var toggleOptions = ['closePopup', 'keepNotes', 'sendEnter', 'monitorGroup', 'debug'];
+var objToggle = {'enable': 'Enabled', 'disable': 'Disabled'};
+
+for (var i = 0; i < toggleOptions.length; i++) {
+	for (var opt in objToggle) {
+		chrome.contextMenus.create({
+			title: objToggle[opt],
+			type: 'radio',
+			contexts: ['page'],
+			id: toggleOptions[i] + '-' + opt,
+			parentId: toggleOptions[i] + 'Parent',
+			checked: false,
+			onclick: optionsHandler
+		});
+	}
 }
 
-chrome.contextMenus.create({type: 'separator', parentId: 'monitorParent'});
+chrome.contextMenus.create({type: 'separator', parentId: 'monitorGroupParent'});
 
 chrome.contextMenus.create({
 	title: 'Force Refresh',
 	contexts: ['page'],
 	id: 'monitorForceRefresh',
-	parentId: 'monitorParent',
+	parentId: 'monitorGroupParent',
 	onclick: function() { alert('Coming Soon!'); }
 });
 
@@ -496,41 +471,6 @@ chrome.contextMenus.create({
 	onclick: function() { chrome.tabs.create({url: chrome.extension.getURL('help.html')}); }
 });
 
-chrome.storage.sync.get(['debug', 'autoFinish', 'closePopup', 'sendEnter', 'monitorGroup', 'userId', 'userName', 'userEmail', 'fullName', 'groupName', 'groupId'], function(items) {
-	if (chrome.runtime.lastError) {
-		console.error('SNAFU User Sync Error: %s', chrome.runtime.lastError.message);
-	} else {
-		chrome.contextMenus.update('assignIncToMe', {documentUrlPatterns: (isVarEmpty(items.userId) === true) ? ['https://make/it/hidden/'] : ['https://ghsprod.service-now.com/incident.do?*']});
-		chrome.contextMenus.update('assignTaskToMe', {documentUrlPatterns: (isVarEmpty(items.userId) === true) ? ['https://make/it/hidden/'] : ['https://ghsprod.service-now.com/sc_task.do?*']});
-		chrome.contextMenus.update('assignSeparator', {documentUrlPatterns: (isVarEmpty(items.userId) === true) ? ['https://make/it/hidden/'] : ['https://ghsprod.service-now.com/incident.do?*', 'https://ghsprod.service-now.com/sc_task.do?*']});
-		chrome.contextMenus.update('queryOrReset', {
-			title: (isVarEmpty(items.userId) === true) ? 'Query User Data' : 'Reset User Data',
-			onclick: (isVarEmpty(items.userId) === true) ? queryUserData : resetUserData
-		});
-
-		// set the autofinish radio
-		['save', 'update', 'auto', 'none'].forEach(function(opt) {
-			chrome.contextMenus.update('autoFinish-' + opt, {checked: (items.autoFinish === opt) ? true : false});
-		});
-
-		// set the closePopup radio
-		chrome.contextMenus.update('closePopup-enable', {checked: (items.closePopup === true) ? true : false});
-		chrome.contextMenus.update('closePopup-disable', {checked: (items.closePopup === false) ? true : false});
-
-		// set the debug radio
-		chrome.contextMenus.update('debug-enable', {checked: (items.debug === true) ? true : false});
-		chrome.contextMenus.update('debug-disable', {checked: (items.debug === false) ? true : false});
-
-		// set the monitor group radio
-		chrome.contextMenus.update('monitorGroup-enable', {checked: (items.monitorGroup === true) ? true : false});
-		chrome.contextMenus.update('monitorGroup-disable', {checked: (items.monitorGroup === false) ? true : false});
-
-		// set the send on enter radio
-		chrome.contextMenus.update('sendEnter-enable', {checked: (items.sendEnter === true) ? true : false});
-		chrome.contextMenus.update('sendEnter-disable', {checked: (items.sendEnter === false) ? true : false});
-	}
-});
-
 // monitor user data settings to update the context menu
 chrome.storage.onChanged.addListener(function(changes, area) {
 	if (area === 'sync') {
@@ -563,9 +503,16 @@ chrome.storage.onChanged.addListener(function(changes, area) {
 			// set the send on enter radio
 			chrome.contextMenus.update('sendEnter-enable', {checked: (changes.sendEnter.newValue === true) ? true : false});
 			chrome.contextMenus.update('sendEnter-disable', {checked: (changes.sendEnter.newValue === false) ? true : false});
+		} else if ('keepNotes' in changes) {
+			// set the keep notes radio
+			chrome.contextMenus.update('keepNotes-enable', {checked: (changes.keepNotes.newValue === true) ? true : false});
+			chrome.contextMenus.update('keepNotes-disable', {checked: (changes.keepNotes.newValue === false) ? true : false});
 		}
 	}
 });
+
+// update the option menus
+updateOptionMenus();
 
 /**
  * Onclick handler for actions
@@ -588,34 +535,27 @@ function actionHandler(info, tab) {
 function optionsHandler(info, tab) {
 	var setting = info.menuItemId.substring(0, info.menuItemId.indexOf('-'));
 	var value = info.menuItemId.substring(info.menuItemId.indexOf('-') + 1);
-	switch (setting) {
-		case 'autoFinish':
-			chrome.storage.sync.set({autoFinish: value}, function() {
-				if (chrome.runtime.lastError) {
-					console.error('SNAFU autoFinish Set Error: %s', chrome.runtime.lastError.message);
-				} else {
-					console.info('SNAFU: Updated autoFinish.');
-				}
-			});
-			break;
-		
-		case 'sendEnter':
-		case 'monitorGroup':;
-		case 'closePopup':
-		case 'debug':
-			var newSetting = {}
-			newSetting[setting] = value;
-			chrome.storage.sync.set(newSetting, function() {
-				if (chrome.runtime.lastError) {
-					console.error('SNAFU %s Set Error: %s', setting, chrome.runtime.lastError.message);
-				} else {
-					console.info('SNAFU: Updated %s.', setting);
-				}	
-			});
-			break;
-
-		default: break;
+	if (setting === 'autoFinish') {
+		chrome.storage.sync.set({autoFinish: value}, function() {
+			if (chrome.runtime.lastError) {
+				console.error('SNAFU autoFinish Set Error: %s', chrome.runtime.lastError.message);
+			} else {
+				console.info('SNAFU: Updated autoFinish.');
+			}
+		});
+	} else {
+		var newSetting = {}
+		newSetting[setting] = (value === 'enable') ? true : false;
+		chrome.storage.sync.set(newSetting, function() {
+			if (chrome.runtime.lastError) {
+				console.error('SNAFU %s Set Error: %s', setting, chrome.runtime.lastError.message);
+			} else {
+				console.info('SNAFU: Updated %s.', setting);
+			}	
+		});
 	}
+
+	updateOptionMenus();
 }
 
 /**
@@ -683,6 +623,51 @@ function handleResponse(response) {
 					console.error('SNAFU Error: Unable to process response to message.');
 				}
 			}
+		}
+	});
+}
+
+/**
+ * Update option menus.
+ * @return	{Void}
+ */
+function updateOptionMenus() {
+	chrome.storage.sync.get(['debug', 'autoFinish', 'closePopup', 'sendEnter', 'keepNotes', 'monitorGroup', 'userId', 'userName', 'userEmail', 'fullName', 'groupName', 'groupId'], function(items) {
+		if (chrome.runtime.lastError) {
+			console.error('SNAFU User Sync Error: %s', chrome.runtime.lastError.message);
+		} else {
+			chrome.contextMenus.update('assignIncToMe', {documentUrlPatterns: (isVarEmpty(items.userId) === true) ? ['https://make/it/hidden/'] : ['https://ghsprod.service-now.com/incident.do?*']});
+			chrome.contextMenus.update('assignTaskToMe', {documentUrlPatterns: (isVarEmpty(items.userId) === true) ? ['https://make/it/hidden/'] : ['https://ghsprod.service-now.com/sc_task.do?*']});
+			chrome.contextMenus.update('assignSeparator', {documentUrlPatterns: (isVarEmpty(items.userId) === true) ? ['https://make/it/hidden/'] : ['https://ghsprod.service-now.com/incident.do?*', 'https://ghsprod.service-now.com/sc_task.do?*']});
+			chrome.contextMenus.update('queryOrReset', {
+				title: (isVarEmpty(items.userId) === true) ? 'Query User Data' : 'Reset User Data',
+				onclick: (isVarEmpty(items.userId) === true) ? queryUserData : resetUserData
+			});
+
+			// set the autofinish radio
+			['save', 'update', 'auto', 'none'].forEach(function(opt) {
+				chrome.contextMenus.update('autoFinish-' + opt, {checked: (items.autoFinish === opt) ? true : false});
+			});
+
+			// set the closePopup radio
+			chrome.contextMenus.update('closePopup-enable', {checked: (items.closePopup === true) ? true : false});
+			chrome.contextMenus.update('closePopup-disable', {checked: (items.closePopup === false) ? true : false});
+
+			// set the debug radio
+			chrome.contextMenus.update('debug-enable', {checked: (items.debug === true) ? true : false});
+			chrome.contextMenus.update('debug-disable', {checked: (items.debug === false) ? true : false});
+
+			// set the monitor group radio
+			chrome.contextMenus.update('monitorGroup-enable', {checked: (items.monitorGroup === true) ? true : false});
+			chrome.contextMenus.update('monitorGroup-disable', {checked: (items.monitorGroup === false) ? true : false});
+
+			// set the send on enter radio
+			chrome.contextMenus.update('sendEnter-enable', {checked: (items.sendEnter === true) ? true : false});
+			chrome.contextMenus.update('sendEnter-disable', {checked: (items.sendEnter === false) ? true : false});
+
+			// set the keep notes radio
+			chrome.contextMenus.update('keepNotes-enable', {checked: (items.keepNotes === true) ? true : false});
+			chrome.contextMenus.update('keepNotes-disable', {checked: (items.keepNotes === false) ? true : false});
 		}
 	});
 }

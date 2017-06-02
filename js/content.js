@@ -115,6 +115,21 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                     }
                     break;
 
+                // auto acknowledge/closure
+                case 'autoAcknowledge':
+                case 'autoClosure':
+                    if (ticketType === false) {
+                        sendResponse({success: false, errMsg: 'Unable to detect an open task or incident.'});
+                    } else {
+                        injectData = {
+                            type: msg.type,
+                            autoFinish: items.autoFinish || 'none',
+                            finishDelay: items.finishDelay || 1.5
+                        }
+                        sendResponse({success: true, errMsg: null});
+                    }
+                    break;
+
                 // acknowledge incident
                 case 'ackIncident':
                     if (ticketType !== 'incident') {

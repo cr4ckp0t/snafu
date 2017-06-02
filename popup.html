@@ -173,10 +173,32 @@
             <div role="tabpanel" class="tab-pane" id="automation">
                 <br />
                 <div class="alert alert-info"><em>Note: Certain tasks that require additional input can't be automatically detected and closed.  For example, quarantine tasks that require you to select quarantine, restock, or repair can't be automated.  Same goes for Hot Swap builds that require selecting new or repurposed.  All other tasks and incidents can be auto-detected.</em></div>
-                <div class="form-group">
-                    <strong>Automatic Ticket Detection:</strong>&nbsp;
-                    <button type="button" class="btn btn-primary btn-xs" id="autoAcknowledge" title="Auto-acknowledge ticket."><span class="glyphicon glyphicon-ok"></span> Acknowledge</button>
-                    <button type="button" class="btn btn-danger btn-xs" id="autoClosure" title="Auto-close ticket."><span class="glyphicon glyphicon-remove"></span> Close</button>
+                <div class="input-group input-group-sm">
+                    <span class="input-group-addon" id="closeQuarantineAddon">Close Quarantine</span>
+                    <select id="closeQuarantine" class="form-control" aria-describedby="quarantineTaskAddon">
+                        <option value="Decommission">Decommission</option>
+                        <option value="Repair">Repair</option>
+                        <option value="Restock">Restock</option>
+                    </select>
+                    <span class="input-group-btn">
+                        <button type="button" class="btn btn-primary" id="sendCloseQuarantine"><span class="glyphicon glyphicon-send"></span> Send</button>
+                    </span>
+                </div>
+                <br />
+                <div class="input-group input-group-sm">
+                    <span class="input-group-addon" id="closeHotSwapAddon">Close Hot Swap</span>
+                    <select id="closeHotSwap" class="form-control" aria-describedby="closeHotSwapAddon">
+                        <option value="New">New Device (Out of Box)</option>
+                        <option value="Repurposed">Repurposed Device</option>
+                    </select>
+                    <span class="input-group-btn">
+                        <button type="button" class="btn btn-primary" id="sendCloseHotSwap"><span class="glyphicon glyphicon-send"></span> Send</button>
+                    </span>
+                </div>
+                <br />
+                <div style="float:right;padding-bottom:10px;" class="btn-group btn-group-sm">
+                    <button type="button" class="btn btn-primary" id="sendAutoAcknowledge" title="Auto-acknowledge ticket."><span class="glyphicon glyphicon-ok"></span> Acknowledge</button>
+                    <button type="button" class="btn btn-danger" id="sendAutoClosure" title="Auto-close ticket."><span class="glyphicon glyphicon-remove"></span> Close</button>
                 </div>
             </div>
 

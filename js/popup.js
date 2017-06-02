@@ -257,6 +257,34 @@ $(document).ready(function() {
         }
     });
 
+    // send close quarantine
+    $('#sendCloseQuarantine').click(function() {
+        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+            chrome.tabs.sendMessage(tabs[0].id, { type: 'closeQuarantine' + $('#closeQuarantine').val() });
+        });
+    });
+
+    // send close hot swap
+    $('#sendCloseHotSwap').click(function() {
+        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+            chrome.tabs.sendMessage(tabs[0].id, { type: 'closeHotSwap' + $('#closeHotSwap').val() });
+        });
+    });
+
+    // send auto acknowledge
+    $('#sendAutoAcknowledge').click(function() {
+        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+            chrome.tabs.sendMessage(tabs[0].id, { type: 'autoAcknowledge' });
+        });
+    });
+
+    // send auto closure
+    $('#sendAutoClosure').click(function() {
+        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+            chrome.tabs.sendMessage(tabs[0].id, { type: 'autoClosure' });
+        });
+    });
+
     $('[id^=newIncident]').click(function() { chrome.tabs.create({url: 'https://ghsprod.service-now.com/incident.do?sysparm_stack=incident_list.do&sys_id=-1'}); });
     $('[id^=openHelp]').click(function() { chrome.tabs.create({url: chrome.extension.getURL('help.html')}); });
     $('[id^=openOptions]').click(function() { chrome.tabs.create({url: chrome.extension.getURL('options.html')}); });
