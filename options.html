@@ -91,13 +91,31 @@
                         <div class="extraInfo">When sending an update do you want the popup window to close?</div>
                         <br />
                         <div class="input-group">
+                            <span class="input-group-addon" id="keepNotesAddon">Persistent Notes</span>
+                            <select id="keepNotes" class="form-control" aria-describedby="keepNotesAddon">
+                                <option value="enable">Enabled</option>
+                                <option value="disable">Disabled</option>
+                            </select>
+                        </div>
+                        <div class="extraInfo">Persist notes between popup closures until update it sent.</div>
+                        <br />
+                        <div class="input-group">
                             <span class="input-group-addon" id="sendEnterAddon">Send On Enter</span>
                             <select id="sendEnter" class="form-control" aria-describedby="sendEnterAddon">
                                 <option value="enable">Enabled</option>
                                 <option value="disable">Disabled</option>
                             </select>
                         </div>
-                        <div class="extraInfo">Pressing enter when typing a note will send the update.</div>
+                        <div class="extraInfo">Pressing [ENTER] when typing a note will send the update. Hit Ctrl/Shift/Alt+ENTER for new a new line.</div>
+                        <br />
+                        <div class="input-group">
+                            <span class="input-group-addon" id="closeAlertsAddon">Close Alerts</span>
+                            <select id="closeAlerts" class="form-control" aria-describedby="closeAlertsAddon">
+                                <option value="enable">Enabled</option>
+                                <option value="disable">Disabled</option>
+                            </select>
+                        </div>
+                        <div class="extraInfo">Automatically close the Epic Hyperspace and BCA device alerts that appear in incidents.</div>
                         <br />
                         <div class="form-group">
                             <label for="cannedMsgs" class="textareaLabel">Canned Messages</label>
@@ -117,58 +135,6 @@
                 </div>
             </td>
             <td width="50%" style="vertical-align:top;padding-left:10px;" align="left">
-                <div id="content" class="panel panel-primary">
-                    <div class="panel-heading">
-                        <div class="panel-title">Group Monitoring</div>
-                    </div>
-                    <div class="panel-body">
-                        <p><em>This will check every X minutes for new incidents and tasks that have been assigned to the groups you designate.  If it finds a new one you will receive a Google Chrome notification.</em></p>
-                        <div class="input-group">
-                            <span class="input-group-addon" id="monitorGroupAddon">Monitor Group</span>
-                            <select id="monitorGroup" class="form-control" aria-describedby="monitorGroupAddon">
-                                <option value="enable">Enabled</option>
-                                <option value="disable">Disabled</option>
-                            </select>
-                        </div>
-                        <div class="extraInfo">Monitor assignment groups for assignments.</div>
-                        <br />
-                        <div class="input-group">
-                            <span class="input-group-addon" id="assignGroupAddon">Assignment Group</span>
-                            <select id="assignGroup" class="form-control" aria-describedby="assignGroupAddon">
-                                <option value="7d8ea2206fcaf60449bfd4a21c3ee406">Desktop Support</option>
-                                <option value="49eeaee06f8af60449bfd4a21c3ee4b6">Desktop Support Asset Management</option>
-                                <option value="4b44b2206f46720c7839d4a21c3ee45b">Desktop Support Coordinators</option>
-                                <option value="dbaf2e206fcaf60449bfd4a21c3ee463">Desktop Support Engineers</option>
-                                <option value="200fa2ec6f8af60449bfd4a21c3ee443">Desktop Support Greenville Campus</option>
-                                <option value="404faeec6f8af60449bfd4a21c3ee41d">Desktop Support Greenville Staging</option>
-                                <option value="c85fe6686f8af60449bfd4a21c3ee415">Desktop Support Greer Campus</option>
-                                <option value="275fe2206fcaf60449bfd4a21c3ee452">Desktop Support Hillcrest Campus</option>
-                                <option value="566f6aac6f8af60449bfd4a21c3ee4e9">Desktop Support Laurens Campus</option>
-                                <option value="057faa206fcaf60449bfd4a21c3ee444">Desktop Support MDC Campus</option>
-                                <option value="488faa206fcaf60449bfd4a21c3ee4bb">Desktop Support MDC Delivery</option>
-                                <option value="da8fea206fcaf60449bfd4a21c3ee447">Desktop Support MDC Staging</option>
-                                <option value="759f2a206fcaf60449bfd4a21c3ee4a4">Desktop Support Oconee Campus</option>
-                                <option value="38afaaec6f8af60449bfd4a21c3ee420">Desktop Support Patewood Campus</option>
-                            </select>
-                        </div>
-                        <div class="extraInfo">Notifications will be generated when ticket is assigned to the group.</div>
-                        <br />
-                        <div class="input-group">
-                            <span class="input-group-addon" id="monitorIntervalAddon">Monitor Interval</span>
-                            <input type="number" id="monitorInterval" class="form-control" aria-describedby="monitorIntervalAddon" min="1" max="30" step="1" value="3" />
-                        </div>
-                        <div class="extraInfo">Time, in minutes, between checks for new assignments.  Minimum = 1, Maximum = 30</div>
-                        <br />
-                        <div class="input-group">
-                            <span class="input-group-addon" id="monitorIconAddon">Show On Toolbar</span>
-                            <select id="monitorIcon" class="form-control" aria-describedby="monitorIconAddon">
-                                <option value="enable">Enabled</option>
-                                <option value="disable">Disabled</option>
-                            </select>
-                        </div>
-                        <div class="extraInfo">Show ticket count on the toolbar icon.</div>
-                    </div>
-                </div>
                 <div id="content" class="panel panel-primary">
                     <div class="panel-heading">
                         <div class="panel-title"><strong>ServiceNow User Information</strong></div>

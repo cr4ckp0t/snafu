@@ -29,6 +29,26 @@
         "all_frames": true,
         "run_at": "document_end"
     }],
+    "commands": {
+        "assignToMe": {
+            "description": "Query technician info or assign to technician.",
+            "suggested_key": {
+                "default": "Alt+A"
+            }
+        },
+        "savePage": {
+            "description": "Save the ticket.",
+            "suggested_key": {
+                "default": "Alt+S"
+            }
+        },
+        "updatePage": {
+            "description": "Update the ticket.",
+            "suggested_key": {
+                "default": "Alt+U"
+            }
+        }
+    },
     "options_page": "options.html",
     "web_accessible_resources": ["js/inject.js"],
     "manifest_version": 2

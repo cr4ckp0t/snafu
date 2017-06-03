@@ -159,7 +159,7 @@ $(document).ready(function() {
                     workNotes: $('#workNotes').val(),
                     custNotes: $('#customerNotes').val()
                 }, function(response) {
-                    chrome.storage.sync.get(['debug', 'closePopup'], function(items) {
+                    chrome.storage.sync.get(['debug', 'closePopup', 'keepNotes'], function(items) {
                         if (chrome.runtime.lastError) {
                             console.error('SNAFU Sync Get Error: %s', chrome.runtime.lastError.message);
                         } else {
@@ -175,10 +175,8 @@ $(document).ready(function() {
                                 }
                             }
                         }
-
-                        if (items.closePopup === true) {
-                            setTimeout(function() { window.close(); }, 500);
-                        }
+                        chrome.storage.local.clear();
+                        if (items.closePopup === true) setTimeout(function() { window.close(); }, 500);
                     });
                 });
             });
@@ -212,13 +210,11 @@ $(document).ready(function() {
                                         console.info('SNAFU: Update sent!');
                                     }
                                 } else {
-                                    console.error('SNAFU Error: Unable to process response to message.');
+                                    console.error('SNAFU Error: Unable to process message response.');
                                 }
                             }
 
-                            if (items.closePopup === true) {
-                                setTimeout(function() { window.close(); }, 500);
-                            }
+                            if (items.closePopup === true) setTimeout(function() { window.close(); }, 500);
                         }
                     });
                 });
@@ -226,17 +222,91 @@ $(document).ready(function() {
         }
     });
 
-    // create new incident
-    $('[id^=newIncident]').click(function() { chrome.tabs.create({url: 'https://ghsprod.service-now.com/incident.do?sysparm_stack=incident_list.do&sys_id=-1'}); });
-    
-    // open help page
-    $('[id^=openHelp]').click(function() { chrome.tabs.create({url: chrome.extension.getURL('help.html')}); });
+    // send scheduled appointment update
+    $('#sendAppointment').click(function() {
+        //alert($('#schedAppt').val());
+        if (isVarEmpty($('#schedAppt').val()) === true) {
+            console.error('SNAFU Error: You must provide a date and time for the appointment.');
+        } else {
+            chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+                chrome.tabs.sendMessage(tabs[0].id, {
+                    type: 'scheduled',
+                    custNotes: $('#schedAppt').val().slice(0, -3),
+                    workNotes: $('#customerNotes').val()
+                }, function(response) {
+                    chrome.storage.sync.get(['debug', 'closePopup'], function(items) {
+                        if (chrome.runtime.lastError) {
+                            console.error('SNAFU Sync Get Error: %s', chrome.runtime.lastError.message);
+                        } else {
+                            if (items.debug === true) {
+                                if (isVarEmpty(response) === false) {
+                                    if (response.success === false) {
+                                        console.error('SNAFU Error: %s', response.errMsg);
+                                    } else {
+                                        console.info('SNAFU: Appointment update sent.');
+                                    }
+                                } else {
+                                    console.error('SNAFU Error: Unable to process message response.');
+                                }
+                            }
+                            if (items.closePopup === true) setTimeout(function() { window.close(); }, 500);
+                        }
+                    });
+                });
+            });
+        }
+    });
 
-    // open options page
+    // send close quarantine
+    $('#sendCloseQuarantine').click(function() {
+        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+            chrome.tabs.sendMessage(tabs[0].id, { type: 'closeQuarantine' + $('#closeQuarantine').val() });
+        });
+    });
+
+    // send close hot swap
+    $('#sendCloseHotSwap').click(function() {
+        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+            chrome.tabs.sendMessage(tabs[0].id, { type: 'closeHotSwap' + $('#closeHotSwap').val() });
+        });
+    });
+
+    // send auto acknowledge
+    $('#sendAutoAcknowledge').click(function() {
+        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+            chrome.tabs.sendMessage(tabs[0].id, { type: 'autoAcknowledge' });
+        });
+    });
+
+    // send auto closure
+    $('#sendAutoClosure').click(function() {
+        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+            chrome.tabs.sendMessage(tabs[0].id, { type: 'autoClosure' });
+        });
+    });
+
+    $('[id^=newIncident]').click(function() { chrome.tabs.create({url: 'https://ghsprod.service-now.com/incident.do?sysparm_stack=incident_list.do&sys_id=-1'}); });
+    $('[id^=openHelp]').click(function() { chrome.tabs.create({url: chrome.extension.getURL('help.html')}); });
     $('[id^=openOptions]').click(function() { chrome.tabs.create({url: chrome.extension.getURL('options.html')}); });
-    
-    // open faq page
-    $('[id^=openFaq]').click(function() { chrome.tabs.create({url: chrome.extension.getURL('faq.html')}); }); 
+    $('[id^=openFaq]').click(function() { chrome.tabs.create({url: chrome.extension.getURL('faq.html')}); });
+
+    // load the saved notes
+    chrome.storage.sync.get(['debug', 'keepNotes'], function(items) {
+        if (items.keepNotes === true) {
+            chrome.storage.local.get(['custNotes', 'workNotes'], function(notes) {
+                // customer notes
+                if (isVarEmpty(notes.custNotes) === false) {
+                    if (items.debug === true) console.info('SNAFU: Loaded saved customer notes.');
+                    $('#customerNotes').val(notes.custNotes);
+                }
+                // work notes
+                if (isVarEmpty(notes.workNotes) === false) {
+                    if (items.debug === true) console.info('SNAFU: Loaded saved work notes.');
+                    $('#workNotes').val(notes.workNotes);
+                }
+            });
+        }
+    });
 });
 
 /**
@@ -336,13 +406,11 @@ function processClick(clickType) {
                             console.info('SNAFU: Update sent!');
                         }
                     } else {
-                        console.error('SNAFU Error: Unable to process response to message.');
+                        console.error('SNAFU Error: Unable to process message response.');
                     }
                 }
 
-                if (items.closePopup === true) {
-                    setTimeout(function() { window.close(); }, 500);
-                }
+                if (items.closePopup === true) setTimeout(function() { window.close(); }, 500);
             });
         });
     });
@@ -354,14 +422,24 @@ function processClick(clickType) {
  * @return  {Void}
  */
 function processKeyUpUpdate(event) {
-    chrome.storage.sync.get(['debug', 'sendEnter'], function(items) {
-        if (items.sendEnter === true && event.keyCode === 13) {
-            if (items.debug === true) {
-                console.info('SNAFU: Proccessed KeyUp event.');
+    if (event.keyCode === 13 && !event.shiftKey && !event.ctrlKey && !event.altKey) {
+        chrome.storage.sync.get('sendEnter', function(items) {
+            if (items.sendEnter === true) $('#sendUpdate').click();
+        });
+    } else if ($.inArray(event.keyCode, [48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 186, 187, 188, 189, 190, 191, 219, 220, 221, 222]) !== -1) {
+        chrome.storage.sync.get(['debug', 'keepNotes'], function(items) {
+            console.info(items);
+            if (items.keepNotes === true) {
+                chrome.storage.local.set({
+                    custNotes: $('#customerNotes').val(),
+                    workNotes: $('#workNotes').val()
+                }, function() {
+                    if (chrome.runtime.lastError) console.warn('SNAFU Persistent Notes Error: %s', chrome.runtime.lastError.message);
+                    else if (items.debug === true) console.info('SNAFU: Saved persistent notes.');
+                });
             }
-            $('#sendUpdate').click();
-        }
-    });
+        });
+    }
 }
 
 /**
@@ -370,14 +448,11 @@ function processKeyUpUpdate(event) {
  * @return  {Void}
  */
 function processKeyUpEquipOrder(event) {
-    chrome.storage.sync.get(['debug', 'sendEnter'], function(items) {
-        if (items.sendEnter === true && event.keyCode === 13) {
-            if (items.debug === true) {
-                console.info('SNAFU: Proccessed KeyUp event.');
-            }
-            $('#sendEquipment').click();
-        }
-    }); 
+    if (event.keyCode === 13 && !event.shiftKey && !event.ctrlKey && !event.altKey) {
+        chrome.storage.sync.get('sendEnter', function(items) {
+            if (items.sendEnter === true) $('#sendEquipment').click();
+        });
+    }
 }
 
 /**

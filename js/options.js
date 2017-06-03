@@ -19,8 +19,11 @@
 $(document).ready(function() {
 	$('[id$=Success').hide();
 	$('[id$=Failure').hide();
-
 	$('#saveSettings').click(function() { saveSettings(); })
+	$('#versionAbout').html(chrome.app.getDetails().version);
+	$('#openFaq').click(function() { chrome.tabs.create({url: chrome.extension.getURL('faq.html')}); });
+	$('#openHelp').click(function() { chrome.tabs.create({url: chrome.extension.getURL('help.html')}); });
+
 	$('#reloadData').click(function() { 
 		loadSettings();
 		successMessage('Reloaded settings successsfully.');
@@ -31,9 +34,6 @@ $(document).ready(function() {
 			chrome.tabs.remove(tabs[0].id);
 		});
 	});
-	$('#versionAbout').html(chrome.app.getDetails().version);
-	$('#openFaq').click(function() { chrome.tabs.create({url: chrome.extension.getURL('faq.html')}); });
-	$('#openHelp').click(function() { chrome.tabs.create({url: chrome.extension.getURL('help.html')}); });
 
 	// reset user data
 	$('#resetUser').click(function() {
@@ -42,10 +42,8 @@ $(document).ready(function() {
 				console.error('SNAFU Sync Remove Error: %s', chrome.runtime.lastError.message);
 				errorMessage('Failed to remove user data.');
 			} else {
-				if (debug === true) {
-					console.info('SNAFU: Removed user data.');
-				}
 				successMessage('Successfully removed user data.');
+				loadSettings();
 			}
 		});
 	});
@@ -57,9 +55,6 @@ $(document).ready(function() {
 				console.error('SNAFU Sync Clear Error: %s', chrome.runtime.lastError.message);
 				errorMessage('Failed to clear settings.');
 			} else {
-				if (debug === true) {
-					console.info('SNAFU: Cleared all settings.');
-				}
 				successMessage('Successfully cleared all settings.');
 				loadSettings();
 			}
@@ -78,13 +73,11 @@ function saveSettings() {
 		debug: ($('#debugMode').val() === 'enable') ? true : false,
 		closePopup: ($('#closePopup').val() === 'enable') ? true: false,
 		sendEnter: ($('#sendEnter').val() === 'enable') ? true : false,
+		keepNotes: ($('#keepNotes').val() === 'enable') ? true : false,
 		canned: getCannedMessages(),
 		autoFinish: $('#ticketCompletion').val(),
 		finishDelay: $('#finishDelay').val(),
-		monitorGroup: ($('#monitorGroup').val() === 'enable') ? true : false,
-		assignGroup: $('#assignGroup').val(),
-		monitorIcon: ($('#monitorIcon').val() === 'enable') ? true : false,
-		monitorInterval: $('#monitorInterval').val()
+		closeAlerts: ($('#closeAlerts').val() === 'enable') ? true : false
 	}, function() {
 		if (chrome.runtime.lastError) {
 			console.error('SNAFU Sync Set Error: %s', chrome.runtime.lastError.message);
@@ -101,35 +94,38 @@ function saveSettings() {
  * @return	{Void}
  */
 function loadSettings() {
-	chrome.storage.sync.get(['debug', 'closePopup', 'canned', 'autoFinish', 'finishDelay', 'sendEnter', 'userId', 'userName', 'userEmail', 'fullName', 'groupName', 'groupId', 'monitorGroup', 'assignGroup', 'monitorInterval', 'monitorIcon'], function(items) {
+	chrome.storage.sync.get([
+		'debug',
+		'closePopup',
+		'canned',
+		'autoFinish',
+		'finishDelay',
+		'sendEnter',
+		'keepNotes',
+		'closeAlerts',
+		'userId',
+		'userName',
+		'userEmail',
+		'fullName',
+		'groupName',
+		'groupId',
+	], function(items) {
 		if (chrome.runtime.lastError) {
 			console.error('SNAFU Sync Get Error: %s', chrome.runtime.lastError.message);
 		} else {
+			var settingsToCreate = {}
+
 			// debug settings
 			if (isVarEmpty(items.debug) === true) {
-				chrome.storage.sync.set({debug: false}, function() {
-					if (chrome.runtime.lastError) {
-						console.error('SNAFU debug Set Error: %s', chrome.runtime.lastError.message);
-					} else {
-						console.info('SNAFU: Created debug setting.');
-					}
-				});
+				settingsToCreate['debug'] = false;
 				$('#debugMode').val('disable');
-				debug = false;
 			} else {
 				$('#debugMode').val((items.debug === true) ? 'enable' : 'disable');
-				debug = items.debug;
 			}
 
 			// close popup on submit
 			if (isVarEmpty(items.closePopup) === true) {
-				chrome.storage.sync.set({closePopup: false}, function() {
-					if (chrome.runtime.lastError) {
-						console.error('SNAFU closePopup Set Error: %s', chrome.runtime.lastError.message);
-					} else {
-						console.info('SNAFU: Created closePopup setting.');
-					}
-				});
+				settingsToCreate['closePopup'] = false;
 				$('#closePopup').val('disable');
 			} else {
 				$('#closePopup').val((items.closePopup === true) ? 'enable' : 'disable');
@@ -137,18 +133,10 @@ function loadSettings() {
 			
 			// canned messages
 			if (isVarEmpty(items.canned) === true) {
-				chrome.storage.sync.set({
-					canned: {
-						'callingUser': 'Calling {INC_CUST_FNAME} at {INC_CUR_PHONE}.',
-						'leftVoicemail': 'Left voicemail for {INC_CUST_FNAME} at {INC_CUR_PHONE} to discuss the ticket.'
-					}
-				}, function() {
-					if (chrome.runtime.lastError) {
-						console.error('SNAFU canned Set Error: %s', chrome.runtime.lastError.message);
-					} else {
-						console.info('SNAFU: Created canned messages.');
-					}
-				});
+				settingsToCreate['canned'] = {
+					'callingUser': 'Calling {INC_CUST_FNAME} at {INC_CUR_PHONE}.',
+					'leftVoicemail': 'Left voicemail for {INC_CUST_FNAME} at {INC_CUR_PHONE} to discuss the ticket.'
+				}
 			} else {
 				var cannedMsgs = '';
 				for (var key in items.canned) {
@@ -160,13 +148,7 @@ function loadSettings() {
 
 			// auto finish
 			if (isVarEmpty(items.autoFinish) === true) {
-				chrome.storage.sync.set({autoFinish: 'none'}, function() {
-					if (chrome.runtime.lastError) {
-						console.error('SNAFU autoFinish Set Error: %s', chrome.runtime.lastError.message);
-					} else {
-						console.info('SNAFU: Created autoFinish setting.');
-					}
-				});
+				settingsToCreate['autoFinish'] = 'none';
 				$('#ticketCompletion').val('none');
 			} else {
 				$('#ticketCompletion').val(items.autoFinish);
@@ -174,86 +156,45 @@ function loadSettings() {
 
 			// finish delay
 			if (isVarEmpty(items.finishDelay) === true) {
-				chrome.storage.sync.set({finishDelay: 1.5}, function() {
-					if (chrome.runtime.lastError) {
-						console.error('SNAFU finishDelay Set Error: %s', chrome.runtime.lastError.message);
-					} else {
-						console.info('SNAFU: Created finishDelay setting.');
-					}
-				});
+				settingsToCreate['finishDelay'] = 1.5;
 				$('#finishDelay').val(1.5);
 			} else {
 				$('#finishDelay').val(items.finishDelay);
 			}
 
-			// monitor group
-			if (isVarEmpty(items.monitorGroup) === true) {
-				chrome.storage.sync.set({monitorGroup: false}, function() {
-					if (chrome.runtime.lastError) {
-						console.error('SNAFU monitorGroup Set Error: %s', chrome.runtime.lastError.message);
-					} else {
-						console.info('SNAFU: Created monitorGroup setting.');
-					}
-				});
-				$('#monitorGroup').val('disable');
-			} else {
-				$('#monitorGroup').val((items.monitorGroup === true) ? 'enable' : 'disable');
-			}
-
-			// assignment group
-			if (isVarEmpty(items.assignGroup) === true) {
-				chrome.storage.sync.set({assignGroup: '7d8ea2206fcaf60449bfd4a21c3ee406'}, function() {
-					if (chrome.runtime.lastError) {
-						console.error('SNAFU assignGroup Set Error: %s', chrome.runtime.lastError.message);
-					} else {
-						console.info('SNAFU: Created assignGroup setting.');
-					}
-				});
-				$('#assignGroup').val('7d8ea2206fcaf60449bfd4a21c3ee406');
-			} else {
-				$('#assignGroup').val(items.assignGroup);
-			}
-
-			// monitor interval
-			if (isVarEmpty(items.monitorInterval) === true) {
-				chrome.storage.sync.set({monitorInterval: 3}, function() {
-					if (chrome.runtime.lastError) {
-						console.error('SNAFU monitorInterval Set Error: %s', chrome.runtime.lastError.message);
-					} else {
-						console.info('SNAFU: Created monitorInterval setting.');
-					}
-				});
-				$('#monitorInterval').val(3);
-			} else {
-				$('#monitorInterval').val(items.monitorInterval);
-			}
-
-			// show ticket count on toolbar icon
-			if (isVarEmpty(items.monitorIcon) === true) {
-				chrome.storage.sync.set({monitorIcon: true}, function() {
-					if (chrome.runtime.lastError) {
-						console.error('SNAFU monitorIcon Set Error: %s', chrome.runtime.lastError.message);
-					} else {
-						console.info('SNAFU: Create monitorIcon setting.');
-					}
-				});
-				$('#monitorIcon').val('enable');
-			} else {
-				$('#monitorIcon').val((items.monitorIcon === true) ? 'enable' : 'disable');
-			}
-
 			// send on enter
 			if (isVarEmpty(items.sendEnter) === true) {
-				chrome.storage.sync.set({sendEnter: true}, function() {
-					if (chrome.runtime.lastError) {
-						console.error('SNAFU sendEnter Set Error: %s', chrome.runtime.lastError.message);
-					} else {
-						console.info('SNAFU: Create sendEnter setting.');
-					}
-				});
+				settingsToCreate['sendEnter'] = true;
 				$('#sendEnter').val('enable');
 			} else {
 				$('#sendEnter').val((items.sendEnter === true) ? 'enable' : 'disable');
+			}
+
+			// keep notes
+			if (isVarEmpty(items.keepNotes) === true) {
+				settingsToCreate['keepNotes'] = false;
+				$('#keepNotes').val('disable');
+			} else {
+				$('#keepNotes').val((items.keepNotes === true) ? 'enable' : 'disable');
+			}
+
+			// close alerts
+			if (isVarEmpty(items.closeAlerts) === true) {
+				settingsToCreate['closeAlerts'] = true;
+				$('#closeAlerts').val('enable');
+			} else {
+				$('#closeAlerts').val((items.closeAlerts === true) ? 'enable' : 'disable');
+			}
+
+			// send the settings to sync storage
+			if (isVarEmpty(settingsToCreate) === false) {
+				chrome.storage.sync.set(settingsToCreate, function() {
+					if (chrome.runtime.lastError) {
+						console.warn('SNAFU Sync Set Error: %s', chrome.runtime.lastError);
+					} else {
+						console.info('SNAFU: Created settings successfully.');
+					}
+				});
 			}
 
 			// set user info

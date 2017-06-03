@@ -16,6 +16,43 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  **/
 
+// keyboard shortcuts
+chrome.commands.onCommand.addListener(function(command) {
+	if (command === 'savePage' || command === 'updatePage') {
+		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+			chrome.tabs.sendMessage(tabs[0].id, {type: command}, handleResponse);
+		});
+	} else if (command === 'assignToMe') {
+		chrome.storage.sync.get(['debug', 'userId', 'fullName', 'groupId', 'groupName'], function(items) {
+			if (chrome.runtime.lastError) {
+				console.warn('SNAFU Sync Get Error: %s', chrome.runtime.lastError.message);
+			} else {
+				if (isVarEmpty(items.userId) === true || isVarEmpty(items.fullName) === true || isVarEmpty(items.groupId) === true || isVarEmpty(items.groupName) === true) {
+					// query user info
+					var messageData = {
+						type: 'userQuery'
+					}
+				} else {
+					// assign to technician
+					var messageData = {
+						type: 'assignToMe',
+						userInfo: {
+							userId: items.userId,
+							fullName: items.fullName,
+							groupId: items.groupId,
+							groupName: items.groupName 
+						}
+					}
+				}
+				chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+					chrome.tabs.sendMessage(tabs[0].id, messageData, handleResponse);
+				});
+			}
+		});
+	}
+});
+
+// only activate the icon if service now is the active tab
 chrome.runtime.onInstalled.addListener(function() {
     chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
         chrome.declarativeContent.onPageChanged.addRules([{
@@ -29,6 +66,7 @@ chrome.runtime.onInstalled.addListener(function() {
     });
 });
 
+// show help page the when the extension is installed
 chrome.runtime.onInstalled.addListener(function(details) {
 	if (details.reason === 'install') {
 		// show help page
@@ -36,84 +74,42 @@ chrome.runtime.onInstalled.addListener(function(details) {
 	}
 });
 
+// create settings on startup, if they don't exist
 chrome.runtime.onStartup.addListener(function() {
-	chrome.storage.sync.get(['autoFinish', 'finishDelay', 'debug', 'canned', 'closePopup', 'sendEnter', 'monitorGroup', 'assignGroup', 'monInterval'], function(items) {
+	chrome.storage.sync.get([
+		'autoFinish',
+		'finishDelay',
+		'debug',
+		'canned',
+		'closePopup',
+		'sendEnter',
+		'keepNotes',
+		'closeAlerts'
+	], function(items) {
 		if (chrome.runtime.lastError) {
 			console.error('SNAFU: Sync Get Error: %s', chrome.runtime.lastError.message);
 		} else {
-			if (isVarEmpty(items.autoFinish) === true) {
-				chrome.storage.sync.set({autoFinish: 'none'}, function() {
-					if (chrome.runtime.lastError) {
-						console.error('SNAFU autoFinish Set Error: %s', chrome.runtime.lastError.message);
-					}
-				});
-			}
-
-			if (isVarEmpty(items.finishDelay) === true) {
-				chrome.storage.sync.set({finishDelay: 1.5}, function() {
-					if (chrome.runtime.lastError) {
-						console.error('SNAFU finishDelay Set Error: %s', chrome.runtime.lastError.message);
-					}
-				});
-			}
-
-			if (isVarEmpty(items.debug) === true) {
-				chrome.storage.sync.set({debug: false}, function() {
-					if (chrome.runtime.lastError) {
-						console.error('SNAFU debug Set Error: %s', chrome.runtime.lastError.message);
-					}
-				});
-			}
-
+			var settingsToCreate = {}
+			// create the settings
+			if (isVarEmpty(items.autoFinish) === true) settingsToCreate['autoFinish'] = 'none';
+			if (isVarEmpty(items.finishDelay) === true) settingsToCreate['finishDelay'] = 1.5;
+			if (isVarEmpty(items.debug) === true) settingsToCreate['debug'] = false;
+			if (isVarEmpty(items.closePopup) === true) settingsToCreate['closePopup'] = false;
+			if (isVarEmpty(items.sendEnter) === true) settingsToCreate['sendEnter'] = true;
+			if (isVarEmpty(items.keepNotes) === true) settingsToCreate['keepNotes'] = false;
+			if (isVarEmpty(items.closeAlerts) === true) settingsToCreate['closeAlerts'] = true;
 			if (isVarEmpty(items.canned) === true) {
-				chrome.storage.sync.set({
-					canned: {
-						'callingUser': 'Calling {INC_CUST_FNAME} at {INC_CUR_PHONE}.',
-						'leftVoicemail': 'Left voicemail for {INC_CUST_FNAME} at {INC_CUR_PHONE} to discuss the ticket.'
-					}
-				}, function() {
-					if (chrome.runtime.lastError) {
-						console.error('SNAFU canned Set Error: %s', chrome.runtime.lastError.message);
-					}
-				});
+				settingsToCreate['canned'] = {
+					'callingUser': 'Calling {INC_CUST_FNAME} at {INC_CUR_PHONE}.',
+					'leftVoicemail': 'Left voicemail for {INC_CUST_FNAME} at {INC_CUR_PHONE} to discuss the ticket.'
+				}
 			}
-
-			if (isVarEmpty(items.closePopup) === true) {
-				chrome.storage.sync.set({closePopup: false}, function() {
+			if (isVarEmpty(settingsToCreate) === false) {
+				chrome.storage.sync.set(settingsToCreate, function() {
 					if (chrome.runtime.lastError) {
-						console.error('SNAFU closePopup Set Error: %s', chrome.runtime.lastError.message);
-					}
-				});
-			}
-
-			if (isVarEmpty(items.sendEnter) === true) {
-				chrome.storage.sync.set({sendEnter: true}, function() {
-					if (chrome.runtime.lastError) {
-						console.error('SNAFU sendEnter Set Error: %s', chrome.runtime.lastError.message);
-					}
-				});
-			}
-
-			if (isVarEmpty(items.monitorGroup) === true) {
-				chrome.storage.sync.set({monitorGroup: false}, function() {
-					if (chrome.runtime.lastError) {
-						console.error('SNAFU monitorGroup Set Error: %s', chrome.runtime.lastError.message);
-					}
-				});
-			}
-
-			if (isVarEmpty(items.assignGroup) === true) {
-				chrome.storage.sync.set({assignGroup: '7d8ea2206fcaf60449bfd4a21c3ee406'}, function() {
-					if (chrome.runtime.lastError) {
-						console.error('SNAFU assignGroup Set Error: %s', chrome.runtime.lastError.message);
-					}
-				});
-			}
-
-			if (isVarEmpty(items.monitorInterval) === true) {
-				chrome.storage.sync.set({monitorInterval: 3}, function() {
-					if (chrome.runtime.lastError) {
-						console.error('SNAFU monitorInterval Set Error: %s', chrome.runtime.lastError.message);
+						console.warn('SNAFU Sync Set Error: %s', chrome.runtime.lastError.message);
+					} else {
+						console.info('SNAFU: Created settings successfully.');
 					}
 				});
 			}
@@ -128,4 +124,29 @@ chrome.runtime.onStartup.addListener(function() {
  */
 function isVarEmpty(value) {
     return (value === null || value === undefined || value === NaN || value.toString().trim() === '') ? true : false
+}
+
+/**
+ * Handle the response from the sendMessage call for debugging purposes.
+ * @param	{Object}	response
+ * @return	{Void}
+ */
+function handleResponse(response) {
+	chrome.storage.sync.get(['debug'], function(items) {
+		if (chrome.runtime.lastError) {
+			console.error('SNAFU Sync Get Error: %s', chrome.runtime.lastError.message);
+		} else {
+			if (items.debug === true) {
+				if (isVarEmpty(response) === false) {
+					if (response.success === false) {
+						console.error('SNAFU Error: %s', response.errMsg);
+					} else {
+						console.info('SNAFU: Update sent!');
+					}
+				} else {
+					console.error('SNAFU Error: Unable to process response to message.');
+				}
+			}
+		}
+	});
 }

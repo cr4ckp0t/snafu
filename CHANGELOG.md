@@ -5,10 +5,21 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
-- Added scheduled option to put a ticket on hold with an appointment message.
+### Added
+- Scheduled option to put a ticket on hold with an appointment message.
+- Keybinds to save and update the page.  Alt+S (Save) and Alt+U (Update) are the default keys.
+- Keybind to query user info and assign to technician.  Alt+A is default.
+- Notes can now be made persistent until you send the update.
+- Prevent extension from closing ticket when unassigned.
+- Made acknowledgements and closures automatically detect the type of ticket and respond accordingly.
+- Option to automatically close the Epic Hyperspace and BCA device popups.
 
-### TODO
-- Make popup persistent, or save typed notes.
+### Removed
+- Monitor Assignment Group settings.  Will put them back when I decide to write the code.
+
+### Fixed
+- Send on Enter will be ignored if holding Shift, Ctrl, or Alt.
+- Enable/Disable options will now be set correctly via context menus.
 
 ## 1.0.6 [2017-05-24]
 ### Added

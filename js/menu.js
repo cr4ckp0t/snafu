@@ -16,7 +16,9 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  **/
 
-// uber parent
+/**
+ * Uber Parent
+ */
 chrome.contextMenus.create({
 	title: 'SNAFU',
 	contexts: ['page'],
@@ -24,148 +26,38 @@ chrome.contextMenus.create({
 	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*', 'https://ghsprod.service-now.com/incident.do?*']
 });
 
-// auto acknowledge incident
+/**
+ * Auto Acknowledge
+ */
 chrome.contextMenus.create({
-	title: 'Acknowledge Incident',
+	title: 'Auto Acknowledge',
 	contexts: ['page'],
+	id: 'autoAcknowledge',
 	parentId: 'snafuParent',
-	id: 'parentAckIncident',
-	documentUrlPatterns: ['https://ghsprod.service-now.com/incident.do?*']
-});
-
-// acknowledge generic incident
-chrome.contextMenus.create({
-	title: 'Generic Acknowledgement',
-	contexts: ['page'],
-	id: 'ackIncident',
-	parentId: 'parentAckIncident',
-	documentUrlPatterns: ['https://ghsprod.service-now.com/incident.do?*'],
+	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*', 'https://ghsprod.service-now.com/incident.do?*'],
 	onclick: actionHandler
 });
 
-// acknowledge incident - call end user
+/**
+ * Auto Closure
+ */
 chrome.contextMenus.create({
-	title: 'Call End User',
+	title: 'Auto Close',
 	contexts: ['page'],
-	id: 'ackCallUser',
-	parentId: 'parentAckIncident',
-	documentUrlPatterns: ['https://ghsprod.service-now.com/incident.do?*'],
-	onclick: actionHandler
-});
-
-// parent for acknowledge tasks
-chrome.contextMenus.create({
-	title: 'Acknowledge Tasks',
-	contexts: ['page'],
+	id: 'autoClosure',
 	parentId: 'snafuParent',
-	id: 'parentAckTask',
-	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*']
-});
-
-chrome.contextMenus.create({
-	title: 'Generic Task',
-	contexts: ['page'],
-	id: 'ackTask',
-	parentId: 'parentAckTask',
-	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
+	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*', 'https://ghsprod.service-now.com/incident.do?*'],
 	onclick: actionHandler
 });
 
+/**
+ * Close Hot Swap Task
+ */
 chrome.contextMenus.create({
-	title: 'Equipment Move',
-	contexts: ['page'],
-	id: 'ackMove',
-	parentId: 'parentAckTask',
-	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
-	onclick: actionHandler
-});
-
-chrome.contextMenus.create({
-	title: 'Equipment Removal',
-	contexts: ['page'],
-	id: 'ackRemoval',
-	parentId: 'parentAckTask',
-	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
-	onclick: actionHandler
-});
-
-chrome.contextMenus.create({
-	title: 'Hot Swap',
-	contexts: ['page'],
-	id: 'ackHotSwap',
-	parentId: 'parentAckTask',
-	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
-	onclick: actionHandler
-});
-
-chrome.contextMenus.create({
-	title: 'Installation',
-	contexts: ['page'],
-	id: 'ackInstall',
-	parentId: 'parentAckTask',
-	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
-	onclick: actionHandler
-});
-
-chrome.contextMenus.create({
-	title: 'Quarantine',
-	contexts: ['page'],
-	id: 'ackQuarantine',
-	parentId: 'parentAckTask',
-	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
-	onclick: actionHandler
-});
-
-chrome.contextMenus.create({
-	title: 'Reclaim',
-	contexts: ['page'],
-	id: 'ackReclaim',
-	parentId: 'parentAckTask',
-	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
-	onclick: actionHandler
-});
-
-chrome.contextMenus.create({
-	title: 'Reimage Only',
-	contexts: ['page'],
-	id: 'ackReimage',
-	parentId: 'parentAckTask',
-	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
-	onclick: actionHandler
-});
-
-// closure tasks
-chrome.contextMenus.create({
-	title: 'Close Tasks',
-	contexts: ['page'],
-	id: 'parentCloseTask',
-	parentId: 'snafuParent',
-	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*']
-});
-
-chrome.contextMenus.create({
-	title: 'Equipment Move',
-	contexts: ['page'],
-	id: 'closeMove',
-	parentId: 'parentCloseTask',
-	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
-	onclick: actionHandler
-});
-
-chrome.contextMenus.create({
-	title: 'Equipment Removal',
-	contexts: ['page'],
-	id: 'closeRemoval',
-	parentId: 'parentCloseTask',
-	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
-	onclick: actionHandler
-});
-
-chrome.contextMenus.create({
-	title: 'Hot Swap',
+	title: 'Close Hot Swap Task',
 	contexts: ['page'],
 	id: 'closeHotSwapParent',
-	parentId: 'parentCloseTask',
+	parentId: 'snafuParent',
 	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*']
 });
 
@@ -187,20 +79,14 @@ chrome.contextMenus.create({
 	onclick: actionHandler
 });
 
+/**
+ * Close Quarantine Task
+ */
 chrome.contextMenus.create({
-	title: 'Installation',
-	contexts: ['page'],
-	id: 'closeInstall',
-	parentId: 'parentCloseTask',
-	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
-	onclick: actionHandler
-});
-
-chrome.contextMenus.create({
-	title: 'Quarantine',
+	title: 'Close Quarantine Task',
 	contexts: ['page'],
 	id: 'closeQuarantineParent',
-	parentId: 'parentCloseTask',
+	parentId: 'snafuParent',
 	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*']
 });
 
@@ -231,41 +117,11 @@ chrome.contextMenus.create({
 	onclick: actionHandler
 });
 
-chrome.contextMenus.create({
-	title: 'Reclaim',
-	contexts: ['page'],
-	id: 'closeReclaimParent',
-	parentId: 'parentCloseTask',
-	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*']
-});
+chrome.contextMenus.create({type: 'separator', parentId: 'snafuParent'});
 
-chrome.contextMenus.create({
-	title: 'Hot Swap Reclaim',
-	contexts: ['page'],
-	id: 'closeReclaimHotSwap',
-	parentId: 'closeReclaimParent',
-	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
-	onclick: actionHandler
-});
-
-chrome.contextMenus.create({
-	title: 'Reimage Only Reclaim',
-	contexts: ['page'],
-	id: 'closeReclaimReimage',
-	parentId: 'closeReclaimParent',
-	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
-	onclick: actionHandler
-});
-
-chrome.contextMenus.create({
-	title: 'Reimage Only Build',
-	contexts: ['page'],
-	id: 'closeReimage',
-	parentId: 'parentCloseTask',
-	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
-	onclick: actionHandler
-});
-
+/**
+ * Ticket Assignments
+ */
 chrome.contextMenus.create({
 	title: 'Assignments',
 	contexts: ['page'],
@@ -307,16 +163,18 @@ chrome.contextMenus.create({
 	parentId: 'assignParent',
 	documentUrlPatterns: ['https://make/it/hidden'],
 	onclick: function() {
-		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-			chrome.tabs.sendMessage(tabs[0].id, {
-				type: 'assignToMe',
-				userInfo: {
-					userId: items.userId,
-					fullName: items.fullName,
-					groupId: items.groupId,
-					groupName: items.groupName
-				}
-			}, handleResponse);
+		chrome.storage.sync.get(['userId', 'fullName', 'groupId', 'groupName'], function(items) {
+			chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+				chrome.tabs.sendMessage(tabs[0].id, {
+					type: 'assignToMe',
+					userInfo: {
+						userId: items.userId,
+						fullName: items.fullName,
+						groupId: items.groupId,
+						groupName: items.groupName
+					}
+				}, handleResponse);
+			});
 		});
 	}
 });
@@ -335,12 +193,8 @@ chrome.contextMenus.create({
 	parentId: 'assignParent'
 });
 
-chrome.contextMenus.create({type: 'separator', parentId: 'snafuParent'});
-
 /**
- * ****************************************
  * Options Parent
- * ****************************************
  */
 chrome.contextMenus.create({
 	title: 'Options',
@@ -376,18 +230,12 @@ chrome.contextMenus.create({
 	parentId: 'optionsParent'
 });
 
-var objToggle = {'enable': 'Enabled', 'disable': 'Disabled'}
-for (var opt in objToggle) {
-	chrome.contextMenus.create({
-		title: objToggle[opt],
-		type: 'radio',
-		contexts: ['page'],
-		id: 'closePopup-' + opt,
-		parentId: 'closePopupParent',
-		checked: false,
-		onclick: optionsHandler
-	});
-}
+chrome.contextMenus.create({
+	title: 'Persistent Notes',
+	contexts: ['page'],
+	id: 'keepNotesParent',
+	parentId: 'optionsParent'
+});
 
 chrome.contextMenus.create({
 	title: 'Send On Enter',
@@ -396,18 +244,6 @@ chrome.contextMenus.create({
 	parentId: 'optionsParent'
 });
 
-for (var opt in objToggle) {
-	chrome.contextMenus.create({
-		title: objToggle[opt],
-		type: 'radio',
-		contexts: ['page'],
-		id: 'sendEnter-' + opt,
-		parentId: 'sendEnterParent',
-		checked: false,
-		onclick: optionsHandler
-	});
-}
-
 chrome.contextMenus.create({
 	title: 'Debug Mode',
 	contexts: ['page'],
@@ -415,44 +251,30 @@ chrome.contextMenus.create({
 	parentId: 'optionsParent'
 });
 
-for (var opt in objToggle) {
-	chrome.contextMenus.create({
-		title: objToggle[opt],
-		type: 'radio',
-		contexts: ['page'],
-		id: 'debug-' + opt,
-		parentId: 'debugParent',
-		checked: false,
-		onclick: optionsHandler
-	});
+var toggleOptions = ['closePopup', 'keepNotes', 'sendEnter', 'debug'];
+var objToggle = {'enable': 'Enabled', 'disable': 'Disabled'};
+
+for (var i = 0; i < toggleOptions.length; i++) {
+	for (var opt in objToggle) {
+		chrome.contextMenus.create({
+			title: objToggle[opt],
+			type: 'radio',
+			contexts: ['page'],
+			id: toggleOptions[i] + '-' + opt,
+			parentId: toggleOptions[i] + 'Parent',
+			checked: false,
+			onclick: optionsHandler
+		});
+	}
 }
 
-chrome.contextMenus.create({
-	title: 'Monitor Group',
-	contexts: ['page'],
-	id: 'monitorParent',
-	parentId: 'optionsParent'
-});
-
-for (var opt in objToggle) {
-	chrome.contextMenus.create({
-		title: objToggle[opt],
-		type: 'radio',
-		contexts: ['page'],
-		id: 'monitorGroup-' + opt,
-		parentId: 'monitorParent',
-		checked: false,
-		onclick: optionsHandler
-	});
-}
-
-chrome.contextMenus.create({type: 'separator', parentId: 'monitorParent'});
+chrome.contextMenus.create({type: 'separator', parentId: 'monitorGroupParent'});
 
 chrome.contextMenus.create({
 	title: 'Force Refresh',
 	contexts: ['page'],
 	id: 'monitorForceRefresh',
-	parentId: 'monitorParent',
+	parentId: 'monitorGroupParent',
 	onclick: function() { alert('Coming Soon!'); }
 });
 
@@ -467,9 +289,7 @@ chrome.contextMenus.create({
 });
 
 /**
- * *****************************************
  * Help Page
- * *****************************************
  */
 chrome.contextMenus.create({
 	title: 'Help',
@@ -492,41 +312,6 @@ chrome.contextMenus.create({
 	id: 'helpPage',
 	parentId: 'helpParent',
 	onclick: function() { chrome.tabs.create({url: chrome.extension.getURL('help.html')}); }
-});
-
-chrome.storage.sync.get(['debug', 'autoFinish', 'closePopup', 'sendEnter', 'monitorGroup', 'userId', 'userName', 'userEmail', 'fullName', 'groupName', 'groupId'], function(items) {
-	if (chrome.runtime.lastError) {
-		console.error('SNAFU User Sync Error: %s', chrome.runtime.lastError.message);
-	} else {
-		chrome.contextMenus.update('assignIncToMe', {documentUrlPatterns: (isVarEmpty(items.userId) === true) ? ['https://make/it/hidden/'] : ['https://ghsprod.service-now.com/incident.do?*']});
-		chrome.contextMenus.update('assignTaskToMe', {documentUrlPatterns: (isVarEmpty(items.userId) === true) ? ['https://make/it/hidden/'] : ['https://ghsprod.service-now.com/sc_task.do?*']});
-		chrome.contextMenus.update('assignSeparator', {documentUrlPatterns: (isVarEmpty(items.userId) === true) ? ['https://make/it/hidden/'] : ['https://ghsprod.service-now.com/incident.do?*', 'https://ghsprod.service-now.com/sc_task.do?*']});
-		chrome.contextMenus.update('queryOrReset', {
-			title: (isVarEmpty(items.userId) === true) ? 'Query User Data' : 'Reset User Data',
-			onclick: (isVarEmpty(items.userId) === true) ? queryUserData : resetUserData
-		});
-
-		// set the autofinish radio
-		['save', 'update', 'auto', 'none'].forEach(function(opt) {
-			chrome.contextMenus.update('autoFinish-' + opt, {checked: (items.autoFinish === opt) ? true : false});
-		});
-
-		// set the closePopup radio
-		chrome.contextMenus.update('closePopup-enable', {checked: (items.closePopup === true) ? true : false});
-		chrome.contextMenus.update('closePopup-disable', {checked: (items.closePopup === false) ? true : false});
-
-		// set the debug radio
-		chrome.contextMenus.update('debug-enable', {checked: (items.debug === true) ? true : false});
-		chrome.contextMenus.update('debug-disable', {checked: (items.debug === false) ? true : false});
-
-		// set the monitor group radio
-		chrome.contextMenus.update('monitorGroup-enable', {checked: (items.monitorGroup === true) ? true : false});
-		chrome.contextMenus.update('monitorGroup-disable', {checked: (items.monitorGroup === false) ? true : false});
-
-		// set the send on enter radio
-		chrome.contextMenus.update('sendEnter-enable', {checked: (items.sendEnter === true) ? true : false});
-		chrome.contextMenus.update('sendEnter-disable', {checked: (items.sendEnter === false) ? true : false});
-	}
 });
 
 // monitor user data settings to update the context menu
@@ -553,17 +338,20 @@ chrome.storage.onChanged.addListener(function(changes, area) {
 			// set the debug radio
 			chrome.contextMenus.update('debug-enable', {checked: (changes.debug.newValue === true) ? true : false});
 			chrome.contextMenus.update('debug-disable', {checked: (changes.debug.newValue === false) ? true : false});
-		} else if ('monitorGroup' in changes) {
-			// set the monitor group radio
-			chrome.contextMenus.update('monitorGroup-enable', {checked: (changes.monitorGroup.newValue === true) ? true : false});
-			chrome.contextMenus.update('monitorGroup-disable', {checked: (changes.monitorGroup.newValue === false) ? true : false});
 		} else if ('sendEnter' in changes) {
 			// set the send on enter radio
 			chrome.contextMenus.update('sendEnter-enable', {checked: (changes.sendEnter.newValue === true) ? true : false});
 			chrome.contextMenus.update('sendEnter-disable', {checked: (changes.sendEnter.newValue === false) ? true : false});
+		} else if ('keepNotes' in changes) {
+			// set the keep notes radio
+			chrome.contextMenus.update('keepNotes-enable', {checked: (changes.keepNotes.newValue === true) ? true : false});
+			chrome.contextMenus.update('keepNotes-disable', {checked: (changes.keepNotes.newValue === false) ? true : false});
 		}
 	}
 });
+
+// update the option menus
+updateOptionMenus();
 
 /**
  * Onclick handler for actions
@@ -586,34 +374,27 @@ function actionHandler(info, tab) {
 function optionsHandler(info, tab) {
 	var setting = info.menuItemId.substring(0, info.menuItemId.indexOf('-'));
 	var value = info.menuItemId.substring(info.menuItemId.indexOf('-') + 1);
-	switch (setting) {
-		case 'autoFinish':
-			chrome.storage.sync.set({autoFinish: value}, function() {
-				if (chrome.runtime.lastError) {
-					console.error('SNAFU autoFinish Set Error: %s', chrome.runtime.lastError.message);
-				} else {
-					console.info('SNAFU: Updated autoFinish.');
-				}
-			});
-			break;
-		
-		case 'sendEnter':
-		case 'monitorGroup':;
-		case 'closePopup':
-		case 'debug':
-			var newSetting = {}
-			newSetting[setting] = value;
-			chrome.storage.sync.set(newSetting, function() {
-				if (chrome.runtime.lastError) {
-					console.error('SNAFU %s Set Error: %s', setting, chrome.runtime.lastError.message);
-				} else {
-					console.info('SNAFU: Updated %s.', setting);
-				}	
-			});
-			break;
-
-		default: break;
+	if (setting === 'autoFinish') {
+		chrome.storage.sync.set({autoFinish: value}, function() {
+			if (chrome.runtime.lastError) {
+				console.error('SNAFU autoFinish Set Error: %s', chrome.runtime.lastError.message);
+			} else {
+				console.info('SNAFU: Updated autoFinish.');
+			}
+		});
+	} else {
+		var newSetting = {}
+		newSetting[setting] = (value === 'enable') ? true : false;
+		chrome.storage.sync.set(newSetting, function() {
+			if (chrome.runtime.lastError) {
+				console.error('SNAFU %s Set Error: %s', setting, chrome.runtime.lastError.message);
+			} else {
+				console.info('SNAFU: Updated %s.', setting);
+			}	
+		});
 	}
+
+	updateOptionMenus();
 }
 
 /**
@@ -681,6 +462,47 @@ function handleResponse(response) {
 					console.error('SNAFU Error: Unable to process response to message.');
 				}
 			}
+		}
+	});
+}
+
+/**
+ * Update option menus.
+ * @return	{Void}
+ */
+function updateOptionMenus() {
+	chrome.storage.sync.get(['debug', 'autoFinish', 'closePopup', 'sendEnter', 'keepNotes', 'userId', 'userName', 'userEmail', 'fullName', 'groupName', 'groupId'], function(items) {
+		if (chrome.runtime.lastError) {
+			console.error('SNAFU User Sync Error: %s', chrome.runtime.lastError.message);
+		} else {
+			chrome.contextMenus.update('assignIncToMe', {documentUrlPatterns: (isVarEmpty(items.userId) === true) ? ['https://make/it/hidden/'] : ['https://ghsprod.service-now.com/incident.do?*']});
+			chrome.contextMenus.update('assignTaskToMe', {documentUrlPatterns: (isVarEmpty(items.userId) === true) ? ['https://make/it/hidden/'] : ['https://ghsprod.service-now.com/sc_task.do?*']});
+			chrome.contextMenus.update('assignSeparator', {documentUrlPatterns: (isVarEmpty(items.userId) === true) ? ['https://make/it/hidden/'] : ['https://ghsprod.service-now.com/incident.do?*', 'https://ghsprod.service-now.com/sc_task.do?*']});
+			chrome.contextMenus.update('queryOrReset', {
+				title: (isVarEmpty(items.userId) === true) ? 'Query User Data' : 'Reset User Data',
+				onclick: (isVarEmpty(items.userId) === true) ? queryUserData : resetUserData
+			});
+
+			// set the autofinish radio
+			['save', 'update', 'auto', 'none'].forEach(function(opt) {
+				chrome.contextMenus.update('autoFinish-' + opt, {checked: (items.autoFinish === opt) ? true : false});
+			});
+
+			// set the closePopup radio
+			chrome.contextMenus.update('closePopup-enable', {checked: (items.closePopup === true) ? true : false});
+			chrome.contextMenus.update('closePopup-disable', {checked: (items.closePopup === false) ? true : false});
+
+			// set the debug radio
+			chrome.contextMenus.update('debug-enable', {checked: (items.debug === true) ? true : false});
+			chrome.contextMenus.update('debug-disable', {checked: (items.debug === false) ? true : false});
+
+			// set the send on enter radio
+			chrome.contextMenus.update('sendEnter-enable', {checked: (items.sendEnter === true) ? true : false});
+			chrome.contextMenus.update('sendEnter-disable', {checked: (items.sendEnter === false) ? true : false});
+
+			// set the keep notes radio
+			chrome.contextMenus.update('keepNotes-enable', {checked: (items.keepNotes === true) ? true : false});
+			chrome.contextMenus.update('keepNotes-disable', {checked: (items.keepNotes === false) ? true : false});
 		}
 	});
 }
