@@ -16,7 +16,9 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  **/
 
-// uber parent
+/**
+ * Uber Parent
+ */
 chrome.contextMenus.create({
 	title: 'SNAFU',
 	contexts: ['page'],
@@ -24,148 +26,38 @@ chrome.contextMenus.create({
 	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*', 'https://ghsprod.service-now.com/incident.do?*']
 });
 
-// auto acknowledge incident
+/**
+ * Auto Acknowledge
+ */
 chrome.contextMenus.create({
-	title: 'Acknowledge Incident',
+	title: 'Auto Acknowledge',
 	contexts: ['page'],
+	id: 'autoAcknowledge',
 	parentId: 'snafuParent',
-	id: 'parentAckIncident',
-	documentUrlPatterns: ['https://ghsprod.service-now.com/incident.do?*']
-});
-
-// acknowledge generic incident
-chrome.contextMenus.create({
-	title: 'Generic Acknowledgement',
-	contexts: ['page'],
-	id: 'ackIncident',
-	parentId: 'parentAckIncident',
-	documentUrlPatterns: ['https://ghsprod.service-now.com/incident.do?*'],
+	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*', 'https://ghsprod.service-now.com/incident.do?*'],
 	onclick: actionHandler
 });
 
-// acknowledge incident - call end user
+/**
+ * Auto Closure
+ */
 chrome.contextMenus.create({
-	title: 'Call End User',
+	title: 'Auto Close',
 	contexts: ['page'],
-	id: 'ackCallUser',
-	parentId: 'parentAckIncident',
-	documentUrlPatterns: ['https://ghsprod.service-now.com/incident.do?*'],
-	onclick: actionHandler
-});
-
-// parent for acknowledge tasks
-chrome.contextMenus.create({
-	title: 'Acknowledge Tasks',
-	contexts: ['page'],
+	id: 'autoClosure',
 	parentId: 'snafuParent',
-	id: 'parentAckTask',
-	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*']
-});
-
-chrome.contextMenus.create({
-	title: 'Generic Task',
-	contexts: ['page'],
-	id: 'ackTask',
-	parentId: 'parentAckTask',
-	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
+	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*', 'https://ghsprod.service-now.com/incident.do?*'],
 	onclick: actionHandler
 });
 
+/**
+ * Close Hot Swap Task
+ */
 chrome.contextMenus.create({
-	title: 'Equipment Move',
-	contexts: ['page'],
-	id: 'ackMove',
-	parentId: 'parentAckTask',
-	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
-	onclick: actionHandler
-});
-
-chrome.contextMenus.create({
-	title: 'Equipment Removal',
-	contexts: ['page'],
-	id: 'ackRemoval',
-	parentId: 'parentAckTask',
-	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
-	onclick: actionHandler
-});
-
-chrome.contextMenus.create({
-	title: 'Hot Swap',
-	contexts: ['page'],
-	id: 'ackHotSwap',
-	parentId: 'parentAckTask',
-	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
-	onclick: actionHandler
-});
-
-chrome.contextMenus.create({
-	title: 'Installation',
-	contexts: ['page'],
-	id: 'ackInstall',
-	parentId: 'parentAckTask',
-	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
-	onclick: actionHandler
-});
-
-chrome.contextMenus.create({
-	title: 'Quarantine',
-	contexts: ['page'],
-	id: 'ackQuarantine',
-	parentId: 'parentAckTask',
-	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
-	onclick: actionHandler
-});
-
-chrome.contextMenus.create({
-	title: 'Reclaim',
-	contexts: ['page'],
-	id: 'ackReclaim',
-	parentId: 'parentAckTask',
-	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
-	onclick: actionHandler
-});
-
-chrome.contextMenus.create({
-	title: 'Reimage Only',
-	contexts: ['page'],
-	id: 'ackReimage',
-	parentId: 'parentAckTask',
-	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
-	onclick: actionHandler
-});
-
-// closure tasks
-chrome.contextMenus.create({
-	title: 'Close Tasks',
-	contexts: ['page'],
-	id: 'parentCloseTask',
-	parentId: 'snafuParent',
-	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*']
-});
-
-chrome.contextMenus.create({
-	title: 'Equipment Move',
-	contexts: ['page'],
-	id: 'closeMove',
-	parentId: 'parentCloseTask',
-	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
-	onclick: actionHandler
-});
-
-chrome.contextMenus.create({
-	title: 'Equipment Removal',
-	contexts: ['page'],
-	id: 'closeRemoval',
-	parentId: 'parentCloseTask',
-	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
-	onclick: actionHandler
-});
-
-chrome.contextMenus.create({
-	title: 'Hot Swap',
+	title: 'Close Hot Swap Task',
 	contexts: ['page'],
 	id: 'closeHotSwapParent',
-	parentId: 'parentCloseTask',
+	parentId: 'snafuParent',
 	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*']
 });
 
@@ -187,20 +79,14 @@ chrome.contextMenus.create({
 	onclick: actionHandler
 });
 
+/**
+ * Close Quarantine Task
+ */
 chrome.contextMenus.create({
-	title: 'Installation',
-	contexts: ['page'],
-	id: 'closeInstall',
-	parentId: 'parentCloseTask',
-	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
-	onclick: actionHandler
-});
-
-chrome.contextMenus.create({
-	title: 'Quarantine',
+	title: 'Close Quarantine Task',
 	contexts: ['page'],
 	id: 'closeQuarantineParent',
-	parentId: 'parentCloseTask',
+	parentId: 'snafuParent',
 	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*']
 });
 
@@ -231,41 +117,11 @@ chrome.contextMenus.create({
 	onclick: actionHandler
 });
 
-chrome.contextMenus.create({
-	title: 'Reclaim',
-	contexts: ['page'],
-	id: 'closeReclaimParent',
-	parentId: 'parentCloseTask',
-	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*']
-});
+chrome.contextMenus.create({type: 'separator', parentId: 'snafuParent'});
 
-chrome.contextMenus.create({
-	title: 'Hot Swap Reclaim',
-	contexts: ['page'],
-	id: 'closeReclaimHotSwap',
-	parentId: 'closeReclaimParent',
-	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
-	onclick: actionHandler
-});
-
-chrome.contextMenus.create({
-	title: 'Reimage Only Reclaim',
-	contexts: ['page'],
-	id: 'closeReclaimReimage',
-	parentId: 'closeReclaimParent',
-	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
-	onclick: actionHandler
-});
-
-chrome.contextMenus.create({
-	title: 'Reimage Only Build',
-	contexts: ['page'],
-	id: 'closeReimage',
-	parentId: 'parentCloseTask',
-	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
-	onclick: actionHandler
-});
-
+/**
+ * Ticket Assignments
+ */
 chrome.contextMenus.create({
 	title: 'Assignments',
 	contexts: ['page'],
@@ -337,12 +193,8 @@ chrome.contextMenus.create({
 	parentId: 'assignParent'
 });
 
-chrome.contextMenus.create({type: 'separator', parentId: 'snafuParent'});
-
 /**
- * ****************************************
  * Options Parent
- * ****************************************
  */
 chrome.contextMenus.create({
 	title: 'Options',
@@ -399,14 +251,7 @@ chrome.contextMenus.create({
 	parentId: 'optionsParent'
 });
 
-chrome.contextMenus.create({
-	title: 'Monitor Group',
-	contexts: ['page'],
-	id: 'monitorGroupParent',
-	parentId: 'optionsParent'
-});
-
-var toggleOptions = ['closePopup', 'keepNotes', 'sendEnter', 'monitorGroup', 'debug'];
+var toggleOptions = ['closePopup', 'keepNotes', 'sendEnter', 'debug'];
 var objToggle = {'enable': 'Enabled', 'disable': 'Disabled'};
 
 for (var i = 0; i < toggleOptions.length; i++) {
@@ -444,9 +289,7 @@ chrome.contextMenus.create({
 });
 
 /**
- * *****************************************
  * Help Page
- * *****************************************
  */
 chrome.contextMenus.create({
 	title: 'Help',
@@ -495,10 +338,6 @@ chrome.storage.onChanged.addListener(function(changes, area) {
 			// set the debug radio
 			chrome.contextMenus.update('debug-enable', {checked: (changes.debug.newValue === true) ? true : false});
 			chrome.contextMenus.update('debug-disable', {checked: (changes.debug.newValue === false) ? true : false});
-		} else if ('monitorGroup' in changes) {
-			// set the monitor group radio
-			chrome.contextMenus.update('monitorGroup-enable', {checked: (changes.monitorGroup.newValue === true) ? true : false});
-			chrome.contextMenus.update('monitorGroup-disable', {checked: (changes.monitorGroup.newValue === false) ? true : false});
 		} else if ('sendEnter' in changes) {
 			// set the send on enter radio
 			chrome.contextMenus.update('sendEnter-enable', {checked: (changes.sendEnter.newValue === true) ? true : false});
@@ -632,7 +471,7 @@ function handleResponse(response) {
  * @return	{Void}
  */
 function updateOptionMenus() {
-	chrome.storage.sync.get(['debug', 'autoFinish', 'closePopup', 'sendEnter', 'keepNotes', 'monitorGroup', 'userId', 'userName', 'userEmail', 'fullName', 'groupName', 'groupId'], function(items) {
+	chrome.storage.sync.get(['debug', 'autoFinish', 'closePopup', 'sendEnter', 'keepNotes', 'userId', 'userName', 'userEmail', 'fullName', 'groupName', 'groupId'], function(items) {
 		if (chrome.runtime.lastError) {
 			console.error('SNAFU User Sync Error: %s', chrome.runtime.lastError.message);
 		} else {
@@ -656,10 +495,6 @@ function updateOptionMenus() {
 			// set the debug radio
 			chrome.contextMenus.update('debug-enable', {checked: (items.debug === true) ? true : false});
 			chrome.contextMenus.update('debug-disable', {checked: (items.debug === false) ? true : false});
-
-			// set the monitor group radio
-			chrome.contextMenus.update('monitorGroup-enable', {checked: (items.monitorGroup === true) ? true : false});
-			chrome.contextMenus.update('monitorGroup-disable', {checked: (items.monitorGroup === false) ? true : false});
 
 			// set the send on enter radio
 			chrome.contextMenus.update('sendEnter-enable', {checked: (items.sendEnter === true) ? true : false});

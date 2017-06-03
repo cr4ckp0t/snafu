@@ -84,10 +84,7 @@ chrome.runtime.onStartup.addListener(function() {
 		'closePopup',
 		'sendEnter',
 		'keepNotes',
-		'monitorGroup',
-		'assignGroup',
-		'monitorInterval',
-		'monitorIcon'
+		'closeAlerts'
 	], function(items) {
 		if (chrome.runtime.lastError) {
 			console.error('SNAFU: Sync Get Error: %s', chrome.runtime.lastError.message);
@@ -100,10 +97,7 @@ chrome.runtime.onStartup.addListener(function() {
 			if (isVarEmpty(items.closePopup) === true) settingsToCreate['closePopup'] = false;
 			if (isVarEmpty(items.sendEnter) === true) settingsToCreate['sendEnter'] = true;
 			if (isVarEmpty(items.keepNotes) === true) settingsToCreate['keepNotes'] = false;
-			if (isVarEmpty(items.monitorGroup) === true) settingsToCreate['monitorGroup'] = false;
-			if (isVarEmpty(items.assignGroup) === true) settingsToCreate['assignGroup'] = '7d8ea2206fcaf60449bfd4a21c3ee406';	// desktop support
-			if (isVarEmpty(items.monitorInterval) === true) settingsToCreate['monitorInterval'] = 3;
-			if (isVarEmpty(items.monitorIcon) === true) settingsToCreate['monitorIcon'] = true;
+			if (isVarEmpty(items.closeAlerts) === true) settingsToCreate['closeAlerts'] = true;
 			if (isVarEmpty(items.canned) === true) {
 				settingsToCreate['canned'] = {
 					'callingUser': 'Calling {INC_CUST_FNAME} at {INC_CUR_PHONE}.',

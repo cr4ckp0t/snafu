@@ -193,7 +193,6 @@ var snafuAutoTickets = {
 
 // listen for triggers on the custom event for passing text
 document.addEventListener('SNAFU_Inject', function(snafuInject) {
-
 	// query for the user informatoin
 	if (snafuInject.detail.type === 'userQuery') {
 		var snafuAssignedTo = g_form.getReference('assigned_to');
@@ -253,29 +252,150 @@ document.addEventListener('SNAFU_Inject', function(snafuInject) {
 		snafuInfoMessage(snafuSprintf('Updating page in %s seconds.  Please wait...', [snafuInject.detail.finishDelay]));
 		setTimeout(function() { g_form.submit(); }, snafuInject.detail.finishDelay * 1000);
 
-	// auto acknowledge
-	} else if (snafuInject.detail.type === 'autoAcknowledge') {
+	// auto ticket detection
+	} else if (snafuInject.detail.type === 'autoAcknowledge' || snafuInject.detail.type === 'autoClosure') {
 		var snafuTicketType = snafuGetTicketType();
 		if (snafuTicketType === false) {
 			snafuErrorMessage('No task or incident detected.');
 		} else {
 			if (snafuTicketType in snafuAutoTickets) {
 				var snafuTicket = snafuAutoTickets[snafuTicketType];
-				
-				// set the field with value
-				if (snafuIsVarEmpty(snafuTicket.field) === false && snafuIsVarEmpty(snafuTicket.ack.value) === false) {
-					snafuSetValue(snafuTicket.field, snafuTicket.ack.value);
-					snafuFlash(snafuTicket.field);
+				var snafuTicketAction = (snafuInject.detail.type === 'autoAcknowledge') ? snafuTicket.ack : snafuTicket.close;
+				console.info(snafuTicketAction);
+				console.info(snafuInject.detail.type);
+				if (snafuIsVarEmpty(snafuTicketAction) === true) {
+					snafuErrorMessage(snafuSprintf('Unable to complete action "%s" on this ticket type (%s).', [snafuInject.detail.type, snafuTicketType]));
+				} else {
+					// set the field with value
+					if (snafuIsVarEmpty(snafuTicket.field) === false && snafuIsVarEmpty(snafuTicketAction.value) === false) {
+						snafuSetValue(snafuTicket.field, snafuTicketAction.value);
+						snafuFlash(snafuTicket.field);
+					}
+
+					// set the work notes
+					if (snafuIsVarEmpty(snafuTicketAction.script) === false) {
+						snafuSetValue('work_notes', snafuTicketAction.script);
+						snafuFlash('work_notes');
+					}
+
+					// if a task, set root cause ci and due date
+					if (snafuTicket.field === 'state') {
+						var snafuDueDate = snafuGetDueDate();
+
+						// due date
+						if (g_form.getValue('due_date') !== snafuDueDate) {
+							snafuSetValue('due_date', snafuDueDate);
+							snafuFlash('due_date');
+						}
+
+						// root cause ci
+						// desktop services value is 5a8d6816a1cf38003a42245d1035d56e
+						if (g_form.getValue('cmdb_ci') !== '5a8d6816a1cf38003a42245d1035d56e') {
+							snafuSetDisplayValue('cmdb_ci', '5a8d6816a1cf38003a42245d1035d56e', 'Desktop Services');
+							snafuFlash('cmdb_ci');
+						}
+					}
+
+					// autofinish
+					switch (snafuInject.detail.autoFinish) {
+						// save (stay on ticket's page)
+						case 'save':
+							// not going to let incidents be autosaved
+							if (snafuTicket.field === 'state' || (snafuTicket.field === 'incident_state' && snafuTicketAction.value !== '6')) {
+								// delay 1.5 seconds
+								setTimeout(function() { g_form.save(); }, snafuInject.detail.finishDelay * 1000);
+							}
+							break;
+						
+						// update (go back to last page)
+						case 'update':
+							// not going to let incident be autoupdated
+							if (snafuTicket.field === 'state' || (snafuTicket.field === 'incident_state' && snafuTicketAction.value !== '6')) {
+								// delay 1.5 seconds
+								setTimeout(function() { g_form.submit(); }, snafuInject.detail.finishDelay * 1000);
+							}
+							break;
+
+						// auto (save all updates except closures, which are updated. incidents are never automatically resolved)
+						case 'auto':
+							// if a closure then update, otherwise save
+							if (snafuTicket.field === 'state' && (snafuTicketAction.value === '3' || snafuTicketAction.value === '4')) {
+								// update
+								setTimeout(function() { g_form.submit(); }, snafuInject.detail.finishDelay * 1000);
+							} else if (snafuTicket.field === 'state' || (snafuTicket.field === 'incident_state' && snafuTicketAction.value !== '6')) {
+								setTimeout(function() { g_form.save(); }, snafuInject.detail.finishDelay * 1000);
+							}
+							break;
+						
+						// neither
+						case 'none':
+						default:
+							break;
+					}
+				}					
+			} else {
+				snafuErrorMessage('Unknown ticket type detected.');
+			}
+		}
+
+	// handle everything else
+	} else {
+		// make sure ticket is assigned
+		if (g_form.getReference('assigned_to').currentRow === -1) {
+			snafuErrorMessage('Unable to send update to unassigned ticket.  Please assign it to yourself and try again.');
+		} else {
+			var snafuTicketType = snafuGetTicketType();
+			var snafuType = snafuInject.detail.type;
+			var snafuField = snafuInject.detail.field;
+			var snafuValue = snafuInject.detail.value;
+			var snafuWorkNotes = (snafuIsVarEmpty(snafuInject.detail.workNotes) === false) ? snafuReplaceWildcards(snafuInject.detail.workNotes) : null;
+			var snafuCustNotes = (snafuIsVarEmpty(snafuInject.detail.custNotes) === false) ? snafuReplaceWildcards(snafuInject.detail.custNotes) : null;
+
+			if (snafuType.indexOf('closeQuarantine') !== -1 && snafuTicketType !== 'rhs_restock') {
+				snafuErrorMessage('Open ticket is not for a quarantined asset');
+			} else if (snafuType.indexOf('closeHotSwap') !== -1 && snafuTicketType !== 'rhs_build') {
+				snafuErrorMessage('Open ticket is not for a Hot Swap build.');
+			} else {
+
+				// set field with value
+				if (snafuIsVarEmpty(snafuField) === false && snafuIsVarEmpty(snafuValue) === false) {
+					snafuSetValue(snafuField, snafuValue);
+					snafuFlash(snafuField)
 				}
 
-				// set the work notes
-				if (snafuIsVarEmpty(snafuTicket.ack) === false) {
-					snafuSetValue('work_notes', snafuTicket.ack.script);
+				// customer notes (comments)
+				if (snafuIsVarEmpty(snafuCustNotes) === false) {
+					snafuSetValue('comments', snafuCustNotes);
+					snafuFlash('comments');
+				}
+
+				// work notes
+				if (snafuIsVarEmpty(snafuWorkNotes) === false) {
+					snafuSetValue('work_notes', snafuWorkNotes);
 					snafuFlash('work_notes');
 				}
 
-				// if a task, set root cause ci and due date
-				if (snafuTicket.field === 'state') {
+				// set the resolve message if it is a resolved code (incident only)
+				if (snafuField === 'incident_state' && snafuValue === '6') {
+					snafuSetValue('comments', snafuReplaceWildcards(snafuRslvComments));
+					snafuFlash('comments');
+
+					// set to Problem Resolved
+					snafuSetValue('close_code', 'Problem Resolved');
+					snafuFlash('close_code');
+
+					// spoke to customer
+					snafuSetValue('u_customer_communication', 'Spoke to Customer');
+					snafuFlash('u_customer_communication');
+
+					if (snafuIsVarEmpty(snafuWorkNotes) === false) {
+						snafuSetValue('close_notes', snafuWorkNotes);
+						snafuFlash('close_notes');
+					}
+				}
+
+				// change the root cause ci and due date for tasks
+				if (snafuField === 'state') {
 					var snafuDueDate = snafuGetDueDate();
 
 					// due date
@@ -290,6 +410,13 @@ document.addEventListener('SNAFU_Inject', function(snafuInject) {
 						snafuSetDisplayValue('cmdb_ci', '5a8d6816a1cf38003a42245d1035d56e', 'Desktop Services');
 						snafuFlash('cmdb_ci');
 					}
+
+					// set quarantine select, if needed
+					if (snafuType.indexOf('closeQuarantine') !== -1) {
+						snafuSetValue('rhs_restock_status', snafuType.replace('closeQuarantine', '').toLowerCase());
+					} else if (snafuType.indexOf('closeHotSwap') !== -1) {
+						snafuSetValue('rhs_replacement_type', snafuType.replace('closeHotSwap', '').toLowerCase());
+					}
 				}
 
 				// autofinish
@@ -297,7 +424,7 @@ document.addEventListener('SNAFU_Inject', function(snafuInject) {
 					// save (stay on ticket's page)
 					case 'save':
 						// not going to let incidents be autosaved
-						if (snafuTicket.field === 'state' || (snafuTicket.field === 'incident_state' && snafuTicket.ack.value !== '6')) {
+						if (snafuField === 'state' || (snafuField === 'incident_state' && snafuValue !== '6')) {
 							// delay 1.5 seconds
 							setTimeout(function() { g_form.save(); }, snafuInject.detail.finishDelay * 1000);
 						}
@@ -306,7 +433,7 @@ document.addEventListener('SNAFU_Inject', function(snafuInject) {
 					// update (go back to last page)
 					case 'update':
 						// not going to let incident be autoupdated
-						if (snafuTicket.field === 'state' || (snafuTicket.field === 'incident_state' && snafuTicket.ack.value !== '6')) {
+						if (snafuField === 'state' || (snafuField === 'incident_state' && snafuValue !== '6')) {
 							// delay 1.5 seconds
 							setTimeout(function() { g_form.submit(); }, snafuInject.detail.finishDelay * 1000);
 						}
@@ -315,10 +442,10 @@ document.addEventListener('SNAFU_Inject', function(snafuInject) {
 					// auto (save all updates except closures, which are updated. incidents are never automatically resolved)
 					case 'auto':
 						// if a closure then update, otherwise save
-						if (snafuTicket.field === 'state' && (snafuTicket.ack.value === '3' || snafuTicket.ack.value === '4')) {
+						if (snafuField === 'state' && (snafuValue === '3' || snafuValue === '4')) {
 							// update
 							setTimeout(function() { g_form.submit(); }, snafuInject.detail.finishDelay * 1000);
-						} else if (snafuTicket.field === 'state' || (snafuTicket.field === 'incident_state' && snafuTicket.ack.value !== '6')) {
+						} else if (snafuField === 'state' || (snafuField === 'incident_state' && snafuValue !== '6')) {
 							setTimeout(function() { g_form.save(); }, snafuInject.detail.finishDelay * 1000);
 						}
 						break;
@@ -328,133 +455,6 @@ document.addEventListener('SNAFU_Inject', function(snafuInject) {
 					default:
 						break;
 				}
-			} else {
-				snafuErrorMessage('Task name not found.');
-			}
-		}
-	
-	// auto closure
-	} else if (snafuInject.detail.type === 'autoClosure') {
-		var snafuTicketType = snafuGetTicketType();
-		if (snafuTicketType === false) {
-			snafuErrorMessage('No task or incident detected.');
-		} else {
-			if (snafuTicketType in snafuAutoTickets) {
-				var snafuTicket = snafuAutoTickets[snafuTicketType];
-			} else {
-				snafuErrorMessage('Task name not found.');
-			}
-		}
-
-	// handle everything else
-	} else {
-		// make sure ticket is assigned
-		if (g_form.getReference('assigned_to').currentRow === -1) {
-			snafuErrorMessage('Unable to send update to unassigned ticket.  Please assign it to yourself and try again.');
-		} else {
-			var snafuType = snafuInject.detail.type;
-			var snafuField = snafuInject.detail.field;
-			var snafuValue = snafuInject.detail.value;
-			var snafuWorkNotes = (snafuIsVarEmpty(snafuInject.detail.workNotes) === false) ? snafuReplaceWildcards(snafuInject.detail.workNotes) : null;
-			var snafuCustNotes = (snafuIsVarEmpty(snafuInject.detail.custNotes) === false) ? snafuReplaceWildcards(snafuInject.detail.custNotes) : null;
-
-			// set field with value
-			if (snafuIsVarEmpty(snafuField) === false && snafuIsVarEmpty(snafuValue) === false) {
-				snafuSetValue(snafuField, snafuValue);
-				snafuFlash(snafuField)
-			}
-
-			// customer notes (comments)
-			if (snafuIsVarEmpty(snafuCustNotes) === false) {
-				snafuSetValue('comments', snafuCustNotes);
-				snafuFlash('comments');
-			}
-
-			// work notes
-			if (snafuIsVarEmpty(snafuWorkNotes) === false) {
-				snafuSetValue('work_notes', snafuWorkNotes);
-				snafuFlash('work_notes');
-			}
-
-			// set the resolve message if it is a resolved code (incident only)
-			if (snafuField === 'incident_state' && snafuValue === '6') {
-				snafuSetValue('comments', snafuReplaceWildcards(snafuRslvComments));
-				snafuFlash('comments');
-
-				// set to Problem Resolved
-				snafuSetValue('close_code', 'Problem Resolved');
-				snafuFlash('close_code');
-
-				// spoke to customer
-				snafuSetValue('u_customer_communication', 'Spoke to Customer');
-				snafuFlash('u_customer_communication');
-
-				if (snafuIsVarEmpty(snafuWorkNotes) === false) {
-					snafuSetValue('close_notes', snafuWorkNotes);
-					snafuFlash('close_notes');
-				}
-			}
-
-			// change the root cause ci and due date for tasks
-			if (snafuField === 'state') {
-				var snafuDueDate = snafuGetDueDate();
-
-				// due date
-				if (g_form.getValue('due_date') !== snafuDueDate) {
-					snafuSetValue('due_date', snafuDueDate);
-					snafuFlash('due_date');
-				}
-
-				// root cause ci
-				// desktop services value is 5a8d6816a1cf38003a42245d1035d56e
-				if (g_form.getValue('cmdb_ci') !== '5a8d6816a1cf38003a42245d1035d56e') {
-					snafuSetDisplayValue('cmdb_ci', '5a8d6816a1cf38003a42245d1035d56e', 'Desktop Services');
-					snafuFlash('cmdb_ci');
-				}
-
-				// set quarantine select, if needed
-				if (snafuType.indexOf('closeQuarantine') !== -1) {
-					snafuSetValue('rhs_restock_status', snafuType.replace('closeQuarantine', '').toLowerCase());
-				} else if (snafuType.indexOf('closeHotSwap') !== -1) {
-					snafuSetValue('rhs_replacement_type', snafuType.replace('closeHotSwap', '').toLowerCase());
-				}
-			}
-
-			// autofinish
-			switch (snafuInject.detail.autoFinish) {
-				// save (stay on ticket's page)
-				case 'save':
-					// not going to let incidents be autosaved
-					if (snafuField === 'state' || (snafuField === 'incident_state' && snafuValue !== '6')) {
-						// delay 1.5 seconds
-						setTimeout(function() { g_form.save(); }, snafuInject.detail.finishDelay * 1000);
-					}
-					break;
-				
-				// update (go back to last page)
-				case 'update':
-					// not going to let incident be autoupdated
-					if (snafuField === 'state' || (snafuField === 'incident_state' && snafuValue !== '6')) {
-						// delay 1.5 seconds
-						setTimeout(function() { g_form.submit(); }, snafuInject.detail.finishDelay * 1000);
-					}
-					break;
-
-				// auto (save all updates except closures, which are updated. incidents are never automatically resolved)
-				case 'auto':
-					// if a closure then update, otherwise save
-					if (snafuField === 'state' && (snafuValue === '3' || snafuValue === '4')) {
-						// update
-						setTimeout(function() { g_form.submit(); }, snafuInject.detail.finishDelay * 1000);
-					} else if (snafuField === 'state' || (snafuField === 'incident_state' && snafuValue !== '6')) {
-						setTimeout(function() { g_form.save(); }, snafuInject.detail.finishDelay * 1000);
-					}
-					break;
-				
-				// neither
-				case 'none':
-				default:
-					break;
 			}
 		}
 	}

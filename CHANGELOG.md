@@ -11,14 +11,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Keybind to query user info and assign to technician.  Alt+A is default.
 - Notes can now be made persistent until you send the update.
 - Prevent extension from closing ticket when unassigned.
+- Made acknowledgements and closures automatically detect the type of ticket and respond accordingly.
+- Option to automatically close the Epic Hyperspace and BCA device popups.
+
+### Removed
+- Monitor Assignment Group settings.  Will put them back when I decide to write the code.
 
 ### Fixed
 - Send on Enter will be ignored if holding Shift, Ctrl, or Alt.
 - Enable/Disable options will now be set correctly via context menus.
-
-### ToDo
-- Make acknowledgements and closures automatically detect the type of ticket and respond accordingly.
-- Auto acknowledge the Epic Hyperspace and BCA Device popups. (if possible)
 
 ## 1.0.6 [2017-05-24]
 ### Added

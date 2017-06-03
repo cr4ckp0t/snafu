@@ -77,10 +77,7 @@ function saveSettings() {
 		canned: getCannedMessages(),
 		autoFinish: $('#ticketCompletion').val(),
 		finishDelay: $('#finishDelay').val(),
-		monitorGroup: ($('#monitorGroup').val() === 'enable') ? true : false,
-		assignGroup: $('#assignGroup').val(),
-		monitorIcon: ($('#monitorIcon').val() === 'enable') ? true : false,
-		monitorInterval: $('#monitorInterval').val()
+		closeAlerts: ($('#closeAlerts').val() === 'enable') ? true : false
 	}, function() {
 		if (chrome.runtime.lastError) {
 			console.error('SNAFU Sync Set Error: %s', chrome.runtime.lastError.message);
@@ -105,16 +102,13 @@ function loadSettings() {
 		'finishDelay',
 		'sendEnter',
 		'keepNotes',
+		'closeAlerts',
 		'userId',
 		'userName',
 		'userEmail',
 		'fullName',
 		'groupName',
 		'groupId',
-		'monitorGroup',
-		'assignGroup',
-		'monitorInterval',
-		'monitorIcon'
 	], function(items) {
 		if (chrome.runtime.lastError) {
 			console.error('SNAFU Sync Get Error: %s', chrome.runtime.lastError.message);
@@ -168,38 +162,6 @@ function loadSettings() {
 				$('#finishDelay').val(items.finishDelay);
 			}
 
-			// monitor group
-			if (isVarEmpty(items.monitorGroup) === true) {
-				settingsToCreate['monitorGroup'] = false;
-				$('#monitorGroup').val('disable');
-			} else {
-				$('#monitorGroup').val((items.monitorGroup === true) ? 'enable' : 'disable');
-			}
-
-			// assignment group
-			if (isVarEmpty(items.assignGroup) === true) {
-				settingsToCreate['assignGroup'] = '7d8ea2206fcaf60449bfd4a21c3ee406';
-				$('#assignGroup').val('7d8ea2206fcaf60449bfd4a21c3ee406');
-			} else {
-				$('#assignGroup').val(items.assignGroup);
-			}
-
-			// monitor interval
-			if (isVarEmpty(items.monitorInterval) === true) {
-				settingsToCreate['monitorInterval'] = 3;
-				$('#monitorInterval').val(3);
-			} else {
-				$('#monitorInterval').val(items.monitorInterval);
-			}
-
-			// show ticket count on toolbar icon
-			if (isVarEmpty(items.monitorIcon) === true) {
-				settingsToCreate['monitorIcon'] = true;
-				$('#monitorIcon').val('enable');
-			} else {
-				$('#monitorIcon').val((items.monitorIcon === true) ? 'enable' : 'disable');
-			}
-
 			// send on enter
 			if (isVarEmpty(items.sendEnter) === true) {
 				settingsToCreate['sendEnter'] = true;
@@ -214,6 +176,14 @@ function loadSettings() {
 				$('#keepNotes').val('disable');
 			} else {
 				$('#keepNotes').val((items.keepNotes === true) ? 'enable' : 'disable');
+			}
+
+			// close alerts
+			if (isVarEmpty(items.closeAlerts) === true) {
+				settingsToCreate['closeAlerts'] = true;
+				$('#closeAlerts').val('enable');
+			} else {
+				$('#closeAlerts').val((items.closeAlerts === true) ? 'enable' : 'disable');
 			}
 
 			// send the settings to sync storage
