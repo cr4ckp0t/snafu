@@ -84,7 +84,9 @@ chrome.runtime.onStartup.addListener(function() {
 		'closePopup',
 		'sendEnter',
 		'keepNotes',
-		'closeAlerts'
+		'closeAlerts',
+		'buildLog',
+		'builds'
 	], function(items) {
 		if (chrome.runtime.lastError) {
 			console.error('SNAFU: Sync Get Error: %s', chrome.runtime.lastError.message);
@@ -98,6 +100,8 @@ chrome.runtime.onStartup.addListener(function() {
 			if (isVarEmpty(items.sendEnter) === true) settingsToCreate['sendEnter'] = true;
 			if (isVarEmpty(items.keepNotes) === true) settingsToCreate['keepNotes'] = false;
 			if (isVarEmpty(items.closeAlerts) === true) settingsToCreate['closeAlerts'] = true;
+			if (isVarEmpty(items.buildLog) === true) settingsToCreate['buildLog'] = false;
+			if (isVarEmpty(items.builds) === true) settingsToCreate['builds'] = {};
 			if (isVarEmpty(items.canned) === true) {
 				settingsToCreate['canned'] = {
 					'callingUser': 'Calling {INC_CUST_FNAME} at {INC_CUR_PHONE}.',

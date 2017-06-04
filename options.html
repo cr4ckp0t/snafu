@@ -117,6 +117,20 @@
                         </div>
                         <div class="extraInfo">Automatically close the Epic Hyperspace and BCA device alerts that appear in incidents.</div>
                         <br />
+                        <div class="input-group">
+                            <span class="input-group-addon" id="buildLogAddon">Log Builds</span>
+                            <select id="buildLog" class="form-control" aria-describedby="buildLogAddon">
+                                <option value="enable">Enabled</option>
+                                <option value="disable">Disabled</option>
+                            </select>
+                            <span class="input-group-btn">
+                                <button type="button" id="openBuildLog" class="btn btn-primary form-control">
+                                    <span class="glyphicon glyphicon-th-list"></span> Open Log
+                                </button>
+                            </span>
+                        </div>
+                        <div class="extraInfo">Log Hot Swap, Reimage, and Equipment Order builds automatically.</div>
+                        <br />
                         <div class="form-group">
                             <label for="cannedMsgs" class="textareaLabel">Canned Messages</label>
                             <textarea id="cannedMsgs" class="form-control" rows="6" cols="50"></textarea>

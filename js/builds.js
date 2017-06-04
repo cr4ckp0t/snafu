@@ -17,12 +17,22 @@
  **/
 
 $(document).ready(function() {
-	$('#version').html(chrome.app.getDetails().version);
 	$('#versionAbout').html(chrome.app.getDetails().version);
-	$('#openAll').click(function() { $('[id^=collapse]').collapse('show'); });
-	$('#closeAll').click(function() { $('[id^=collapse]').collapse('hide'); });
-	$('#toggleAll').click(function() { $('[id^=collapse]').collapse('toggle'); });
-	$('#openHelp').click(function() { chrome.tabs.create({url: chrome.extension.getURL('help.html')}); });
+	$('[id^=alert]').hide();
 	$('#openOptions').click(function() { chrome.tabs.create({url: chrome.extension.getURL('options.html')}); });
+	$('#openFaq').click(function() { chrome.tabs.create({url: chrome.extension.getURL('faq.html')}); });
+	$('#openHelp').click(function() { chrome.tabs.create({url: chrome.extension.getURL('help.html')}); });
 	$('#closeWindow').click(function() { chrome.tabs.query({active: true, currentWindow: true}, function(tabs) { chrome.tabs.remove(tabs[0].id); }); });
+
+	loadBuilds();
 });
+
+/**
+ * Pulls the builds from the settings and loads them in to the table.
+ * @return	{Void}
+ */
+function loadBuilds() {
+	chrome.storage.sync.get(['debug', 'builds'], function(items) {
+
+	});
+}

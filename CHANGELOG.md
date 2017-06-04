@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+### ToDo
+- Add logging for builds and equipment orders.
+
 ## 1.1.1 [2017-06-03]
 ### Added
 - Equipment moves and removal requests are now auto-detected.

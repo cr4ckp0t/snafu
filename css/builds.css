@@ -16,13 +16,48 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  **/
 
-$(document).ready(function() {
-	$('#version').html(chrome.app.getDetails().version);
-	$('#versionAbout').html(chrome.app.getDetails().version);
-	$('#openAll').click(function() { $('[id^=collapse]').collapse('show'); });
-	$('#closeAll').click(function() { $('[id^=collapse]').collapse('hide'); });
-	$('#toggleAll').click(function() { $('[id^=collapse]').collapse('toggle'); });
-	$('#openHelp').click(function() { chrome.tabs.create({url: chrome.extension.getURL('help.html')}); });
-	$('#openOptions').click(function() { chrome.tabs.create({url: chrome.extension.getURL('options.html')}); });
-	$('#closeWindow').click(function() { chrome.tabs.query({active: true, currentWindow: true}, function(tabs) { chrome.tabs.remove(tabs[0].id); }); });
-});
+ body {
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size: 14px;
+    padding: 5px;
+	padding-top: 40px;
+}
+
+a:link, a:active, a:visited {
+	color: #3eb049;
+	text-decoration: none;
+}
+
+a:hover {
+	color: #3eb049;
+	text-decoration: underline;
+}
+
+div#content {
+	width: 75%;
+	margin: 0 auto;
+}
+
+h1#header {
+	color: #3eb049;
+	font-weight: bold;
+}
+
+h1#header small {
+	font-style: italic;
+}
+
+table#aboutTable td {
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
+td#about-label {
+	text-align: left;
+	font-weight: bold;
+	vertical-align: text-top;
+}
+
+td#about-value {
+	text-align: left;
+}

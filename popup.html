@@ -33,7 +33,6 @@
             <li role="presentation" class="active"><a href="#main" aria-controls="main" role="tab" data-toggle="tab">Main</a></li>
             <li role="presentation"><a href="#equipment" aria-controls="equipment" role="tab" data-toggle="tab">Equipment Orders</a></li>
             <li role="presentation"><a href="#automation" aria-controls="automation" role="tab" data-toggle="tab">Automation</a></li>
-            <li role="presentation"><a href="#timeCalc" aria-controls="timeCalc" role="tab" data-toggle="tab">Time Calculator</a></li>
         </ul>
 
         <!-- Tab Panes -->
@@ -65,7 +64,7 @@
                         <span class="input-group-addon" id="schedApptAddon">Appointment</span>
                         <input type="datetime-local" id="schedAppt" class="form-control" aria-describedby="schedApptAddon" />
                         <span class="input-group-btn">
-                            <button type="button" class="btn btn-primary" id="sendAppointment" class="form-control">
+                            <button type="button" class="btn btn-primary form-control" id="sendAppointment">
                                 <span class="glyphicon glyphicon-calendar"></span> Schedule
                             </button>
                         </span>
@@ -119,6 +118,7 @@
                         <button type="button" class="btn btn-default" id="newIncident" title="Create New Incident"><span class="glyphicon glyphicon-plus"></span></button>
                         <button type="button" class="btn btn-default" id="openFaq" title="Frequently Asked Questions"><span class="glyphicon glyphicon-tasks"></span></button>
                         <button type="button" class="btn btn-default" id="openHelp" title="Help"><span class="glyphicon glyphicon-question-sign"></span></button>
+                        <button type="button" class="btn btn-default" id="openBuildLog" title="Build Log"><span class="glyphicon glyphicon-th-list"></span></button>
                         <button type="button" class="btn btn-warning" id="openOptions" title="Options"><span class="glyphicon glyphicon-cog"></span></button>
                     </span>
                 </div>
@@ -164,6 +164,7 @@
                         <button type="button" class="btn btn-default" id="newIncident2" title="Create New Incident"><span class="glyphicon glyphicon-plus"></span></button>
                         <button type="button" class="btn btn-default" id="openFaq2" title="Frequently Asked Questions"><span class="glyphicon glyphicon-tasks"></span></button>
                         <button type="button" class="btn btn-default" id="openHelp2" title="Help"><span class="glyphicon glyphicon-question-sign"></span></button>
+                        <button type="button" class="btn btn-default" id="openBuildLog2" title="Build Log"><span class="glyphicon glyphicon-th-list"></span></button>
                         <button type="button" class="btn btn-warning" id="openOptions2" title="Options"><span class="glyphicon glyphicon-cog"></span></button>
                     </span>
                 </div>
@@ -200,11 +201,6 @@
                     <button type="button" class="btn btn-primary" id="sendAutoAcknowledge" title="Auto-acknowledge ticket."><span class="glyphicon glyphicon-ok"></span> Acknowledge</button>
                     <button type="button" class="btn btn-danger" id="sendAutoClosure" title="Auto-close ticket."><span class="glyphicon glyphicon-remove"></span> Close</button>
                 </div>
-            </div>
-
-            <!-- Time Calculator Panel -->
-            <div role="tabpanel" class="tab-pane" id="timeCalc">
-
             </div>
         </div>
     </div>

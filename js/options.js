@@ -23,16 +23,12 @@ $(document).ready(function() {
 	$('#versionAbout').html(chrome.app.getDetails().version);
 	$('#openFaq').click(function() { chrome.tabs.create({url: chrome.extension.getURL('faq.html')}); });
 	$('#openHelp').click(function() { chrome.tabs.create({url: chrome.extension.getURL('help.html')}); });
+	$('#openBuildLog').click(function() { chrome.tabs.create({url: chrome.extension.getURL('builds.html')}); });
+	$('#closeWindow').click(function() { chrome.tabs.query({active: true, currentWindow: true}, function(tabs) { chrome.tabs.remove(tabs[0].id); }); });
 
 	$('#reloadData').click(function() { 
 		loadSettings();
 		successMessage('Reloaded settings successsfully.');
-	});
-
-	$('#closeWindow').click(function() {
-		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-			chrome.tabs.remove(tabs[0].id);
-		});
 	});
 
 	// reset user data
@@ -77,7 +73,8 @@ function saveSettings() {
 		canned: getCannedMessages(),
 		autoFinish: $('#ticketCompletion').val(),
 		finishDelay: $('#finishDelay').val(),
-		closeAlerts: ($('#closeAlerts').val() === 'enable') ? true : false
+		closeAlerts: ($('#closeAlerts').val() === 'enable') ? true : false,
+		buildLog: ($('#buildLog').val() === 'enable') ? true : false
 	}, function() {
 		if (chrome.runtime.lastError) {
 			console.error('SNAFU Sync Set Error: %s', chrome.runtime.lastError.message);
@@ -103,6 +100,8 @@ function loadSettings() {
 		'sendEnter',
 		'keepNotes',
 		'closeAlerts',
+		'buildLog',
+		'builds',
 		'userId',
 		'userName',
 		'userEmail',
@@ -186,6 +185,17 @@ function loadSettings() {
 				$('#closeAlerts').val((items.closeAlerts === true) ? 'enable' : 'disable');
 			}
 
+			// build log
+			if (isVarEmpty(items.buildLog) === true) {
+				settingsToCreate['buildLog'] = false;
+				$('#buildLog').val('disable');
+			} else {
+				$('#buildLog').val((items.buildLog === true) ? 'enable' : 'disable');
+			}
+
+			// completed builds
+			if (isVarEmpty(items.builds) === true) settingsToCreate['builds'] = {};
+			
 			// send the settings to sync storage
 			if (isVarEmpty(settingsToCreate) === false) {
 				chrome.storage.sync.set(settingsToCreate, function() {

@@ -289,6 +289,7 @@ $(document).ready(function() {
     $('[id^=openHelp]').click(function() { chrome.tabs.create({url: chrome.extension.getURL('help.html')}); });
     $('[id^=openOptions]').click(function() { chrome.tabs.create({url: chrome.extension.getURL('options.html')}); });
     $('[id^=openFaq]').click(function() { chrome.tabs.create({url: chrome.extension.getURL('faq.html')}); });
+    $('[id^=openBuildLog').click(function() { chrome.tabs.create({url: chrome.extension.getURL('builds.html')}); });
 
     // load the saved notes
     chrome.storage.sync.get(['debug', 'keepNotes'], function(items) {
