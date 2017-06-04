@@ -279,7 +279,7 @@ function getTicketType() {
     if (document.getElementById('incident.incident_state') !== null) {
         // it's an incident
         return 'incident';
-    } else if (document.getElementById('sc_task.state') !== null) {
+    } else if (document.getElementById('sc_task.state') !== null || document.getElementById('u_absolute_install.state') !== null) {
         // it's a task
         return 'task';
     } else {

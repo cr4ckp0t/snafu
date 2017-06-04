@@ -4,11 +4,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
-### ToDo
-- Detect Equipment Move/Remove tasks based on their auto-generated short description.
+## 1.1.1 [2017-06-03]
+### Added
+- Equipment moves and removal requests are now auto-detected.
+- SPR workflow tasks are now auto-dectected.
+- Install Absolute tickets are now auto-detected.
+- Loaner workflow tasks are now auto-detected.
 
-## 1.1.0 (2017-06-02)
+### Fixed
+- Auto-detected scripts will now have their wildcards replaced.
+
+## 1.1.0 [2017-06-02]
 ### Added
 - Scheduled option to put a ticket on hold with an appointment message.
 - Keybinds to save and update the page.  Alt+S (Save) and Alt+U (Update) are the default keys.

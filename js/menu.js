@@ -23,7 +23,7 @@ chrome.contextMenus.create({
 	title: 'SNAFU',
 	contexts: ['page'],
 	id: 'snafuParent',
-	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*', 'https://ghsprod.service-now.com/incident.do?*']
+	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*', 'https://ghsprod.service-now.com/incident.do?*', 'https://ghsprod.service-now.com/u_absolute_install.do?*']
 });
 
 /**
@@ -34,7 +34,7 @@ chrome.contextMenus.create({
 	contexts: ['page'],
 	id: 'autoAcknowledge',
 	parentId: 'snafuParent',
-	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*', 'https://ghsprod.service-now.com/incident.do?*'],
+	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*', 'https://ghsprod.service-now.com/incident.do?*', 'https://ghsprod.service-now.com/u_absolute_install.do?*'],
 	onclick: actionHandler
 });
 
@@ -46,7 +46,7 @@ chrome.contextMenus.create({
 	contexts: ['page'],
 	id: 'autoClosure',
 	parentId: 'snafuParent',
-	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*', 'https://ghsprod.service-now.com/incident.do?*'],
+	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*', 'https://ghsprod.service-now.com/incident.do?*', 'https://ghsprod.service-now.com/u_absolute_install.do?*'],
 	onclick: actionHandler
 });
 
@@ -267,16 +267,6 @@ for (var i = 0; i < toggleOptions.length; i++) {
 		});
 	}
 }
-
-chrome.contextMenus.create({type: 'separator', parentId: 'monitorGroupParent'});
-
-chrome.contextMenus.create({
-	title: 'Force Refresh',
-	contexts: ['page'],
-	id: 'monitorForceRefresh',
-	parentId: 'monitorGroupParent',
-	onclick: function() { alert('Coming Soon!'); }
-});
 
 chrome.contextMenus.create({type: 'separator', parentId: 'optionsParent'});
 

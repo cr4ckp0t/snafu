@@ -20,11 +20,10 @@
  *  We have to use ServiceNow's g_form JavaScript object in order to
  *  access fields and inputs correctly.  Chrome extensions do not
  *  access to page variables, so we have to inject code and use Custom Events
- *  to pass data between the extension and page.
+ *  to pass data between the extension and the page.
  **/
 
 var snafuRslvComments = "My name is {TECH_NAME} and I was the technician that assisted you with {TICKET}. Thank you for the opportunity to provide you with service today with your {INC_TYPE}. If for any reason, your issue does not appear to be resolved please contact the Service Desk at (864) 455-8000.";
-
 var snafuAutoTickets = {
 	// misc
 	'generic_task': {
@@ -33,7 +32,7 @@ var snafuAutoTickets = {
 			'script': 'Acknowledging task.',
 			'value': '2'
 		},
-		'close': null,
+		'close': null
 	},
 	'generic_incident': {
 		'field': 'incident_state',
@@ -41,7 +40,50 @@ var snafuAutoTickets = {
 			'script': 'Acknowledging incident.',
 			'value': '3'
 		},
-		'close': null,
+		'close': null
+	},
+	'general_request': {
+		'field': 'state',
+		'ack': {
+			'script': 'Acknowledging general request task.',
+			'value': '2'
+		},
+		'close': null
+	},
+
+	// equipment move/remove
+	'equip_removal': {
+		'field': 'state',
+		'ack': {
+			'script': 'Acknowledging equipment removal.',
+			'value': '2'
+		},
+		'close': {
+			'script': 'Equipment removed, per the customer\'s request.',
+			'value': '3'
+		}
+	},
+	'equip_disconnect': {
+		'field': 'state',
+		'ack': {
+			'script': 'Acknowledging equipment disconnect task.',
+			'value': '2'
+		},
+		'close': {
+			'script': 'Equipment disconnected, per the customer\'s request.',
+			'value': '3'
+		}
+	},
+	'equip_reconnect': {
+		'field': 'state',
+		'ack': {
+			'script': 'Acknowledging equipment reconnect task.',
+			'value': '2'
+		},
+		'close': {
+			'script': 'Equipment reconnected and tested, per the customer\'s request.',
+			'value': '3'
+		}
 	},
 
 	// reimage only workflow
@@ -177,6 +219,35 @@ var snafuAutoTickets = {
 		}
 	},
 
+	// spr workflow
+	'spr_configure': {
+		'field': 'state',
+		'ack': {
+			'script': 'Acknowledging SPR configuration task.',
+			'value': '2'
+		},
+		'close': null
+	},
+	'spr_delivery': {
+		'field': 'state',
+		'ack': {
+			'script': 'Acknowledging SPR delivery task.',
+			'value': '2'
+		},
+		'close': null
+	},
+	'spr_install': {
+		'field': 'state',
+		'ack': {
+			'script': 'Acknowledging SPR install task.',
+			'value': '2'
+		},
+		'close': {
+			'script': 'Completed SPR installation.',
+			'value': '3'
+		}
+	},
+
 	// equipment pull workflow
 	'equip_pull': {
 		'field': 'state',
@@ -186,6 +257,48 @@ var snafuAutoTickets = {
 		},
 		'close': {
 			'script': 'Equipment pulled for delivery.',
+			'value': '3'
+		}
+	},
+
+	// loaner workflow
+	'loaner_build': {
+		'field': 'state',
+		'ack': {
+			'script': 'Acknowledging loaner request build.',
+			'value': '2'
+		},
+		'close': null
+	},
+	'loaner_deploy': {
+		'field': 'state',
+		'ack': {
+			'script': 'Acknowledging loaner deployment task.',
+			'value': '2'
+		},
+		'close': null
+	},
+	'loaner_reclaim': {
+		'field': 'state',
+		'ack': {
+			'script': 'Acknowledging loaner reclaim task.',
+			'value': '2'
+		},
+		'close': {
+			'script': 'Loaner device reclaimed.',
+			'value': '3'
+		}
+	},
+
+	// install absolute task
+	'absolute_install': {
+		'field': 'state',
+		'ack': {
+			'script': 'Acknowledging Absolute install request.',
+			'value': '2'
+		},
+		'close': {
+			'script': 'Absolute installation completed on {ABS_MACHINE}.',
 			'value': '3'
 		}
 	}
@@ -274,7 +387,7 @@ document.addEventListener('SNAFU_Inject', function(snafuInject) {
 
 					// set the work notes
 					if (snafuIsVarEmpty(snafuTicketAction.script) === false) {
-						snafuSetValue('work_notes', snafuTicketAction.script);
+						snafuSetValue('work_notes', snafuReplaceWildcards(snafuTicketAction.script));
 						snafuFlash('work_notes');
 					}
 
@@ -290,7 +403,7 @@ document.addEventListener('SNAFU_Inject', function(snafuInject) {
 
 						// root cause ci
 						// desktop services value is 5a8d6816a1cf38003a42245d1035d56e
-						if (g_form.getValue('cmdb_ci') !== '5a8d6816a1cf38003a42245d1035d56e') {
+						if (snafuTicketType !== 'absolute_install' && g_form.getValue('cmdb_ci') !== '5a8d6816a1cf38003a42245d1035d56e') {
 							snafuSetDisplayValue('cmdb_ci', '5a8d6816a1cf38003a42245d1035d56e', 'Desktop Services');
 							snafuFlash('cmdb_ci');
 						}
@@ -527,7 +640,10 @@ function snafuReplaceWildcards(strIn) {
 		"{REPLACE_CUSTOMER}": "snafuUcwords(g_form.getReference('rhs_user').name) || 'UNKNOWN';",							// user requiring the hot swap
 		"{REPLACE_HOSTNAME}": "g_form.getReference('rhs_replacement_computer').name || 'UNKNOWN';",							// replacement computer hostname
 		"{REPLACE_MODEL}": "snafuGetComputerModel(g_form.getReference('rhs_replacement_computer').model_id) || 'UNKNOWN';",	// replacement computer model
-		"{REPLACE_SERIAL}": "g_form.getReference('rhs_replacement_computer').serial_number || 'UNKNOWN';"					// replacement computer serial number
+		"{REPLACE_SERIAL}": "g_form.getReference('rhs_replacement_computer').serial_number || 'UNKNOWN';",					// replacement computer serial number
+
+		// miscellaneous
+		"{ABS_MACHINE}": "g_form.getReference('cmdb_ci').name || 'UNKNOWN';"												// absolute install device											
 	};
 	
 	// use regular expressions to find matches and send them for processing
@@ -639,8 +755,20 @@ function snafuGetTicketType() {
         // it's an incident
         return 'generic_incident';
     } else if (document.getElementById('sc_task.state') !== null) {
-        // it's a task
-        return (g_form.getValue('u_task_name') !== '') ? g_form.getValue('u_task_name') : 'generic_task';
+        // it's a trap! (task)
+		var snafuShortDesc = g_form.getValue('short_description');
+		if (snafuShortDesc.indexOf('Equipment Move/Remove') !== -1) {
+			return 'equip_removal';
+		} else if (snafuShortDesc.indexOf('Disconnect System') !== -1) {
+			return 'equip_disconnect';
+		} else if (snafuShortDesc.indexOf('Reconnect System') !== -1) {
+			return 'equip_reconnect';
+		} else {
+        	var snafuTaskName = g_form.getValue('u_task_name').toLowerCase();
+			return (snafuTaskName in snafuAutoTickets) ? snafuTaskName : 'generic_task';
+		}
+	} else if (document.getElementById('u_absolute_install.state') !== null) {
+		return 'absolute_install';
     } else {
         // it's neither
         return false;
