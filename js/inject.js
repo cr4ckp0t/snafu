@@ -22,7 +22,6 @@
  *  access to page variables, so we have to inject code and use Custom Events
  *  to pass data between the extension and the page.
  **/
-
 var snafuRslvComments = "My name is {TECH_NAME} and I was the technician that assisted you with {TICKET}. Thank you for the opportunity to provide you with service today with your {INC_TYPE}. If for any reason, your issue does not appear to be resolved please contact the Service Desk at (864) 455-8000.";
 var snafuAutoTickets = {
 	// misc
@@ -626,7 +625,7 @@ function snafuReplaceWildcards(strIn) {
 		"{DUE_DATE}": "g_form.getValue('due_date') || 'UNKNOWN';",															// due date
 		"{REQUEST_ITEM}": "g_form.getValue('request_item') || 'UNKNOWN';",													// ritm number
 		"{REQUESTED_BY}": "snafuUcwords(g_form.getReference('requested_for').name) || 'UNKNOWN';",							// task requested by
-		"{REQUESTED_FOR}": "snafuUcwords(g_form.getReference('u_requested_for').name) || 'UNKNOWN';",						// task requested for
+		"{REQUESTED_FOR}": "snafuUcwords(g_form.getReference('request_item.u_requested_for').name) || 'UNKNOWN';",			// task requested for
 		"{TASK_STATE}": "g_form.getDisplayValue('state') || 'UNKNOWN';",													// task state
 
 		// hot swap only

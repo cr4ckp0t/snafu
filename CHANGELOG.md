@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
+### Fixed
+- Scheduled tasks will now correctly process the wildcards.
+
 ### ToDo
 - Add logging for builds and equipment orders.
 
