@@ -58,10 +58,9 @@
 		<br />
 		<div class="panel panel-primary">
 			<div class="panel-heading">Build Log</div>
-			<table class="table" id="buildList">
+			<table class="table">
 				<thead>
 					<tr>
-						<th>&nbsp;</th>
 						<th>Request Item</th>
 						<th>Date/Time</th>
 						<th>Hostname</th>
@@ -71,6 +70,9 @@
 						<th>New/Used</th>
 					</tr>
 				</thead>
+				<tbody id="buildList">
+					<tr><td colspan="8" style="text-align:center;"><span style="font-style:italic;color:#a0a0a0;">No builds have been recorded.</span></td></tr>
+				</tbody>
 			</table>
 		</div>
 	</div>
@@ -150,6 +152,7 @@
 
 	<script src="js/jquery.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
+	<script src="js/moment.min.js"></script>
     <script src="js/builds.js"></script>
 </body>
 

@@ -135,12 +135,6 @@ $(document).ready(function() {
         }
     });
 
-    // acknowledgement clicks
-    $('a[id^=ack]').click(function(event) { processClick(event.target.id); });
-
-    // closure clicks
-    $('a[id^=close]').click(function(event) { processClick(event.target.id); });
-
     // keyup events
     $('textarea[id$=Notes]').keyup(processKeyUpUpdate);
     $('input[id^=comp').keyup(processKeyUpEquipOrder);

@@ -245,13 +245,20 @@ chrome.contextMenus.create({
 });
 
 chrome.contextMenus.create({
+	title: 'Build Log',
+	contexts: ['page'],
+	id: 'buildLogParent',
+	parentId: 'optionsParent'
+});
+
+chrome.contextMenus.create({
 	title: 'Debug Mode',
 	contexts: ['page'],
 	id: 'debugParent',
 	parentId: 'optionsParent'
 });
 
-var toggleOptions = ['closePopup', 'keepNotes', 'sendEnter', 'debug'];
+var toggleOptions = ['closePopup', 'keepNotes', 'sendEnter', 'buildLog', 'debug'];
 var objToggle = {'enable': 'Enabled', 'disable': 'Disabled'};
 
 for (var i = 0; i < toggleOptions.length; i++) {
@@ -267,6 +274,16 @@ for (var i = 0; i < toggleOptions.length; i++) {
 		});
 	}
 }
+
+chrome.contextMenus.create({type: 'separator', parentId: 'buildLogParent'});
+
+chrome.contextMenus.create({
+	title: "Open Build Log",
+	contexts: ['page'],
+	id: 'openBuildLog',
+	parentId: 'buildLogParent',
+	onclick: function() { chrome.tabs.create({url: chrome.extension.getURL('builds.html')}); }
+});
 
 chrome.contextMenus.create({type: 'separator', parentId: 'optionsParent'});
 

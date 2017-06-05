@@ -18,21 +18,110 @@
 
 $(document).ready(function() {
 	$('#versionAbout').html(chrome.app.getDetails().version);
-	$('[id^=alert]').hide();
+	$('#alertSuccess').hide();
+	$('#alertFailure').hide();
 	$('#openOptions').click(function() { chrome.tabs.create({url: chrome.extension.getURL('options.html')}); });
 	$('#openFaq').click(function() { chrome.tabs.create({url: chrome.extension.getURL('faq.html')}); });
 	$('#openHelp').click(function() { chrome.tabs.create({url: chrome.extension.getURL('help.html')}); });
 	$('#closeWindow').click(function() { chrome.tabs.query({active: true, currentWindow: true}, function(tabs) { chrome.tabs.remove(tabs[0].id); }); });
 
+	// reload the log
+	$('#reloadLog').click(function() {
+		loadBuilds();
+		successMessage('Successfully reloaded the build log.');
+	});
+
+	// clear the build log
+	$('#clearLog').click(function() {
+		chrome.storage.sync.remove(['builds'], function() {
+			if (chrome.runtime.lastError) {
+				errorMessage('Failed to reset the build log.');
+			} else {
+				successMessage('Successfully reset the build log.');
+			}
+			loadBuilds();
+		});
+	});
+
 	loadBuilds();
+
+	/* chrome.storage.sync.set({
+		builds: {
+			'RITM0123456': {
+				sysId: '83e5ecf36fbe72007839d4a21c3ee453',
+				hostname: 'DT2UA1234567',
+				assetTag: '53912345',
+				dateTime: Date.now(),
+				build: 'GrMH-MANDATORY',
+				model: '800 Mini',
+				newUsed: 'New'
+			},
+			'RITM0769101': {
+				sysId: '83e5ecf36fbe72007839d4a21c3ee453',
+				hostname: 'LT5CG1234567',
+				assetTag: '54212345',
+				dateTime: Date.now(),
+				build: 'GrMH-PHYSICIAN',
+				model: '850 G3',
+				newUsed: 'Repurposed'
+			}
+		}
+	}, function() { console.info('SNAFU: Saved dummy builds.'); }); */
 });
 
 /**
- * Pulls the builds from the settings and loads them in to the table.
+ * Pulls the builds from settings and loads them in to the table.
  * @return	{Void}
  */
 function loadBuilds() {
 	chrome.storage.sync.get(['debug', 'builds'], function(items) {
+		if (chrome.runtime.lastError) {
+			console.warn('SNAFU Sync Get Error: %s', chrome.runtime.lastError.message);
+		} else {
+			if (items.debug === true) console.info('SNAFU: Generating build list.');
 
+			if (Object.keys(items.builds).length > 0) {
+				var innerHtml = '';
+				var template = '<tr><td><a href="https://ghsprod.service-now.com/nav_to.do?uri=%2Fsc_req_item.do%3Fsys_id%3D%s" target="_blank">%s</a></td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>\n';
+				for (var ritm in items.builds) {
+					innerHtml += sprintf(template, [items.builds[ritm].sysId, ritm, moment(items.builds[ritm].dateTime).format('YYYY-MM-DD HH:mm'), items.builds[ritm].hostname, items.builds[ritm].assetTag, items.builds[ritm].build, items.builds[ritm].model, items.builds[ritm].newUsed]);
+				}
+				$('#buildList').html(innerHtml);
+			} else {
+				$('#buildList').html('<tr><td colspan="8" style="text-align:center;"><span style="font-style:italic;color:#a0a0a0;">No builds have been recorded.</span></td></tr>');	
+			}
+		}
 	});
+}
+
+/**
+ * Javascript sprintf function.
+ * @param   {String}    template
+ * @param   {String[]}  values
+ * @return  {String}
+ */
+function sprintf(template, values) {
+    return template.replace(/%s/g, function() {
+        return values.shift();
+    });
+}
+
+/**
+ * Set success message.
+ * @param	{String}	msg
+ */
+function successMessage(msg) {
+	$('#alertSuccessMsg').text(msg);
+	$('#alertSuccess').fadeIn();
+	setTimeout(function() { $('#alertSuccess').fadeOut(); }, 2500);
+}
+
+/**
+ * Set error message.
+ * @param	{String}	msg
+ */
+function errorMessage(msg) {
+	$('#alertFailureMsg').text(msg);
+	$('#alertFailure').fadeIn();
+	setTimeout(function() { $('#alertFailure').fadeOut(); }, 2500);
 }

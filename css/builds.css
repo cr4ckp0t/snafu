@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  **/
 
- body {
+body {
     font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
     font-size: 14px;
     padding: 5px;
@@ -41,6 +41,7 @@ div#content {
 h1#header {
 	color: #3eb049;
 	font-weight: bold;
+	text-align: center;
 }
 
 h1#header small {
