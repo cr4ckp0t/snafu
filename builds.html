@@ -47,12 +47,12 @@
     </nav>
 	<div id="content">
 		<h1 id="header" ><img src="images/icon-64.png" alt="Logo" style="height:50px;width:50px;" /> SNAFU <small>Build Log</small></h1>
-		<div id="alertSuccess" style="margin: 0 auto;text-align:center;width:75%" class="alert alert-success alert-dismissible" role="alert">
-			<span id="alertSuccessMsg"></span>
+		<div id="alertSuccess" style="margin: 0 auto;text-align:center;" class="alert alert-success alert-dismissible" role="alert">
+			<span class="glyphicon glyphicon-ok"></span>  <span id="alertSuccessMsg"></span>
 			<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 		</div>
-		<div id="alertFailure" style="margin: 0 auto;text-align:center;width:75%;" class="alert alert-danger alert-dismissible" role="alert">
-			<span id="alertFailureMsg"></span>
+		<div id="alertFailure" style="margin: 0 auto;text-align:center;" class="alert alert-danger alert-dismissible" role="alert">
+			<span class="glyphicon glyphicon-remove"></span>  <span id="alertFailureMsg"></span>
 			<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 		</div>
 		<br />
@@ -61,6 +61,7 @@
 			<table class="table">
 				<thead>
 					<tr>
+						<th></th>
 						<th>Request Item</th>
 						<th>Date/Time</th>
 						<th>Hostname</th>

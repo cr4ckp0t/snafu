@@ -44,7 +44,7 @@
         },
         "autoHandle": {
             "description": "Auto-acknowledge/close ticket.",
-            "suggested_key": { "default": "Alt+H" }
+            "suggested_key": { "default": "Alt+A" }
         }
     },
     "options_page": "options.html",

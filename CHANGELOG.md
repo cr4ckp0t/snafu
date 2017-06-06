@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 ### Added
-- Keybind for automatic handling of tickets. Default key is Alt+H.
+- Keybind for automatic handling of tickets. Default key is Alt+A.
 
 ### Fixed
 - Scheduled tasks will now correctly process the wildcards.

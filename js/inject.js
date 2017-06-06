@@ -364,21 +364,40 @@ document.addEventListener('SNAFU_Inject', function(snafuInject) {
 		snafuInfoMessage(snafuSprintf('Updating page in %s seconds.  Please wait...', [snafuInject.detail.finishDelay]));
 		setTimeout(function() { g_form.submit(); }, snafuInject.detail.finishDelay * 1000);
 
-	// auto handle ticket
-	} else if (snafuInject.detail.type === 'autoHandle') {
-		var snafuTicketType = snafuGetTicketType();
-
 	// auto ticket detection
-	} else if (snafuInject.detail.type === 'autoAcknowledge' || snafuInject.detail.type === 'autoClosure') {
+	} else if (snafuInject.detail.type === 'autoHandle' || snafuInject.detail.type === 'autoAcknowledge' || snafuInject.detail.type === 'autoClosure') {
 		var snafuTicketType = snafuGetTicketType();
 		if (snafuTicketType === false) {
 			snafuErrorMessage('No task or incident detected.');
-		} else {
-			if (snafuTicketType in snafuAutoTickets) {
-				var snafuTicket = snafuAutoTickets[snafuTicketType];
+		} else if (snafuTicketType in snafuAutoTickets) {
+			var snafuTicket = snafuAutoTickets[snafuTicketType];
+			var snafuError = false;
+			// determine ack or close
+			if (snafuInject.detail.type === 'autoHandle') {
+				var snafuTicketStatus = (snafuTicketType === 'incident') ? g_form.getValue('incident_state') : g_form.getValue('state');
+				if (snafuTicketType === 'incident') {
+					if (snafuTicketStatus === '6') {
+						// if ticket is resolved then abort
+						snafuError = true;
+					} else {
+						// if status is 1 (New) or 2 (Assigned) then auto-acknowledge, otherwise auto-close
+						snafuInject.detail.type = (snafuTicketStatus === '1' || snafuTicketStatus === '2') ? 'autoAcknowledge' : 'autoClose';
+					} 
+				} else {
+					if (snafuTicketStatus === '3' || snafuTicketStatus === '4') {
+						// if ticket is closed then abort
+						snafuError = true;
+					} else {
+						// if status is 1 (Open) then auto-acknowledge, otherwise auto-close
+						snafuInject.detail.type = (snafuTicketStatus === '1') ? 'autoAcknowledge' : 'autoClose';
+					}
+				}
+			}
+
+			if (snafuError === true ) {
+				snafuErrorMessage('Ticket has already been closed.');
+			} else {
 				var snafuTicketAction = (snafuInject.detail.type === 'autoAcknowledge') ? snafuTicket.ack : snafuTicket.close;
-				console.info(snafuTicketAction);
-				console.info(snafuInject.detail.type);
 				if (snafuIsVarEmpty(snafuTicketAction) === true) {
 					snafuErrorMessage(snafuSprintf('Unable to complete action "%s" on this ticket type (%s).', [snafuInject.detail.type, snafuTicketType]));
 				} else {
@@ -448,10 +467,10 @@ document.addEventListener('SNAFU_Inject', function(snafuInject) {
 						default:
 							break;
 					}
-				}					
-			} else {
-				snafuErrorMessage('Unknown ticket type detected.');
-			}
+				}
+			}				
+		} else {
+			snafuErrorMessage('Unknown ticket type detected.');
 		}
 
 	// handle everything else

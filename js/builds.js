@@ -16,6 +16,8 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  **/
 
+var removeEntries = [];
+
 $(document).ready(function() {
 	$('#versionAbout').html(chrome.app.getDetails().version);
 	$('#alertSuccess').hide();
@@ -33,7 +35,7 @@ $(document).ready(function() {
 
 	// clear the build log
 	$('#clearLog').click(function() {
-		chrome.storage.sync.remove(['builds'], function() {
+		chrome.storage.sync.set({ builds: {} }, function() {
 			if (chrome.runtime.lastError) {
 				errorMessage('Failed to reset the build log.');
 			} else {
@@ -43,9 +45,33 @@ $(document).ready(function() {
 		});
 	});
 
+	// remove entries
+	$('#removeEntries').click(function() {
+		if (removeEntries.length === 0) {
+			errorMessage('No builds are selected.');
+		} else {
+			chrome.storage.sync.get('builds', function(items) {
+				if (chrome.runtime.lastError) {
+					errorMessage('Failed to remove entries.');
+				} else {
+					for (var i = 0; i < removeEntries.length; i++)
+						delete items.builds[removeEntries[i]];
+					chrome.storage.sync.set({ builds: items.builds }, function() {
+						if (chrome.runtime.lastError) {
+							errorMessage('Failed to resave the updated build list.');
+						} else {
+							successMessage('Updated the build list.');
+						}
+					});
+					loadBuilds();
+				}
+			});
+		}
+	});
+
 	loadBuilds();
 
-	/* chrome.storage.sync.set({
+	/*chrome.storage.sync.set({
 		builds: {
 			'RITM0123456': {
 				sysId: '83e5ecf36fbe72007839d4a21c3ee453',
@@ -69,6 +95,14 @@ $(document).ready(function() {
 	}, function() { console.info('SNAFU: Saved dummy builds.'); }); */
 });
 
+// updates removeEntries for when they click to remove builds
+$(document).on('click', '.entry', function() {
+	var checked = jQuery('.entry:checked');
+	removeEntries = [];
+	for (var i = 0; i < checked.length; i++)
+		removeEntries.push(checked[i].value);
+});
+
 /**
  * Pulls the builds from settings and loads them in to the table.
  * @return	{Void}
@@ -81,10 +115,11 @@ function loadBuilds() {
 			if (items.debug === true) console.info('SNAFU: Generating build list.');
 
 			if (Object.keys(items.builds).length > 0) {
-				var innerHtml = '';
-				var template = '<tr><td><a href="https://ghsprod.service-now.com/nav_to.do?uri=%2Fsc_req_item.do%3Fsys_id%3D%s" target="_blank">%s</a></td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>\n';
+				var innerHtml = '', i = 0;
+				var template = '<tr><td><input class="entry" type="checkbox" id="%s" name="removeEntry" value="%s" /></td><td><a href="https://ghsprod.service-now.com/nav_to.do?uri=%2Fsc_req_item.do%3Fsys_id%3D%s" target="_blank">%s</a></td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>\n';
 				for (var ritm in items.builds) {
-					innerHtml += sprintf(template, [items.builds[ritm].sysId, ritm, moment(items.builds[ritm].dateTime).format('YYYY-MM-DD HH:mm'), items.builds[ritm].hostname, items.builds[ritm].assetTag, items.builds[ritm].build, items.builds[ritm].model, items.builds[ritm].newUsed]);
+					i += 1;
+					innerHtml += sprintf(template, [i, ritm, items.builds[ritm].sysId, ritm, moment(items.builds[ritm].dateTime).format('YYYY-MM-DD HH:mm'), items.builds[ritm].hostname, items.builds[ritm].assetTag, items.builds[ritm].build, items.builds[ritm].model, items.builds[ritm].newUsed]);
 				}
 				$('#buildList').html(innerHtml);
 			} else {
