@@ -132,7 +132,8 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                     }
                     break;
 
-                // auto acknowledge/closure
+                // auto acknowledge/closure/handle
+                case 'autoHandle':
                 case 'autoAcknowledge':
                 case 'autoClosure':
                     if (ticketType === false) {

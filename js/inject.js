@@ -364,6 +364,10 @@ document.addEventListener('SNAFU_Inject', function(snafuInject) {
 		snafuInfoMessage(snafuSprintf('Updating page in %s seconds.  Please wait...', [snafuInject.detail.finishDelay]));
 		setTimeout(function() { g_form.submit(); }, snafuInject.detail.finishDelay * 1000);
 
+	// auto handle ticket
+	} else if (snafuInject.detail.type === 'autoHandle') {
+		var snafuTicketType = snafuGetTicketType();
+
 	// auto ticket detection
 	} else if (snafuInject.detail.type === 'autoAcknowledge' || snafuInject.detail.type === 'autoClosure') {
 		var snafuTicketType = snafuGetTicketType();

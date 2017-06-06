@@ -32,21 +32,19 @@
     "commands": {
         "assignToMe": {
             "description": "Query technician info or assign to technician.",
-            "suggested_key": {
-                "default": "Alt+A"
-            }
+            "suggested_key": { "default": "Alt+Q" }
         },
         "savePage": {
             "description": "Save the ticket.",
-            "suggested_key": {
-                "default": "Alt+S"
-            }
+            "suggested_key": { "default": "Alt+S" }
         },
         "updatePage": {
             "description": "Update the ticket.",
-            "suggested_key": {
-                "default": "Alt+U"
-            }
+            "suggested_key": {  "default": "Alt+U"  }
+        },
+        "autoHandle": {
+            "description": "Auto-acknowledge/close ticket.",
+            "suggested_key": { "default": "Alt+H" }
         }
     },
     "options_page": "options.html",

@@ -5,8 +5,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
+### Added
+- Keybind for automatic handling of tickets. Default key is Alt+H.
+
 ### Fixed
 - Scheduled tasks will now correctly process the wildcards.
+
+### Changed
+- Changed default key for Assign To Me/Query User Info to Alt+Q.
 
 ### ToDo
 - Add logging for builds and equipment orders.
