@@ -554,6 +554,26 @@ document.addEventListener('SNAFU_Inject', function(snafuInject) {
 					}
 				}
 
+				// if build logging is enabled and closing a hot swap, then log the build
+				if (snafuInject.detail.buildLog === true && snafuType.indexOf('closeHotSwap') !== -1 && snafuTicketType === 'rhs_build') {
+					// query the user info sent by the options page
+					var snafuBuildLogQuery = document.createEvent('CustomEvent');
+					var snafuReplacement = g_form.getReference('rhs_replacement_computer');
+					var snafuRequestItem = g_form.getReference('request_item');
+					snafuBuildLogQuery.initCustomEvent('SNAFU_BuildLogQuery', true, true, {
+						sysId: snafuRequestItem.sys_id,
+						ritm: snafuRequestItem.number,
+						hostname: snafuReplacement.name,
+						assetTag: snafuReplacement.asset_tag,
+						dateTime: Date.now(),
+						build: g_form.getValue('rhs_software'),
+						model: snafuGetComputerModel(snafuReplacement.model_id),
+						newUsed: snafuType.replace('closeHotSwap', '').toLowerCase()
+					});
+					snafuInfoMessage('Build saved to the log.');
+					document.dispatchEvent(snafuBuildLogQuery);
+				}
+
 				// autofinish
 				switch (snafuInject.detail.autoFinish) {
 					// save (stay on ticket's page)
@@ -646,7 +666,7 @@ function snafuReplaceWildcards(strIn) {
 		// task only	
 		"{CATEGORY_ITEM}": "g_form.getValue('cat_item') || 'UNKNOWN';",														// category item
 		"{DUE_DATE}": "g_form.getValue('due_date') || 'UNKNOWN';",															// due date
-		"{REQUEST_ITEM}": "g_form.getValue('request_item') || 'UNKNOWN';",													// ritm number
+		"{REQUEST_ITEM}": "g_form.getReference('request_item').number || 'UNKNOWN';",										// ritm number
 		"{REQUESTED_BY}": "snafuUcwords(g_form.getReference('requested_for').name) || 'UNKNOWN';",							// task requested by
 		"{REQUESTED_FOR}": "snafuUcwords(g_form.getReference('request_item.u_requested_for').name) || 'UNKNOWN';",			// task requested for
 		"{TASK_STATE}": "g_form.getDisplayValue('state') || 'UNKNOWN';",													// task state

@@ -50,6 +50,32 @@ $(document).ready(function() {
     }
 });
 
+// build log event trigger
+document.addEventListener('SNAFU_BuildLogQuery', function(build) {
+    console.info(build.detail);
+    if (isVarEmpty(build.detail.sysId) || isVarEmpty(build.detail.ritm) || isVarEmpty(build.detail.hostname) || isVarEmpty(build.detail.assetTag) || isVarEmpty(build.detail.dateTime) || isVarEmpty(build.detail.build) || isVarEmpty(build.detail.model) || isVarEmpty(build.detail.newUsed)) {
+        sendStatusMessage('error', 'Received incorrect data for the build log.');
+    } else {
+        chrome.storage.sync.get('builds', function(items) {
+            if (chrome.runtime.lastError) {
+                sendStatusMessage('error', 'Unable to pull build log data.');
+            } else {
+                items.builds[build.detail.ritm] = {
+                    sysId: build.detail.sysId,
+                    hostname: build.detail.hostname,
+                    assetTag: build.detail.assetTag,
+                    dateTime: build.detail.dateTime,
+                    build: build.detail.build,
+                    model: build.detail.model,
+                    newUsed: build.detail.newUsed
+                }
+                console.info(items.builds);
+                chrome.storage.sync.set({builds: items.builds}, function() {});
+            }
+        });
+    }
+});
+
 // listen for triggers on the custom event for passing text
 document.addEventListener('SNAFU_UserQuery', function(userData) {
     if (isVarEmpty(userData.detail.fullName) || isVarEmpty(userData.detail.userName) || isVarEmpty(userData.detail.userId) || isVarEmpty(userData.detail.userEmail) || isVarEmpty(userData.detail.groupName) || isVarEmpty(userData.detail.groupId)) {
@@ -79,7 +105,7 @@ document.addEventListener('SNAFU_UserQuery', function(userData) {
 });
 
 chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
-    chrome.storage.sync.get(['autoFinish', 'finishDelay', 'debug'], function(items) {
+    chrome.storage.sync.get(['autoFinish', 'finishDelay', 'buildLog', 'debug'], function(items) {
         if (chrome.runtime.lastError) {
             console.error('SNAFU Sync Get Error: %s', chrome.runtime.lastError.message);
         } else {
@@ -101,7 +127,8 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                     } else {
                         injectData = {
                             type: msg.type,
-                            finishDelay: items.finishDelay || null
+                            finishDelay: items.finishDelay || null,
+                            buildLog: items.buildLog
                         }
                         sendResponse({success: true, errMsg: null});
                     }
@@ -112,7 +139,8 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                 case 'sendErrorMsg':
                     injectData = {
                         type: msg.type,
-                        statusMsg: msg.statusMsg
+                        statusMsg: msg.statusMsg,
+                        buildLog: items.buildLog
                     }
                     sendResponse({success: true, errMsg: null});
                     break;
@@ -126,7 +154,8 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                             type: msg.type,
                             autoFinish: items.autoFinish || 'none',
                             finishDelay: items.finishDelay || 1.5,
-                            userInfo: msg.userInfo
+                            userInfo: msg.userInfo,
+                            buildLog: items.buildLog
                         }
                         sendResponse({success: true, errMsg: null});
                     }
@@ -142,7 +171,8 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                         injectData = {
                             type: msg.type,
                             autoFinish: items.autoFinish || 'none',
-                            finishDelay: items.finishDelay || 1.5
+                            finishDelay: items.finishDelay || 1.,
+                            buildLog: items.buildLog
                         }
                         sendResponse({success: true, errMsg: null});
                     }
@@ -160,7 +190,8 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                             field: 'state',
                             value: '3', // closed complete
                             workNotes: 'Computer has been built. One {REPLACE_MODEL} has been built {REPLACE_BUILD}. Tag {REPLACE_ASSET} HostName {REPLACE_HOSTNAME}. Resolving Task.',
-                            custNotes: null
+                            custNotes: null,
+                            buildLog: items.buildLog
                         }
                         sendResponse({success: true, errMsg: null});
                     }
@@ -189,7 +220,8 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                             field: 'state',
                             value: '3', // closed complete
                             workNotes: sprintf('Device removed from quarantine %s', addToNotes),
-                            custNotes: null
+                            custNotes: null,
+                            buildLog: items.buildLog
                         }
                         sendResponse({success: true, errMsg: null});
                     }
@@ -207,7 +239,8 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                             field: (ticketType === 'incident') ? 'incident_state' : 'state',
                             value: (ticketType === 'incident') ? '4' : '-5',    // on hold or pending
                             custNotes: (ticketType === 'incident') ? sprintf('Scheduled appointment with {INC_CUSTOMER} for %s at %s.', msg.custNotes.split('T')) : sprintf('Scheduled appointment with {REQUESTED_FOR} for %s at %s.', msg.custNotes.split('T')),
-                            workNotes: msg.workNotes || null
+                            workNotes: msg.workNotes || null,
+                            buildLog: items.buildLog
                         }
                         sendResponse({success: true, errMsg: null});
                     }
@@ -227,7 +260,8 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                             field: (ticketType === 'incident') ? 'incident_state' : 'state',
                             value: (ticketType === 'incident') ? incStates[parseInt(msg.tState)] : taskStates[parseInt(msg.tState)],
                             workNotes: msg.workNotes || null,
-                            custNotes: msg.custNotes || null
+                            custNotes: msg.custNotes || null,
+                            buildLog: items.buildLog
                         }
                         sendResponse({success: true, errMsg: null});
                     }
@@ -245,7 +279,8 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                             field: 'state',
                             value: '3',
                             workNotes: msg.workNotes || null,
-                            custNotes: 'My name is {TECH_NAME} and I have completed the build process for your workstation. The next step is for the system to be delivered to our technicians supporting your campus or ambulatory location so they can schedule an appropriate time to come to your desk and install the system. Please be sure to watch for communication regarding the delivery and installation of your computer at your desk.'
+                            custNotes: 'My name is {TECH_NAME} and I have completed the build process for your workstation. The next step is for the system to be delivered to our technicians supporting your campus or ambulatory location so they can schedule an appropriate time to come to your desk and install the system. Please be sure to watch for communication regarding the delivery and installation of your computer at your desk.',
+                            buildLog: items.buildLog
                         }
                         sendResponse({success: true, errMsg: null});
                     }
@@ -308,4 +343,52 @@ function sprintf(template, values) {
     return template.replace(/%s/g, function() {
         return values.shift();
     });
+}
+
+/**
+ * Handle the response from the sendMessage call for debugging purposes.
+ * @param	{Object}	response
+ * @return	{Void}
+ */
+function handleResponse(response) {
+	chrome.storage.sync.get(['debug'], function(items) {
+		if (chrome.runtime.lastError) {
+			console.error('SNAFU Sync Get Error: %s', chrome.runtime.lastError.message);
+		} else {
+			if (items.debug === true) {
+				if (isVarEmpty(response) === false) {
+					if (response.success === false) {
+						console.error('SNAFU Error: %s', response.errMsg);
+					} else {
+						console.info('SNAFU: Update sent!');
+					}
+				} else {
+					console.error('SNAFU Error: Unable to process response to message.');
+				}
+			}
+		}
+	});
+}
+
+/**
+ * Sends a message interpreted as a info/error message in Service Now.
+ * @param   {String}    status
+ * @param   {String}    msg
+ * @return  {Void}
+ */
+function sendStatusMessage(status, msg) {
+    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+		chrome.tabs.sendMessage(tabs[0].id, {type: 'send' + ucWords(status) + 'Msg', statusMsg: msg}, handleResponse);
+	});
+}
+
+/**
+ * Capitalizes the first character of each word.
+ * @param	{String}	str
+ * @return	{String}
+ */
+function ucWords(str) {
+	return str.toLowerCase().replace(/^([a-z\u00E0-\u00FC])|\s+([a-z\u00E0-\u00FC])/g, function(e) {
+		return e.toUpperCase();
+	});
 }

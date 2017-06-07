@@ -7,15 +7,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## Unreleased
 ### Added
 - Keybind for automatic handling of tickets. Default key is Alt+A.
+- Logging of Hot Swap builds have been added.  Must be enabled in the options.
 
 ### Fixed
 - Scheduled tasks will now correctly process the wildcards.
+- Request item wildcard will now pull the correct data.
 
 ### Changed
 - Changed default key for Assign To Me/Query User Info to Alt+Q.
-
-### ToDo
-- Add logging for builds and equipment orders.
 
 ## 1.1.1 [2017-06-03]
 ### Added
