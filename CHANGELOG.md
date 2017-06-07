@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## 1.1.2 [2017-06-06]
 ### Added
 - Keybind for automatic handling of tickets. Default key is Alt+A.
 - Logging of Hot Swap builds have been added.  Must be enabled in the options.
