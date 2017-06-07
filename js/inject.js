@@ -242,7 +242,7 @@ var snafuAutoTickets = {
 			'value': '2'
 		},
 		'close': {
-			'script': 'Completed SPR installation.',
+			'script': 'Completed SPR installation and attached signed completion sheet.',
 			'value': '3'
 		}
 	},
