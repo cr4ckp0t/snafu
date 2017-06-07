@@ -52,7 +52,6 @@ $(document).ready(function() {
 
 // build log event trigger
 document.addEventListener('SNAFU_BuildLogQuery', function(build) {
-    console.info(build.detail);
     if (isVarEmpty(build.detail.sysId) || isVarEmpty(build.detail.ritm) || isVarEmpty(build.detail.hostname) || isVarEmpty(build.detail.assetTag) || isVarEmpty(build.detail.dateTime) || isVarEmpty(build.detail.build) || isVarEmpty(build.detail.model) || isVarEmpty(build.detail.newUsed)) {
         sendStatusMessage('error', 'Received incorrect data for the build log.');
     } else {
@@ -69,7 +68,6 @@ document.addEventListener('SNAFU_BuildLogQuery', function(build) {
                     model: build.detail.model,
                     newUsed: build.detail.newUsed
                 }
-                console.info(items.builds);
                 chrome.storage.sync.set({builds: items.builds}, function() {});
             }
         });
