@@ -5,8 +5,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
+### Fixed
+- Incidents will now be handled automatically correctly.
+
 ### Changed
 - Modified closure script for SPR installs.
+- Modified closure script for Equipment Move/Removes.
+
+### To Do
+- Make ticket statuses persistent, alongside the notes (via keepNotes).
 
 ## 1.1.2 [2017-06-06]
 ### Added

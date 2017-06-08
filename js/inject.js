@@ -58,7 +58,7 @@ var snafuAutoTickets = {
 			'value': '2'
 		},
 		'close': {
-			'script': 'Equipment removed, per the customer\'s request.',
+			'script': 'Equipment removed, per {REQUESTED_BY}\'s request.',
 			'value': '3'
 		}
 	},
@@ -69,7 +69,7 @@ var snafuAutoTickets = {
 			'value': '2'
 		},
 		'close': {
-			'script': 'Equipment disconnected, per the customer\'s request.',
+			'script': 'Equipment disconnected, per {REQUESTED_BY}\'s request.',
 			'value': '3'
 		}
 	},
@@ -80,7 +80,7 @@ var snafuAutoTickets = {
 			'value': '2'
 		},
 		'close': {
-			'script': 'Equipment reconnected and tested, per the customer\'s request.',
+			'script': 'Equipment reconnected and tested, per {REQUESTED_BY}\'s request.',
 			'value': '3'
 		}
 	},
@@ -374,8 +374,8 @@ document.addEventListener('SNAFU_Inject', function(snafuInject) {
 			var snafuError = false;
 			// determine ack or close
 			if (snafuInject.detail.type === 'autoHandle') {
-				var snafuTicketStatus = (snafuTicketType === 'incident') ? g_form.getValue('incident_state') : g_form.getValue('state');
-				if (snafuTicketType === 'incident') {
+				var snafuTicketStatus = (snafuTicketType === 'generic_incident') ? g_form.getValue('incident_state') : g_form.getValue('state');
+				if (snafuTicketType === 'generic_incident') {
 					if (snafuTicketStatus === '6') {
 						// if ticket is resolved then abort
 						snafuError = true;
