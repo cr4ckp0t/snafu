@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
+### Added
+- Loaner equipment closures will now be handled automatically.
+
 ### Fixed
 - Incidents will now be handled automatically correctly.
 
@@ -14,6 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### To Do
 - Make ticket statuses persistent, alongside the notes (via keepNotes).
+- Determine possibility of checking for attachments (signed completion sheets) for deployments and loaners.
 
 ## 1.1.2 [2017-06-06]
 ### Added

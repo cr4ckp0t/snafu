@@ -275,7 +275,10 @@ var snafuAutoTickets = {
 			'script': 'Acknowledging loaner deployment task.',
 			'value': '2'
 		},
-		'close': null
+		'close': {
+			'script': 'Delivered requested loaner device(s) and attached signed loaner form.',
+			'value': '3'
+		}
 	},
 	'loaner_reclaim': {
 		'field': 'state',
