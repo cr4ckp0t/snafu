@@ -42,20 +42,20 @@
             <div role="tabpanel" class="tab-pane active" id="main">
                 <div class="form-group" style="padding-top:10px;">
                     <div class="btn-group" data-toggle="buttons">
-                        <label class="btn btn-primary btn-sm active">
-                            <input type="radio" name="tStatus" id="0" value="0" autocomplete="off" checked /> In Progress
+                        <label id="tStatus0" class="btn btn-primary btn-sm active">
+                            <input type="radio" name="tStatus" value="0" autocomplete="off" checked /> In Progress
                         </label>
-                        <label class="btn btn-primary btn-sm">
-                            <input type="radio" name="tStatus" id="1" value="1" autocomplete="off" /> On Hold
+                        <label id="tStatus1" class="btn btn-primary btn-sm">
+                            <input type="radio" name="tStatus" value="1" autocomplete="off" /> On Hold
                         </label>
-                        <label class="btn btn-primary btn-sm">
-                            <input type="radio" name="tStatus" id="4" value="4" autocomplete="off" /> Scheduled
+                        <label id="tStatus4" class="btn btn-primary btn-sm">
+                            <input type="radio" name="tStatus" value="4" autocomplete="off" /> Scheduled
                         </label>
-                        <label class="btn btn-primary btn-sm">
-                            <input type="radio" name="tStatus" id="2" value="2" autocomplete="off" /> Resolved
+                        <label id="tStatus2" class="btn btn-primary btn-sm">
+                            <input type="radio" name="tStatus" value="2" autocomplete="off" /> Resolved
                         </label>
-                        <label class="btn btn-primary btn-sm">
-                            <input type="radio" name="tStatus" id="3" value="3" autocomplete="off" /> Incomplete
+                        <label id="tStatus3" class="btn btn-primary btn-sm">
+                            <input type="radio" name="tStatus" value="3" autocomplete="off" /> Incomplete
                         </label>
                     </div>
                 </div>
@@ -199,6 +199,7 @@
                 <br />
                 <div style="float:right;padding-bottom:10px;" class="btn-group btn-group-sm">
                     <button type="button" class="btn btn-primary" id="sendAutoAcknowledge" title="Auto-acknowledge ticket."><span class="glyphicon glyphicon-ok"></span> Acknowledge</button>
+                    <button type="button" class="btn btn-warning" id="sendAutoEnRoute" title="Auto En Route detection."><span class="glyphicon glyphicon-sunglasses"></span> En Route</button>
                     <button type="button" class="btn btn-danger" id="sendAutoClosure" title="Auto-close ticket."><span class="glyphicon glyphicon-remove"></span> Close</button>
                 </div>
             </div>

@@ -4,9 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## 1.1.3 [2017-06-12]
 ### Added
 - Loaner equipment closures will now be handled automatically.
+- Add "En Route" messages to auto-detection.
+- Added "Auto En Route" context menu.
+- Ticket statuses (In Progress, On Hold, etc.) are now persistent, alongside the notes (via keepNotes).
 
 ### Fixed
 - Incidents will now be handled automatically correctly.
@@ -14,10 +17,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Modified closure script for SPR installs.
 - Modified closure script for Equipment Move/Removes.
-
-### To Do
-- Make ticket statuses persistent, alongside the notes (via keepNotes).
-- Determine possibility of checking for attachments (signed completion sheets) for deployments and loaners.
 
 ## 1.1.2 [2017-06-06]
 ### Added

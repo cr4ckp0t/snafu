@@ -82,6 +82,19 @@ $(document).ready(function() {
     $('input[type=datetime-local]').attr('min', new Date(now.getTime()-now.getTimezoneOffset()*60000).toISOString().substring(0,19));
     $('input[type=datetime-local]').val(new Date(now.getTime()-now.getTimezoneOffset()*60000).toISOString().substring(0,19));
     $('input[name=tStatus]').change(function() {
+        chrome.storage.sync.get(['debug', 'keepNotes'], function(items) {
+            if (items.keepNotes === true) {
+                chrome.storage.local.set({
+                    ticketStatus: $('input[name=tStatus]:checked').val(),
+                    custNotes: $('#customerNotes').val(),
+                    workNotes: $('#workNotes').val()
+                }, function() {
+                    if (chrome.runtime.lastError) console.warn('SNAFU Persistent Notes Error: %s', chrome.runtime.lastError.message);
+                    else if (items.debug === true) console.info('SNAFU: Saved persistent notes.');
+                });
+            }
+        });
+    
         if ($('input[name=tStatus]:checked').val() === '4') {
             $('#schedApptWrapper').fadeIn();
         } else {
@@ -279,6 +292,13 @@ $(document).ready(function() {
         });
     });
 
+    // send auto en route
+    $('#sendAutoEnRoute').click(function() {
+        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+            chrome.tabs.sendMessage(tabs[0].id, { type: 'autoEnRoute' });
+        });
+    });
+
     $('[id^=newIncident]').click(function() { chrome.tabs.create({url: 'https://ghsprod.service-now.com/incident.do?sysparm_stack=incident_list.do&sys_id=-1'}); });
     $('[id^=openHelp]').click(function() { chrome.tabs.create({url: chrome.extension.getURL('help.html')}); });
     $('[id^=openOptions]').click(function() { chrome.tabs.create({url: chrome.extension.getURL('options.html')}); });
@@ -288,7 +308,14 @@ $(document).ready(function() {
     // load the saved notes
     chrome.storage.sync.get(['debug', 'keepNotes'], function(items) {
         if (items.keepNotes === true) {
-            chrome.storage.local.get(['custNotes', 'workNotes'], function(notes) {
+            chrome.storage.local.get(['ticketStatus', 'custNotes', 'workNotes'], function(notes) {
+                // ticket status
+                if (isVarEmpty(notes.ticketStatus) === false) {
+                    if (items.debug === true) console.info('SNAFU: Loaded saved ticket status.');
+                    $('input[name=tStatus][value=' + notes.ticketStatus + ']').prop('checked', true);
+                    $('#tStatus0').removeClass('active');
+                    $('#tStatus' + notes.ticketStatus).addClass('active');
+                }
                 // customer notes
                 if (isVarEmpty(notes.custNotes) === false) {
                     if (items.debug === true) console.info('SNAFU: Loaded saved customer notes.');
@@ -423,9 +450,9 @@ function processKeyUpUpdate(event) {
         });
     } else if ($.inArray(event.keyCode, [48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 186, 187, 188, 189, 190, 191, 219, 220, 221, 222]) !== -1) {
         chrome.storage.sync.get(['debug', 'keepNotes'], function(items) {
-            console.info(items);
             if (items.keepNotes === true) {
                 chrome.storage.local.set({
+                    ticketStatus: $('input[name=tStatus]:checked').val(),
                     custNotes: $('#customerNotes').val(),
                     workNotes: $('#workNotes').val()
                 }, function() {

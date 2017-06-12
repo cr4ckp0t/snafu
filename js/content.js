@@ -162,6 +162,7 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                 // auto acknowledge/closure/handle
                 case 'autoHandle':
                 case 'autoAcknowledge':
+                case 'autoEnRoute':
                 case 'autoClosure':
                     if (ticketType === false) {
                         sendResponse({success: false, errMsg: 'Unable to detect an open task or incident.'});

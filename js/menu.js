@@ -39,6 +39,18 @@ chrome.contextMenus.create({
 });
 
 /**
+ * Auto "En Route"
+ */
+chrome.contextMenus.create({
+	title: 'Auto En Route',
+	contexts: ['page'],
+	id: 'autoEnRoute',
+	parentId: 'snafuParent',
+	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*', 'https://ghsprod.service-now.com/incident.do?*', 'https://ghsprod.service-now.com/u_absolute_install.do?*'],
+	onclick: actionHandler
+});
+
+/**
  * Auto Closure
  */
 chrome.contextMenus.create({

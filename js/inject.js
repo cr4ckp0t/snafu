@@ -31,12 +31,20 @@ var snafuAutoTickets = {
 			'script': 'Acknowledging task.',
 			'value': '2'
 		},
+		'enRoute': {
+			'script': 'En route to complete task',
+			'value': '2'
+		},
 		'close': null
 	},
 	'generic_incident': {
 		'field': 'incident_state',
 		'ack': {
 			'script': 'Acknowledging incident.',
+			'value': '3'
+		},
+		'enRoute': {
+			'script': 'En route to troubleshoot the device.',
 			'value': '3'
 		},
 		'close': null
@@ -47,6 +55,10 @@ var snafuAutoTickets = {
 			'script': 'Acknowledging general request task.',
 			'value': '2'
 		},
+		'enRoute': {
+			'script': 'En route to complete the general request.',
+			'value': '2'
+		},
 		'close': null
 	},
 
@@ -55,6 +67,10 @@ var snafuAutoTickets = {
 		'field': 'state',
 		'ack': {
 			'script': 'Acknowledging equipment removal.',
+			'value': '2'
+		},
+		'enRoute': {
+			'script': 'En route to complete equipment removal',
 			'value': '2'
 		},
 		'close': {
@@ -68,6 +84,10 @@ var snafuAutoTickets = {
 			'script': 'Acknowledging equipment disconnect task.',
 			'value': '2'
 		},
+		'enRoute': {
+			'script': 'En route to complete equipment disconnect.',
+			'value': '2'
+		},
 		'close': {
 			'script': 'Equipment disconnected, per {REQUESTED_BY}\'s request.',
 			'value': '3'
@@ -77,6 +97,10 @@ var snafuAutoTickets = {
 		'field': 'state',
 		'ack': {
 			'script': 'Acknowledging equipment reconnect task.',
+			'value': '2'
+		},
+		'enRoute': {
+			'script': 'En route to complete equipment reconnect.',
 			'value': '2'
 		},
 		'close': {
@@ -92,6 +116,10 @@ var snafuAutoTickets = {
 			'script': 'Acknowledging reclaim for device reimage.',
 			'value': '2'
 		},
+		'enRoute': {
+			'script': 'En route to complete reimage reclaim.',
+			'value': '2'
+		},
 		'close': {
 			'script': 'Device has been reclaimed for reimaging.',
 			'value': '3'
@@ -103,6 +131,7 @@ var snafuAutoTickets = {
 			'script': 'Acknowledging reimage task.',
 			'value': '2'
 		},
+		'enRoute': null,
 		'close': {
 			'script': 'Computer has been built. One {BROKEN_MODEL} has been built {REPLACE_BUILD}. Tag {BROKEN_ASSET} HostName {BROKEN_HOSTNAME}. Resolving Task.',
 			'value': '3'
@@ -112,6 +141,10 @@ var snafuAutoTickets = {
 		'field': 'state',
 		'ack': {
 			'script': 'Acknowledging reimage return task.',
+			'value': '2'
+		},
+		'enRoute': {
+			'script': 'En route to return {BROKEN_HOSTNAME}.',
 			'value': '2'
 		},
 		'close': {
@@ -127,12 +160,17 @@ var snafuAutoTickets = {
 			'script': 'Acknowledging build request.',
 			'value': '2'
 		},
+		'enRoute': null,
 		'close': null
 	},
 	'rhs_reclaim': {
 		'field': 'state',
 		'ack': {
 			'script': 'Acknowledging reclaim task.',
+			'value': '2'
+		},
+		'enRoute': {
+			'script': 'En route to complete {BROKEN_HOSTNAME} reclaim.',
 			'value': '2'
 		},
 		'close': {
@@ -146,6 +184,7 @@ var snafuAutoTickets = {
 			'script': 'Acknowledging quarantine task.',
 			'value': '2'
 		},
+		'enRoute': null,
 		'close': null
 	},
 	'rhs_repair': {
@@ -154,6 +193,7 @@ var snafuAutoTickets = {
 			'script': 'Acknowledging repair task.',
 			'value': '2'
 		},
+		'enRoute': null,
 		'close': {
 			'script': '{BROKEN_HOSTNAME} has been repaired and returned to stock.',
 			'value': '3'
@@ -165,6 +205,7 @@ var snafuAutoTickets = {
 			'script': 'Acknowledging decommission task.',
 			'value': '2'
 		},
+		'enRoute': null,
 		'close': {
 			'script': '{BROKEN_HOSTNAME} has been decommissioned.',
 			'value': '3'
@@ -178,6 +219,10 @@ var snafuAutoTickets = {
 			'script': 'Acknowledging MDC Staging delivery task.',
 			'value': '2'
 		},
+		'enRoute': {
+			'script': 'En route to complete MDC Staging delivery.',
+			'value': '2'
+		},
 		'close': null
 	},
 	'deliver_mdc': {
@@ -186,6 +231,7 @@ var snafuAutoTickets = {
 			'script': 'Acknowledging MDC Disposal task.',
 			'value': '2'
 		},
+		'enRoute': null,
 		'close': null
 	},
 
@@ -196,6 +242,7 @@ var snafuAutoTickets = {
 			'script': 'Acknowledging equipment configuration task.',
 			'value': '2'
 		},
+		'enRoute': null,
 		'close': null
 	},
 	'po_deploy_items': {
@@ -204,12 +251,20 @@ var snafuAutoTickets = {
 			'script': 'Acknowledging equipment delivery task.',
 			'value': '2'
 		},
+		'enRoute': {
+			'script': 'En route to complete equipment delivery.',
+			'value': '2'
+		},
 		'close': null
 	},
 	'po_install_items': {
 		'field': 'state',
 		'ack': {
 			'script': 'Acknowledging equipment install task.',
+			'value': '2'
+		},
+		'enRoute': {
+			'script': 'En route to complete equipment installation.',
 			'value': '2'
 		},
 		'close': {
@@ -225,6 +280,7 @@ var snafuAutoTickets = {
 			'script': 'Acknowledging SPR configuration task.',
 			'value': '2'
 		},
+		'enRoute': null,
 		'close': null
 	},
 	'spr_delivery': {
@@ -233,12 +289,20 @@ var snafuAutoTickets = {
 			'script': 'Acknowledging SPR delivery task.',
 			'value': '2'
 		},
+		'enRoute': {
+			'script': 'En route to complete SPR delivery.',
+			'value': '2'
+		},
 		'close': null
 	},
 	'spr_install': {
 		'field': 'state',
 		'ack': {
 			'script': 'Acknowledging SPR install task.',
+			'value': '2'
+		},
+		'enRoute': {
+			'script': 'En route to complete SPR installation.',
 			'value': '2'
 		},
 		'close': {
@@ -254,6 +318,7 @@ var snafuAutoTickets = {
 			'script': 'Acknowledging equipment pull request.',
 			'value': '2'
 		},
+		'enRoute': null,
 		'close': {
 			'script': 'Equipment pulled for delivery.',
 			'value': '3'
@@ -267,12 +332,17 @@ var snafuAutoTickets = {
 			'script': 'Acknowledging loaner request build.',
 			'value': '2'
 		},
+		'enRoute': null,
 		'close': null
 	},
 	'loaner_deploy': {
 		'field': 'state',
 		'ack': {
 			'script': 'Acknowledging loaner deployment task.',
+			'value': '2'
+		},
+		'enRoute': {
+			'script': 'En route to complete loaner deployment.',
 			'value': '2'
 		},
 		'close': {
@@ -284,6 +354,10 @@ var snafuAutoTickets = {
 		'field': 'state',
 		'ack': {
 			'script': 'Acknowledging loaner reclaim task.',
+			'value': '2'
+		},
+		'enRoute': {
+			'script': 'En route to complete loaner reclaim.',
 			'value': '2'
 		},
 		'close': {
@@ -299,6 +373,7 @@ var snafuAutoTickets = {
 			'script': 'Acknowledging Absolute install request.',
 			'value': '2'
 		},
+		'enRoute': null,
 		'close': {
 			'script': 'Absolute installation completed on {ABS_MACHINE}.',
 			'value': '3'
@@ -368,7 +443,7 @@ document.addEventListener('SNAFU_Inject', function(snafuInject) {
 		setTimeout(function() { g_form.submit(); }, snafuInject.detail.finishDelay * 1000);
 
 	// auto ticket detection
-	} else if (snafuInject.detail.type === 'autoHandle' || snafuInject.detail.type === 'autoAcknowledge' || snafuInject.detail.type === 'autoClosure') {
+	} else if (snafuInject.detail.type === 'autoEnRoute' || snafuInject.detail.type === 'autoHandle' || snafuInject.detail.type === 'autoAcknowledge' || snafuInject.detail.type === 'autoClosure') {
 		var snafuTicketType = snafuGetTicketType();
 		if (snafuTicketType === false) {
 			snafuErrorMessage('No task or incident detected.');
@@ -400,7 +475,12 @@ document.addEventListener('SNAFU_Inject', function(snafuInject) {
 			if (snafuError === true ) {
 				snafuErrorMessage('Ticket has already been closed.');
 			} else {
-				var snafuTicketAction = (snafuInject.detail.type === 'autoAcknowledge') ? snafuTicket.ack : snafuTicket.close;
+				if (snafuInject.detail.type === 'autoEnRoute') {
+					var snafuTicketAction = snafuTicket.enRoute;
+				} else {
+					var snafuTicketAction = (snafuInject.detail.type === 'autoAcknowledge') ? snafuTicket.ack : snafuTicket.close;
+				}
+				
 				if (snafuIsVarEmpty(snafuTicketAction) === true) {
 					snafuErrorMessage(snafuSprintf('Unable to complete action "%s" on this ticket type (%s).', [snafuInject.detail.type, snafuTicketType]));
 				} else {
