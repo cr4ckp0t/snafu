@@ -750,7 +750,7 @@ function snafuReplaceWildcards(strIn) {
 		"{CATEGORY_ITEM}": "g_form.getValue('cat_item') || 'UNKNOWN';",														// category item
 		"{DUE_DATE}": "g_form.getValue('due_date') || 'UNKNOWN';",															// due date
 		"{REQUEST_ITEM}": "g_form.getReference('request_item').number || 'UNKNOWN';",										// ritm number
-		"{REQUESTED_BY}": "snafuUcwords(g_form.getReference('requested_for').name) || 'UNKNOWN';",							// task requested by
+		"{REQUESTED_BY}": "snafuUcwords(g_form.getReference('request_item.request.requested_for').name) || 'UNKNOWN';",		// task requested by
 		"{REQUESTED_FOR}": "snafuUcwords(g_form.getReference('request_item.u_requested_for').name) || 'UNKNOWN';",			// task requested for
 		"{TASK_STATE}": "g_form.getDisplayValue('state') || 'UNKNOWN';",													// task state
 
