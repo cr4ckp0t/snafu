@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
+### Added
+- Button to popup to quickly bring up the Service Catalog.
+
 ### Fixed
 - {REQUESTED_BY} wildcard now pulls the correct information.
 
