@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 - {REQUESTED_BY} wildcard now pulls the correct information.
 
+### ToDo
+- Add Kronos time calculator.
+
 ## 1.1.3 [2017-06-12]
 ### Added
 - Loaner equipment closures will now be handled automatically.
