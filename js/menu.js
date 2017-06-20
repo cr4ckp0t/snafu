@@ -308,6 +308,32 @@ chrome.contextMenus.create({
 });
 
 /**
+ * Miscellaneous
+ */
+chrome.contextMenus.create({
+	title: 'Miscellaneous',
+	contexts: ['page'],
+	id: 'miscParent',
+	parentId: 'snafuParent'
+});
+
+chrome.contextMenus.create({
+	title: 'Create New Incident',
+	contexts: ['page'],
+	id: 'newIncident',
+	parentId: 'miscParent',
+	onclick: function() { chrome.tabs.create({url: 'https://ghsprod.service-now.com/incident.do?sysparm_stack=incident_list.do&sys_id=-1'}); }
+});
+
+chrome.contextMenus.create({
+	title: 'Service Catalog',
+	contexts: ['page'],
+	id: 'serviceCatalog',
+	parentId: 'miscParent',
+	onclick: function() { chrome.tabs.create({url: 'https://ghsprod.service-now.com/catalog_home.do?sysparm_view=catalog_default' }); }
+});
+
+/**
  * Help Page
  */
 chrome.contextMenus.create({

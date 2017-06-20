@@ -4,12 +4,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## 1.1.4 [2017-06-20]
 ### Added
 - Button to popup to quickly bring up the Service Catalog.
+- Miscellaneous section to context menu.
 
 ### Fixed
 - {REQUESTED_BY} wildcard now pulls the correct information.
+- Clicking Scheduled button will reset the notes/status.
+- Clicking Send Equipment button will reset the notes/status.
+- Extension will allow updating ticket that isn't assigned to you, as long as it's not being resolved.
 
 ### ToDo
 - Add Kronos time calculator.

@@ -220,7 +220,7 @@ $(document).ready(function() {
                                     console.error('SNAFU Error: Unable to process message response.');
                                 }
                             }
-
+                            chrome.storage.local.clear();
                             if (items.closePopup === true) setTimeout(function() { window.close(); }, 500);
                         }
                     });
@@ -256,6 +256,7 @@ $(document).ready(function() {
                                     console.error('SNAFU Error: Unable to process message response.');
                                 }
                             }
+                            chrome.storage.local.clear();
                             if (items.closePopup === true) setTimeout(function() { window.close(); }, 500);
                         }
                     });

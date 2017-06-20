@@ -559,7 +559,7 @@ document.addEventListener('SNAFU_Inject', function(snafuInject) {
 	// handle everything else
 	} else {
 		// make sure ticket is assigned
-		if (g_form.getReference('assigned_to').currentRow === -1) {
+		if (snafuIsResolveCode(snafuInject.detail.field, snafuInject.detail.value) === true && g_form.getReference('assigned_to').currentRow === -1) {
 			snafuErrorMessage('Unable to send update to unassigned ticket.  Please assign it to yourself and try again.');
 		} else {
 			var snafuTicketType = snafuGetTicketType();
@@ -898,4 +898,20 @@ function snafuGetTicketType() {
         // it's neither
         return false;
     }
+}
+
+/**
+ * Determines if the status provided is a resolve code.
+ * @param	{String}	field
+ * @param	{String}	value
+ * @return	{Boolean}
+ */
+function snafuIsResolveCode(field, value) {
+	if (field === 'incident_state') {
+		return (value === '6') ? true : false;
+	} else if (field === 'state') {
+		return (value === '3') ? true : false;
+	} else {
+		return false
+	}
 }
