@@ -33,6 +33,7 @@
             <li role="presentation" class="active"><a href="#main" aria-controls="main" role="tab" data-toggle="tab">Main</a></li>
             <li role="presentation"><a href="#equipment" aria-controls="equipment" role="tab" data-toggle="tab">Equipment Orders</a></li>
             <li role="presentation"><a href="#automation" aria-controls="automation" role="tab" data-toggle="tab">Automation</a></li>
+            <li role="presentation"><a href="#timeCalc" aria-controls="timeCalc" role="tab" data-toggle="tab">Time Calculator</a></li>
         </ul>
 
         <!-- Tab Panes -->
@@ -99,10 +100,10 @@
                 <div class="form-group">
                     <div class="btn-group" data-toggle="buttons">
                         <label id="autoFinish-save" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="Save ticket automatically.">
-                            <input type="radio" name="autoFinish" value="save" autocomplete="off" /> Auto Save
+                            <input type="radio" name="autoFinish" value="save" autocomplete="off" /> Save
                         </label>
                         <label id="autoFinish-update" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="Update ticket automatically.">
-                            <input type="radio" name="autoFinish" value="update" autocomplete="off" /> Auto Update
+                            <input type="radio" name="autoFinish" value="update" autocomplete="off" /> Update
                         </label>
                         <label id="autoEquipTicket-auto" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="Save everything except closures, which are updated.">
                             <input type="radio" name="autoFinish" value="auto" autocomplete="off" /> Automatic
@@ -146,10 +147,10 @@
                 <div class="form-group">
                     <div class="btn-group" data-toggle="buttons">
                         <label id="autoEquipTicket-save" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="Save ticket automatically.">
-                            <input type="radio" name="autoEquipTicket" value="save" autocomplete="off" /> Auto Save
+                            <input type="radio" name="autoEquipTicket" value="save" autocomplete="off" /> Save
                         </label>
                         <label id="autoEquipTicket-update" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="Update ticket automatically.">
-                            <input type="radio" name="autoEquipTicket" value="update" autocomplete="off" /> Auto Update
+                            <input type="radio" name="autoEquipTicket" value="update" autocomplete="off" /> Update
                         </label>
                         <label id="autoEquipTicket-auto" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="Save everything except closures, which are updated.">
                             <input type="radio" name="autoEquipTicket" value="auto" autocomplete="off" /> Automatic
@@ -204,6 +205,12 @@
                     <button type="button" class="btn btn-warning" id="sendAutoEnRoute" title="Auto En Route detection."><span class="glyphicon glyphicon-sunglasses"></span> En Route</button>
                     <button type="button" class="btn btn-danger" id="sendAutoClosure" title="Auto-close ticket."><span class="glyphicon glyphicon-remove"></span> Close</button>
                 </div>
+            </div>
+
+            <!-- Time Calculator -->
+            <div role="tabpanel" class="tab-pane" id="timeCalc">
+                <br />
+                <p><strong>Coming Soon!</strong></p>
             </div>
         </div>
     </div>

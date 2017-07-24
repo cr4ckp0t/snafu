@@ -16,6 +16,8 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  **/
 
+var docPatterns = ['https://ghsprod.service-now.com/sc_task.do?*', 'https://ghsprod.service-now.com/incident.do?*', 'https://ghsprod.service-now.com/u_absolute_install.do?*'];
+
 /**
  * Uber Parent
  */
@@ -23,7 +25,7 @@ chrome.contextMenus.create({
 	title: 'SNAFU',
 	contexts: ['page'],
 	id: 'snafuParent',
-	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*', 'https://ghsprod.service-now.com/incident.do?*', 'https://ghsprod.service-now.com/u_absolute_install.do?*']
+	documentUrlPatterns: docPatterns
 });
 
 /**
@@ -34,7 +36,7 @@ chrome.contextMenus.create({
 	contexts: ['page'],
 	id: 'autoAcknowledge',
 	parentId: 'snafuParent',
-	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*', 'https://ghsprod.service-now.com/incident.do?*', 'https://ghsprod.service-now.com/u_absolute_install.do?*'],
+	documentUrlPatterns: docPatterns,
 	onclick: actionHandler
 });
 
@@ -46,7 +48,7 @@ chrome.contextMenus.create({
 	contexts: ['page'],
 	id: 'autoEnRoute',
 	parentId: 'snafuParent',
-	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*', 'https://ghsprod.service-now.com/incident.do?*', 'https://ghsprod.service-now.com/u_absolute_install.do?*'],
+	documentUrlPatterns: docPatterns,
 	onclick: actionHandler
 });
 
@@ -58,7 +60,7 @@ chrome.contextMenus.create({
 	contexts: ['page'],
 	id: 'autoClosure',
 	parentId: 'snafuParent',
-	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*', 'https://ghsprod.service-now.com/incident.do?*', 'https://ghsprod.service-now.com/u_absolute_install.do?*'],
+	documentUrlPatterns: docPatterns,
 	onclick: actionHandler
 });
 
