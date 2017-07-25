@@ -70,6 +70,7 @@ function saveSettings() {
 		closePopup: ($('#closePopup').val() === 'enable') ? true: false,
 		sendEnter: ($('#sendEnter').val() === 'enable') ? true : false,
 		keepNotes: ($('#keepNotes').val() === 'enable') ? true : false,
+		persistNotes: ($('#persistNotes').val() === 'enable') ? true : false,
 		canned: getCannedMessages(),
 		autoFinish: $('#ticketCompletion').val(),
 		finishDelay: $('#finishDelay').val(),
@@ -99,6 +100,7 @@ function loadSettings() {
 		'finishDelay',
 		'sendEnter',
 		'keepNotes',
+		'persistNotes',
 		'closeAlerts',
 		'buildLog',
 		'builds',
@@ -175,6 +177,14 @@ function loadSettings() {
 				$('#keepNotes').val('disable');
 			} else {
 				$('#keepNotes').val((items.keepNotes === true) ? 'enable' : 'disable');
+			}
+
+			// persist notes after submission
+			if (isVarEmpty(items.persistNotes) === true) {
+				settingsToCreate['persistNotes'] = false;
+				$('#persistNotes').val('disable');
+			} else {
+				$('#persistNotes').val((items.persistNotes === true) ? 'enable' : 'disable');
 			}
 
 			// close alerts

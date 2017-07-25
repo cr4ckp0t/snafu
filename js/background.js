@@ -84,6 +84,7 @@ chrome.runtime.onStartup.addListener(function() {
 		'closePopup',
 		'sendEnter',
 		'keepNotes',
+		'persistNotes',
 		'closeAlerts',
 		'buildLog',
 		'builds'
@@ -99,6 +100,7 @@ chrome.runtime.onStartup.addListener(function() {
 			if (isVarEmpty(items.closePopup) === true) settingsToCreate['closePopup'] = false;
 			if (isVarEmpty(items.sendEnter) === true) settingsToCreate['sendEnter'] = true;
 			if (isVarEmpty(items.keepNotes) === true) settingsToCreate['keepNotes'] = false;
+			if (isVarEmpty(items.persistNotes) === true) settingsToCreate['persistNotes'] = false;
 			if (isVarEmpty(items.closeAlerts) === true) settingsToCreate['closeAlerts'] = true;
 			if (isVarEmpty(items.buildLog) === true) settingsToCreate['buildLog'] = false;
 			if (isVarEmpty(items.builds) === true) settingsToCreate['builds'] = {};

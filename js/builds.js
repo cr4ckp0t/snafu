@@ -84,10 +84,8 @@ $(document).ready(function() {
 					for (var build in items.builds) {
 						buildList += sprintf('%s,%s,%s,%s,%s,%s,%s,%s\n', [items.builds[build].sysId, build, moment(items.builds[build].dateTime).format('YYYY-MM-DD HH:mm'), items.builds[build].hostname, items.builds[build].assetTag, items.builds[build].build.replace(', ', ' | ').replace(',', ' | '), items.builds[build].model.replace(',', ' | '), items.builds[build].newUsed.replace(',', ' | ')]);
 					}
-					
 					var objectUrl = URL.createObjectURL(new Blob([buildList], {type: 'text/csv'}));
 					var d = new Date();
-
 					chrome.downloads.download({url: objectUrl, filename: sprintf('buildLog-%s.csv', [d.getFullYear() + ('0' + (d.getMonth() + 1)).slice(-2) + ('0' + d.getDate()).slice(-2)]), conflictAction: 'overwrite', saveAs: true});
 				}
 			}

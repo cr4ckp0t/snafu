@@ -7,10 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## Unreleased
 ### Added
 - Ability to export build list to CSV file has been added.
+- Option to persist notes even after submitting (disabled by default).
 
 ### Changed
 - Changed labels for automatic ticket handling.
 - Cleaned up context menu code.
+- Cleaned up options window.
 
 ## 1.1.4 [2017-06-20]
 ### Added
@@ -22,9 +24,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Clicking Scheduled button will reset the notes/status.
 - Clicking Send Equipment button will reset the notes/status.
 - Extension will allow updating ticket that isn't assigned to you, as long as it's not being resolved.
-
-### ToDo
-- Add Kronos time calculator.
 
 ## 1.1.3 [2017-06-12]
 ### Added

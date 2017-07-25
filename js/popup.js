@@ -167,7 +167,7 @@ $(document).ready(function() {
                     workNotes: $('#workNotes').val(),
                     custNotes: $('#customerNotes').val()
                 }, function(response) {
-                    chrome.storage.sync.get(['debug', 'closePopup', 'keepNotes'], function(items) {
+                    chrome.storage.sync.get(['debug', 'closePopup', 'keepNotes', 'persistNotes'], function(items) {
                         if (chrome.runtime.lastError) {
                             console.error('SNAFU Sync Get Error: %s', chrome.runtime.lastError.message);
                         } else {
@@ -182,9 +182,10 @@ $(document).ready(function() {
                                     console.error('SNAFU Error: Unable to process response to message.');
                                 }
                             }
+
+                            if (items.keepNotes === false || (items.keepNotes === true && item.persistNotes === false)) chrome.storage.local.clear();
+                            if (items.closePopup === true) setTimeout(function() { window.close(); }, 500);
                         }
-                        chrome.storage.local.clear();
-                        if (items.closePopup === true) setTimeout(function() { window.close(); }, 500);
                     });
                 });
             });
@@ -206,7 +207,7 @@ $(document).ready(function() {
                     workNotes: equipWorkNotes,
                     custNotes: null
                 }, function(response) {
-                    chrome.storage.sync.get(['debug', 'closePopup'], function(items) {
+                    chrome.storage.sync.get(['debug', 'closePopup', 'keepNotes', 'persistNotes'], function(items) {
                         if (chrome.runtime.lastError) {
                             console.error('SNAFU Sync Get Error: %s', chrome.runtime.lastError.message);
                         } else {
@@ -221,7 +222,7 @@ $(document).ready(function() {
                                     console.error('SNAFU Error: Unable to process message response.');
                                 }
                             }
-                            chrome.storage.local.clear();
+                            if (items.keepNotes === false || (items.keepNotes === true && item.persistNotes === false)) chrome.storage.local.clear();
                             if (items.closePopup === true) setTimeout(function() { window.close(); }, 500);
                         }
                     });
@@ -242,7 +243,7 @@ $(document).ready(function() {
                     custNotes: $('#schedAppt').val().slice(0, -3),
                     workNotes: $('#customerNotes').val()
                 }, function(response) {
-                    chrome.storage.sync.get(['debug', 'closePopup'], function(items) {
+                    chrome.storage.sync.get(['debug', 'closePopup', 'keepNotes', 'persistNotes'], function(items) {
                         if (chrome.runtime.lastError) {
                             console.error('SNAFU Sync Get Error: %s', chrome.runtime.lastError.message);
                         } else {
@@ -257,7 +258,7 @@ $(document).ready(function() {
                                     console.error('SNAFU Error: Unable to process message response.');
                                 }
                             }
-                            chrome.storage.local.clear();
+                            if (items.keepNotes === false || (items.keepNotes === true && item.persistNotes === false)) chrome.storage.local.clear();
                             if (items.closePopup === true) setTimeout(function() { window.close(); }, 500);
                         }
                     });
@@ -303,12 +304,12 @@ $(document).ready(function() {
 
     // run the time calculator
     $('#calculateTime').click(function() {
-
+        errorMessage('Functionality not yet implemented.  Wait for version 1.1.6.');
     });
 
     // reset the time calculator
     $('#resetTime').click(function() {
-
+        errorMessage('Functionality not yet implemented.  Wait for version 1.1.6.');
     });
 
     $('[id^=newIncident]').click(function() { chrome.tabs.create({url: 'https://ghsprod.service-now.com/incident.do?sysparm_stack=incident_list.do&sys_id=-1'}); });
@@ -516,4 +517,24 @@ function loadWildcards() {
     }
     $('#custWildcards').html(custWildcards);
     $('#workWildcards').html(workWildcards);
+}
+
+/**
+ * Set success message.
+ * @param	{String}	msg
+ */
+function successMessage(msg) {
+	$('#alertCalcSuccessMsg').text(msg);
+	$('#alertCalcSuccess').fadeIn();
+	setTimeout(function() { $('#alertCalcSuccess').fadeOut(); }, 2500);
+}
+
+/**
+ * Set error message.
+ * @param	{String}	msg
+ */
+function errorMessage(msg) {
+	$('#alertCalcFailureMsg').text(msg);
+	$('#alertCalcFailure').fadeIn();
+	setTimeout(function() { $('#alertCalcFailure').fadeOut(); }, 2500);
 }

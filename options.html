@@ -100,6 +100,15 @@
                         <div class="extraInfo">Persist notes between popup closures until update it sent.</div>
                         <br />
                         <div class="input-group">
+                            <span class="input-group-addon" id="persistNotes">Clear On Submit</span>
+                            <select id="persistNotes" class="form-control" aria-describedby="persistNotesAddon">
+                                <option value="enable">Enabled</option>
+                                <option value="disable">Disabled</option>
+                            </select>
+                        </div>
+                        <div class="extraInfo">If Persistent Notes is enabled this will allow you to keep the notes even after submitting the update.</div>
+                        <br />
+                        <div class="input-group">
                             <span class="input-group-addon" id="sendEnterAddon">Send On Enter</span>
                             <select id="sendEnter" class="form-control" aria-describedby="sendEnterAddon">
                                 <option value="enable">Enabled</option>
@@ -130,12 +139,6 @@
                             </span>
                         </div>
                         <div class="extraInfo">Log Hot Swap, Reimage, and Equipment Order builds automatically.</div>
-                        <br />
-                        <div class="form-group">
-                            <label for="cannedMsgs" class="textareaLabel">Canned Messages</label>
-                            <textarea id="cannedMsgs" class="form-control" rows="6" cols="50"></textarea>
-                            <div class="extraInfo">Put each message on its own line in the format of {label}|{message}.</div>
-                        </div>
                         <br />
                         <div class="input-group">
                             <span class="input-group-addon" id="debugAddon">Debug Mode</span>
@@ -182,6 +185,19 @@
                         <div class="input-group">
                             <span class="input-group-addon" id="groupIdAddon">Group ID</span>
                             <input type="text" class="form-control" id="groupId" aria-describedby="groupIdAddon" readonly />
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div id="content" class="panel panel-primary">
+                    <div class="panel-heading">
+                        <div class="panel-title"><strong>Canned Messages</strong></div>
+                    </div>
+                    <div class="panel-body">
+                        <div class="form-group">
+                            <label for="cannedMsgs" class="textareaLabel">Canned Messages</label>
+                            <textarea id="cannedMsgs" class="form-control" rows="6" cols="50"></textarea>
+                            <div class="extraInfo">Put each message on its own line in the format of {label}|{message}.</div>
                         </div>
                     </div>
                 </div>
