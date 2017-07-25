@@ -69,6 +69,31 @@ $(document).ready(function() {
 		}
 	});
 
+	// export csv
+	$('#exportCSV').click(function() {
+		chrome.storage.sync.get(['debug', 'builds'], function(items) {
+			if (chrome.runtime.lastError) {
+				console.warn('SNAFU Sync Get Error; %s', chrome.runtime.lastError.message);
+			} else {
+				if (items.debug === true) console.info('SNAFU: Generating CSV of build log.');
+
+				if (Object.keys(items.builds).length === 0) {
+					errorMessage('No builds have been logged.');
+				} else {
+					var buildList = 'SysId,Request Item,Date,Hostname,Asset Tag,Build,Model,New/Used\n';
+					for (var build in items.builds) {
+						buildList += sprintf('%s,%s,%s,%s,%s,%s,%s,%s\n', [items.builds[build].sysId, build, moment(items.builds[build].dateTime).format('YYYY-MM-DD HH:mm'), items.builds[build].hostname, items.builds[build].assetTag, items.builds[build].build.replace(', ', ' | ').replace(',', ' | '), items.builds[build].model.replace(',', ' | '), items.builds[build].newUsed.replace(',', ' | ')]);
+					}
+					
+					var objectUrl = URL.createObjectURL(new Blob([buildList], {type: 'text/csv'}));
+					var d = new Date();
+
+					chrome.downloads.download({url: objectUrl, filename: sprintf('buildLog-%s.csv', [d.getFullYear() + ('0' + (d.getMonth() + 1)).slice(-2) + ('0' + d.getDate()).slice(-2)]), conflictAction: 'overwrite', saveAs: true});
+				}
+			}
+		});
+	});
+
 	loadBuilds();
 
 	/*chrome.storage.sync.set({
@@ -159,4 +184,38 @@ function errorMessage(msg) {
 	$('#alertFailureMsg').text(msg);
 	$('#alertFailure').fadeIn();
 	setTimeout(function() { $('#alertFailure').fadeOut(); }, 2500);
+}
+
+/**
+ * Handle the response from the sendMessage call for debugging purposes.
+ * @param	{Object}	response
+ * @return	{Void}
+ */
+function handleResponse(response) {
+	chrome.storage.sync.get(['debug'], function(items) {
+		if (chrome.runtime.lastError) {
+			console.error('SNAFU Sync Get Error: %s', chrome.runtime.lastError.message);
+		} else {
+			if (items.debug === true) {
+				if (isVarEmpty(response) === false) {
+					if (response.success === false) {
+						console.error('SNAFU Error: %s', response.errMsg);
+					} else {
+						console.info('SNAFU: Update sent!');
+					}
+				} else {
+					console.error('SNAFU Error: Unable to process response to message.');
+				}
+			}
+		}
+	});
+}
+
+/**
+ * Checks if a variable is empty (null, undefined, NaN, etc.).
+ * @param   {String}    value
+ * @return  {Boolean}
+ */
+function isVarEmpty(value) {
+    return (value === null || value === undefined || value === NaN ) ? true : false
 }

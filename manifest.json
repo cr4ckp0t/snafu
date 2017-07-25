@@ -19,6 +19,7 @@
     },
     "permissions": [
         "tabs",
+        "downloads",
         "contextMenus",
         "storage",
         "declarativeContent"

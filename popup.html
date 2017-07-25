@@ -105,7 +105,7 @@
                         <label id="autoFinish-update" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="Update ticket automatically.">
                             <input type="radio" name="autoFinish" value="update" autocomplete="off" /> Update
                         </label>
-                        <label id="autoEquipTicket-auto" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="Save everything except closures, which are updated.">
+                        <label id="autoFinish-auto" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="Save everything except closures, which are updated.">
                             <input type="radio" name="autoFinish" value="auto" autocomplete="off" /> Automatic
                         </label>
                         <label id="autoFinish-none" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="Don't save/update automatically.">
@@ -200,17 +200,73 @@
                     </span>
                 </div>
                 <br />
-                <div style="float:right;padding-bottom:10px;" class="btn-group btn-group-sm">
-                    <button type="button" class="btn btn-primary" id="sendAutoAcknowledge" title="Auto-acknowledge ticket."><span class="glyphicon glyphicon-ok"></span> Acknowledge</button>
-                    <button type="button" class="btn btn-warning" id="sendAutoEnRoute" title="Auto En Route detection."><span class="glyphicon glyphicon-sunglasses"></span> En Route</button>
-                    <button type="button" class="btn btn-danger" id="sendAutoClosure" title="Auto-close ticket."><span class="glyphicon glyphicon-remove"></span> Close</button>
+                <div class="form-group">
+                    <div class="btn-group btn-group-sm">
+                        <button type="button" class="btn btn-primary" id="sendAutoAcknowledge" title="Auto-acknowledge ticket."><span class="glyphicon glyphicon-ok"></span> Acknowledge</button>
+                        <button type="button" class="btn btn-warning" id="sendAutoEnRoute" title="Auto En Route detection."><span class="glyphicon glyphicon-sunglasses"></span> En Route</button>
+                        <button type="button" class="btn btn-danger" id="sendAutoClosure" title="Auto-close ticket."><span class="glyphicon glyphicon-remove"></span> Close</button>
+                    </div>
+                    <span style="float:right;" class="btn-group btn-group-sm">
+                        <button type="button" class="btn btn-default" id="newIncident3" title="Create New Incident"><span class="glyphicon glyphicon-plus"></span></button>
+                        <button type="button" class="btn btn-default" id="openCatalog3" title="Open Service Catalog"><span class="glyphicon glyphicon-list-alt"></span></button>
+                        <button type="button" class="btn btn-default" id="openFaq3" title="Frequently Asked Questions"><span class="glyphicon glyphicon-tasks"></span></button>
+                        <button type="button" class="btn btn-default" id="openHelp3" title="Help"><span class="glyphicon glyphicon-question-sign"></span></button>
+                        <button type="button" class="btn btn-default" id="openBuildLog3" title="Build Log"><span class="glyphicon glyphicon-th-list"></span></button>
+                        <button type="button" class="btn btn-warning" id="openOptions3" title="Options"><span class="glyphicon glyphicon-cog"></span></button>
+                    </span>
                 </div>
             </div>
 
             <!-- Time Calculator -->
             <div role="tabpanel" class="tab-pane" id="timeCalc">
                 <br />
-                <p><strong>Coming Soon!</strong></p>
+                <div class="alert alert-info"><em><strong>Note:</strong> All times should be in 24-hour format.</em></div>
+                <div id="alertCalcSuccess" class="alert alert-success alert-dismissible" role="alert">
+                    <span class="glyphicon glyphicon-ok"></span>  <span id="alertSuccessMsg"></span>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div id="alertCalcFailure" class="alert alert-danger alert-dismissible" role="alert">
+                    <span class="glyphicon glyphicon-remove"></span>  <span id="alertFailureMsg"></span>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="input-group">
+                    <span class="input-group-addon" id="inTimeAddon">Clock In:</span>
+                    <input type="time" class="form-control" id="inTime" aria-describedby="inTimeAddon" />
+                </div>
+                <br />
+                <div class="input-group">
+                    <span class="input-group-addon" id="lunchOutTimeAddon">Lunch Out:</span>
+                    <input type="time" class="form-control" id="lunchOutTime" aria-describedby="lunchOutTimeAddon" />
+                </div>
+                <br />
+                <div class="input-group">
+                    <span class="input-group-addon" id="lunchInTimeAddon">Lunch In:</span>
+                    <input type="time" class="form-control" id="lunchInTime" aria-describedby="lunchInTimeAddon" />
+                </div>
+                <br />
+                <div class="input-group">
+                    <span class="input-group-addon" id="lunchSkippedAddon">Lunch Skipped:</span>
+                    <select class="form-control" id="lunchSkipped" aria-describedby="lunchSkippedAddon">
+                        <option value="yes">Yes</option>
+                        <option value="no" selected>No</option>
+                    </select>
+                </div>
+                <br />
+                <div class="form-group">
+                    <span style="float:left;" class="btn-group btn-group-sm">
+                        <button type="button" class="btn btn-primary" id="calculateTime" title="Calculate Clock Out Time"><span class="glyphicon glyphicon-th"></span> Calculate</button>
+                        <button type="button" class="btn btn-danger" id="resetTime" title="Reset Time Fields"><span class="glyphicon glyphicon-refresh"></span> Reset</button>
+                    </span>
+                    <span style="float:right;" class="btn-group btn-group-sm">
+                        <button type="button" class="btn btn-default" id="newIncident4" title="Create New Incident"><span class="glyphicon glyphicon-plus"></span></button>
+                        <button type="button" class="btn btn-default" id="openCatalog4" title="Open Service Catalog"><span class="glyphicon glyphicon-list-alt"></span></button>
+                        <button type="button" class="btn btn-default" id="openFaq4" title="Frequently Asked Questions"><span class="glyphicon glyphicon-tasks"></span></button>
+                        <button type="button" class="btn btn-default" id="openHelp4" title="Help"><span class="glyphicon glyphicon-question-sign"></span></button>
+                        <button type="button" class="btn btn-default" id="openBuildLog4" title="Build Log"><span class="glyphicon glyphicon-th-list"></span></button>
+                        <button type="button" class="btn btn-warning" id="openOptions4" title="Options"><span class="glyphicon glyphicon-cog"></span></button>
+                    </span>
+                </div>
+                <br />
             </div>
         </div>
     </div>

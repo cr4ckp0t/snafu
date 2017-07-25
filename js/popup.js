@@ -151,6 +151,7 @@ $(document).ready(function() {
     // keyup events
     $('textarea[id$=Notes]').keyup(processKeyUpUpdate);
     $('input[id^=comp').keyup(processKeyUpEquipOrder);
+    $('input[id$=Time]').keyup(processKeyUpTimeCalc);
 
     // send ticket update
     $('#sendUpdate').click(function() {
@@ -298,6 +299,16 @@ $(document).ready(function() {
         chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
             chrome.tabs.sendMessage(tabs[0].id, { type: 'autoEnRoute' });
         });
+    });
+
+    // run the time calculator
+    $('#calculateTime').click(function() {
+
+    });
+
+    // reset the time calculator
+    $('#resetTime').click(function() {
+
     });
 
     $('[id^=newIncident]').click(function() { chrome.tabs.create({url: 'https://ghsprod.service-now.com/incident.do?sysparm_stack=incident_list.do&sys_id=-1'}); });
@@ -475,6 +486,19 @@ function processKeyUpEquipOrder(event) {
     if (event.keyCode === 13 && !event.shiftKey && !event.ctrlKey && !event.altKey) {
         chrome.storage.sync.get('sendEnter', function(items) {
             if (items.sendEnter === true) $('#sendEquipment').click();
+        });
+    }
+}
+
+/**
+ * Process KeyUp event from Time Calculator tab.
+ * @param   {Object}    event
+ * @return  {Void}
+ */
+function processKeyUpTimeCalc(event) {
+    if (event.keyCode === 13 && !event.shiftKey && !event.ctrlKey && !event.altKey) {
+        chrome.storage.sync.get('sendEnter', function(items) {
+            if (items.sendEnter === true) $('#calculateTime').click();
         });
     }
 }
