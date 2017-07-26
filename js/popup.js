@@ -183,7 +183,7 @@ $(document).ready(function() {
                                 }
                             }
 
-                            if (items.keepNotes === false || (items.keepNotes === true && item.persistNotes === false)) chrome.storage.local.clear();
+                            if (items.keepNotes === false || (items.keepNotes === true && items.persistNotes === false)) chrome.storage.local.clear();
                             if (items.closePopup === true) setTimeout(function() { window.close(); }, 500);
                         }
                     });
@@ -222,7 +222,7 @@ $(document).ready(function() {
                                     console.error('SNAFU Error: Unable to process message response.');
                                 }
                             }
-                            if (items.keepNotes === false || (items.keepNotes === true && item.persistNotes === false)) chrome.storage.local.clear();
+                            if (items.keepNotes === false || (items.keepNotes === true && items.persistNotes === false)) chrome.storage.local.clear();
                             if (items.closePopup === true) setTimeout(function() { window.close(); }, 500);
                         }
                     });
@@ -258,7 +258,7 @@ $(document).ready(function() {
                                     console.error('SNAFU Error: Unable to process message response.');
                                 }
                             }
-                            if (items.keepNotes === false || (items.keepNotes === true && item.persistNotes === false)) chrome.storage.local.clear();
+                            if (items.keepNotes === false || (items.keepNotes === true && items.persistNotes === false)) chrome.storage.local.clear();
                             if (items.closePopup === true) setTimeout(function() { window.close(); }, 500);
                         }
                     });

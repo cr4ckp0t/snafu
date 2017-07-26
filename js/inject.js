@@ -445,13 +445,15 @@ document.addEventListener('SNAFU_Inject', function(snafuInject) {
 	// auto ticket detection
 	} else if (snafuInject.detail.type === 'autoEnRoute' || snafuInject.detail.type === 'autoHandle' || snafuInject.detail.type === 'autoAcknowledge' || snafuInject.detail.type === 'autoClosure') {
 		var snafuTicketType = snafuGetTicketType();
+		var snafuType = snafuInject.detail.type;
+
 		if (snafuTicketType === false) {
 			snafuErrorMessage('No task or incident detected.');
 		} else if (snafuTicketType in snafuAutoTickets) {
 			var snafuTicket = snafuAutoTickets[snafuTicketType];
 			var snafuError = false;
 			// determine ack or close
-			if (snafuInject.detail.type === 'autoHandle') {
+			if (snafuType === 'autoHandle') {
 				var snafuTicketStatus = (snafuTicketType === 'generic_incident') ? g_form.getValue('incident_state') : g_form.getValue('state');
 				if (snafuTicketType === 'generic_incident') {
 					if (snafuTicketStatus === '6') {
@@ -459,7 +461,7 @@ document.addEventListener('SNAFU_Inject', function(snafuInject) {
 						snafuError = true;
 					} else {
 						// if status is 1 (New) or 2 (Assigned) then auto-acknowledge, otherwise auto-close
-						snafuInject.detail.type = (snafuTicketStatus === '1' || snafuTicketStatus === '2') ? 'autoAcknowledge' : 'autoClose';
+						snafuType = (snafuTicketStatus === '1' || snafuTicketStatus === '2') ? 'autoAcknowledge' : 'autoClose';
 					} 
 				} else {
 					if (snafuTicketStatus === '3' || snafuTicketStatus === '4') {
@@ -467,7 +469,8 @@ document.addEventListener('SNAFU_Inject', function(snafuInject) {
 						snafuError = true;
 					} else {
 						// if status is 1 (Open) then auto-acknowledge, otherwise auto-close
-						snafuInject.detail.type = (snafuTicketStatus === '1') ? 'autoAcknowledge' : 'autoClose';
+						snafuType = (snafuTicketStatus === '1') ? 'autoAcknowledge' : 'autoClose';
+						//console.log(snafuType, snafuTicketStatus)
 					}
 				}
 			}
@@ -475,14 +478,14 @@ document.addEventListener('SNAFU_Inject', function(snafuInject) {
 			if (snafuError === true ) {
 				snafuErrorMessage('Ticket has already been closed.');
 			} else {
-				if (snafuInject.detail.type === 'autoEnRoute') {
+				if (snafuType === 'autoEnRoute') {
 					var snafuTicketAction = snafuTicket.enRoute;
 				} else {
-					var snafuTicketAction = (snafuInject.detail.type === 'autoAcknowledge') ? snafuTicket.ack : snafuTicket.close;
+					var snafuTicketAction = (snafuType === 'autoAcknowledge') ? snafuTicket.ack : snafuTicket.close;
 				}
 				
 				if (snafuIsVarEmpty(snafuTicketAction) === true) {
-					snafuErrorMessage(snafuSprintf('Unable to complete action "%s" on this ticket type (%s).', [snafuInject.detail.type, snafuTicketType]));
+					snafuErrorMessage(snafuSprintf('Unable to complete action "%s" on this ticket type (%s).', [snafuType, snafuTicketType]));
 				} else {
 					// set the field with value
 					if (snafuIsVarEmpty(snafuTicket.field) === false && snafuIsVarEmpty(snafuTicketAction.value) === false) {
