@@ -70,7 +70,7 @@ function saveSettings() {
 		closePopup: ($('#closePopup').val() === 'enable') ? true: false,
 		sendEnter: ($('#sendEnter').val() === 'enable') ? true : false,
 		keepNotes: ($('#keepNotes').val() === 'enable') ? true : false,
-		persistNotes: ($('#persistNotes').val() === 'enable') ? true : false,
+		clearNotes: ($('#clearNotes').val() === 'enable') ? true : false,
 		canned: getCannedMessages(),
 		autoFinish: $('#ticketCompletion').val(),
 		finishDelay: $('#finishDelay').val(),
@@ -100,7 +100,7 @@ function loadSettings() {
 		'finishDelay',
 		'sendEnter',
 		'keepNotes',
-		'persistNotes',
+		'clearNotes',
 		'closeAlerts',
 		'buildLog',
 		'builds',
@@ -180,11 +180,11 @@ function loadSettings() {
 			}
 
 			// persist notes after submission
-			if (isVarEmpty(items.persistNotes) === true) {
-				settingsToCreate['persistNotes'] = false;
-				$('#persistNotes').val('disable');
+			if (isVarEmpty(items.clearNotes) === true) {
+				settingsToCreate['clearNotes'] = true;
+				$('#clearNotes').val('disable');
 			} else {
-				$('#persistNotes').val((items.persistNotes === true) ? 'enable' : 'disable');
+				$('#clearNotes').val((items.clearNotes === true) ? 'enable' : 'disable');
 			}
 
 			// close alerts

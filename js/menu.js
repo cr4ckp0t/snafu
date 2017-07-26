@@ -252,6 +252,13 @@ chrome.contextMenus.create({
 });
 
 chrome.contextMenus.create({
+	title: 'Keep on Submit',
+	contexts: ['page'],
+	id: 'clearNotesParent',
+	parentId: 'optionsParent'
+});
+
+chrome.contextMenus.create({
 	title: 'Send On Enter',
 	contexts: ['page'],
 	id: 'sendEnterParent',
@@ -272,7 +279,7 @@ chrome.contextMenus.create({
 	parentId: 'optionsParent'
 });
 
-var toggleOptions = ['closePopup', 'keepNotes', 'sendEnter', 'buildLog', 'debug'];
+var toggleOptions = ['closePopup', 'keepNotes', 'clearNotes', 'sendEnter', 'buildLog', 'debug'];
 var objToggle = {'enable': 'Enabled', 'disable': 'Disabled'};
 
 for (var i = 0; i < toggleOptions.length; i++) {
@@ -393,6 +400,10 @@ chrome.storage.onChanged.addListener(function(changes, area) {
 			// set the keep notes radio
 			chrome.contextMenus.update('keepNotes-enable', {checked: (changes.keepNotes.newValue === true) ? true : false});
 			chrome.contextMenus.update('keepNotes-disable', {checked: (changes.keepNotes.newValue === false) ? true : false});
+		} else if ('clearNotes' in changes) {
+			// set the keep on submit radio
+			chrome.contextMenus.update('clearNotes-enable', {checked: (changes.clearNotes.newValue === true) ? true : false});
+			chrome.contextMenus.update('clearNotes-disable', {checked: (changes.clearNotes.newValue === false) ? true : false});
 		}
 	}
 });
@@ -550,6 +561,10 @@ function updateOptionMenus() {
 			// set the keep notes radio
 			chrome.contextMenus.update('keepNotes-enable', {checked: (items.keepNotes === true) ? true : false});
 			chrome.contextMenus.update('keepNotes-disable', {checked: (items.keepNotes === false) ? true : false});
+
+			// set the keep on submit radio
+			chrome.contextMenus.update('clearNotes-enable', {checked: (changes.clearNotes.newValue === true) ? true : false});
+			chrome.contextMenus.update('clearNotes-disable', {checked: (changes.clearNotes.newValue === false) ? true : false});
 		}
 	});
 }

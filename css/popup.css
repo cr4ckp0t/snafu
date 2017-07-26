@@ -65,6 +65,12 @@ div#form-info {
     color: #A0A0A0
 }
 
+div.extraInfo {
+	color: #bfbfbf;
+    font-size: 12px;
+    font-style: italic;
+}
+
 textarea#customerNotes, textarea#workNotes {
     width: 100%;
     font-size: 12px;

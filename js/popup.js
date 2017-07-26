@@ -79,8 +79,8 @@ $(document).ready(function() {
 
     // monitor tStatus to show/hide the scheduled input
     var now = new Date();
-    $('input[type=datetime-local]').attr('min', new Date(now.getTime()-now.getTimezoneOffset()*60000).toISOString().substring(0,19));
-    $('input[type=datetime-local]').val(new Date(now.getTime()-now.getTimezoneOffset()*60000).toISOString().substring(0,19));
+    $('input[type=datetime-local]').attr('min', new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().substring(0, 19));
+    $('input[type=datetime-local]').val(new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().substring(0, 19));
     $('input[name=tStatus]').change(function() {
         chrome.storage.sync.get(['debug', 'keepNotes'], function(items) {
             if (items.keepNotes === true) {
@@ -167,7 +167,7 @@ $(document).ready(function() {
                     workNotes: $('#workNotes').val(),
                     custNotes: $('#customerNotes').val()
                 }, function(response) {
-                    chrome.storage.sync.get(['debug', 'closePopup', 'keepNotes', 'persistNotes'], function(items) {
+                    chrome.storage.sync.get(['debug', 'closePopup', 'keepNotes', 'clearNotes'], function(items) {
                         if (chrome.runtime.lastError) {
                             console.error('SNAFU Sync Get Error: %s', chrome.runtime.lastError.message);
                         } else {
@@ -183,7 +183,7 @@ $(document).ready(function() {
                                 }
                             }
 
-                            if (items.keepNotes === false || (items.keepNotes === true && items.persistNotes === false)) chrome.storage.local.clear();
+                            if (items.keepNotes === false || (items.keepNotes === true && items.clearNotes === true)) chrome.storage.local.clear();
                             if (items.closePopup === true) setTimeout(function() { window.close(); }, 500);
                         }
                     });
@@ -207,7 +207,7 @@ $(document).ready(function() {
                     workNotes: equipWorkNotes,
                     custNotes: null
                 }, function(response) {
-                    chrome.storage.sync.get(['debug', 'closePopup', 'keepNotes', 'persistNotes'], function(items) {
+                    chrome.storage.sync.get(['debug', 'closePopup', 'keepNotes', 'clearNotes'], function(items) {
                         if (chrome.runtime.lastError) {
                             console.error('SNAFU Sync Get Error: %s', chrome.runtime.lastError.message);
                         } else {
@@ -222,7 +222,7 @@ $(document).ready(function() {
                                     console.error('SNAFU Error: Unable to process message response.');
                                 }
                             }
-                            if (items.keepNotes === false || (items.keepNotes === true && items.persistNotes === false)) chrome.storage.local.clear();
+                            if (items.keepNotes === false || (items.keepNotes === true && items.clearNotes === true)) chrome.storage.local.clear();
                             if (items.closePopup === true) setTimeout(function() { window.close(); }, 500);
                         }
                     });
@@ -243,7 +243,7 @@ $(document).ready(function() {
                     custNotes: $('#schedAppt').val().slice(0, -3),
                     workNotes: $('#customerNotes').val()
                 }, function(response) {
-                    chrome.storage.sync.get(['debug', 'closePopup', 'keepNotes', 'persistNotes'], function(items) {
+                    chrome.storage.sync.get(['debug', 'closePopup', 'keepNotes', 'clearNotes'], function(items) {
                         if (chrome.runtime.lastError) {
                             console.error('SNAFU Sync Get Error: %s', chrome.runtime.lastError.message);
                         } else {
@@ -258,7 +258,7 @@ $(document).ready(function() {
                                     console.error('SNAFU Error: Unable to process message response.');
                                 }
                             }
-                            if (items.keepNotes === false || (items.keepNotes === true && items.persistNotes === false)) chrome.storage.local.clear();
+                            if (items.keepNotes === false || (items.keepNotes === true && items.clearNotes === true)) chrome.storage.local.clear();
                             if (items.closePopup === true) setTimeout(function() { window.close(); }, 500);
                         }
                     });
@@ -304,12 +304,24 @@ $(document).ready(function() {
 
     // run the time calculator
     $('#calculateTime').click(function() {
-        errorMessage('Functionality not yet implemented.  Wait for version 1.1.6.');
+        // validate the info
+        if (isVarEmpty($('#inTime').val()) === true || isVarEmpty($('#lunchOutTime').val()) || isVarEmpty($('#lunchInTime').val())) {
+            errorMessage('You must provide a Clock In, Lunch Out, and Lunch In times in order to calculate.');
+        } else {
+            var d = new Date();
+            var inTime = new Date(d.getFullYear() + '-' + d.getMonth() + '-' + d.getDate() + ' ' + $('#inTime').val());
+            var lunchOutTime = new Date(d.getFullYear() + '-' + d.getMonth() + '-' + d.getDate() + ' ' + $('#lunchOutTime').val());
+            var lunchInTime = new Date(d.getFullYear() + '-' + d.getMonth() + '-' + d.getDate() + ' ' + $('#lunchInTime').val());
+            console.info(Math.abs(lunchOutTime - inTime), Math.abs(lunchInTime - lunchOutTime));
+        }
     });
 
     // reset the time calculator
     $('#resetTime').click(function() {
-        errorMessage('Functionality not yet implemented.  Wait for version 1.1.6.');
+        $('#inTime').val('');
+        $('#lunchOutTime').val('');
+        $('#lunchInTime').val('');
+        successMessage('Times has been reset.');
     });
 
     $('[id^=newIncident]').click(function() { chrome.tabs.create({url: 'https://ghsprod.service-now.com/incident.do?sysparm_stack=incident_list.do&sys_id=-1'}); });

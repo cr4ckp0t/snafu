@@ -176,7 +176,6 @@
             <!-- Automation Panel -->
             <div role="tabpanel" class="tab-pane" id="automation">
                 <br />
-                <div class="alert alert-info"><em>Note: Certain tasks that require additional input can't be automatically detected and closed.  For example, quarantine tasks that require you to select quarantine, restock, or repair can't be automated.  Same goes for Hot Swap builds that require selecting new or repurposed.  All other tasks and incidents can be auto-detected.</em></div>
                 <div class="input-group input-group-sm">
                     <span class="input-group-addon" id="closeQuarantineAddon">Close Quarantine</span>
                     <select id="closeQuarantine" class="form-control" aria-describedby="quarantineTaskAddon">
@@ -200,6 +199,8 @@
                     </span>
                 </div>
                 <br />
+                <div class="extraInfo"><em>Certain tasks that require additional input can't be automatically detected and closed.  For example, quarantine tasks that require you to select quarantine, restock, or repair can't be automated.  Same goes for Hot Swap builds that require selecting new or repurposed.  All other tasks and incidents can be auto-detected.</em></div>
+                <br />
                 <div class="form-group">
                     <div class="btn-group btn-group-sm">
                         <button type="button" class="btn btn-primary" id="sendAutoAcknowledge" title="Auto-acknowledge ticket."><span class="glyphicon glyphicon-ok"></span> Acknowledge</button>
@@ -220,7 +221,6 @@
             <!-- Time Calculator -->
             <div role="tabpanel" class="tab-pane" id="timeCalc">
                 <br />
-                <div class="alert alert-info"><em><strong>Note:</strong> All times should be in 24-hour format.</em></div>
                 <div id="alertCalcSuccess" class="alert alert-success alert-dismissible" role="alert">
                     <span class="glyphicon glyphicon-ok"></span>  <span id="alertCalcSuccessMsg"></span>
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -251,6 +251,8 @@
                         <option value="no" selected="selected">No</option>
                     </select>
                 </div>
+                <br />
+                <div class="extraInfo"><em>All times should be in 24-hour (HH:MM) format.</em></div>
                 <br />
                 <div class="form-group">
                     <span style="float:left;" class="btn-group btn-group-sm">
