@@ -305,14 +305,23 @@ $(document).ready(function() {
     // run the time calculator
     $('#calculateTime').click(function() {
         // validate the info
-        if (isVarEmpty($('#inTime').val()) === true || isVarEmpty($('#lunchOutTime').val()) || isVarEmpty($('#lunchInTime').val())) {
+        if (isVarEmpty($('#inTime').val()) || isVarEmpty($('#lunchOutTime').val()) || isVarEmpty($('#lunchInTime').val())) {
             errorMessage('You must provide a Clock In, Lunch Out, and Lunch In times in order to calculate.');
         } else {
             var d = new Date();
             var inTime = new Date(d.getFullYear() + '-' + d.getMonth() + '-' + d.getDate() + ' ' + $('#inTime').val());
             var lunchOutTime = new Date(d.getFullYear() + '-' + d.getMonth() + '-' + d.getDate() + ' ' + $('#lunchOutTime').val());
             var lunchInTime = new Date(d.getFullYear() + '-' + d.getMonth() + '-' + d.getDate() + ' ' + $('#lunchInTime').val());
-            console.info(Math.abs(lunchOutTime - inTime), Math.abs(lunchInTime - lunchOutTime));
+
+            if (inTime > lunchOutTime || inTime > lunchInTime || lunchOutTime > lunchInTime) {
+                errorMessage('Please provide valid time inputs.');
+            } else {
+                var timeLeft = 28800000 - (Math.abs(lunchOutTime - inTime));
+                var outTime = lunchInTime + timeLeft;
+                console.log(timeLeft, lunchInTime, outTime);
+                //$('#alertAnswerResult').text(msToTime(Math.abs(timeLeft + lunchInTime)));
+                //$('#alertAnswer').fadeIn();
+            }
         }
     });
 
@@ -532,8 +541,21 @@ function loadWildcards() {
 }
 
 /**
+ * Convert milliseconds to human readable time.
+ * @param   {Integer}   ms
+ */
+function msToTime(ms) {
+    var minutes = parseInt((ms / (1000 * 60)) % 60);
+    var hours = parseInt((ms / (1000 * 60 * 60)) % 24);
+    hours = (hours < 10) ? "0" + hours : hours;
+    minutes = (minutes < 10) ? "0" + minutes : minutes;
+    return hours + ':' + minutes;
+}
+
+/**
  * Set success message.
  * @param	{String}	msg
+ * @return  {Void}
  */
 function successMessage(msg) {
 	$('#alertCalcSuccessMsg').text(msg);
@@ -544,6 +566,7 @@ function successMessage(msg) {
 /**
  * Set error message.
  * @param	{String}	msg
+ * @return  {Void}
  */
 function errorMessage(msg) {
 	$('#alertCalcFailureMsg').text(msg);
