@@ -4,9 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## 1.1.7 [2017-07-28]
 ### Added
 - Clear on Submit option added to the context menu.
+- Time calculator to determine correct Clock out time to get full 8 hours.
 
 ## 1.1.6 [2017-07-26]
 ### Fixed

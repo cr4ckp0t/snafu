@@ -305,23 +305,27 @@ $(document).ready(function() {
     // run the time calculator
     $('#calculateTime').click(function() {
         // validate the info
-        if (isVarEmpty($('#inTime').val()) || isVarEmpty($('#lunchOutTime').val()) || isVarEmpty($('#lunchInTime').val())) {
-            errorMessage('You must provide a Clock In, Lunch Out, and Lunch In times in order to calculate.');
+        if (isVarEmpty($('#inTime').val()) && ($('#lunchSkipped').val() === 'no' && isVarEmpty($('#lunchOutTime').val()) || isVarEmpty($('#lunchInTime').val()))) {
+            errorMessage('You must provide valid times with which to calculate.');
         } else {
             var d = new Date();
             var inTime = new Date(d.getFullYear() + '-' + d.getMonth() + '-' + d.getDate() + ' ' + $('#inTime').val());
-            var lunchOutTime = new Date(d.getFullYear() + '-' + d.getMonth() + '-' + d.getDate() + ' ' + $('#lunchOutTime').val());
-            var lunchInTime = new Date(d.getFullYear() + '-' + d.getMonth() + '-' + d.getDate() + ' ' + $('#lunchInTime').val());
 
-            if (inTime > lunchOutTime || inTime > lunchInTime || lunchOutTime > lunchInTime) {
-                errorMessage('Please provide valid time inputs.');
+            if ($('#lunchSkipped').val() === 'no') {
+                var lunchOutTime = new Date(d.getFullYear() + '-' + d.getMonth() + '-' + d.getDate() + ' ' + $('#lunchOutTime').val());
+                var lunchInTime = new Date(d.getFullYear() + '-' + d.getMonth() + '-' + d.getDate() + ' ' + $('#lunchInTime').val());
+
+                if (inTime > lunchOutTime || inTime > lunchInTime || lunchOutTime > lunchInTime) {
+                    errorMessage('Please provide valid time inputs.');
+                } else {
+                    var timeLeft = 28800000 - (Math.abs(lunchOutTime - inTime));
+                    var outTime = new Date(lunchInTime.getTime() + timeLeft);
+                }
             } else {
-                var timeLeft = 28800000 - (Math.abs(lunchOutTime - inTime));
-                var outTime = lunchInTime + timeLeft;
-                console.log(timeLeft, lunchInTime, outTime);
-                //$('#alertAnswerResult').text(msToTime(Math.abs(timeLeft + lunchInTime)));
-                //$('#alertAnswer').fadeIn();
+                var outTime = new Date(inTime.getTime() + 28800000);
             }
+            $('#alertAnswerResult').text(('0' + outTime.getHours()).slice(-2) + ':' + ('0' + outTime.getMinutes()).slice(-2) + ' (' + outTime.getFormattedTime() + ')');
+            $('#alertAnswer').fadeIn();
         }
     });
 
@@ -330,7 +334,8 @@ $(document).ready(function() {
         $('#inTime').val('');
         $('#lunchOutTime').val('');
         $('#lunchInTime').val('');
-        successMessage('Times has been reset.');
+        $('#alertAnswer').fadeOut();
+        successMessage('Times have been reset.');
     });
 
     $('[id^=newIncident]').click(function() { chrome.tabs.create({url: 'https://ghsprod.service-now.com/incident.do?sysparm_stack=incident_list.do&sys_id=-1'}); });
@@ -541,18 +546,6 @@ function loadWildcards() {
 }
 
 /**
- * Convert milliseconds to human readable time.
- * @param   {Integer}   ms
- */
-function msToTime(ms) {
-    var minutes = parseInt((ms / (1000 * 60)) % 60);
-    var hours = parseInt((ms / (1000 * 60 * 60)) % 24);
-    hours = (hours < 10) ? "0" + hours : hours;
-    minutes = (minutes < 10) ? "0" + minutes : minutes;
-    return hours + ':' + minutes;
-}
-
-/**
  * Set success message.
  * @param	{String}	msg
  * @return  {Void}
@@ -572,4 +565,12 @@ function errorMessage(msg) {
 	$('#alertCalcFailureMsg').text(msg);
 	$('#alertCalcFailure').fadeIn();
 	setTimeout(function() { $('#alertCalcFailure').fadeOut(); }, 2500);
+}
+
+Date.prototype.getFormattedTime = function () {
+    var hours = this.getHours() == 0 ? "12" : this.getHours() > 12 ? this.getHours() - 12 : this.getHours();
+    var minutes = (this.getMinutes() < 10 ? "0" : "") + this.getMinutes();
+    var ampm = this.getHours() < 12 ? "AM" : "PM";
+    var formattedTime = hours + ":" + minutes + " " + ampm;
+    return formattedTime;
 }
