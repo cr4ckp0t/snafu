@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+### ToDo
+- Utilize Chrome notifications for clock in/out.
+- Technician database for contact information.
+
 ## 1.1.7 [2017-07-28]
 ### Added
 - Clear on Submit option added to the context menu.

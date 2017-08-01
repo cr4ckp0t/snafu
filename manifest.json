@@ -1,7 +1,7 @@
 {
     "name": "SNAFU: SNow Automated Form Utilizer",
     "short_name": "SNAFU",
-    "version": "1.1.7",
+    "version": "1.1.8",
     "description": "It's like SNAP, only way better!",
     "author": "Adam Koch",
     "icons": {
