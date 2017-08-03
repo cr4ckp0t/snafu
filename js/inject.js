@@ -634,7 +634,12 @@ document.addEventListener('SNAFU_Inject', function(snafuInject) {
 
 					// set quarantine select, if needed
 					if (snafuType.indexOf('closeQuarantine') !== -1) {
-						snafuSetValue('rhs_restock_status', snafuType.replace('closeQuarantine', '').toLowerCase());
+						if (snafuType !== 'closeQuarantineRepairYes' && snafuType !== 'closeQuarantineRepairNo') {
+							snafuSetValue('rhs_restock_status', snafuType.replace('closeQuarantine', '').toLowerCase());
+						} else {
+							snafuSetValue('rhs_restock_status', 'repair');
+							snafuSetValue('asset_repair_type', snafuType.replace('closeQuarantineRepair', ''));
+						}
 					} else if (snafuType.indexOf('closeHotSwap') !== -1) {
 						snafuSetValue('rhs_replacement_type', snafuType.replace('closeHotSwap', '').toLowerCase());
 					}

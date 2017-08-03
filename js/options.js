@@ -21,14 +21,20 @@ $(document).ready(function() {
 	$('[id$=Failure').hide();
 	$('#saveSettings').click(function() { saveSettings(); })
 	$('#versionAbout').html(chrome.app.getDetails().version);
-	$('#openFaq').click(function() { chrome.tabs.create({url: chrome.extension.getURL('faq.html')}); });
-	$('#openHelp').click(function() { chrome.tabs.create({url: chrome.extension.getURL('help.html')}); });
-	$('#openBuildLog').click(function() { chrome.tabs.create({url: chrome.extension.getURL('builds.html')}); });
+	$('#openFaq').click(function() { chrome.tabs.create({url: chrome.runtime.getURL('faq.html')}); });
+	$('#openHelp').click(function() { chrome.tabs.create({url: chrome.runtime.getURL('help.html')}); });
+	$('#openBuildLog').click(function() { chrome.tabs.create({url: chrome.runtime.getURL('builds.html')}); });
 	$('#closeWindow').click(function() { chrome.tabs.query({active: true, currentWindow: true}, function(tabs) { chrome.tabs.remove(tabs[0].id); }); });
 
 	$('#reloadData').click(function() { 
 		loadSettings();
 		successMessage('Reloaded settings successsfully.');
+	});
+
+	$('[id$=Toggle]').click(function(event) {
+		var isChecked = $('#' + event.target.id).is(':checked');
+		var inputId = event.target.id.replace('Toggle', '') + 'Time';
+		$('#' + inputId).prop('disabled', (isChecked === true) ? false : true);
 	});
 
 	// reset user data
@@ -75,7 +81,25 @@ function saveSettings() {
 		autoFinish: $('#ticketCompletion').val(),
 		finishDelay: $('#finishDelay').val(),
 		closeAlerts: ($('#closeAlerts').val() === 'enable') ? true : false,
-		buildLog: ($('#buildLog').val() === 'enable') ? true : false
+		buildLog: ($('#buildLog').val() === 'enable') ? true : false,
+		alarms: {
+			clockIn: {
+				enabled: $('#clockInToggle').is(':checked'),
+				time: $('#clockInTime').val()
+			},
+			lunchOut: {
+				enabled: $('#lunchOutToggle').is(':checked'),
+				time: $('#lunchOutTime').val()
+			},
+			lunchIn: {
+				enabled: $('#lunchInToggle').is(':checked'),
+				time: $('#lunchInTime').val()
+			},
+			clockOut: {
+				enabled: $('#clockOutToggle').is(':checked'),
+				time: $('#clockOutTime').val()
+			}
+		}
 	}, function() {
 		if (chrome.runtime.lastError) {
 			console.error('SNAFU Sync Set Error: %s', chrome.runtime.lastError.message);
@@ -110,6 +134,7 @@ function loadSettings() {
 		'fullName',
 		'groupName',
 		'groupId',
+		'alarms',
 	], function(items) {
 		if (chrome.runtime.lastError) {
 			console.error('SNAFU Sync Get Error: %s', chrome.runtime.lastError.message);
@@ -205,6 +230,54 @@ function loadSettings() {
 
 			// completed builds
 			if (isVarEmpty(items.builds) === true) settingsToCreate['builds'] = {};
+
+			// alarms
+			if (isVarEmpty(items.alarms) === true) {
+				settingsToCreate['alarms'] = {
+					clockIn: {
+						enabled: false,
+						time: '07:30'
+					},
+					lunchOut: {
+						enabled: false,
+						time: '11:30'
+					},
+					lunchIn: {
+						enabled: false,
+						time: '12:01'
+					},
+					clockOut: {
+						enabled: false,
+						time: '16:01'
+					}
+				}
+
+				// clock in
+				$('#clockInTime').val('07:30');
+				$('#clockInTime').prop('disabled', true);
+				$('#clockInToggle').prop('checked', false);
+
+				// lunch out
+				$('#lunchOutTime').val('11:30');
+				$('#lunchOutTime').prop('disabled', true);
+				$('#lunchOutToggle').prop('checked', false);
+
+				// lunch in
+				$('#lunchInTime').val('12:01');
+				$('#lunchInTime').prop('disabled', true);
+				$('#lunchInToggle').prop('checked', false);
+
+				// clock out
+				$('#clockOutTime').val('16:01');
+				$('#clockOutTime').prop('disabled', true);
+				$('#clockOutToggle').prop('checked', false);
+			} else {
+				for (var alarm in items.alarms) {
+					$('#' + alarm + 'Time').val(items.alarms[alarm].time);
+					$('#' + alarm + 'Time').prop('disabled', (items.alarms[alarm].enabled === true) ? false : true);
+					$('#' + alarm + 'Toggle').prop('checked', items.alarms[alarm].enabled);
+				}
+			}
 			
 			// send the settings to sync storage
 			if (isVarEmpty(settingsToCreate) === false) {

@@ -20,6 +20,8 @@
     "permissions": [
         "tabs",
         "downloads",
+        "alarms",
+        "notifications",
         "contextMenus",
         "storage",
         "declarativeContent"

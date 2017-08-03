@@ -70,7 +70,7 @@ chrome.runtime.onInstalled.addListener(function() {
 chrome.runtime.onInstalled.addListener(function(details) {
 	if (details.reason === 'install') {
 		// show help page
-		chrome.tabs.create({url: chrome.extension.getURL('help.html')});
+		chrome.tabs.create({url: chrome.runtime.getURL('help.html')});
 	}
 });
 
@@ -87,7 +87,8 @@ chrome.runtime.onStartup.addListener(function() {
 		'clearNotes',
 		'closeAlerts',
 		'buildLog',
-		'builds'
+		'builds',
+		'alarms'
 	], function(items) {
 		if (chrome.runtime.lastError) {
 			console.error('SNAFU: Sync Get Error: %s', chrome.runtime.lastError.message);
@@ -110,6 +111,26 @@ chrome.runtime.onStartup.addListener(function() {
 					'leftVoicemail': 'Left voicemail for {INC_CUST_FNAME} at {INC_CUR_PHONE} to discuss the ticket.'
 				}
 			}
+			if (isVarEmpty(items.alarms) === true) {
+				settingsToCreate['alarms'] = {
+					clockIn: {
+						enabled: false,
+						time: '07:30'
+					},
+					lunchOut: {
+						enabled: false,
+						time: '11:30'
+					},
+					lunchIn: {
+						enabled: false,
+						time: '12:01'
+					},
+					clockOut: {
+						enabled: false,
+						time: '16:01'
+					}
+				}
+			}
 			if (isVarEmpty(settingsToCreate) === false) {
 				chrome.storage.sync.set(settingsToCreate, function() {
 					if (chrome.runtime.lastError) {
@@ -121,6 +142,11 @@ chrome.runtime.onStartup.addListener(function() {
 			}
 		}
 	});
+});
+
+// alarm listener
+chrome.alarms.onAlarm.addListener(function(alarm) {
+	
 });
 
 /**

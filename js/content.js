@@ -29,7 +29,7 @@ var injectData = {}
 
 // create event to manipulate g_form from the page
 var injectScript = document.createElement('script');
-injectScript.src = chrome.extension.getURL('js/inject.js');
+injectScript.src = chrome.runtime.getURL('js/inject.js');
 injectScript.onload = function() { this.remove(); };
 (document.head||document.documentElement).appendChild(injectScript);
 
@@ -198,7 +198,8 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                 
                 // close quarantine task
                 case 'closeQuarantineDecommission':
-                case 'closeQuarantineRepair':
+                case 'closeQuarantineRepairYes':
+                case 'closeQuarantineRepairNo':
                 case 'closeQuarantineRestock':
                     if (ticketType !== 'task') {
                         sendResponse({success: false, errMsg: 'Unable to detect an open task.'});

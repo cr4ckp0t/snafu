@@ -116,11 +116,29 @@ chrome.contextMenus.create({
 chrome.contextMenus.create({
 	title: 'Repair Device',
 	contexts: ['page'],
-	id: 'closeQuarantineRepair',
+	id: 'closeQuarantineRepairParent',
 	parentId: 'closeQuarantineParent',
+	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*']
+});
+
+chrome.contextMenus.create({
+	title: 'On-Site',
+	contexts: ['page'],
+	id: 'closeQuarantineRepairYes',
+	parentId: 'closeQuarantineRepairParent',
 	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
 	onclick: actionHandler
 });
+
+chrome.contextMenus.create({
+	title: 'At MDC',
+	contexts: ['page'],
+	id: 'closeQuarantineRepairNo',
+	parentId: 'closeQuarantineRepairParent',
+	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
+	onclick: actionHandler
+});
+
 
 chrome.contextMenus.create({
 	title: 'Restock Device',
@@ -303,7 +321,7 @@ chrome.contextMenus.create({
 	contexts: ['page'],
 	id: 'openBuildLog',
 	parentId: 'buildLogParent',
-	onclick: function() { chrome.tabs.create({url: chrome.extension.getURL('builds.html')}); }
+	onclick: function() { chrome.tabs.create({url: chrome.runtime.getURL('builds.html')}); }
 });
 
 chrome.contextMenus.create({type: 'separator', parentId: 'optionsParent'});
@@ -313,7 +331,7 @@ chrome.contextMenus.create({
 	contexts: ['page'],
 	id: 'optionsPage',
 	parentId: 'optionsParent',
-	onclick: function() { chrome.tabs.create({url: chrome.extension.getURL('options.html')}); }
+	onclick: function() { chrome.tabs.create({url: chrome.runtime.getURL('options.html')}); }
 });
 
 /**
@@ -357,7 +375,7 @@ chrome.contextMenus.create({
 	contexts: ['page'],
 	id: 'faqPage',
 	parentId: 'helpParent',
-	onclick: function() { chrome.tabs.create({url: chrome.extension.getURL('faq.html')}) }
+	onclick: function() { chrome.tabs.create({url: chrome.runtime.getURL('faq.html')}) }
 });
 
 chrome.contextMenus.create({
@@ -365,7 +383,7 @@ chrome.contextMenus.create({
 	contexts: ['page'],
 	id: 'helpPage',
 	parentId: 'helpParent',
-	onclick: function() { chrome.tabs.create({url: chrome.extension.getURL('help.html')}); }
+	onclick: function() { chrome.tabs.create({url: chrome.runtime.getURL('help.html')}); }
 });
 
 // monitor user data settings to update the context menu
