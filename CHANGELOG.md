@@ -4,10 +4,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## 1.1.8 [2017-08-03]
+### Added
+- Extension will now ask for additional permissions related to alarms and notifications.
+
+### Changed
+- Added functionality to automate the improved repair workflow for on-site repairs.
+
 ### ToDo
-- Utilize Chrome notifications for clock in/out.
-- Technician database for contact information.
+- *In Progress:* Utilize Chrome notifications and alarms for clock in/out.
 
 ## 1.1.7 [2017-07-28]
 ### Added
