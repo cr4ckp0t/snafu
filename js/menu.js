@@ -581,8 +581,8 @@ function updateOptionMenus() {
 			chrome.contextMenus.update('keepNotes-disable', {checked: (items.keepNotes === false) ? true : false});
 
 			// set the keep on submit radio
-			chrome.contextMenus.update('clearNotes-enable', {checked: (changes.clearNotes.newValue === true) ? true : false});
-			chrome.contextMenus.update('clearNotes-disable', {checked: (changes.clearNotes.newValue === false) ? true : false});
+			chrome.contextMenus.update('clearNotes-enable', {checked: (items.clearNotes === true) ? true : false});
+			chrome.contextMenus.update('clearNotes-disable', {checked: (items.clearNotes === false) ? true : false});
 		}
 	});
 }

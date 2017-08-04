@@ -4,15 +4,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.1.9 [2017-08-04]
+### Added
+- Added snafu keyword for custom search provider.
+- Auto-Closure script for SPR and hardware delivery tasks.
+
+### Fixed
+- Small bug with context menus related to updating the menus after a settings change.
+
+### ToDo
+- *In Progress:* Utilize Chrome notifications and alarms for clock in/out.
+
 ## 1.1.8 [2017-08-03]
 ### Added
 - Extension will now ask for additional permissions related to alarms and notifications.
 
 ### Changed
 - Added functionality to automate the improved repair workflow for on-site repairs.
-
-### ToDo
-- *In Progress:* Utilize Chrome notifications and alarms for clock in/out.
 
 ## 1.1.7 [2017-07-28]
 ### Added

@@ -128,13 +128,13 @@ function loadSettings() {
 		'closeAlerts',
 		'buildLog',
 		'builds',
+		'alarms',
 		'userId',
 		'userName',
 		'userEmail',
 		'fullName',
 		'groupName',
 		'groupId',
-		'alarms',
 	], function(items) {
 		if (chrome.runtime.lastError) {
 			console.error('SNAFU Sync Get Error: %s', chrome.runtime.lastError.message);

@@ -88,7 +88,7 @@ chrome.runtime.onStartup.addListener(function() {
 		'closeAlerts',
 		'buildLog',
 		'builds',
-		'alarms'
+		'alarms',
 	], function(items) {
 		if (chrome.runtime.lastError) {
 			console.error('SNAFU: Sync Get Error: %s', chrome.runtime.lastError.message);
@@ -149,6 +149,11 @@ chrome.alarms.onAlarm.addListener(function(alarm) {
 	
 });
 
+// search provider listener
+chrome.omnibox.onInputEntered.addListener(function(text) {
+	chrome.tabs.create({url: sprintf('https://ghsprod.service-now.com/textsearch.do?sysparm_no_redirect=true&sysparm_search=%s', [text])});
+});
+
 /**
  * Checks if a variable is empty (null, undefined, NaN, etc.).
  * @param   {String}    value
@@ -181,4 +186,16 @@ function handleResponse(response) {
 			}
 		}
 	});
+}
+
+/**
+ * Javascript sprintf function.
+ * @param   {String}    template
+ * @param   {String[]}  values
+ * @return  {String}
+ */
+function sprintf(template, values) {
+    return template.replace(/%s/g, function() {
+        return values.shift();
+    });
 }

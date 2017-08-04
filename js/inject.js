@@ -255,7 +255,10 @@ var snafuAutoTickets = {
 			'script': 'En route to complete equipment delivery.',
 			'value': '2'
 		},
-		'close': null
+		'close': {
+			'script': 'Completed equipment delivery to staging at {REQUESTED_FOR_CAMPUS}.',
+			'value': '3'
+		}
 	},
 	'po_install_items': {
 		'field': 'state',
@@ -293,7 +296,10 @@ var snafuAutoTickets = {
 			'script': 'En route to complete SPR delivery.',
 			'value': '2'
 		},
-		'close': null
+		'close': {
+			'script': 'Completed SPR delivery.',
+			'value': '3'
+		}
 	},
 	'spr_install': {
 		'field': 'state',
@@ -760,6 +766,7 @@ function snafuReplaceWildcards(strIn) {
 		"{REQUEST_ITEM}": "g_form.getReference('request_item').number || 'UNKNOWN';",										// ritm number
 		"{REQUESTED_BY}": "snafuUcwords(g_form.getReference('request_item.request.requested_for').name) || 'UNKNOWN';",		// task requested by
 		"{REQUESTED_FOR}": "snafuUcwords(g_form.getReference('request_item.u_requested_for').name) || 'UNKNOWN';",			// task requested for
+		"{REQUESTED_FOR_CAMPUS}": "snafuGetCampusName(g_form.getValue('requestedfor_campus')) || 'UNKNOWN';",							// requested for campus
 		"{TASK_STATE}": "g_form.getDisplayValue('state') || 'UNKNOWN';",													// task state
 
 		// hot swap only
@@ -921,5 +928,52 @@ function snafuIsResolveCode(field, value) {
 		return (value === '3') ? true : false;
 	} else {
 		return false
+	}
+}
+
+/**
+ * Determines campus from ID.
+ * @param	{String}	uid
+ * @return	{String}
+ */
+function snafuGetCampusName(uid) {
+	switch (uid) {
+		case '6480562a9861f1003a423fba5511147d':
+			return 'Baptist Easley';
+			break;
+		case '3fcd08d12b9af90033bdff70f8da15e8':
+			return 'GHS Downtown';
+			break;
+		case 'd4e0962a9861f1003a423fba5511147f':	// ngh
+		case 'd690522a9861f1003a423fba551114d9':	// gmmc
+			return 'ISC';
+			break;
+		case '52c0962a9861f1003a423fba5511147d':
+			return 'GrMH';
+			break;
+		case '15d0962a9861f1003a423fba5511147e':
+			return 'LCMH';
+			break;
+		case '102861af6f1b220049bfd4a21c3ee499':
+			return 'MDC';
+			break;
+		case 'bfe0962a9861f1003a423fba551114b8':
+			return 'OMH';
+			break;
+		case '6c11562a9861f1003a423fba551114de':
+			return 'Offsite';
+			break;
+		case '9b9265f92b121240fb4c779217da1568':
+			return 'Self Regional Hospital';
+			break;
+		case '9901562a9861f1003a423fba551114dd':
+			return 'HMH';
+			break;
+		case '3f9609fe2bbc0a0033bdff70f8da159f':	// independence pointe
+		case '72f0962a9861f1003a423fba551114ba':	// patewood
+			return 'Patewood';
+			break;
+		default:
+			return 'Unknown';
 	}
 }
