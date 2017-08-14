@@ -22,6 +22,7 @@
  *  access to page variables, so we have to inject code and use Custom Events
  *  to pass data between the extension and the page.
  **/
+
 var snafuRslvComments = "My name is {TECH_NAME} and I was the technician that assisted you with {TICKET}. Thank you for the opportunity to provide you with service today with your {INC_TYPE}. If for any reason, your issue does not appear to be resolved please contact the Service Desk at (864) 455-8000.";
 var snafuAutoTickets = {
 	// misc
@@ -619,6 +620,9 @@ document.addEventListener('SNAFU_Inject', function(snafuInject) {
 						snafuSetValue('close_notes', snafuWorkNotes);
 						snafuFlash('close_notes');
 					}
+
+					// attempt to select the Resolve Information tab
+
 				}
 
 				// change the root cause ci and due date for tasks
@@ -636,6 +640,12 @@ document.addEventListener('SNAFU_Inject', function(snafuInject) {
 					if (g_form.getValue('cmdb_ci') !== '5a8d6816a1cf38003a42245d1035d56e') {
 						snafuSetDisplayValue('cmdb_ci', '5a8d6816a1cf38003a42245d1035d56e', 'Desktop Services');
 						snafuFlash('cmdb_ci');
+					}
+
+					// if setting to pending and sub-status is set, then set the select
+					if (snafuValue === '-5' && snafuIsVarEmpty(snafuInject.detail.subStatus) === false) {
+						snafuSetValue('u_sub_state', snafuInject.detail.subStatus);
+						snafuFlash('u_sub_state');
 					}
 
 					// set quarantine select, if needed

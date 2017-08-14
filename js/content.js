@@ -188,6 +188,7 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                             finishDelay: items.finishDelay || 1.5,
                             field: 'state',
                             value: '3', // closed complete
+                            subStatus: msg.subStatus || null,
                             workNotes: 'Computer has been built. One {REPLACE_MODEL} has been built {REPLACE_BUILD}. Tag {REPLACE_ASSET} HostName {REPLACE_HOSTNAME}. Resolving Task.',
                             custNotes: null,
                             buildLog: items.buildLog
@@ -219,6 +220,7 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                             finishDelay: items.finishDelay || 1.5,
                             field: 'state',
                             value: '3', // closed complete
+                            subStatus: msg.subStatus || null,
                             workNotes: sprintf('Device removed from quarantine %s', addToNotes),
                             custNotes: null,
                             buildLog: items.buildLog
@@ -238,6 +240,7 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                             finishDelay: items.finishDelay || 1.5,
                             field: (ticketType === 'incident') ? 'incident_state' : 'state',
                             value: (ticketType === 'incident') ? '4' : '-5',    // on hold or pending
+                            subStatus: msg.subStatus || null,
                             custNotes: (ticketType === 'incident') ? sprintf('Scheduled appointment with {INC_CUSTOMER} for %s at %s.', msg.custNotes.split('T')) : sprintf('Scheduled appointment with {REQUESTED_FOR} for %s at %s.', msg.custNotes.split('T')),
                             workNotes: msg.workNotes || null,
                             buildLog: items.buildLog
@@ -253,12 +256,27 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                     if (ticketType === false) {
                         sendResponse({success: false, errMsg: 'ServiceNow must be active tab.'});
                     } else {
+                        // closing incident, so open resolve information tab
+                        if (ticketType === 'incident' && msg.tState === '2') {
+                            $('span[class=tab_caption_text]').each(function (index) {
+                                if ($(this).parent().hasClass('tabs2_active') && index !== 2) {
+                                    $(this).parent().removeClass('tabs2_active');
+                                }
+                                
+                                if (index === 2) {
+                                    $(this).parent().addClass('tabs2_active');
+                                    $(this).parent().click();
+                                }
+                            });
+                        }
+
                         injectData = {
                             type: msg.type,
                             autoFinish: items.autoFinish || 'none',
                             finishDelay: items.finishDelay || 1.5,
                             field: (ticketType === 'incident') ? 'incident_state' : 'state',
                             value: (ticketType === 'incident') ? incStates[parseInt(msg.tState)] : taskStates[parseInt(msg.tState)],
+                            subStatus: msg.subStatus || null,
                             workNotes: msg.workNotes || null,
                             custNotes: msg.custNotes || null,
                             buildLog: items.buildLog
@@ -278,6 +296,7 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                             finishDelay: items.finishDelay || 1.5,
                             field: 'state',
                             value: '3',
+                            subStatus: msg.subStatus || null,
                             workNotes: msg.workNotes || null,
                             custNotes: 'My name is {TECH_NAME} and I have completed the build process for your workstation. The next step is for the system to be delivered to our technicians supporting your campus or ambulatory location so they can schedule an appropriate time to come to your desk and install the system. Please be sure to watch for communication regarding the delivery and installation of your computer at your desk.',
                             buildLog: items.buildLog

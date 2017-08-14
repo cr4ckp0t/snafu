@@ -68,19 +68,14 @@ $(document).ready(function() {
     $('div[id^=alert]').hide();
     $('span[id^=comp]').hide();
     $('div[id=schedApptWrapper]').hide();
+    $('div[id=taskSubStatusWrapper]').hide();
     $('[data-toggle="tooltip"]').tooltip();
 
-    // close quarantine submenu
-    $('#closeQuarantine').on('click', function(event) {
-        $(this).next('ul').toggle();
-        event.stopPropagation();
-        event.preventDefault();
-    });
-
-    // monitor tStatus to show/hide the scheduled input
     var now = new Date();
     $('input[type=datetime-local]').attr('min', new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().substring(0, 19));
     $('input[type=datetime-local]').val(new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().substring(0, 19));
+
+    // monitor tStatus to show/hide the scheduled input
     $('input[name=tStatus]').change(function() {
         chrome.storage.sync.get(['debug', 'keepNotes'], function(items) {
             if (items.keepNotes === true) {
@@ -97,8 +92,13 @@ $(document).ready(function() {
     
         if ($('input[name=tStatus]:checked').val() === '4') {
             $('#schedApptWrapper').fadeIn();
+            $('#taskSubStatusWrapper').fadeOut();
+        } else if ($('input[name=tStatus]:checked').val() === '1') {
+            $('#schedApptWrapper').fadeOut();
+            $('#taskSubStatusWrapper').fadeIn();
         } else {
             $('#schedApptWrapper').fadeOut();
+            $('#taskSubStatusWrapper').fadeOut();
         }
     });
 
@@ -164,6 +164,7 @@ $(document).ready(function() {
                 chrome.tabs.sendMessage(tabs[0].id, {
                     type: 'sendUpdate',
                     tState: $('input[name=tStatus]:checked').val(),
+                    subStatus: $('#taskSubStatus').val(),
                     workNotes: $('#workNotes').val(),
                     custNotes: $('#customerNotes').val()
                 }, function(response) {

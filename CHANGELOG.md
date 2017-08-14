@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+### Added
+- Automatically clicks the Resolve Information tab when closing incidents.
+- Support for task sub-state options.
+
+### ToDo
+- *In Progress:* Utilize Chrome notifications and alarms for clock in/out.
+
 ## 1.1.9 [2017-08-04]
 ### Added
 - Added snafu keyword for custom search provider.
@@ -11,9 +19,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 - Small bug with context menus related to updating the menus after a settings change.
-
-### ToDo
-- *In Progress:* Utilize Chrome notifications and alarms for clock in/out.
 
 ## 1.1.8 [2017-08-03]
 ### Added
