@@ -29,7 +29,7 @@ var injectData = {}
 
 // inject the dymo javascript
 var dymoInject = document.createElement('script');
-dymoInject.src = chrome.runetime.getURL('js/dymo.js');
+dymoInject.src = chrome.runtime.getURL('js/dymo.js');
 dymoInject.onload = function() { this.remove(); };
 (document.head||document.documentElement).appendChild(dymoInject);
 
