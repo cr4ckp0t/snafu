@@ -4,6 +4,7 @@
 [Chrome Web Store](https://chrome.google.com/webstore/detail/snafu-snow-automated-form/hnnbkmfkgnjngnkijdmfijmbkpjmmmpd?hl=en-US&gl=US)<br />
 [Changelog](https://adamko.ch/snafu) ([Link viewable on GHS machines.](https://adamkoch.squarespace.com/snafu))
 
+## License
 ```
 SNAFU: SNow Automated Field Utilizer
 Copyright (C) 2017  Adam Koch <akoch@ghs.org>
@@ -22,6 +23,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ```
 
+## Statistics
 ```
 http://cloc.sourceforge.net v 1.64  T=0.07 s (380.9 files/s, 83008.2 lines/s)
 -------------------------------------------------------------------------------
