@@ -5,10 +5,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
+### Added
+- Cancelled Task workflow automation.
+
+### Changed
+- Cleaned up the context menu code to make changes more efficient to implement.
+
 ### ToDo
 - *In Progress:* Utilize Chrome notifications and alarms for clock in/out.
-- Add Cancelled Task workflow automation.
-- See if build, quarantine, etc. labels can be auto-printed.
+- *In Progress:* See if build, quarantine, etc. labels can be auto-printed.
 
 ## 1.1.10 [2017-08-14]
 ### Added

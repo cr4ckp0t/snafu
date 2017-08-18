@@ -18,15 +18,7 @@
         "default_title": "SNAFU: SNow Automated Form Utilizer",
         "default_popup": "popup.html"
     },
-    "permissions": [
-        "tabs",
-        "downloads",
-        "alarms",
-        "notifications",
-        "contextMenus",
-        "storage",
-        "declarativeContent"
-    ],
+    "permissions": [ "tabs", "downloads",  "alarms",  "notifications", "contextMenus", "storage", "declarativeContent" ],
     "content_scripts": [{
         "matches": ["https://ghsprod.service-now.com/*"],
         "js": ["js/jquery.min.js", "js/content.js"],
@@ -52,6 +44,6 @@
         }
     },
     "options_page": "options.html",
-    "web_accessible_resources": ["js/inject.js"],
+    "web_accessible_resources": ["js/inject.js", "js/dymo.js"],
     "manifest_version": 2
 }

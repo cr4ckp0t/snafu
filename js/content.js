@@ -27,6 +27,12 @@ var taskStates = ['2', '-5', '3', '4'];
 // data to send
 var injectData = {}
 
+// inject the dymo javascript
+var dymoInject = document.createElement('script');
+dymoInject.src = chrome.runetime.getURL('js/dymo.js');
+dymoInject.onload = function() { this.remove(); };
+(document.head||document.documentElement).appendChild(dymoInject);
+
 // create event to manipulate g_form from the page
 var injectScript = document.createElement('script');
 injectScript.src = chrome.runtime.getURL('js/inject.js');

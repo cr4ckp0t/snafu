@@ -21,3 +21,17 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ```
+
+```
+http://cloc.sourceforge.net v 1.64  T=0.07 s (380.9 files/s, 83008.2 lines/s)
+-------------------------------------------------------------------------------
+Language                     files          blank        comment           code
+-------------------------------------------------------------------------------
+Javascript                      13            267            699           2662
+HTML                             5             47             84           1222
+CSS                              6             63             98            257
+JSON                             1              0              0             49
+-------------------------------------------------------------------------------
+SUM:                            25            377            881           4190
+-------------------------------------------------------------------------------
+```

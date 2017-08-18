@@ -284,9 +284,23 @@ chrome.contextMenus.create({
 });
 
 chrome.contextMenus.create({
+	title: 'Close Alerts',
+	contexts: ['page'],
+	id: 'closeAlertsParent',
+	parentId: 'optionsParent'
+});
+
+chrome.contextMenus.create({
 	title: 'Build Log',
 	contexts: ['page'],
 	id: 'buildLogParent',
+	parentId: 'optionsParent'
+});
+
+chrome.contextMenus.create({
+	title: 'Print Labels',
+	contexts: ['page'],
+	id: 'printLabelsParent',
 	parentId: 'optionsParent'
 });
 
@@ -297,7 +311,7 @@ chrome.contextMenus.create({
 	parentId: 'optionsParent'
 });
 
-var toggleOptions = ['closePopup', 'keepNotes', 'clearNotes', 'sendEnter', 'buildLog', 'debug'];
+var toggleOptions = ['closePopup', 'keepNotes', 'clearNotes', 'sendEnter', 'closeAlerts', 'buildLog', 'printLabels', 'debug'];
 var objToggle = {'enable': 'Enabled', 'disable': 'Disabled'};
 
 for (var i = 0; i < toggleOptions.length; i++) {
@@ -404,24 +418,26 @@ chrome.storage.onChanged.addListener(function(changes, area) {
 			});
 		} else if ('closePopup' in changes) {
 			// set the closePopup radio
-			chrome.contextMenus.update('closePopup-enable', {checked: (changes.closePopup.newValue === true) ? true : false});
-			chrome.contextMenus.update('closePopup-disable', {checked: (changes.closePopup.newValue === false) ? true : false});
+			updateRadio('closePopup', changes.closePopup.newValue);
 		} else if ('debug' in changes) {
 			// set the debug radio
-			chrome.contextMenus.update('debug-enable', {checked: (changes.debug.newValue === true) ? true : false});
-			chrome.contextMenus.update('debug-disable', {checked: (changes.debug.newValue === false) ? true : false});
+			updateRadio('debug', changes.debug.newValue);
 		} else if ('sendEnter' in changes) {
 			// set the send on enter radio
-			chrome.contextMenus.update('sendEnter-enable', {checked: (changes.sendEnter.newValue === true) ? true : false});
-			chrome.contextMenus.update('sendEnter-disable', {checked: (changes.sendEnter.newValue === false) ? true : false});
+			updateRadio('sendEnter', changes.sendEnter.newValue);
 		} else if ('keepNotes' in changes) {
 			// set the keep notes radio
-			chrome.contextMenus.update('keepNotes-enable', {checked: (changes.keepNotes.newValue === true) ? true : false});
-			chrome.contextMenus.update('keepNotes-disable', {checked: (changes.keepNotes.newValue === false) ? true : false});
+			updateRadio('keepNotes', changes.keepNotes.newValue);
+		} else if ('buildLog' in changes) {
+			// set the build log radio\
+			updateRadio('buildLog', changes.buildLog.newValue);
 		} else if ('clearNotes' in changes) {
 			// set the keep on submit radio
-			chrome.contextMenus.update('clearNotes-enable', {checked: (changes.clearNotes.newValue === true) ? true : false});
-			chrome.contextMenus.update('clearNotes-disable', {checked: (changes.clearNotes.newValue === false) ? true : false});
+			updateRadio('clearNotes', changes.clearNotes.newValue);
+		} else if ('closeAlerts' in changes) {
+			updateRadio('closeAlerts', changes.closeAlerts.newValue);
+		} else if ('printLabels' in changes) {
+			updateRadio('printLabels', changes.printLabels.newValue);
 		}
 	}
 });
@@ -547,7 +563,7 @@ function handleResponse(response) {
  * @return	{Void}
  */
 function updateOptionMenus() {
-	chrome.storage.sync.get(['debug', 'autoFinish', 'closePopup', 'sendEnter', 'keepNotes', 'userId', 'userName', 'userEmail', 'fullName', 'groupName', 'groupId'], function(items) {
+	chrome.storage.sync.get(['debug', 'autoFinish', 'closePopup', 'sendEnter', 'keepNotes', 'closeAlerts', 'buildLog', 'printLabels', 'userId', 'userName', 'userEmail', 'fullName', 'groupName', 'groupId'], function(items) {
 		if (chrome.runtime.lastError) {
 			console.error('SNAFU User Sync Error: %s', chrome.runtime.lastError.message);
 		} else {
@@ -564,25 +580,35 @@ function updateOptionMenus() {
 				chrome.contextMenus.update('autoFinish-' + opt, {checked: (items.autoFinish === opt) ? true : false});
 			});
 
-			// set the closePopup radio
-			chrome.contextMenus.update('closePopup-enable', {checked: (items.closePopup === true) ? true : false});
-			chrome.contextMenus.update('closePopup-disable', {checked: (items.closePopup === false) ? true : false});
+			// update radios
+			var radios = ['closePopup', 'debug', 'sendEnter', 'keepNotes', 'clearNotes', 'closeAlerts', 'buildLog', 'printLabels'];
+			for (var i = 0; i < radios.length; i++) {
+				updateRadio(radios[i], items[radios[i]]);
+			}
 
-			// set the debug radio
-			chrome.contextMenus.update('debug-enable', {checked: (items.debug === true) ? true : false});
-			chrome.contextMenus.update('debug-disable', {checked: (items.debug === false) ? true : false});
-
-			// set the send on enter radio
-			chrome.contextMenus.update('sendEnter-enable', {checked: (items.sendEnter === true) ? true : false});
-			chrome.contextMenus.update('sendEnter-disable', {checked: (items.sendEnter === false) ? true : false});
-
-			// set the keep notes radio
-			chrome.contextMenus.update('keepNotes-enable', {checked: (items.keepNotes === true) ? true : false});
-			chrome.contextMenus.update('keepNotes-disable', {checked: (items.keepNotes === false) ? true : false});
-
-			// set the keep on submit radio
-			chrome.contextMenus.update('clearNotes-enable', {checked: (items.clearNotes === true) ? true : false});
-			chrome.contextMenus.update('clearNotes-disable', {checked: (items.clearNotes === false) ? true : false});
 		}
 	});
+}
+
+/**
+ * Update on/of radios.
+ * @param	{String}	menuId
+ * @param	{Bool}		value
+ * @return	{Void}
+ */
+function updateRadio(menuId, value) {
+	chrome.contextMenus.update(sprintf('%s-enable', [menuId]), {checked: (value === true) ? true : false});
+	chrome.contextMenus.update(sprintf('%s-disable', [menuId]), {checked: (value === false) ? true : false});
+}
+
+/**
+ * Javascript sprintf function.
+ * @param   {String}    template
+ * @param   {String[]}  values
+ * @return  {String}
+ */
+function sprintf(template, values) {
+    return template.replace(/%s/g, function() {
+        return values.shift();
+    });
 }

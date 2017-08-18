@@ -82,6 +82,7 @@ function saveSettings() {
 		finishDelay: $('#finishDelay').val(),
 		closeAlerts: ($('#closeAlerts').val() === 'enable') ? true : false,
 		buildLog: ($('#buildLog').val() === 'enable') ? true : false,
+		printLabels: ($('#printLabels').val() === 'enable') ? true : false,
 		alarms: {
 			clockIn: {
 				enabled: $('#clockInToggle').is(':checked'),
@@ -128,6 +129,7 @@ function loadSettings() {
 		'closeAlerts',
 		'buildLog',
 		'builds',
+		'printLabels',
 		'alarms',
 		'userId',
 		'userName',
@@ -218,6 +220,14 @@ function loadSettings() {
 				$('#closeAlerts').val('enable');
 			} else {
 				$('#closeAlerts').val((items.closeAlerts === true) ? 'enable' : 'disable');
+			}
+
+			// print labels automatically
+			if (isVarEmpty(items.printLabels) === true) {
+				settingsToCreate['printLabels'] = false;
+				$('#printLabels').val('disable');
+			} else {
+				$('#printLabels').val((items.printLabels === true) ? 'enable' : 'disable');
 			}
 
 			// build log

@@ -385,6 +385,20 @@ var snafuAutoTickets = {
 			'script': 'Absolute installation completed on {ABS_MACHINE}.',
 			'value': '3'
 		}
+	},
+
+	// cancelled task (when closing workflow as incomplete)
+	'cancelled_task': {
+		'field': 'state',
+		'ack': {
+			'script': 'Acknowledging cancelled task workflow.',
+			'value': '2'
+		},
+		'enRoute': null,
+		'close': {
+			'script': 'Updated {BROKEN_HOSTNAME}\'s location information.',
+			'value': '3'
+		}
 	}
 }
 
@@ -913,6 +927,8 @@ function snafuGetTicketType() {
 			return 'equip_disconnect';
 		} else if (snafuShortDesc.indexOf('Reconnect System') !== -1) {
 			return 'equip_reconnect';
+		} else if (snafuShortDesc.indexOf('CANCELLED TASK') !== -1) {
+			return 'cancelled_task';
 		} else {
         	var snafuTaskName = g_form.getValue('u_task_name').toLowerCase();
 			return (snafuTaskName in snafuAutoTickets) ? snafuTaskName : 'generic_task';
