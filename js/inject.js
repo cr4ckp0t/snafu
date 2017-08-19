@@ -24,7 +24,7 @@
  **/
 
 var snafuRslvComments = "My name is {TECH_NAME} and I was the technician that assisted you with {TICKET}. Thank you for the opportunity to provide you with service today with your {INC_TYPE}. If for any reason, your issue does not appear to be resolved please contact the Service Desk at (864) 455-8000.";
-var snafuAutoTickets = {
+var snafuAutoTickets = { 
 	// misc
 	'generic_task': {
 		'field': 'state',
@@ -404,6 +404,7 @@ var snafuAutoTickets = {
 
 // listen for triggers on the custom event for passing text
 document.addEventListener('SNAFU_Inject', function(snafuInject) {
+
 	// query for the user informatoin
 	if (snafuInject.detail.type === 'userQuery') {
 		var snafuAssignedTo = g_form.getReference('assigned_to');

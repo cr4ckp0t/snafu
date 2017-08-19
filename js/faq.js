@@ -22,7 +22,7 @@ $(document).ready(function() {
 	$('#openAll').click(function() { $('[id^=collapse]').collapse('show'); });
 	$('#closeAll').click(function() { $('[id^=collapse]').collapse('hide'); });
 	$('#toggleAll').click(function() { $('[id^=collapse]').collapse('toggle'); });
-	$('#openHelp').click(function() { chrome.tabs.create({url: chrome.runtime.getURL('help.html')}); });
-	$('#openOptions').click(function() { chrome.tabs.create({url: chrome.runtime.getURL('options.html')}); });
+	$('#openHelp').click(function() { chrome.tabs.create({url: chrome.runtime.getURL('html/help.html')}); });
+	$('#openOptions').click(function() { chrome.tabs.create({url: chrome.runtime.getURL('html/options.html')}); });
 	$('#closeWindow').click(function() { chrome.tabs.query({active: true, currentWindow: true}, function(tabs) { chrome.tabs.remove(tabs[0].id); }); });
 });

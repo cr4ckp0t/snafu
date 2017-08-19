@@ -20,7 +20,7 @@ $(document).ready(function() {
 	$('#version').html(chrome.app.getDetails().version);
 	$('#versionAbout').html(chrome.app.getDetails().version);
 	$('#licenseLink').click(function() { chrome.tabs.create({url: chrome.runtime.getURL('LICENSE')}); });
-	$('#openOptions').click(function() { chrome.tabs.create({url: chrome.runtime.getURL('options.html')}); });
-	$('#openFaq').click(function() { chrome.tabs.create({url: chrome.runtime.getURL('faq.html')}); });
+	$('#openOptions').click(function() { chrome.tabs.create({url: chrome.runtime.getURL('html/options.html')}); });
+	$('#openFaq').click(function() { chrome.tabs.create({url: chrome.runtime.getURL('html/faq.html')}); });
 	$('#closeWindow').click(function() { chrome.tabs.query({active: true, currentWindow: true}, function(tabs) { chrome.tabs.remove(tabs[0].id); }); });
 });

@@ -70,7 +70,7 @@ chrome.runtime.onInstalled.addListener(function() {
 chrome.runtime.onInstalled.addListener(function(details) {
 	if (details.reason === 'install') {
 		// show help page
-		chrome.tabs.create({url: chrome.runtime.getURL('help.html')});
+		chrome.tabs.create({url: chrome.runtime.getURL('html/help.html')});
 	}
 });
 

@@ -341,10 +341,10 @@ $(document).ready(function() {
 
     $('[id^=newIncident]').click(function() { chrome.tabs.create({url: 'https://ghsprod.service-now.com/incident.do?sysparm_stack=incident_list.do&sys_id=-1'}); });
     $('[id^=openCatalog]').click(function() { chrome.tabs.create({url: 'https://ghsprod.service-now.com/catalog_home.do?sysparm_view=catalog_default' }); });
-    $('[id^=openHelp]').click(function() { chrome.tabs.create({url: chrome.runtime.getURL('help.html')}); });
-    $('[id^=openOptions]').click(function() { chrome.tabs.create({url: chrome.runtime.getURL('options.html')}); });
-    $('[id^=openFaq]').click(function() { chrome.tabs.create({url: chrome.runtime.getURL('faq.html')}); });
-    $('[id^=openBuildLog').click(function() { chrome.tabs.create({url: chrome.runtime.getURL('builds.html')}); });
+    $('[id^=openHelp]').click(function() { chrome.tabs.create({url: chrome.runtime.getURL('html/help.html')}); });
+    $('[id^=openOptions]').click(function() { chrome.tabs.create({url: chrome.runtime.getURL('html/options.html')}); });
+    $('[id^=openFaq]').click(function() { chrome.tabs.create({url: chrome.runtime.getURL('html/faq.html')}); });
+    $('[id^=openBuildLog').click(function() { chrome.tabs.create({url: chrome.runtime.getURL('html/builds.html')}); });
 
     // load the saved notes
     chrome.storage.sync.get(['debug', 'keepNotes'], function(items) {

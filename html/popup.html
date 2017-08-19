@@ -1,0 +1,297 @@
+<!--
+    SNAFU: SNow Automated Form Utilizer
+    Copyright (C) 2017  Adam Koch <akoch@ghs.org>
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<!doctype html>
+<html>
+
+<head>
+    <title>SNAFU: SNow Automated Form Utilizer</title>
+    <link href="../css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="../css/popup.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+    <h1 id="header"><img src="images/icon-64.png" alt="Logo" style="height:50px;width:50px;" /> SNAFU <small>SNow Automated Form Utilizer</small></h1>
+    <div>
+        <!-- Navigation -->
+        <ul class="nav nav-tabs" role="tablist">
+            <li role="presentation" class="active"><a href="#main" aria-controls="main" role="tab" data-toggle="tab">Main</a></li>
+            <li role="presentation"><a href="#equipment" aria-controls="equipment" role="tab" data-toggle="tab">Equipment Orders</a></li>
+            <li role="presentation"><a href="#automation" aria-controls="automation" role="tab" data-toggle="tab">Automation</a></li>
+            <li role="presentation"><a href="#timeCalc" aria-controls="timeCalc" role="tab" data-toggle="tab">Time Calculator</a></li>
+        </ul>
+
+        <!-- Tab Panes -->
+        <div class="tab-content">
+
+            <!-- Main Panel -->
+            <div role="tabpanel" class="tab-pane active" id="main">
+                <div class="form-group" style="padding-top:10px;">
+                    <div class="btn-group" data-toggle="buttons">
+                        <label id="tStatus0" class="btn btn-primary btn-sm active">
+                            <input type="radio" name="tStatus" value="0" autocomplete="off" checked /> In Progress
+                        </label>
+                        <label id="tStatus1" class="btn btn-primary btn-sm">
+                            <input type="radio" name="tStatus" value="1" autocomplete="off" /> On Hold
+                        </label>
+                        <label id="tStatus4" class="btn btn-primary btn-sm">
+                            <input type="radio" name="tStatus" value="4" autocomplete="off" /> Scheduled
+                        </label>
+                        <label id="tStatus2" class="btn btn-primary btn-sm">
+                            <input type="radio" name="tStatus" value="2" autocomplete="off" /> Resolved
+                        </label>
+                        <label id="tStatus3" class="btn btn-primary btn-sm">
+                            <input type="radio" name="tStatus" value="3" autocomplete="off" /> Incomplete
+                        </label>
+                    </div>
+                </div>
+                <div id="taskSubStatusWrapper">
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-addon" id="taskSubStatusAddon">Sub-Status</span>
+                        <select id="taskSubStatus" class="form-control" aria-describedby="taskSubStatusAddon">
+                            <option value>-- None --</option>
+                            <option value="Awaiting Response from Customer">Awaiting Response from Customer</option>
+                            <option value="Customer Contacted">Customer Contacted</option>
+                            <option value="Pending Customer Validation">Pending Customer Validation</option>
+                        </select>
+                    </div>
+                    <br />
+                </div>
+                <div id="schedApptWrapper">
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-addon" id="schedApptAddon">Appointment</span>
+                        <input type="datetime-local" id="schedAppt" class="form-control" aria-describedby="schedApptAddon" />
+                        <span class="input-group-btn">
+                            <button type="button" class="btn btn-primary form-control" id="sendAppointment">
+                                <span class="glyphicon glyphicon-calendar"></span> Schedule
+                            </button>
+                        </span>
+                    </div>
+                    <br />
+                </div>
+                <div class="form-group">
+                    <label for="customerNotes">Additional Comments (Viewable By Customer)</label>
+                    <textarea class="form-control" id="customerNotes" name="customerNotes" rows="2" cols="35"></textarea>
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-addon" id="custWildcardsAddon">Wildcards</span>
+                        <select id="custWildcards" name="custWildcards" class="form-control" aria-describedby="custWildcardsAddon"></select>
+                    </div>
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-addon">Messages</span>
+                        <select id="custCannedMsgs" name="cannedMsgs" class="form-control"></select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="workNotes">Work Notes (Not Viewable By Customer)</label>
+                    <textarea class="form-control" id="workNotes" name="workNotes" rows="2" cols="35"></textarea>
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-addon" id="workWildcardsAddon">Wildcards</span>
+                        <select id="workWildcards" name="workWildcards" class="form-control" aria-describedby="workWildcardsAddon"></select>
+                    </div>
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-addon">Messages</span>
+                        <select id="workCannedMsgs" name="cannedMsgs" class="form-control">
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="btn-group" data-toggle="buttons">
+                        <label id="autoFinish-save" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="Save ticket automatically.">
+                            <input type="radio" name="autoFinish" value="save" autocomplete="off" /> Save
+                        </label>
+                        <label id="autoFinish-update" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="Update ticket automatically.">
+                            <input type="radio" name="autoFinish" value="update" autocomplete="off" /> Update
+                        </label>
+                        <label id="autoFinish-auto" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="Save everything except closures, which are updated.">
+                            <input type="radio" name="autoFinish" value="auto" autocomplete="off" /> Automatic
+                        </label>
+                        <label id="autoFinish-none" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="Don't save/update automatically.">
+                            <input type="radio" name="autoFinish" value="none" autocomplete="off" /> None
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <button type="button" class="btn btn-sm btn-primary" id="sendUpdate" title="Send Update"><span class="glyphicon glyphicon-send"></span> Send Update</button>
+                    <span style="float:right;" class="btn-group btn-group-sm">
+                        <button type="button" class="btn btn-default" id="newIncident" title="Create New Incident"><span class="glyphicon glyphicon-plus"></span></button>
+                        <button type="button" class="btn btn-default" id="openCatalog" title="Open Service Catalog"><span class="glyphicon glyphicon-list-alt"></span></button>
+                        <button type="button" class="btn btn-default" id="openFaq" title="Frequently Asked Questions"><span class="glyphicon glyphicon-tasks"></span></button>
+                        <button type="button" class="btn btn-default" id="openHelp" title="Help"><span class="glyphicon glyphicon-question-sign"></span></button>
+                        <button type="button" class="btn btn-default" id="openBuildLog" title="Build Log"><span class="glyphicon glyphicon-th-list"></span></button>
+                        <button type="button" class="btn btn-warning" id="openOptions" title="Options"><span class="glyphicon glyphicon-cog"></span></button>
+                    </span>
+                </div>
+            </div>
+
+            <!-- Equipment Order Panel -->
+            <div role="tabpanel" class="tab-pane" id="equipment">
+                <div id="compHostGroup" class="form-group" style="padding-top:10px;">
+                    <label for="compHost">Hostname</label>
+                    <input type="text" id="compHost" class="form-control" placeholder="DTXXXXXXXXXX" />
+                </div>
+                <div id="compAssetGroup" class="form-group">
+                    <label for="compAsset">Asset Tag</label>
+                    <input type="text" id="compAsset" class="form-control" placeholder="XXXXXXXX" />
+                </div>
+                <div id="compModelGroup" class="form-group">
+                    <label for="compModel">Model</label>
+                    <input type="text" id="compModel" class="form-control" placeHolder="850 G1 HD" />
+                </div>
+                <div id="compBuildGroup" class="form-group">
+                    <label for="compBuild">Build</label>
+                    <input type="text" id="compBuild" class="form-control" placeHolder="GMH-MANDATORY" />
+                </div>
+                <div class="form-group">
+                    <div class="btn-group" data-toggle="buttons">
+                        <label id="autoEquipTicket-save" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="Save ticket automatically.">
+                            <input type="radio" name="autoEquipTicket" value="save" autocomplete="off" /> Save
+                        </label>
+                        <label id="autoEquipTicket-update" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="Update ticket automatically.">
+                            <input type="radio" name="autoEquipTicket" value="update" autocomplete="off" /> Update
+                        </label>
+                        <label id="autoEquipTicket-auto" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="Save everything except closures, which are updated.">
+                            <input type="radio" name="autoEquipTicket" value="auto" autocomplete="off" /> Automatic
+                        </label>
+                        <label id="autoEquipTicket-none" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="Don't save/update automatically.">
+                            <input type="radio" name="autoEquipTicket" value="none" autocomplete="off" /> Neither
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <button type="button" class="btn btn-sm btn-primary" id="sendEquipment" title="Send Update"><span class="glyphicon glyphicon-send"></span> Send Update</button>
+                    <span style="float:right;" class="btn-group btn-group-sm">
+                        <button type="button" class="btn btn-default" id="newIncident2" title="Create New Incident"><span class="glyphicon glyphicon-plus"></span></button>
+                        <button type="button" class="btn btn-default" id="openCatalog2" title="Open Service Catalog"><span class="glyphicon glyphicon-list-alt"></span></button>
+                        <button type="button" class="btn btn-default" id="openFaq2" title="Frequently Asked Questions"><span class="glyphicon glyphicon-tasks"></span></button>
+                        <button type="button" class="btn btn-default" id="openHelp2" title="Help"><span class="glyphicon glyphicon-question-sign"></span></button>
+                        <button type="button" class="btn btn-default" id="openBuildLog2" title="Build Log"><span class="glyphicon glyphicon-th-list"></span></button>
+                        <button type="button" class="btn btn-warning" id="openOptions2" title="Options"><span class="glyphicon glyphicon-cog"></span></button>
+                    </span>
+                </div>
+            </div>
+
+            <!-- Automation Panel -->
+            <div role="tabpanel" class="tab-pane" id="automation">
+                <br />
+                <div class="input-group input-group-sm">
+                    <span class="input-group-addon" id="closeQuarantineAddon">Close Quarantine</span>
+                    <select id="closeQuarantine" class="form-control" aria-describedby="quarantineTaskAddon">
+                        <option value="Decommission">Decommission</option>
+                        <option value="RepairYes">Repair On-Site</option>
+                        <option value="RepairNo">Repair at MDC</option>
+                        <option value="Restock">Restock</option>
+                    </select>
+                    <span class="input-group-btn">
+                        <button type="button" class="btn btn-primary" id="sendCloseQuarantine"><span class="glyphicon glyphicon-send"></span> Send</button>
+                    </span>
+                </div>
+                <br />
+                <div class="input-group input-group-sm">
+                    <span class="input-group-addon" id="closeHotSwapAddon">Close Hot Swap</span>
+                    <select id="closeHotSwap" class="form-control" aria-describedby="closeHotSwapAddon">
+                        <option value="New">New Device (Out of Box)</option>
+                        <option value="Repurposed">Repurposed Device</option>
+                    </select>
+                    <span class="input-group-btn">
+                        <button type="button" class="btn btn-primary" id="sendCloseHotSwap"><span class="glyphicon glyphicon-send"></span> Send</button>
+                    </span>
+                </div>
+                <br />
+                <div class="extraInfo"><em>Certain tasks that require additional input can't be automatically detected and closed.  For example, quarantine tasks that require you to select quarantine, restock, or repair can't be automated.  Same goes for Hot Swap builds that require selecting new or repurposed.  All other tasks and incidents can be auto-detected.</em></div>
+                <br />
+                <div class="form-group">
+                    <div class="btn-group btn-group-sm">
+                        <button type="button" class="btn btn-primary" id="sendAutoAcknowledge" title="Auto-acknowledge ticket."><span class="glyphicon glyphicon-ok"></span> Acknowledge</button>
+                        <button type="button" class="btn btn-warning" id="sendAutoEnRoute" title="Auto En Route detection."><span class="glyphicon glyphicon-sunglasses"></span> En Route</button>
+                        <button type="button" class="btn btn-danger" id="sendAutoClosure" title="Auto-close ticket."><span class="glyphicon glyphicon-remove"></span> Close</button>
+                    </div>
+                    <span style="float:right;" class="btn-group btn-group-sm">
+                        <button type="button" class="btn btn-default" id="newIncident3" title="Create New Incident"><span class="glyphicon glyphicon-plus"></span></button>
+                        <button type="button" class="btn btn-default" id="openCatalog3" title="Open Service Catalog"><span class="glyphicon glyphicon-list-alt"></span></button>
+                        <button type="button" class="btn btn-default" id="openFaq3" title="Frequently Asked Questions"><span class="glyphicon glyphicon-tasks"></span></button>
+                        <button type="button" class="btn btn-default" id="openHelp3" title="Help"><span class="glyphicon glyphicon-question-sign"></span></button>
+                        <button type="button" class="btn btn-default" id="openBuildLog3" title="Build Log"><span class="glyphicon glyphicon-th-list"></span></button>
+                        <button type="button" class="btn btn-warning" id="openOptions3" title="Options"><span class="glyphicon glyphicon-cog"></span></button>
+                    </span>
+                </div>
+            </div>
+
+            <!-- Time Calculator -->
+            <div role="tabpanel" class="tab-pane" id="timeCalc">
+                <br />
+                <div id="alertCalcSuccess" class="alert alert-success alert-dismissible" role="alert">
+                    <span class="glyphicon glyphicon-ok"></span>  <span id="alertCalcSuccessMsg"></span>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div id="alertCalcFailure" class="alert alert-danger alert-dismissible" role="alert">
+                    <span class="glyphicon glyphicon-remove"></span>  <span id="alertCalcFailureMsg"></span>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div id="alertAnswer" class="alert alert-info alert-dismissible" role="alert">
+                    <span class="glyphicon glyphicon-hourglass"></span> You should clock out at <span id="alertAnswerResult" style="font-weight:bold;"></span> in order to receive 8 hours.
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="input-group">
+                    <span class="input-group-addon" id="inTimeAddon">Clock In:</span>
+                    <input type="time" class="form-control" id="inTime" aria-describedby="inTimeAddon" />
+                </div>
+                <br />
+                <div class="input-group">
+                    <span class="input-group-addon" id="lunchOutTimeAddon">Lunch Out:</span>
+                    <input type="time" class="form-control" id="lunchOutTime" aria-describedby="lunchOutTimeAddon" />
+                </div>
+                <br />
+                <div class="input-group">
+                    <span class="input-group-addon" id="lunchInTimeAddon">Lunch In:</span>
+                    <input type="time" class="form-control" id="lunchInTime" aria-describedby="lunchInTimeAddon" />
+                </div>
+                <br />
+                <div class="input-group">
+                    <span class="input-group-addon" id="lunchSkippedAddon">Lunch Skipped:</span>
+                    <select class="form-control" id="lunchSkipped" aria-describedby="lunchSkippedAddon">
+                        <option value="yes">Yes</option>
+                        <option value="no" selected="selected">No</option>
+                    </select>
+                </div>
+                <br />
+                <div class="extraInfo"><em>All times should be in 24-hour (HH:MM) format.</em></div>
+                <br />
+                <div class="form-group">
+                    <span style="float:left;" class="btn-group btn-group-sm">
+                        <button type="button" class="btn btn-primary" id="calculateTime" title="Calculate Clock Out Time"><span class="glyphicon glyphicon-th"></span> Calculate</button>
+                        <button type="button" class="btn btn-danger" id="resetTime" title="Reset Time Fields"><span class="glyphicon glyphicon-refresh"></span> Reset</button>
+                    </span>
+                    <span style="float:right;" class="btn-group btn-group-sm">
+                        <button type="button" class="btn btn-default" id="newIncident4" title="Create New Incident"><span class="glyphicon glyphicon-plus"></span></button>
+                        <button type="button" class="btn btn-default" id="openCatalog4" title="Open Service Catalog"><span class="glyphicon glyphicon-list-alt"></span></button>
+                        <button type="button" class="btn btn-default" id="openFaq4" title="Frequently Asked Questions"><span class="glyphicon glyphicon-tasks"></span></button>
+                        <button type="button" class="btn btn-default" id="openHelp4" title="Help"><span class="glyphicon glyphicon-question-sign"></span></button>
+                        <button type="button" class="btn btn-default" id="openBuildLog4" title="Build Log"><span class="glyphicon glyphicon-th-list"></span></button>
+                        <button type="button" class="btn btn-warning" id="openOptions4" title="Options"><span class="glyphicon glyphicon-cog"></span></button>
+                    </span>
+                </div>
+                <br />
+            </div>
+        </div>
+    </div>
+    <script src="../js/jquery.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/popup.js"></script>
+</body>
+
+</html>

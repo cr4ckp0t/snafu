@@ -22,9 +22,9 @@ $(document).ready(function() {
 	$('#versionAbout').html(chrome.app.getDetails().version);
 	$('#alertSuccess').hide();
 	$('#alertFailure').hide();
-	$('#openOptions').click(function() { chrome.tabs.create({url: chrome.runtime.getURL('options.html')}); });
-	$('#openFaq').click(function() { chrome.tabs.create({url: chrome.runtime.getURL('faq.html')}); });
-	$('#openHelp').click(function() { chrome.tabs.create({url: chrome.runtime.getURL('help.html')}); });
+	$('#openOptions').click(function() { chrome.tabs.create({url: chrome.runtime.getURL('html/options.html')}); });
+	$('#openFaq').click(function() { chrome.tabs.create({url: chrome.runtime.getURL('html/faq.html')}); });
+	$('#openHelp').click(function() { chrome.tabs.create({url: chrome.runtime.getURL('html/help.html')}); });
 	$('#closeWindow').click(function() { chrome.tabs.query({active: true, currentWindow: true}, function(tabs) { chrome.tabs.remove(tabs[0].id); }); });
 
 	// reload the log

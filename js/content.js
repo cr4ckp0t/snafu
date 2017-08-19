@@ -30,13 +30,11 @@ var injectData = {}
 // inject the dymo javascript
 var dymoInject = document.createElement('script');
 dymoInject.src = chrome.runtime.getURL('js/dymo.js');
-dymoInject.onload = function() { this.remove(); };
-(document.head||document.documentElement).appendChild(dymoInject);
+document.body.appendChild(dymoInject);
 
 // create event to manipulate g_form from the page
 var injectScript = document.createElement('script');
 injectScript.src = chrome.runtime.getURL('js/inject.js');
-injectScript.onload = function() { this.remove(); };
 (document.head||document.documentElement).appendChild(injectScript);
 
 $(document).ready(function() {
@@ -109,7 +107,7 @@ document.addEventListener('SNAFU_UserQuery', function(userData) {
 });
 
 chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
-    chrome.storage.sync.get(['autoFinish', 'finishDelay', 'buildLog', 'debug'], function(items) {
+    chrome.storage.sync.get(['autoFinish', 'finishDelay', 'buildLog', 'printLabels', 'debug'], function(items) {
         if (chrome.runtime.lastError) {
             console.error('SNAFU Sync Get Error: %s', chrome.runtime.lastError.message);
         } else {
@@ -177,7 +175,8 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                             type: msg.type,
                             autoFinish: items.autoFinish || 'none',
                             finishDelay: items.finishDelay || 1.,
-                            buildLog: items.buildLog
+                            buildLog: items.buildLog,
+                            printLabels: items.printLabels
                         }
                         sendResponse({success: true, errMsg: null});
                     }
@@ -197,7 +196,8 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                             subStatus: msg.subStatus || null,
                             workNotes: 'Computer has been built. One {REPLACE_MODEL} has been built {REPLACE_BUILD}. Tag {REPLACE_ASSET} HostName {REPLACE_HOSTNAME}. Resolving Task.',
                             custNotes: null,
-                            buildLog: items.buildLog
+                            buildLog: items.buildLog,
+                            printLabels: items.printLabels
                         }
                         sendResponse({success: true, errMsg: null});
                     }
@@ -229,7 +229,8 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                             subStatus: msg.subStatus || null,
                             workNotes: sprintf('Device removed from quarantine %s', addToNotes),
                             custNotes: null,
-                            buildLog: items.buildLog
+                            buildLog: items.buildLog,
+                            printLabels: items.printLabels
                         }
                         sendResponse({success: true, errMsg: null});
                     }
@@ -249,7 +250,8 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                             subStatus: msg.subStatus || null,
                             custNotes: (ticketType === 'incident') ? sprintf('Scheduled appointment with {INC_CUSTOMER} for %s at %s.', msg.custNotes.split('T')) : sprintf('Scheduled appointment with {REQUESTED_FOR} for %s at %s.', msg.custNotes.split('T')),
                             workNotes: msg.workNotes || null,
-                            buildLog: items.buildLog
+                            buildLog: items.buildLog,
+                            printLabels: items.printLabels
                         }
                         sendResponse({success: true, errMsg: null});
                     }
@@ -285,7 +287,8 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                             subStatus: msg.subStatus || null,
                             workNotes: msg.workNotes || null,
                             custNotes: msg.custNotes || null,
-                            buildLog: items.buildLog
+                            buildLog: items.buildLog,
+                            printLabels: items.printLabels
                         }
                         sendResponse({success: true, errMsg: null});
                     }
@@ -305,7 +308,8 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                             subStatus: msg.subStatus || null,
                             workNotes: msg.workNotes || null,
                             custNotes: 'My name is {TECH_NAME} and I have completed the build process for your workstation. The next step is for the system to be delivered to our technicians supporting your campus or ambulatory location so they can schedule an appropriate time to come to your desk and install the system. Please be sure to watch for communication regarding the delivery and installation of your computer at your desk.',
-                            buildLog: items.buildLog
+                            buildLog: items.buildLog,
+                            printLabels: items.printLabels
                         }
                         sendResponse({success: true, errMsg: null});
                     }

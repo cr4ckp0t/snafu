@@ -1,0 +1,311 @@
+<!--
+    SNAFU: SNow Automated Form Utilizer
+    Copyright (C) 2017  Adam Koch <akoch@ghs.org>
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<!doctype html>
+<html>
+
+<head>
+    <title>SNAFU: SNow Automated Form Utilizer - HELP!</title>
+    <link href="../css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="../css/help.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+	<div id="content">
+		<nav class="navbar navbar-default navbar-fixed-top">
+			<div class="container-fluid">
+				<div class="navbar-header">
+					<a class="navbar-brand" href="#"><img src="images/icon-16.png" /></a>
+				</div>
+				<div class="btn-group btn-group-sm navbar-right" role="group" style="padding-right:5px;padding-top:2px;">
+                    <button type="button" class="btn btn-default navbar-btn" data-toggle="modal" data-target="#aboutModal"><span class="glyphicon glyphicon-modal-window" aria-hidden="true"></span></button>
+                    <button type="button" class="btn btn-default navbar-btn" id="openFaq"><span class="glyphicon glyphicon-tasks" aria-hidden="true"></span></button>
+                    <button type="button" class="btn btn-primary navbar-btn" id="openOptions"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span></button>
+                    <button type="button" class="btn btn-danger navbar-btn" id="closeWindow"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
+                </div>
+			</div>
+		</nav>
+		<h1 id="header"><img src="images/icon-64.png" alt="Logo" style="height:50px;width:50px;" /> SNAFU <small>Help!</small></h1>
+		<a name="thanks">&nbsp;</a>
+		<blockquote id="thanks">
+			<p>Thank you for installing this Chrome extension!  It has actually been quite fun to write, as well as filling a need created when we all moved over to GHS and lost the use of SNAP (a Dell product).  I am confident that this will perform above and beyond anything that SNAP could have ever hoped for, though to be fair it's not SNAP's fault.</p>
+			<footer>Adam Koch <a href="mailto:akoch@ghs.org">&lt;akoch@ghs.org&gt;</a></footer>
+		</blockquote>
+		<br />
+		<a name="troubleshooting">&nbsp;</a>
+		<div class="panel panel-danger">
+			<div class="panel-heading">Troubleshooting</div>
+			<em>Note: Because of how this extension is forced to inject scripts in to Serivce Now in order to get it to work sometimes things don't get refreshed correctly when the page changes.  If you notice when you try to send an update that it isn't being sent to ServiceNow just refresh the ServiceNow tab, or at the very least Right Click on ServiceNow to bring up the Context Menu and then select "Reload Frame".  Service now operates with an <a href="https://www.w3schools.com/html/html_iframe.asp" target="_blank">Iframe</a>, so the ticket displays are actually full webpages being displayed inside of the navigation, shortcuts, etc. wrapper.</em>
+		</div>
+		<br />
+		<a name="howItWorks">&nbsp;</a>
+		<h3>How It Works</h3>
+		<p>Without going in to too much detail this basically injects a script (<code>js/inject.js</code>) in to the ServiceNow main frame.  This script houses all of the code that manipulates the various forms using ServiceNow's provided API aka <a href="http://wiki.servicenow.com/index.php?title=GlideForm_(g_form)#gsc.tab=0" target="_blank">GlideForm</a>.  Since webpages and Chrome extensions operate in separate worlds we have to use a JavaScript CustomEvent <code>SNAFU_Inject</code> in order to pass data to the page to then be submitted to the form.</p>
+		<p>Because I don't have to worry about the other contracts that the developers of SNAP had to, I am able to automate a lot of the processes that we have to follow in order to properly handle the incidents and tasks that come our way.  This is why I am able to include code that can automatically acknowledge incidents/tasks, or close a build request by pulling the replacement device's information directly from the page.</p>
+		<p>The truth is that SNAP wasn't really all that bad of a program.  It was written quite well.  It's just they tried to cram so many different contracts, all using different customized versions of ServiceNow, into one program using various JavaScript hacks that it eventually severely impeded the performance of the program and caused ServiceNow to be sluggish as well.  In this extension there isn't any of that!</p> 
+		<br />
+		<h3>Layout</h3>
+		<h4>Toolbar Button</h4>
+		<div id="ui-image"><img src="images/help/toolbar-buttons.png" alt="Button" /></div>
+		<p>Above is the toolbar button that you click to bring up the main GUI.</p>
+		<br />
+		<h4>Main GUI</h4>
+		<div id="ui-image"><img src="images/help/main-ui.png" alt="Main UI" /></div>
+		<p>The main GUI when you click on the toolbar button.  This window is also known as the popup.  This is where the magic happens, so to speak.  Everything is pretty straight forward, but just in case this operates a lot like SNAP did, except that FS Status Codes were removed when we were brought over to GHS, so now it's just a matter of setting the ticket's state (In Progress, On Hold, etc.) and then providing whatever notes you want, whether comments (viewable by the customer) or work notes (not viewable).</p>
+		<br />
+		<h4>Equipment Orders UI</h4>
+		<div id="ui-image"><img src="images/help/equipment-order.png" alt="Equipment Orders" /></div>
+		<p>The form used when <strong>closing</strong> Equipment Orders.  Since the RITM's do you allow you to fill in the computer information like Asset Management does this requires you to fill in the request information manually.</p>
+		<br />
+		<h4>Options UI</h4>
+		<div id="ui-image"><img src="images/help/options-ui.png" alt="Options UI" /></div>
+		<p>Above is the UI for editing the limited options available at this time.  This will likely grow as I add more features.</p>
+		<br />
+		<h4>Context Menu</h4>
+		<div id="ui-image"><img src="images/help/context-menu.png" alt="Context Menu" /></div>
+		<p>Above is the context menu from <strong>Right-Clicking</strong> somewhere on a Task or Incident.  The context menu will only appear on pages that it supports (specific tasks or incidents).</p>
+		<br />
+		<h4>Canned Messages</h4>
+		<p>These are frequently used messages that you can quickly add to your Work Notes.  Selecting a message will append the text to what you have written.  They also include various wildcards that will be replaced with the information when the update is submitted.</p>
+		<br />
+		<h4>Save/Update/Automatic/Neither Buttons</h4>
+		<p>
+			<div class="alert alert-info"><em>Note: These apply to the automated and manual updates (via Send Update).  This setting is persistent and will apply for every update you send.  The default is neither.</em></div>
+			<strong>Save</strong>
+			<ul class="list-group">
+				<li class="list-group-item">After filling out the fields the data will be saved, submitting the data but keeping you on the same page.  Just like clicking Save in the Additonal Actions menu.</li>
+			</ul>
+			<strong>Update</strong>
+			<ul class="list-group">
+				<li class="list-group-item">Same as Auto Save, but after submitting the data it will take you back to the page you were previously.  Just like clicking Update on the toolbar of the ticket's page.</li>
+			</ul>
+			<strong>Automatic</strong>
+			<ul class="list-group">
+				<li class="list-group-item"><span class="label label-success">NEW!</span> This option will save any non-closures.  Closures, <em>aside from incident resolutions</em>, will be updated (to go to the previous page).</li>
+			</ul>
+			<strong>Neither (Default)</strong>
+			<ul class="list-group">
+				<li class="list-group-item">As I'm sure you've guessed this doesn't do anything after sending the data.</li>
+			</ul>
+		<br />
+		
+		<h3><a name="wildcards">Wildcards</a></h3>
+		<p>
+			<div class="alert alert-info"><em>Note: Certain wildcards can only be used in certain situations. For example, all of the {REPLACE_*} wildcards can only be used on a Hot Swap requests.  Otherwise, they will be replaced with "UNKNOWN".</em></div>
+			<p>There are certain wildcards that you can use in your notes that will be replaced automatically by the extension with the information from the ticket.  I will list them here for your reference.  If there is one you'd like to see added, please let me know.</p>
+			<strong>Global</strong>
+			<ul class="list-group">
+				<li class="list-group-item"><code>{ASSIGN_GROUP}</code> - Current assignment group.</li>
+				<li class="list-group-item"><code>{OPENED}</code> - Date and time the incident or task was opened.</li>
+				<li class="list-group-item"><code>{OPENED_BY}</code> - Whomever opened the task or incident.</li>
+				<li class="list-group-item"><code>{ROOT_CAUSE}</code> - Root Cause CI</li>
+				<li class="list-group-item"><code>{TECH_NAME}</code> - Assigned To's name (You!).</li>
+				<li class="list-group-item"><code>{TICKET}</code> - Incident or task number.</li>
+			</ul>
+			<strong>Incident Only</strong>
+			<ul class="list-group">
+				<li class="list-group-item"><code>{INC_ADDR}</code> - Customer's street address.</li>
+				<li class="list-group-item"><code>{INC_ADD_LOC}</code> - Additional location information.</li>
+				<li class="list-group-item"><code>{INC_ALT_PHONE}</code> - Customer's alternate phone.</li>
+				<li class="list-group-item"><code>{INC_CAMPUS}</code> - Customer's campus.</li>
+				<li class="list-group-item"><code>{INC_CUR_PHONE}</code> - Customer's current phone.</li>
+				<li class="list-group-item"><code>{INC_CUSTOMER}</code> - Customer's full name.</li>
+				<li class="list-group-item"><code>{INC_CUST_FNAME}</code> - Customer's first name.</li>
+				<li class="list-group-item"><code>{INC_CUST_LNAME}</code> - Customer's last name.</li>
+				<li class="list-group-item"><code>{INC_DETAIL_DESC}</code> - Incident's detailed description.</li>
+				<li class="list-group-item"><code>{INC_EMAIL}</code> - Customer's email.</li>
+				<li class="list-group-item"><code>{INC_IMPACT}</code> - Incident impact.</li>
+				<li class="list-group-item"><code>{INC_KB}</code> - Incident's Knowledge Base article, if provided.</li>
+				<li class="list-group-item"><code>{INC_LOC_TYPE}</code> - Customer's location type (Hospital, Offsite, etc.).</li>
+				<li class="list-group-item"><code>{INC_PRACTICE}</code> - Customer's practice name.</li>
+				<li class="list-group-item"><code>{INC_PRIORITY}</code> - Incident priority.</li>
+				<li class="list-group-item"><code>{INC_SHORT_DESC}</code> - Incident's short description.</li>
+				<li class="list-group-item"><code>{INC_STATE}</code> - Incident's state (In Progress, On Hold, etc..).</li>
+				<li class="list-group-item"><code>{INC_TYPE}</code> - Incident Type (Service Degradation, Service Interruption, etc.).</li>
+				<li class="list-group-item"><code>{INC_TYPE_2}</code> - Incident Type Level 2 (Availability-Performance, Data Related, etc.).</li>
+				<li class="list-group-item"><code>{INC_TYPE_3}</code> - Incident Type Level 3 (Damaged Hardware, Liquid Damage, etc.).</li>
+				<li class="list-group-item"><code>{INC_URGENCY}</code> - Incident urgency.</li>
+			</ul>
+			<strong>Task Only</strong>
+			<ul class="list-group">
+				<li class="list-group-item"><code>{CATEGORY_ITEM}</code> - Task's category item (Asset Management, etc.)</li>
+				<li class="list-group-item"><code>{DUE_DATE}</code> - Task's due date.</li>
+				<li class="list-group-item"><code>{REQUEST_ITEM}</code> - Request item number.</li>
+				<li class="list-group-item"><code>{REQUESTED_BY}</code> - Task requested by.</li>
+				<li class="list-group-item"><code>{REQUESTED_FOR}</code> - Task requested for.</li>
+				<li class="list-group-item"><code>{TASK_SITE}</code> - Task's location (GMH, GrMH, etc.).</li>
+				<li class="list-group-item"><code>{TASK_STATE}</code> - Task state (Work In Progress, Pending, etc.).</li>
+			</ul>
+			<strong>Hot Swap Only</strong>
+			<ul class="list-group">
+				<li class="list-group-item"><code>{BROKEN_ASSET}</code> - Broken device's asset tag.</li>
+				<li class="list-group-item"><code>{BROKEN_HOSTNAME}</code> - Broken device's hostname.</li>
+				<li class="list-group-item"><code>{BROKEN_MODEL}</code> - Broken device's model.</li>
+				<li class="list-group-item"><code>{BROKEN_SERIAL}</code> - Broken device's serial number.</li>
+				<li class="list-group-item"><code>{RELATED_INC}</code> - Related incident that lead to the Hot Swap.</li>
+				<li class="list-group-item"><code>{REPLACE_ASSET}</code> - Replacement computer's asset tag.</li>
+				<li class="list-group-item"><code>{REPLACE_BUILD}</code> - Replacement computer's build/software.</li>
+				<li class="list-group-item"><code>{REPLACE_CUSTOMER}</code> - Customer having the device replaced.</li>
+				<li class="list-group-item"><code>{REPLACE_HOSTNAME}</code> - Replacement computer's hostname.</li>
+				<li class="list-group-item"><code>{REPLACE_MODEL}</code> - Replacement computer's model.</li>
+				<li class="list-group-item"><code>{REPLACE_SERIAL}</code> - Replacement computer's serial number.</li>
+			</ul>
+		</p>	
+		<br />
+		<h3><a name="automation">Automation</a></h3>
+		<p>
+			Automation is split in to 3 types.
+			<ul class="list-group">
+				<li class="list-group-item">Acknowledgments</li>
+				<li class="list-group-item">Closures</li>
+				<li class="list-group-item">Equipment Orders</li>
+			</ul>
+		</p>
+		<br />
+		<h4>Acknowledgements</h4>
+		<p>
+			As you might have guessed acknowledgements have to do with acknowledging an incident or task.  In both cases they simply place the ticket in progress (or Work in Progress) and then include a predetermined text in the Work Notes field.  Additionally, in the case of tasks it will also set the Due Date to today @ 17:00:00, and then set the Root Cause CI field to Desktop Services.  See below for the predetermined text sent for each automated event.
+			<ul class="list-group">
+				<li class="list-group-item"><strong>Incident (Generic)</strong><pre>Acknowledging incident.</pre></li>
+				<li class="list-group-item"><strong>Task (Generic)</strong><pre>Acknowledging task.</pre></li>
+				<li class="list-group-item"><strong>Hot Swap (Build Request)</strong><pre>Acknowledging build request.</pre></li>
+				<li class="list-group-item"><strong>Install Task</strong><pre>Acknowledging install task.</pre></li>
+				<li class="list-group-item"><strong>Quarantine Task</strong><pre>Acknowledging quarantine task.</pre></li>
+				<li class="list-group-item"><strong>Reclaim Task</strong><pre>Acknowledging reclaim task.</pre></li>
+			</ul>
+		</p>
+		<br />
+		<h4>Closures</h4>
+		<p>
+			<div class="alert alert-info"><em>Note: Incidents can't be closed automatically.  There's quite a few fields that need to be updated, along with descriptive notes that SNAFU just can't generate.</em></div>
+			Closures work similarly to acknowledgements, with a few differences.  It will set the Due Date and Root Cause CI as with acknowledgements, and will set the state to Closed Complete.  The biggest differences come in the predetermined text used in the Work Notes.  In the case of Hot Swap closures it will pull the replacement device's information from the ticket and then generate the closure script determined by Staging to be used when closing a build request.
+			<ul class="list-group">
+				<li class="list-group-item"><strong>Incident Customer Notes</strong><pre>My name is {TECH_NAME} and I was the technician that assisted you with {TICKET}. Thank you for the opportunity to provide you with service today with your {INC_TYPE}. If for any reason, your issue does not appear to be resolved please contact the Service Desk at (864) 455-8000.</pre></li>
+				<li class="list-group-item">
+					<strong>Hot Swap</strong>
+					<div class="alert alert-warning"><em>Before using this make sure you have filled in the Replacement Hostname in the Hot Swap ticket.  Otherwise, it will not have any information to fill in.</em></div>
+					<pre>Computer has been built. One {REPLACE_MODEL} has been built {REPLACE_BUILD}. Tag {REPLACE_ASSET} HostName {REPLACE_HOSTNAME}. Resolving Task.</pre>
+				</li>
+				<li class="list-group-item"><strong>Install Task</strong><pre>Installed requested equipment and attached signed completion sheet.</pre></li>
+				<li class="list-group-item">
+					<strong>Quarantine Task</strong>
+					<div class="alert alert-success"><em><strong>NEW IN 1.0.1:</strong> Now you can select from 3 quarantine closures (Decommission, Repair, or Restock) and it will select the closure type so it really is a single click to close the task.</em></div>
+					<pre>Device removed from quarantine.</pre>
+				</li>
+				<li class="list-group-item"><strong>Reclaim Task</strong><pre>Device reclaimed and added to quarantine.</pre></li>
+			</ul>
+		</p>
+		<br />
+		<h4>Equipment Orders</h4>
+		<p>
+			<div class="alert alert-info"><em>Note: Because Equipment Orders do not have the information for the device being built saved on the page I had to create a tab especially for these types of builds.</em></div>
+			These are handled exactly like the Hot Swap closures except with a different closure script.
+			<ul class="list-group">
+				<li class="list-group-item"><strong>Comments:</strong><pre>My name is {TECH_NAME} and I have completed the build process for your workstation. The next step is for the system to be delivered to our technicians supporting your campus or ambulatory location so they can schedule an appropriate time to come to your desk and install the system. Please be sure to watch for communication regarding the delivery and installation of your computer at your desk.</pre></li>
+				<li class="list-group-item"><strong>Work Notes:</strong><pre>Computer has been built. One {MAKE} has been built {BUILD}. Tag {ASSET} HostName {HOSTNAME}. Resolving Task. Placing computer in Deployment Room. Please assign to a tech for install and resolution. Once this ticket is closed, the request will generate another task to have a technician come on site to install the equipment. This is just a ticket to track the build and equipment used. A tech should be calling the customer momentarily to set up a time for installation.</pre></li>
+			</ul>
+		</p>
+		<br />
+		<h3><a name="techInfo">Technician Info/Assign To Me</a></h3>
+		<p>
+			<div class="alert alert-info"><em>Note: Make sure the group you want to be saved is the one that is used in the ticket you have open when you click "Query User Info".  It pulls the information straight from the ticket.</em></div>
+			Beginning in version 1.0.1 (2017-05-05) I added the ability to have the extension pull your user data from ServiceNow.  It will pull your name, user ID, user name (GHS username basically), Assignment Group ID, and Assignment Group Name.  You can do this by right-clicking in Serivce Now to bring up the context menu and then selecting <code>Query User Info</code>.  This will pull your information and then save it for use later.  If it is able to pull your information when you right-click to bring up the context menu it will now say <code>Assign To Me</code>.  That's why we need your information, so we can properly assign the ticket to you, in the correct group.  You can view what it has saved by going to the <a href="#" id="openOptions">Options</a>.
+		</p>
+		<br />
+		<p><em>If you would like to request additions, changes, or submit a bug report please use the thread on our <a href="http://share.ghs.org/SiteDirectory/IS/DS/Lists/Team%20Discussion/Flat.aspx?RootFolder=%2fSiteDirectory%2fIS%2fDS%2fLists%2fTeam%20Discussion%2fSNAFU%20Service%20Now%20Automated%20Form%20Utilizer&FolderCTID=0x01200200061017D22DF2184B91B6AEA5AFFD9EB4&TopicsView=http%3A%2F%2Fshare%2Eghs%2Eorg%2FSiteDirectory%2FIS%2FDS%2FLists%2FTeam%2520Discussion%2FAllItems%2Easpx" target="_blank">SharePoint</a>.  That way I'll have a written record of requests/bugs and can keep track.</em></p>
+	</div>
+
+	<!-- About Modal -->
+	<div class="modal fade" id="aboutModal" tabindex="-1" role="dialog" aria-describedby="aboutModalLabel">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title" id="aboutModalLabel">About SNAFU v<span id="versionAbout"></span></h4>
+				</div>
+				<div class="modal-body">
+					<table id="aboutTable" cellspacing="5">
+						<tr>
+							<td id="about-label">Author:</td>
+							<td id="about-value">Adam Koch</td>
+						</tr>
+						<tr>
+							<td id="about-label">E-Mail:</td>
+							<td id="about-value">
+								<a href="mailto:me@adamko.ch">me@adamko.ch</a> (Personal)<br />
+								<a href="mailto:akoch@ghs.org">akoch@ghs.org</a> (Work)
+							</td>
+						</tr>
+						<tr>
+							<td id="about-label">Website:</td>
+							<td id="about-value"><a href="https://adamko.ch" target="_blank">https://adamko.ch</a></td>
+						</tr>
+						<tr>
+							<td id="about-label">Web Store:</td>
+							<td id="about-value"><a href="https://chrome.google.com/webstore/detail/snafu-snow-automated-form/hnnbkmfkgnjngnkijdmfijmbkpjmmmpd?hl=en-US&gl=US" target="_blank">Click Here</a></td>
+						</tr>
+						<tr>
+							<td id="about-label">License:</td>
+							<td id="about-value"><a id="licenseLink" href="#">GNU General Public License v3</a></td>
+						</tr>
+						<tr>
+							<td id="about-label">Git Repository:</td>
+							<td id="about-value"><a href="https://github.com/akoch-ghs/snafu" target="_blank" title="Email me to be given access.">Click Here</a> (Private)</td>
+						</tr>
+						<tr>
+							<td id="about-label">Changelog:</td>
+							<td id="about-value"><a href="https://adamko.ch/snafu" target="_blank">Here</a> or <a href="https://adamkoch.squarespace.com/snafu/" target="_blank">Here</a> (GHS Safe)</td>
+						</tr>
+						<tr>
+							<td id="about-label">Tools Used:</td>
+							<td id="about-value">
+								<a href="https://code.visualstudio.com/" target="_blank" title="IDE">Microsoft Visual Studio Code</a><br />
+								<a href="https://github.com" target="_blank" title="Git repository host.">GitHub</a>
+							</td>
+						</tr>
+						<tr>
+							<td id="about-label">Icons:</td>
+							<td id="about-value"><a href="http://www.flaticon.com/authors/dave-gandy" target="_blank">Dave Gandy</a> from <a href="http://www.flaticon.com" target="_blank">FlatIcon.com</a></td>
+						</tr>
+						<tr>
+							<td id="about-label">Languages:</td>
+							<td id="about-value">JavaScript<br/><acronym title="Hypertext Markup Language 5">HTML5</acronym><br/><acronym title="Cascading Stylesheets">CSS</acronym></td>
+						</tr>
+						<tr>
+							<td id="about-label">JavaScript Libraries:</td>
+							<td id="about-value">
+								<a href="https://jquery.com/" target="_blank">jQuery</a><br />
+								<a href="http://getbootrap.com/" target="_blank">Bootstrap</a>
+							</td>
+						</tr>
+					</table>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close Dialog</button>
+				</div>
+			</div>
+		</div>
+	</div>
+    <!-- END About Modal -->
+
+	<script src="../js/jquery.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+	<script src="../js/help.js"></script>
+</body>
+
+</html>

@@ -10,9 +10,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 - Cleaned up the context menu code to make changes more efficient to implement.
+- Moved HTML files to html/ subfolder for continuity's sake.
+- Updated HTML, JS, and CSS file locations to account for the above change.
+
+### Removed
+- Utilize Chrome notifications and alarms for clock in/out.
 
 ### ToDo
-- *In Progress:* Utilize Chrome notifications and alarms for clock in/out.
 - *In Progress:* See if build, quarantine, etc. labels can be auto-printed.
 
 ## 1.1.10 [2017-08-14]

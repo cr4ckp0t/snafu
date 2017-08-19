@@ -21,9 +21,9 @@ $(document).ready(function() {
 	$('[id$=Failure').hide();
 	$('#saveSettings').click(function() { saveSettings(); })
 	$('#versionAbout').html(chrome.app.getDetails().version);
-	$('#openFaq').click(function() { chrome.tabs.create({url: chrome.runtime.getURL('faq.html')}); });
-	$('#openHelp').click(function() { chrome.tabs.create({url: chrome.runtime.getURL('help.html')}); });
-	$('#openBuildLog').click(function() { chrome.tabs.create({url: chrome.runtime.getURL('builds.html')}); });
+	$('#openFaq').click(function() { chrome.tabs.create({url: chrome.runtime.getURL('html/faq.html')}); });
+	$('#openHelp').click(function() { chrome.tabs.create({url: chrome.runtime.getURL('html/help.html')}); });
+	$('#openBuildLog').click(function() { chrome.tabs.create({url: chrome.runtime.getURL('html/builds.html')}); });
 	$('#closeWindow').click(function() { chrome.tabs.query({active: true, currentWindow: true}, function(tabs) { chrome.tabs.remove(tabs[0].id); }); });
 
 	$('#reloadData').click(function() { 
@@ -130,7 +130,6 @@ function loadSettings() {
 		'buildLog',
 		'builds',
 		'printLabels',
-		'alarms',
 		'userId',
 		'userName',
 		'userEmail',
@@ -240,54 +239,6 @@ function loadSettings() {
 
 			// completed builds
 			if (isVarEmpty(items.builds) === true) settingsToCreate['builds'] = {};
-
-			// alarms
-			if (isVarEmpty(items.alarms) === true) {
-				settingsToCreate['alarms'] = {
-					clockIn: {
-						enabled: false,
-						time: '07:30'
-					},
-					lunchOut: {
-						enabled: false,
-						time: '11:30'
-					},
-					lunchIn: {
-						enabled: false,
-						time: '12:01'
-					},
-					clockOut: {
-						enabled: false,
-						time: '16:01'
-					}
-				}
-
-				// clock in
-				$('#clockInTime').val('07:30');
-				$('#clockInTime').prop('disabled', true);
-				$('#clockInToggle').prop('checked', false);
-
-				// lunch out
-				$('#lunchOutTime').val('11:30');
-				$('#lunchOutTime').prop('disabled', true);
-				$('#lunchOutToggle').prop('checked', false);
-
-				// lunch in
-				$('#lunchInTime').val('12:01');
-				$('#lunchInTime').prop('disabled', true);
-				$('#lunchInToggle').prop('checked', false);
-
-				// clock out
-				$('#clockOutTime').val('16:01');
-				$('#clockOutTime').prop('disabled', true);
-				$('#clockOutToggle').prop('checked', false);
-			} else {
-				for (var alarm in items.alarms) {
-					$('#' + alarm + 'Time').val(items.alarms[alarm].time);
-					$('#' + alarm + 'Time').prop('disabled', (items.alarms[alarm].enabled === true) ? false : true);
-					$('#' + alarm + 'Toggle').prop('checked', items.alarms[alarm].enabled);
-				}
-			}
 			
 			// send the settings to sync storage
 			if (isVarEmpty(settingsToCreate) === false) {
