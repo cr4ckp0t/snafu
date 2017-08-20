@@ -88,7 +88,6 @@ chrome.runtime.onStartup.addListener(function() {
 		'closeAlerts',
 		'buildLog',
 		'builds',
-		'alarms',
 		'printLabels',
 	], function(items) {
 		if (chrome.runtime.lastError) {
@@ -113,26 +112,6 @@ chrome.runtime.onStartup.addListener(function() {
 					'leftVoicemail': 'Left voicemail for {INC_CUST_FNAME} at {INC_CUR_PHONE} to discuss the ticket.'
 				}
 			}
-			if (isVarEmpty(items.alarms) === true) {
-				settingsToCreate['alarms'] = {
-					clockIn: {
-						enabled: false,
-						time: '07:30'
-					},
-					lunchOut: {
-						enabled: false,
-						time: '11:30'
-					},
-					lunchIn: {
-						enabled: false,
-						time: '12:01'
-					},
-					clockOut: {
-						enabled: false,
-						time: '16:01'
-					}
-				}
-			}
 			if (isVarEmpty(settingsToCreate) === false) {
 				chrome.storage.sync.set(settingsToCreate, function() {
 					if (chrome.runtime.lastError) {
@@ -144,11 +123,6 @@ chrome.runtime.onStartup.addListener(function() {
 			}
 		}
 	});
-});
-
-// alarm listener
-chrome.alarms.onAlarm.addListener(function(alarm) {
-	
 });
 
 // search provider listener

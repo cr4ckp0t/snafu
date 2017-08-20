@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  **/
 
-var docPatterns = ['https://ghsprod.service-now.com/sc_task.do?*', 'https://ghsprod.service-now.com/incident.do?*', 'https://ghsprod.service-now.com/u_absolute_install.do?*'];
+const docPatterns = ['https://ghsprod.service-now.com/sc_task.do?*', 'https://ghsprod.service-now.com/incident.do?*', 'https://ghsprod.service-now.com/u_absolute_install.do?*'];
 
 /**
  * Uber Parent
@@ -242,7 +242,7 @@ chrome.contextMenus.create({
 	parentId: 'optionsParent'
 });
 
-var ticketCompletion = {'save': 'Save', 'update': 'Update', 'auto': 'Automatic', 'none': 'None'};
+const ticketCompletion = {'save': 'Save', 'update': 'Update', 'auto': 'Automatic', 'none': 'None'};
 for (var opt in ticketCompletion) {
 	chrome.contextMenus.create({
 		title: ticketCompletion[opt],
@@ -311,8 +311,8 @@ chrome.contextMenus.create({
 	parentId: 'optionsParent'
 });
 
-var toggleOptions = ['closePopup', 'keepNotes', 'clearNotes', 'sendEnter', 'closeAlerts', 'buildLog', 'printLabels', 'debug'];
-var objToggle = {'enable': 'Enabled', 'disable': 'Disabled'};
+const toggleOptions = ['closePopup', 'keepNotes', 'clearNotes', 'sendEnter', 'closeAlerts', 'buildLog', 'printLabels', 'debug'];
+const objToggle = {'enable': 'Enabled', 'disable': 'Disabled'};
 
 for (var i = 0; i < toggleOptions.length; i++) {
 	for (var opt in objToggle) {

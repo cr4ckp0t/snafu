@@ -18,11 +18,11 @@
 
 // incident state ids
 // In Progress, On Hold, Resolved
-var incStates = ['3', '4', '6'];
+const incStates = ['3', '4', '6'];
 
 // task state ids
 // Work in Progress, Pending, Closed Complete, Closed Incomplete
-var taskStates = ['2', '-5', '3', '4'];
+const taskStates = ['2', '-5', '3', '4'];
 
 // data to send
 var injectData = {}

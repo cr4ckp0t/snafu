@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## 1.1.11 [2017-08-20]
 ### Added
 - Cancelled Task workflow automation.
 
@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Cleaned up the context menu code to make changes more efficient to implement.
 - Moved HTML files to html/ subfolder for continuity's sake.
 - Updated HTML, JS, and CSS file locations to account for the above change.
+- JavaScript and CSS are minified for smaller filesizes to minimize load on Service Now.
 
 ### Removed
 - Utilize Chrome notifications and alarms for clock in/out.
