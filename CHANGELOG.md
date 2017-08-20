@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+### ToDo
+- *In Progress:* Auto-print Dymo labels when closing certain tasks.
+
 ## 1.1.11 [2017-08-20]
 ### Added
 - Cancelled Task workflow automation.
@@ -16,9 +20,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Removed
 - Utilize Chrome notifications and alarms for clock in/out.
-
-### ToDo
-- *In Progress:* See if build, quarantine, etc. labels can be auto-printed.
 
 ## 1.1.10 [2017-08-14]
 ### Added
