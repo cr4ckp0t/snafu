@@ -4,7 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## 1.1.12 [2017-08-21]
+###
+- Fixed pathing issues related to the folder structure change, which caused the malfunctions.
+
 ### ToDo
 - *In Progress:* Auto-print Dymo labels when closing certain tasks.
 
