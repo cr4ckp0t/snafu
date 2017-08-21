@@ -1,7 +1,7 @@
 {
     "name": "SNAFU: SNow Automated Form Utilizer",
     "short_name": "SNAFU",
-    "version": "1.1.11",
+    "version": "1.1.12",
     "description": "It's like SNAP, only way better!",
     "author": "Adam Koch",
     "omnibox": {"keyword": "snafu"},
@@ -21,7 +21,7 @@
     "permissions": [ "tabs", "downloads",  "contextMenus", "storage", "declarativeContent" ],
     "content_scripts": [{
         "matches": ["https://ghsprod.service-now.com/*"],
-        "js": ["js/dymo.js", "js/content.js"],
+        "js": ["js/jquery.min.js", "js/content.js"],
         "all_frames": true,
         "run_at": "document_end"
     }],
