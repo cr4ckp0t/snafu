@@ -215,26 +215,27 @@ const snafuAutoTickets = {
 		'ack': { 'script': 'Acknowledging cancelled task workflow.', 'value': '2' },
 		'enRoute': null,
 		'close': { 'script': 'Updated {BROKEN_HOSTNAME}\'s location information.', 'value': '3' }
+	},
+
+	// smart hands request
+	'smart_hands': {
+		'field': 'state',
+		'ack': { 'script': 'Acknowledging Smart Hands request.', 'value': '2' },
+		'enRoute': { 'script': 'En route to complete the Smart Hands request.', 'value': '2' },
+		'close': { 'script': 'Completed Smart Hands request.', 'value': '3' }
 	}
 }
-
-// dymo label xml
-const snafuBuildLabel = '<?xml version="1.0" encoding="utf-8"?><DieCutLabel Version="8.0" Units="twips"><PaperOrientation>Landscape</PaperOrientation><Id>Address</Id><IsOutlined>false</IsOutlined><PaperName>30252 Address</PaperName><DrawCommands><RoundRectangle X="0" Y="0" Width="1581" Height="5040" Rx="270" Ry="270" /></DrawCommands><ObjectInfo><TextObject><Name>TEXT</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String xml:space="preserve">Host Name:</String><Attributes><Font Family="Arial" Size="12" Bold="True" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" HueScale="100" /></Attributes></Element></StyledText></TextObject><Bounds X="331" Y="472.311157226563" Width="1350" Height="360" /></ObjectInfo><ObjectInfo><TextObject><Name>HOSTNAME_TEXT</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String xml:space="preserve">DTXXXXXXXXXX</String><Attributes><Font Family="Arial" Size="12" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" HueScale="100" /></Attributes></Element></StyledText></TextObject><Bounds X="1727.69787597656" Y="480.576568603516" Width="3099.9208984375" Height="345" /></ObjectInfo><ObjectInfo><DateTimeObject><Name>DATE-TIME</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><DateTimeFormat>LongSystemDate</DateTimeFormat><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><PreText>Date Built: </PreText><PostText /><IncludeTime>False</IncludeTime><Use24HourFormat>False</Use24HourFormat></DateTimeObject><Bounds X="331" Y="843.150024414063" Width="3535.39453125" Height="216" /></ObjectInfo><ObjectInfo><TextObject><Name>TEXT_3</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Right</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String xml:space="preserve">Tech: Adam Koch</String><Attributes><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" HueScale="100" /></Attributes></Element></StyledText></TextObject><Bounds X="3513" Y="849.599975585938" Width="1440" Height="216" /></ObjectInfo><ObjectInfo><TextObject><Name>TEXT_4</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Right</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String xml:space="preserve">W7, &lt;BUILD&gt;</String><Attributes><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" HueScale="100" /></Attributes></Element></StyledText></TextObject><Bounds X="2634.90649414063" Y="58" Width="2318.09350585938" Height="216" /></ObjectInfo><ObjectInfo><TextObject><Name>TEXT_5</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String xml:space="preserve">Apps:</String><Attributes><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" HueScale="100" /></Attributes></Element></StyledText></TextObject><Bounds X="331" Y="1064.25" Width="452" Height="210" /></ObjectInfo><ObjectInfo><TextObject><Name>TEXT_6</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String xml:space="preserve">Customer:</String><Attributes><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" HueScale="100" /></Attributes></Element></StyledText></TextObject><Bounds X="331" Y="1277" Width="827" Height="216" /></ObjectInfo><ObjectInfo><TextObject><Name>RITM#</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Right</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String xml:space="preserve">RITMXXXXXXX</String><Attributes><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" HueScale="100" /></Attributes></Element></StyledText></TextObject><Bounds X="3105.6259765625" Y="242.37272644043" Width="1847.3740234375" Height="216" /></ObjectInfo><ObjectInfo><TextObject><Name>TEXT_2</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Top</VerticalAlignment><TextFitMode>ShrinkToFit</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String xml:space="preserve">&lt;CUSTOMER&gt;</String><Attributes><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" HueScale="100" /></Attributes></Element></StyledText></TextObject><Bounds X="1248" Y="1268" Width="2880" Height="225" /></ObjectInfo><ObjectInfo><TextObject><Name>TEXT_8</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Top</VerticalAlignment><TextFitMode>ShrinkToFit</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String xml:space="preserve">Office, Skype</String><Attributes><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" HueScale="100" /></Attributes></Element></StyledText></TextObject><Bounds X="858" Y="1058" Width="2880" Height="210" /></ObjectInfo><ObjectInfo><BarcodeObject><Name>BARCODE</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName>HOSTNAME_TEXT</LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>True</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><Text>DTXXXXXXXXXX</Text><Type>Code39</Type><Size>Small</Size><TextPosition>None</TextPosition><TextFont Family="Arial" Size="8" Bold="False" Italic="False" Underline="False" Strikeout="False" /><CheckSumFont Family="Arial" Size="8" Bold="False" Italic="False" Underline="False" Strikeout="False" /><TextEmbedding>None</TextEmbedding><ECLevel>0</ECLevel><HorizontalAlignment>Left</HorizontalAlignment><QuietZonesPadding Left="0" Top="0" Right="0" Bottom="0" /></BarcodeObject><Bounds X="331" Y="133" Width="3180" Height="285" /></ObjectInfo></DieCutLabel>';
-const snafuDecomLabel = '<?xml version="1.0" encoding="utf-8"?><DieCutLabel Version="8.0" Units="twips"><PaperOrientation>Landscape</PaperOrientation><Id>Address</Id><PaperName>30252 Address</PaperName><DrawCommands><RoundRectangle X="0" Y="0" Width="1581" Height="5040" Rx="270" Ry="270" /></DrawCommands><ObjectInfo><TextObject><Name>TEXT</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName></LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String>&lt;SerialNumber&gt;</String><Attributes><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /></Attributes></Element></StyledText></TextObject><Bounds X="331" Y="1277.82592773438" Width="3055.73413085938" Height="187.199996948242" /></ObjectInfo><ObjectInfo><DateTimeObject><Name>QuarantineDate</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName></LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><DateTimeFormat>LongSystemDate</DateTimeFormat><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><PreText></PreText><PostText></PostText><IncludeTime>False</IncludeTime><Use24HourFormat>False</Use24HourFormat></DateTimeObject><Bounds X="331" Y="648.052490234375" Width="4622" Height="221.363922119141" /></ObjectInfo><ObjectInfo><TextObject><Name>Tech</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName></LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><HorizontalAlignment>Right</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String>&lt;Tech&gt;</String><Attributes><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /></Attributes></Element></StyledText></TextObject><Bounds X="3163.158203125" Y="1277" Width="1789.84191894531" Height="187.199996948242" /></ObjectInfo><ObjectInfo><TextObject><Name>TEXT_4</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName></LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String>Decommission</String><Attributes><Font Family="Arial" Size="11" Bold="True" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /></Attributes></Element></StyledText></TextObject><Bounds X="331" Y="58" Width="4622" Height="242.819625854492" /></ObjectInfo><ObjectInfo><TextObject><Name>TEXT_5</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName></LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String>&lt;Reason&gt;</String><Attributes><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /></Attributes></Element></StyledText></TextObject><Bounds X="331" Y="967.651062011719" Width="4622" Height="187.199996948242" /></ObjectInfo><ObjectInfo><TextObject><Name>RITM#</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName></LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><HorizontalAlignment>Right</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String>RITM0XXXXX</String><Attributes><Font Family="Arial" Size="9" Bold="True" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /></Attributes></Element></StyledText></TextObject><Bounds X="3326.11669921875" Y="360" Width="1626.88342285156" Height="187.199996948242" /></ObjectInfo><ObjectInfo><BarcodeObject><Name>BARCODE</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName>RITM#</LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>True</IsVariable><Text>RITM0XXXXX</Text><Type>Code39</Type><Size>Small</Size><TextPosition>None</TextPosition><TextFont Family="Arial" Size="8" Bold="False" Italic="False" Underline="False" Strikeout="False" /><CheckSumFont Family="Arial" Size="8" Bold="False" Italic="False" Underline="False" Strikeout="False" /><TextEmbedding>None</TextEmbedding><ECLevel>0</ECLevel><HorizontalAlignment>Left</HorizontalAlignment><QuietZonesPadding Left="0" Top="0" Right="0" Bottom="0" /></BarcodeObject><Bounds X="331" Y="322.519256591797" Width="3145.45361328125" Height="265.037841796875" /></ObjectInfo></DieCutLabel>';
-const snafuQuarantineLabel = '<?xml version="1.0" encoding="utf-8"?><DieCutLabel Version="8.0" Units="twips"><PaperOrientation>Landscape</PaperOrientation><Id>Address</Id><PaperName>30252 Address</PaperName><DrawCommands><RoundRectangle X="0" Y="0" Width="1581" Height="5040" Rx="270" Ry="270" /></DrawCommands><ObjectInfo><TextObject><Name>TEXT</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName></LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String>&lt;SerialNumber&gt;</String><Attributes><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /></Attributes></Element></StyledText></TextObject><Bounds X="331" Y="1277.82592773438" Width="3055.73413085938" Height="187.199996948242" /></ObjectInfo><ObjectInfo><DateTimeObject><Name>QuarantineDate</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName></LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><DateTimeFormat>LongSystemDate</DateTimeFormat><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><PreText>Date Quarantined: </PreText><PostText></PostText><IncludeTime>False</IncludeTime><Use24HourFormat>False</Use24HourFormat></DateTimeObject><Bounds X="331" Y="648.052490234375" Width="4622" Height="221.363922119141" /></ObjectInfo><ObjectInfo><TextObject><Name>Tech</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName></LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><HorizontalAlignment>Right</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String>&lt;Tech&gt;</String><Attributes><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /></Attributes></Element></StyledText></TextObject><Bounds X="3163.158203125" Y="1277" Width="1789.84191894531" Height="187.199996948242" /></ObjectInfo><ObjectInfo><TextObject><Name>TEXT_4</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName></LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String>Quarantine</String><Attributes><Font Family="Arial" Size="11" Bold="True" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /></Attributes></Element></StyledText></TextObject><Bounds X="331" Y="58" Width="4622" Height="242.819625854492" /></ObjectInfo><ObjectInfo><TextObject><Name>TEXT_5</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName></LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String>&lt;Reason&gt;</String><Attributes><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /></Attributes></Element></StyledText></TextObject><Bounds X="331" Y="967.651062011719" Width="4622" Height="187.199996948242" /></ObjectInfo><ObjectInfo><TextObject><Name>RITM#</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName></LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><HorizontalAlignment>Right</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String>RITM0XXXXX</String><Attributes><Font Family="Arial" Size="9" Bold="True" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /></Attributes></Element></StyledText></TextObject><Bounds X="3326.11669921875" Y="360" Width="1626.88342285156" Height="187.199996948242" /></ObjectInfo><ObjectInfo><BarcodeObject><Name>BARCODE</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName>RITM#</LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>True</IsVariable><Text>RITM0XXXXX</Text><Type>Code39</Type><Size>Small</Size><TextPosition>None</TextPosition><TextFont Family="Arial" Size="8" Bold="False" Italic="False" Underline="False" Strikeout="False" /><CheckSumFont Family="Arial" Size="8" Bold="False" Italic="False" Underline="False" Strikeout="False" /><TextEmbedding>None</TextEmbedding><ECLevel>0</ECLevel><HorizontalAlignment>Left</HorizontalAlignment><QuietZonesPadding Left="0" Top="0" Right="0" Bottom="0" /></BarcodeObject><Bounds X="331" Y="322.519256591797" Width="3145.45361328125" Height="265.037841796875" /></ObjectInfo></DieCutLabel>';
-const snafuRepairLabel = '<?xml version="1.0" encoding="utf-8"?><DieCutLabel Version="8.0" Units="twips"><PaperOrientation>Landscape</PaperOrientation><Id>Address</Id><PaperName>30252 Address</PaperName><DrawCommands><RoundRectangle X="0" Y="0" Width="1581" Height="5040" Rx="270" Ry="270" /></DrawCommands><ObjectInfo><TextObject><Name>TEXT</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName></LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String>&lt;SerialNumber&gt;</String><Attributes><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /></Attributes></Element></StyledText></TextObject><Bounds X="331" Y="1277.82592773438" Width="3055.73413085938" Height="187.199996948242" /></ObjectInfo><ObjectInfo><DateTimeObject><Name>QuarantineDate</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName></LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><DateTimeFormat>LongSystemDate</DateTimeFormat><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><PreText>Repair Started: </PreText><PostText></PostText><IncludeTime>False</IncludeTime><Use24HourFormat>False</Use24HourFormat></DateTimeObject><Bounds X="331" Y="648.052490234375" Width="4622" Height="221.363922119141" /></ObjectInfo><ObjectInfo><TextObject><Name>Tech</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName></LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><HorizontalAlignment>Right</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String>&lt;Tech&gt;</String><Attributes><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /></Attributes></Element></StyledText></TextObject><Bounds X="3163.158203125" Y="1277" Width="1789.84191894531" Height="187.199996948242" /></ObjectInfo><ObjectInfo><TextObject><Name>TEXT_4</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName></LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String>Repair</String><Attributes><Font Family="Arial" Size="11" Bold="True" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /></Attributes></Element></StyledText></TextObject><Bounds X="331" Y="58" Width="4622" Height="242.819625854492" /></ObjectInfo><ObjectInfo><TextObject><Name>TEXT_5</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName></LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String>&lt;Results&gt;</String><Attributes><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /></Attributes></Element></StyledText></TextObject><Bounds X="331" Y="967.651062011719" Width="4622" Height="187.199996948242" /></ObjectInfo><ObjectInfo><TextObject><Name>RITM#</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName></LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><HorizontalAlignment>Right</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String>RITM0XXXXX</String><Attributes><Font Family="Arial" Size="9" Bold="True" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /></Attributes></Element></StyledText></TextObject><Bounds X="3326.11669921875" Y="360" Width="1626.88342285156" Height="187.199996948242" /></ObjectInfo><ObjectInfo><BarcodeObject><Name>BARCODE</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName>RITM#</LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>True</IsVariable><Text>RITM0XXXXX</Text><Type>Code39</Type><Size>Small</Size><TextPosition>None</TextPosition><TextFont Family="Arial" Size="8" Bold="False" Italic="False" Underline="False" Strikeout="False" /><CheckSumFont Family="Arial" Size="8" Bold="False" Italic="False" Underline="False" Strikeout="False" /><TextEmbedding>None</TextEmbedding><ECLevel>0</ECLevel><HorizontalAlignment>Left</HorizontalAlignment><QuietZonesPadding Left="0" Top="0" Right="0" Bottom="0" /></BarcodeObject><Bounds X="331" Y="322.519256591797" Width="3145.45361328125" Height="265.037841796875" /></ObjectInfo></DieCutLabel>';
-const snafuRestockLabel = '<?xml version="1.0" encoding="utf-8"?><DieCutLabel Version="8.0" Units="twips"><PaperOrientation>Landscape</PaperOrientation><Id>Address</Id><PaperName>30252 Address</PaperName><DrawCommands><RoundRectangle X="0" Y="0" Width="1581" Height="5040" Rx="270" Ry="270" /></DrawCommands><ObjectInfo><TextObject><Name>TEXT</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName></LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String>&lt;SerialNumber&gt;</String><Attributes><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /></Attributes></Element></StyledText></TextObject><Bounds X="331" Y="1277.82592773438" Width="3055.73413085938" Height="187.199996948242" /></ObjectInfo><ObjectInfo><DateTimeObject><Name>QuarantineDate</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName></LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><DateTimeFormat>LongSystemDate</DateTimeFormat><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><PreText>Restocked: </PreText><PostText></PostText><IncludeTime>False</IncludeTime><Use24HourFormat>False</Use24HourFormat></DateTimeObject><Bounds X="331" Y="648.052490234375" Width="4622" Height="221.363922119141" /></ObjectInfo><ObjectInfo><TextObject><Name>Tech</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName></LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><HorizontalAlignment>Right</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String>&lt;Tech&gt;</String><Attributes><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /></Attributes></Element></StyledText></TextObject><Bounds X="3163.158203125" Y="1277" Width="1789.84191894531" Height="187.199996948242" /></ObjectInfo><ObjectInfo><TextObject><Name>TEXT_4</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName></LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String>Restock</String><Attributes><Font Family="Arial" Size="11" Bold="True" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /></Attributes></Element></StyledText></TextObject><Bounds X="331" Y="58" Width="4622" Height="242.819625854492" /></ObjectInfo><ObjectInfo><TextObject><Name>TEXT_5</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName></LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String>&lt;Results&gt;</String><Attributes><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /></Attributes></Element></StyledText></TextObject><Bounds X="331" Y="967.651062011719" Width="4622" Height="187.199996948242" /></ObjectInfo><ObjectInfo><TextObject><Name>RITM#</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName></LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><HorizontalAlignment>Right</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String>RITM0XXXXX</String><Attributes><Font Family="Arial" Size="9" Bold="True" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /></Attributes></Element></StyledText></TextObject><Bounds X="3326.11669921875" Y="360" Width="1626.88342285156" Height="187.199996948242" /></ObjectInfo><ObjectInfo><BarcodeObject><Name>BARCODE</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName>RITM#</LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>True</IsVariable><Text>RITM0XXXXX</Text><Type>Code39</Type><Size>Small</Size><TextPosition>None</TextPosition><TextFont Family="Arial" Size="8" Bold="False" Italic="False" Underline="False" Strikeout="False" /><CheckSumFont Family="Arial" Size="8" Bold="False" Italic="False" Underline="False" Strikeout="False" /><TextEmbedding>None</TextEmbedding><ECLevel>0</ECLevel><HorizontalAlignment>Left</HorizontalAlignment><QuietZonesPadding Left="0" Top="0" Right="0" Bottom="0" /></BarcodeObject><Bounds X="331" Y="322.519256591797" Width="3145.45361328125" Height="265.037841796875" /></ObjectInfo></DieCutLabel>';
 
 // dymo label fields
 const snafuLabelFields = {
 	// replacement build
 	'build': {
-		'HOSTNAME_TEXT': '{REPLACE_HOSTNAME}',		// replacement build's hostname
-		'TEXT_3': 'Tech: {TECH_NAME}',				// technician
-		'TEXT_4': '{REPLACE_OS}, {REPLACE_BUILD}',	// replacement os and build
-		'RITM#': '{REQUEST_ITEM}',					// ritm number
-		'TEXT_2': '{REPLACE_CUSTOMER}',				// customer
-		'TEXT_8': 'Office, Skype, Citrix'			// software
+		'HOSTNAME_TEXT': '{REPLACE_HOSTNAME}',	// replacement build's hostname
+		'TEXT_3': 'Tech: {TECH_NAME}',			// technician
+		'TEXT_4': '{REPLACE_BUILD}',			// replacement os and build
+		'RITM#': '{REQUEST_ITEM}',				// ritm number
+		'TEXT_2': '{REPLACE_CUSTOMER}',			// customer
+		'TEXT_8': 'Office, Skype, Citrix'		// software
 	},
 
 	// decommission
@@ -265,42 +266,42 @@ const snafuLabelFields = {
 	'restock': {
 		'TEXT': '{BROKEN_SERIAL}',				// restocked asset's serial number
 		'Tech': '{TECH_NAME}',					// technician
-		'TECH_5': 'Passed UEFI diagnostics.',	// repair results
+		'TEXT_5': 'Passed UEFI diagnostics.',	// repair results
 		'RITM#': '{REQUEST_ITEM}'				// ritm number
 	}
 }
 
 // listen for triggers on the custom event for passing text
-document.addEventListener('SNAFU_Inject', function(snafuInject) {
+document.addEventListener('SNAFU_Inject', function(inject) {
 	// query for the user informatoin
-	if (snafuInject.detail.type === 'userQuery') {
-		var snafuAssignedTo = g_form.getReference('assigned_to');
-		var snafuAssignmentGroup = g_form.getReference('assignment_group');
+	if (inject.detail.type === 'userQuery') {
+		var assignedTo = g_form.getReference('assigned_to');
+		var assignmentGroup = g_form.getReference('assignment_group');
 
-		if (snafuIsVarEmpty(snafuAssignedTo.name) === false && snafuIsVarEmpty(snafuAssignmentGroup.name) === false) {
+		if (snafuIsVarEmpty(assignedTo.name) === false && snafuIsVarEmpty(assignmentGroup.name) === false) {
 			// query the user info sent by the options page
-			var snafuQuery = document.createEvent('CustomEvent');
-			snafuQuery.initCustomEvent('SNAFU_UserQuery', true, true, {
-				fullName: snafuUcwords(snafuAssignedTo.name),
-				userId: snafuAssignedTo.sys_id,
-				userName: snafuAssignedTo.user_name,
-				userEmail: snafuAssignedTo.email,
-				groupName: snafuUcwords(snafuAssignmentGroup.name),
-				groupId: snafuAssignmentGroup.sys_id
+			var query = document.createEvent('CustomEvent');
+			query.initCustomEvent('SNAFU_UserQuery', true, true, {
+				fullName: snafuUcwords(assignedTo.name),
+				userId: assignedTo.sys_id,
+				userName: assignedTo.user_name,
+				userEmail: assignedTo.email,
+				groupName: snafuUcwords(assignmentGroup.name),
+				groupId: assignmentGroup.sys_id
 			});
 			snafuInfoMessage('Saved your user information.');
-			document.dispatchEvent(snafuQuery);
+			document.dispatchEvent(query);
 		} else {
 			snafuErrorMessage('SNAFU: Unable to pull your user information or incomplete information found.');
 		}
 	
 	// assign task or incident to the user
-	} else if (snafuInject.detail.type === 'assignToMe') {
-		snafuSetDisplayValue('assignment_group', snafuInject.detail.userInfo.groupId, snafuInject.detail.userInfo.groupName);
+	} else if (inject.detail.type === 'assignToMe') {
+		snafuSetDisplayValue('assignment_group', inject.detail.userInfo.groupId, inject.detail.userInfo.groupName);
 		snafuFlash('assignment_group');
-		snafuSetDisplayValue('assigned_to', snafuInject.detail.userInfo.userId, snafuInject.detail.userInfo.fullName.toUpperCase());
+		snafuSetDisplayValue('assigned_to', inject.detail.userInfo.userId, inject.detail.userInfo.fullName.toUpperCase());
 		snafuFlash('assigned_to');
-		switch (snafuInject.detail.autoFinish) {
+		switch (inject.detail.autoFinish) {
 			case 'auto':
 			case 'save':
 				setTimeout(function() { g_form.save(); }, 1000);
@@ -314,126 +315,184 @@ document.addEventListener('SNAFU_Inject', function(snafuInject) {
 		}
 
 	// send success (info) messagea
-	} else if (snafuInject.detail.type === 'sendSuccessMsg') {
-		snafuInfoMessage(snafuInject.detail.statusMsg);
+	} else if (inject.detail.type === 'sendSuccessMsg') {
+		snafuInfoMessage(inject.detail.statusMsg);
 	
 	// send error message
-	} else if (snafuInject.detail.type === 'sendErrorMsg') {
-		snafuErrorMessage(snafuInject.detail.statusMsg);
+	} else if (inject.detail.type === 'sendErrorMsg') {
+		snafuErrorMessage(inject.detail.statusMsg);
 
 	// save the page (via keybinding)
-	} else if (snafuInject.detail.type === 'savePage') {
-		snafuInfoMessage(snafuSprintf('Saving page in %s seconds.  Please wait...', [snafuInject.detail.finishDelay]));
-		setTimeout(function() { g_form.save(); }, snafuInject.detail.finishDelay * 1000);
+	} else if (inject.detail.type === 'savePage') {
+		snafuInfoMessage(snafuSprintf('Saving page in %s seconds.  Please wait...', [inject.detail.finishDelay]));
+		setTimeout(function() { g_form.save(); }, inject.detail.finishDelay * 1000);
 
 	// update the page (via keybinding)
-	} else if (snafuInject.detail.type === 'updatePage') {
-		snafuInfoMessage(snafuSprintf('Updating page in %s seconds.  Please wait...', [snafuInject.detail.finishDelay]));
-		setTimeout(function() { g_form.submit(); }, snafuInject.detail.finishDelay * 1000);
+	} else if (inject.detail.type === 'updatePage') {
+		snafuInfoMessage(snafuSprintf('Updating page in %s seconds.  Please wait...', [inject.detail.finishDelay]));
+		setTimeout(function() { g_form.submit(); }, inject.detail.finishDelay * 1000);
 
 	// auto ticket detection
-	} else if (snafuInject.detail.type === 'autoEnRoute' || snafuInject.detail.type === 'autoHandle' || snafuInject.detail.type === 'autoAcknowledge' || snafuInject.detail.type === 'autoClosure') {
-		var snafuTicketType = snafuGetTicketType();
-		var snafuType = snafuInject.detail.type;
+	} else if (inject.detail.type === 'autoEnRoute' || inject.detail.type === 'autoHandle' || inject.detail.type === 'autoAcknowledge' || inject.detail.type === 'autoClosure') {
+		var ticketType = snafuGetTicketType();
+		var type = inject.detail.type;
 
-		if (snafuTicketType === false) {
+		if (ticketType === false) {
 			snafuErrorMessage('No task or incident detected.');
-		} else if (snafuTicketType in snafuAutoTickets) {
-			var snafuTicket = snafuAutoTickets[snafuTicketType];
-			var snafuError = false;
+		} else if (ticketType in snafuAutoTickets) {
+			var ticket = snafuAutoTickets[ticketType];
+			var error = false;
 			// determine ack or close
-			if (snafuType === 'autoHandle') {
-				var snafuTicketStatus = (snafuTicketType === 'generic_incident') ? g_form.getValue('incident_state') : g_form.getValue('state');
-				if (snafuTicketType === 'generic_incident') {
-					if (snafuTicketStatus === '6') {
+			if (type === 'autoHandle') {
+				var ticketStatus = (ticketType === 'generic_incident') ? g_form.getValue('incident_state') : g_form.getValue('state');
+				if (ticketType === 'generic_incident') {
+					if (ticketStatus === '6') {
 						// if ticket is resolved then abort
-						snafuError = true;
+						error = true;
 					} else {
 						// if status is 1 (New) or 2 (Assigned) then auto-acknowledge, otherwise auto-close
-						snafuType = (snafuTicketStatus === '1' || snafuTicketStatus === '2') ? 'autoAcknowledge' : 'autoClose';
+						type = (ticketStatus === '1' || ticketStatus === '2') ? 'autoAcknowledge' : 'autoClose';
 					} 
 				} else {
-					if (snafuTicketStatus === '3' || snafuTicketStatus === '4') {
+					if (ticketStatus === '3' || ticketStatus === '4') {
 						// if ticket is closed then abort
-						snafuError = true;
+						error = true;
 					} else {
 						// if status is 1 (Open) then auto-acknowledge, otherwise auto-close
-						snafuType = (snafuTicketStatus === '1') ? 'autoAcknowledge' : 'autoClose';
-						//console.log(snafuType, snafuTicketStatus)
+						type = (ticketStatus === '1') ? 'autoAcknowledge' : 'autoClose';
+						//console.log(type, ticketStatus)
 					}
 				}
 			}
 
-			if (snafuError === true ) {
+			if (error === true ) {
 				snafuErrorMessage('Ticket has already been closed.');
 			} else {
-				if (snafuType === 'autoEnRoute') {
-					var snafuTicketAction = snafuTicket.enRoute;
+				if (type === 'autoEnRoute') {
+					var ticketAction = ticket.enRoute;
 				} else {
-					var snafuTicketAction = (snafuType === 'autoAcknowledge') ? snafuTicket.ack : snafuTicket.close;
+					var ticketAction = (type === 'autoAcknowledge') ? ticket.ack : ticket.close;
 				}
 				
-				if (snafuIsVarEmpty(snafuTicketAction) === true) {
-					snafuErrorMessage(snafuSprintf('Unable to complete action "%s" on this ticket type (%s).', [snafuType, snafuTicketType]));
+				if (snafuIsVarEmpty(ticketAction) === true) {
+					snafuErrorMessage(snafuSprintf('Unable to complete action "%s" on this ticket type (%s).', [type, ticketType]));
 				} else {
 					// set the field with value
-					if (snafuIsVarEmpty(snafuTicket.field) === false && snafuIsVarEmpty(snafuTicketAction.value) === false) {
-						snafuSetValue(snafuTicket.field, snafuTicketAction.value);
-						snafuFlash(snafuTicket.field);
+					if (snafuIsVarEmpty(ticket.field) === false && snafuIsVarEmpty(ticketAction.value) === false) {
+						snafuSetValue(ticket.field, ticketAction.value);
+						snafuFlash(ticket.field);
 					}
 
 					// set the work notes
-					if (snafuIsVarEmpty(snafuTicketAction.script) === false) {
-						snafuSetValue('work_notes', snafuReplaceWildcards(snafuTicketAction.script));
+					if (snafuIsVarEmpty(ticketAction.script) === false) {
+						snafuSetValue('work_notes', snafuReplaceWildcards(ticketAction.script));
 						snafuFlash('work_notes');
 					}
 
 					// if a task, set root cause ci and due date
-					if (snafuTicket.field === 'state') {
-						var snafuDueDate = snafuGetDueDate();
+					if (ticket.field === 'state') {
+						var dueDate = snafuGetDueDate();
 
 						// due date
-						if (g_form.getValue('due_date') !== snafuDueDate) {
-							snafuSetValue('due_date', snafuDueDate);
+						if (g_form.getValue('due_date') !== dueDate) {
+							snafuSetValue('due_date', dueDate);
 							snafuFlash('due_date');
 						}
 
 						// root cause ci
 						// desktop services value is 5a8d6816a1cf38003a42245d1035d56e
-						if (snafuTicketType !== 'absolute_install' && g_form.getValue('cmdb_ci') !== '5a8d6816a1cf38003a42245d1035d56e') {
+						if (ticketType !== 'absolute_install' && g_form.getValue('cmdb_ci') !== '5a8d6816a1cf38003a42245d1035d56e') {
 							snafuSetDisplayValue('cmdb_ci', '5a8d6816a1cf38003a42245d1035d56e', 'Desktop Services');
 							snafuFlash('cmdb_ci');
+						}
+
+						// print labels
+						if (inject.detail.printLabels === true && (type.indexOf('closeQuarantine') !== -1 || type.indexOf('closeHotSwap') !== -1)) {
+							
+							// make sure we have a valid printer
+							var printers = dymo.label.framework.getPrinters().filter(function(printer) { return (printer.isConnected === true && printer.isLocal === true) });
+							if (printers.length > 0) {
+					
+								// get the printer's name as well for printing
+								var printerName = printers[0]['name'];
+								if (snafuIsVarEmpty(printerName) === false) {
+									
+									// determine the label type from the ticket type
+									var labelType = (type.indexOf('closeHotSwap') !== -1) ? 'build' : type.replace('closeQuarantine', '').replace('Yes', '').replace('No', '').toLowerCase();
+									if (snafuLabelFields[labelType] === undefined) {
+										console.info(labelType);
+										console.warn('SNAFU: Dymo label type returned invalid.  Skipping print job. . .');
+										snafuErrorMessage('Dymo label type returned invalid.  Skipping print job. . .');
+									} else {
+										var addressLabel = dymo.label.framework.openLabelXml(snafuGetDymoLabelXml(labelType));
+										var labelFields = snafuLabelFields[labelType];
+										var reason = ''
+										var canPrint = true;
+										for (var field in labelFields) {
+											if (labelType === 'reclaim' || labelType === 'repair') {
+												if (field === 'TEXT_5') {
+													reason = prompt(snafuSprintf('Enter the reason for %s this device.  KEEP IT SHORT!', (labelType === 'reclaim') ? ['reclaiming'] : ['repairing']));
+													if (snafuIsVarEmpty(reason) === true) {
+														console.warn('SNAFU: You must provide a valid reason.');
+														snafuErrorMessage('You must provide a valid reason.  Skipping print job. . .');
+														canPrint = false;
+														break;
+													} else {
+														addressLabel.setObjectText(field, reason);
+													}
+												} else {
+													addressLabel.setObjectText(field, snafuReplaceWildcards(labelFields[field]));
+												}
+											} else {
+												addressLabel.setObjectText(field, snafuReplaceWildcards(labelFields[field]));
+											}
+										}
+
+										if (canPrint === false) {
+											console.warn('SNAFU: Unable to print label due to errors.');
+										} else {
+											addressLabel.print(printerName);
+										}
+									}
+								} else {
+									console.warn('SNAFU: Unable to determine printer name.  Skipping print job. . .');
+									snafuErrorMessage('Unable to determine printer name.  Skipping print job. . .');
+								}
+							} else {
+								console.warn('SNAFU: No appropriate printers were found.  Skipping print job. . .');
+								snafuErrorMessage('No appropriate printers were found.  Skipping print job. . .');
+							}
 						}
 					}
 
 					// autofinish
-					switch (snafuInject.detail.autoFinish) {
+					switch (inject.detail.autoFinish) {
 						// save (stay on ticket's page)
 						case 'save':
 							// not going to let incidents be autosaved
-							if (snafuTicket.field === 'state' || (snafuTicket.field === 'incident_state' && snafuTicketAction.value !== '6')) {
+							if (ticket.field === 'state' || (ticket.field === 'incident_state' && ticketAction.value !== '6')) {
 								// delay 1.5 seconds
-								setTimeout(function() { g_form.save(); }, snafuInject.detail.finishDelay * 1000);
+								setTimeout(function() { g_form.save(); }, inject.detail.finishDelay * 1000);
 							}
 							break;
 						
 						// update (go back to last page)
 						case 'update':
 							// not going to let incident be autoupdated
-							if (snafuTicket.field === 'state' || (snafuTicket.field === 'incident_state' && snafuTicketAction.value !== '6')) {
+							if (ticket.field === 'state' || (ticket.field === 'incident_state' && ticketAction.value !== '6')) {
 								// delay 1.5 seconds
-								setTimeout(function() { g_form.submit(); }, snafuInject.detail.finishDelay * 1000);
+								setTimeout(function() { g_form.submit(); }, inject.detail.finishDelay * 1000);
 							}
 							break;
 
 						// auto (save all updates except closures, which are updated. incidents are never automatically resolved)
 						case 'auto':
 							// if a closure then update, otherwise save
-							if (snafuTicket.field === 'state' && (snafuTicketAction.value === '3' || snafuTicketAction.value === '4')) {
+							if (ticket.field === 'state' && (ticketAction.value === '3' || ticketAction.value === '4')) {
 								// update
-								setTimeout(function() { g_form.submit(); }, snafuInject.detail.finishDelay * 1000);
-							} else if (snafuTicket.field === 'state' || (snafuTicket.field === 'incident_state' && snafuTicketAction.value !== '6')) {
-								setTimeout(function() { g_form.save(); }, snafuInject.detail.finishDelay * 1000);
+								setTimeout(function() { g_form.submit(); }, inject.detail.finishDelay * 1000);
+							} else if (ticket.field === 'state' || (ticket.field === 'incident_state' && ticketAction.value !== '6')) {
+								setTimeout(function() { g_form.save(); }, inject.detail.finishDelay * 1000);
 							}
 							break;
 						
@@ -451,42 +510,42 @@ document.addEventListener('SNAFU_Inject', function(snafuInject) {
 	// handle everything else
 	} else {
 		// make sure ticket is assigned
-		if (snafuIsResolveCode(snafuInject.detail.field, snafuInject.detail.value) === true && g_form.getReference('assigned_to').currentRow === -1) {
+		if (snafuIsResolveCode(inject.detail.field, inject.detail.value) === true && g_form.getReference('assigned_to').currentRow === -1) {
 			snafuErrorMessage('Unable to send update to unassigned ticket.  Please assign it to yourself and try again.');
 		} else {
-			var snafuTicketType = snafuGetTicketType();
-			var snafuType = snafuInject.detail.type;
-			var snafuField = snafuInject.detail.field;
-			var snafuValue = snafuInject.detail.value;
-			var snafuWorkNotes = (snafuIsVarEmpty(snafuInject.detail.workNotes) === false) ? snafuReplaceWildcards(snafuInject.detail.workNotes) : null;
-			var snafuCustNotes = (snafuIsVarEmpty(snafuInject.detail.custNotes) === false) ? snafuReplaceWildcards(snafuInject.detail.custNotes) : null;
+			var ticketType = snafuGetTicketType();
+			var type = inject.detail.type;
+			var field = inject.detail.field;
+			var value = inject.detail.value;
+			var workNotes = (snafuIsVarEmpty(inject.detail.workNotes) === false) ? snafuReplaceWildcards(inject.detail.workNotes) : null;
+			var custNotes = (snafuIsVarEmpty(inject.detail.custNotes) === false) ? snafuReplaceWildcards(inject.detail.custNotes) : null;
 
-			if (snafuType.indexOf('closeQuarantine') !== -1 && snafuTicketType !== 'rhs_restock') {
+			if (type.indexOf('closeQuarantine') !== -1 && ticketType !== 'rhs_restock') {
 				snafuErrorMessage('Open ticket is not for a quarantined asset');
-			} else if (snafuType.indexOf('closeHotSwap') !== -1 && snafuTicketType !== 'rhs_build') {
+			} else if (type.indexOf('closeHotSwap') !== -1 && ticketType !== 'rhs_build') {
 				snafuErrorMessage('Open ticket is not for a Hot Swap build.');
 			} else {
 
 				// set field with value
-				if (snafuIsVarEmpty(snafuField) === false && snafuIsVarEmpty(snafuValue) === false) {
-					snafuSetValue(snafuField, snafuValue);
-					snafuFlash(snafuField)
+				if (snafuIsVarEmpty(field) === false && snafuIsVarEmpty(value) === false) {
+					snafuSetValue(field, value);
+					snafuFlash(field)
 				}
 
 				// customer notes (comments)
-				if (snafuIsVarEmpty(snafuCustNotes) === false) {
-					snafuSetValue('comments', snafuCustNotes);
+				if (snafuIsVarEmpty(custNotes) === false) {
+					snafuSetValue('comments', custNotes);
 					snafuFlash('comments');
 				}
 
 				// work notes
-				if (snafuIsVarEmpty(snafuWorkNotes) === false) {
-					snafuSetValue('work_notes', snafuWorkNotes);
+				if (snafuIsVarEmpty(workNotes) === false) {
+					snafuSetValue('work_notes', workNotes);
 					snafuFlash('work_notes');
 				}
 
 				// set the resolve message if it is a resolved code (incident only)
-				if (snafuField === 'incident_state' && snafuValue === '6') {
+				if (field === 'incident_state' && value === '6') {
 					snafuSetValue('comments', snafuReplaceWildcards(snafuRslvComments));
 					snafuFlash('comments');
 
@@ -498,8 +557,8 @@ document.addEventListener('SNAFU_Inject', function(snafuInject) {
 					snafuSetValue('u_customer_communication', 'Spoke to Customer');
 					snafuFlash('u_customer_communication');
 
-					if (snafuIsVarEmpty(snafuWorkNotes) === false) {
-						snafuSetValue('close_notes', snafuWorkNotes);
+					if (snafuIsVarEmpty(workNotes) === false) {
+						snafuSetValue('close_notes', workNotes);
 						snafuFlash('close_notes');
 					}
 
@@ -508,12 +567,12 @@ document.addEventListener('SNAFU_Inject', function(snafuInject) {
 				}
 
 				// change the root cause ci and due date for tasks
-				if (snafuField === 'state') {
-					var snafuDueDate = snafuGetDueDate();
+				if (field === 'state') {
+					var dueDate = snafuGetDueDate();
 
 					// due date
-					if (g_form.getValue('due_date') !== snafuDueDate) {
-						snafuSetValue('due_date', snafuDueDate);
+					if (g_form.getValue('due_date') !== dueDate) {
+						snafuSetValue('due_date', dueDate);
 						snafuFlash('due_date');
 					}
 
@@ -525,89 +584,130 @@ document.addEventListener('SNAFU_Inject', function(snafuInject) {
 					}
 
 					// if setting to pending and sub-status is set, then set the select
-					if (snafuValue === '-5' && snafuIsVarEmpty(snafuInject.detail.subStatus) === false) {
-						snafuSetValue('u_sub_state', snafuInject.detail.subStatus);
+					if (value === '-5' && snafuIsVarEmpty(inject.detail.subStatus) === false) {
+						snafuSetValue('u_sub_state', inject.detail.subStatus);
 						snafuFlash('u_sub_state');
 					}
 
 					// set quarantine select, if needed
-					if (snafuType.indexOf('closeQuarantine') !== -1) {
-						if (snafuType !== 'closeQuarantineRepairYes' && snafuType !== 'closeQuarantineRepairNo') {
-							snafuSetValue('rhs_restock_status', snafuType.replace('closeQuarantine', '').toLowerCase());
+					if (type.indexOf('closeQuarantine') !== -1) {
+						if (type !== 'closeQuarantineRepairYes' && type !== 'closeQuarantineRepairNo') {
+							snafuSetValue('rhs_restock_status', type.replace('closeQuarantine', '').toLowerCase());
 						} else {
 							snafuSetValue('rhs_restock_status', 'repair');
-							snafuSetValue('asset_repair_type', snafuType.replace('closeQuarantineRepair', ''));
+							snafuSetValue('asset_repair_type', type.replace('closeQuarantineRepair', ''));
 						}
-					} else if (snafuType.indexOf('closeHotSwap') !== -1) {
-						snafuSetValue('rhs_replacement_type', snafuType.replace('closeHotSwap', '').toLowerCase());
+					} else if (type.indexOf('closeHotSwap') !== -1) {
+						snafuSetValue('rhs_replacement_type', type.replace('closeHotSwap', '').toLowerCase());
 					}
 
 					// print labels
-					if (snafuInject.detail.printLabels === true) {
+					if (inject.detail.printLabels === true && (type.indexOf('closeQuarantine') !== -1 || type.indexOf('closeHotSwap') !== -1)) {
+						
 						// make sure we have a valid printer
-						var snafuPrinters = dymo.label.framework.getPrinters().filter(function(p) { return p.isConnected && p.printerType == 'LabelWriterPrinter' });
+						var printers = dymo.label.framework.getPrinters().filter(function(printer) { return (printer.isConnected === true && printer.isLocal === true) });
 						if (printers.length > 0) {
+				
 							// get the printer's name as well for printing
-							var snafuPrinterName = snafuPrinters[0]['name'];
-							if (snafuIsVarEmpty(snafuPrinterName) === false) {
+							var printerName = printers[0]['name'];
+							if (snafuIsVarEmpty(printerName) === false) {
+								
+								// determine the label type from the ticket type
+								var labelType = (type.indexOf('closeHotSwap') !== -1) ? 'build' : type.replace('closeQuarantine', '').replace('Yes', '').replace('No', '').toLowerCase();
+								if (snafuLabelFields[labelType] === undefined) {
+									console.info(labelType);
+									console.warn('SNAFU: Dymo label type returned invalid.  Skipping print job. . .');
+									snafuErrorMessage('Dymo label type returned invalid.  Skipping print job. . .');
+								} else {
+									var addressLabel = dymo.label.framework.openLabelXml(snafuGetDymoLabelXml(labelType));
+									var labelFields = snafuLabelFields[labelType];
+									var reason = ''
+									var canPrint = true;
+									for (var field in labelFields) {
+										if (labelType === 'reclaim' || labelType === 'repair') {
+											if (field === 'TEXT_5') {
+												reason = prompt(snafuSprintf('Enter the reason for %s this device.  KEEP IT SHORT!', (labelType === 'reclaim') ? ['reclaiming'] : ['repairing']));
+												if (snafuIsVarEmpty(reason) === true) {
+													console.warn('SNAFU: You must provide a valid reason.');
+													snafuErrorMessage('You must provide a valid reason.  Skipping print job. . .');
+													canPrint = false;
+													break;
+												} else {
+													addressLabel.setObjectText(field, reason);
+												}
+											} else {
+												addressLabel.setObjectText(field, snafuReplaceWildcards(labelFields[field]));
+											}
+										} else {
+											addressLabel.setObjectText(field, snafuReplaceWildcards(labelFields[field]));
+										}
+									}
 
+									if (canPrint === false) {
+										console.warn('SNAFU: Unable to print label due to errors.');
+									} else {
+										addressLabel.print(printerName);
+									}
+								}
 							} else {
-								console.log('Unable to determine printer name.  Skipping printing. . .');
+								console.warn('SNAFU: Unable to determine printer name.  Skipping print job. . .');
+								snafuErrorMessage('Unable to determine printer name.  Skipping print job. . .');
 							}
 						} else {
-							console.log('No appropriate printers were found.  Skipping printing. . .');
+							console.warn('SNAFU: No appropriate printers were found.  Skipping print job. . .');
+							snafuErrorMessage('No appropriate printers were found.  Skipping print job. . .');
 						}
 					}
 				}
 
 				// if build logging is enabled and closing a hot swap, then log the build
-				if (snafuInject.detail.buildLog === true && snafuType.indexOf('closeHotSwap') !== -1 && snafuTicketType === 'rhs_build') {
+				if (inject.detail.buildLog === true && type.indexOf('closeHotSwap') !== -1 && ticketType === 'rhs_build') {
 					// query the user info sent by the options page
-					var snafuBuildLogQuery = document.createEvent('CustomEvent');
-					var snafuReplacement = g_form.getReference('rhs_replacement_computer');
-					var snafuRequestItem = g_form.getReference('request_item');
-					snafuBuildLogQuery.initCustomEvent('SNAFU_BuildLogQuery', true, true, {
-						sysId: snafuRequestItem.sys_id,
-						ritm: snafuRequestItem.number,
-						hostname: snafuReplacement.name,
-						assetTag: snafuReplacement.asset_tag,
+					var buildLogQuery = document.createEvent('CustomEvent');
+					var replacement = g_form.getReference('rhs_replacement_computer');
+					var requestItem = g_form.getReference('request_item');
+					buildLogQuery.initCustomEvent('SNAFU_BuildLogQuery', true, true, {
+						sysId: requestItem.sys_id,
+						ritm: requestItem.number,
+						hostname: replacement.name,
+						assetTag: replacement.asset_tag,
 						dateTime: Date.now(),
 						build: g_form.getValue('rhs_software'),
-						model: snafuGetComputerModel(snafuReplacement.model_id),
-						newUsed: snafuType.replace('closeHotSwap', '').toLowerCase()
+						model: snafuGetComputerModel(replacement.model_id),
+						newUsed: type.replace('closeHotSwap', '').toLowerCase()
 					});
 					snafuInfoMessage('Build saved to the log.');
-					document.dispatchEvent(snafuBuildLogQuery);
+					document.dispatchEvent(buildLogQuery);
 				}
 
 				// autofinish
-				switch (snafuInject.detail.autoFinish) {
+				switch (inject.detail.autoFinish) {
 					// save (stay on ticket's page)
 					case 'save':
 						// not going to let incidents be autosaved
-						if (snafuField === 'state' || (snafuField === 'incident_state' && snafuValue !== '6')) {
+						if (field === 'state' || (field === 'incident_state' && value !== '6')) {
 							// delay 1.5 seconds
-							setTimeout(function() { g_form.save(); }, snafuInject.detail.finishDelay * 1000);
+							setTimeout(function() { g_form.save(); }, inject.detail.finishDelay * 1000);
 						}
 						break;
 					
 					// update (go back to last page)
 					case 'update':
 						// not going to let incident be autoupdated
-						if (snafuField === 'state' || (snafuField === 'incident_state' && snafuValue !== '6')) {
+						if (field === 'state' || (field === 'incident_state' && value !== '6')) {
 							// delay 1.5 seconds
-							setTimeout(function() { g_form.submit(); }, snafuInject.detail.finishDelay * 1000);
+							setTimeout(function() { g_form.submit(); }, inject.detail.finishDelay * 1000);
 						}
 						break;
 
 					// auto (save all updates except closures, which are updated. incidents are never automatically resolved)
 					case 'auto':
 						// if a closure then update, otherwise save
-						if (snafuField === 'state' && (snafuValue === '3' || snafuValue === '4')) {
+						if (field === 'state' && (value === '3' || value === '4')) {
 							// update
-							setTimeout(function() { g_form.submit(); }, snafuInject.detail.finishDelay * 1000);
-						} else if (snafuField === 'state' || (snafuField === 'incident_state' && snafuValue !== '6')) {
-							setTimeout(function() { g_form.save(); }, snafuInject.detail.finishDelay * 1000);
+							setTimeout(function() { g_form.submit(); }, inject.detail.finishDelay * 1000);
+						} else if (field === 'state' || (field === 'incident_state' && value !== '6')) {
+							setTimeout(function() { g_form.save(); }, inject.detail.finishDelay * 1000);
 						}
 						break;
 					
@@ -704,17 +804,6 @@ function snafuReplaceWildcards(strIn) {
 }
 
 /**
- * Reads in file.
- * @param	{String}	fileName
- * @returns	{String}
- */
-function snafuReadFile(file) {
-	var reader = new FileReader();
-	reader.onload = function(e) { return e.result; }
-	reader.readAsText(file);
-}
-
-/**
  * Queries cmdb_model ServiceNow database for model types.
  * @param	{String}	model_id
  * @return	{String}
@@ -747,7 +836,7 @@ function snafuUcwords(str) {
 }
 
 /**
- * Javascript sprintf function.
+ * Javascript snafuSprintf function.
  * @param   {String}    template
  * @param   {String[]}  values
  * @return  {String}
@@ -780,7 +869,7 @@ function snafuSetDisplayValue(field, value, displayValue) {
 }
 
 /**
- * Service Now input field flash.
+ * Service Now input field snafuFlash.
  * @param	{String}	field
  * @return	{Void}
  */
@@ -816,18 +905,20 @@ function snafuGetTicketType() {
         return 'generic_incident';
     } else if (document.getElementById('sc_task.state') !== null) {
         // it's a trap! (task)
-		var snafuShortDesc = g_form.getValue('short_description');
-		if (snafuShortDesc.indexOf('Equipment Move/Remove') !== -1) {
+		var shortDesc = g_form.getValue('short_description');
+		if (shortDesc.indexOf('Equipment Move/Remove') !== -1) {
 			return 'equip_removal';
-		} else if (snafuShortDesc.indexOf('Disconnect System') !== -1) {
+		} else if (shortDesc.indexOf('Disconnect System') !== -1) {
 			return 'equip_disconnect';
-		} else if (snafuShortDesc.indexOf('Reconnect System') !== -1) {
+		} else if (shortDesc.indexOf('Reconnect System') !== -1) {
 			return 'equip_reconnect';
-		} else if (snafuShortDesc.indexOf('CANCELLED TASK') !== -1) {
+		} else if (shortDesc.indexOf('CANCELLED TASK') !== -1) {
 			return 'cancelled_task';
+		} else if (shortDesc.indexOf('Smart/Remote Hands Request') !== -1) {
+			return 'smart_hands';
 		} else {
-        	var snafuTaskName = g_form.getValue('u_task_name').toLowerCase();
-			return (snafuTaskName in snafuAutoTickets) ? snafuTaskName : 'generic_task';
+        	var taskName = g_form.getValue('u_task_name').toLowerCase();
+			return (taskName in snafuAutoTickets) ? taskName : 'generic_task';
 		}
 	} else if (document.getElementById('u_absolute_install.state') !== null) {
 		return 'absolute_install';
@@ -897,5 +988,39 @@ function snafuGetCampusName(uid) {
 			break;
 		default:
 			return 'Unknown';
+	}
+}
+
+/**
+ * Get Dymo label XML.
+ * @param	{String}	type
+ * @return	{String}
+ */
+function snafuGetDymoLabelXml(type) {
+	// dymo label xml
+	switch (type) {
+		case 'build':
+			return '<?xml version="1.0" encoding="utf-8"?><DieCutLabel Version="8.0" Units="twips"><PaperOrientation>Landscape</PaperOrientation><Id>Address</Id><IsOutlined>false</IsOutlined><PaperName>30252 Address</PaperName><DrawCommands><RoundRectangle X="0" Y="0" Width="1581" Height="5040" Rx="270" Ry="270" /></DrawCommands><ObjectInfo><TextObject><Name>TEXT</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String xml:space="preserve">Host Name:</String><Attributes><Font Family="Arial" Size="12" Bold="True" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" HueScale="100" /></Attributes></Element></StyledText></TextObject><Bounds X="331" Y="472.311157226563" Width="1350" Height="360" /></ObjectInfo><ObjectInfo><TextObject><Name>HOSTNAME_TEXT</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String xml:space="preserve">DTXXXXXXXXXX</String><Attributes><Font Family="Arial" Size="12" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" HueScale="100" /></Attributes></Element></StyledText></TextObject><Bounds X="1727.69787597656" Y="480.576568603516" Width="3099.9208984375" Height="345" /></ObjectInfo><ObjectInfo><DateTimeObject><Name>DATE-TIME</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><DateTimeFormat>LongSystemDate</DateTimeFormat><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><PreText>Date Built: </PreText><PostText /><IncludeTime>False</IncludeTime><Use24HourFormat>False</Use24HourFormat></DateTimeObject><Bounds X="331" Y="843.150024414063" Width="3535.39453125" Height="216" /></ObjectInfo><ObjectInfo><TextObject><Name>TEXT_3</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Right</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String xml:space="preserve">Tech: Adam Koch</String><Attributes><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" HueScale="100" /></Attributes></Element></StyledText></TextObject><Bounds X="3513" Y="849.599975585938" Width="1440" Height="216" /></ObjectInfo><ObjectInfo><TextObject><Name>TEXT_4</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Right</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String xml:space="preserve">W7, &lt;BUILD&gt;</String><Attributes><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" HueScale="100" /></Attributes></Element></StyledText></TextObject><Bounds X="2634.90649414063" Y="58" Width="2318.09350585938" Height="216" /></ObjectInfo><ObjectInfo><TextObject><Name>TEXT_5</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String xml:space="preserve">Apps:</String><Attributes><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" HueScale="100" /></Attributes></Element></StyledText></TextObject><Bounds X="331" Y="1064.25" Width="452" Height="210" /></ObjectInfo><ObjectInfo><TextObject><Name>TEXT_6</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String xml:space="preserve">Customer:</String><Attributes><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" HueScale="100" /></Attributes></Element></StyledText></TextObject><Bounds X="331" Y="1277" Width="827" Height="216" /></ObjectInfo><ObjectInfo><TextObject><Name>RITM#</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Right</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String xml:space="preserve">RITMXXXXXXX</String><Attributes><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" HueScale="100" /></Attributes></Element></StyledText></TextObject><Bounds X="3105.6259765625" Y="242.37272644043" Width="1847.3740234375" Height="216" /></ObjectInfo><ObjectInfo><TextObject><Name>TEXT_2</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Top</VerticalAlignment><TextFitMode>ShrinkToFit</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String xml:space="preserve">&lt;CUSTOMER&gt;</String><Attributes><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" HueScale="100" /></Attributes></Element></StyledText></TextObject><Bounds X="1248" Y="1268" Width="2880" Height="225" /></ObjectInfo><ObjectInfo><TextObject><Name>TEXT_8</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Top</VerticalAlignment><TextFitMode>ShrinkToFit</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String xml:space="preserve">Office, Skype</String><Attributes><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" HueScale="100" /></Attributes></Element></StyledText></TextObject><Bounds X="858" Y="1058" Width="2880" Height="210" /></ObjectInfo><ObjectInfo><BarcodeObject><Name>BARCODE</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName>HOSTNAME_TEXT</LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>True</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><Text>DTXXXXXXXXXX</Text><Type>Code39</Type><Size>Small</Size><TextPosition>None</TextPosition><TextFont Family="Arial" Size="8" Bold="False" Italic="False" Underline="False" Strikeout="False" /><CheckSumFont Family="Arial" Size="8" Bold="False" Italic="False" Underline="False" Strikeout="False" /><TextEmbedding>None</TextEmbedding><ECLevel>0</ECLevel><HorizontalAlignment>Left</HorizontalAlignment><QuietZonesPadding Left="0" Top="0" Right="0" Bottom="0" /></BarcodeObject><Bounds X="331" Y="133" Width="3180" Height="285" /></ObjectInfo></DieCutLabel>';
+			break;
+		
+		case 'decommission':
+			return '<?xml version="1.0" encoding="utf-8"?><DieCutLabel Version="8.0" Units="twips"><PaperOrientation>Landscape</PaperOrientation><Id>Address</Id><PaperName>30252 Address</PaperName><DrawCommands><RoundRectangle X="0" Y="0" Width="1581" Height="5040" Rx="270" Ry="270" /></DrawCommands><ObjectInfo><TextObject><Name>TEXT</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName></LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String>&lt;SerialNumber&gt;</String><Attributes><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /></Attributes></Element></StyledText></TextObject><Bounds X="331" Y="1277.82592773438" Width="3055.73413085938" Height="187.199996948242" /></ObjectInfo><ObjectInfo><DateTimeObject><Name>QuarantineDate</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName></LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><DateTimeFormat>LongSystemDate</DateTimeFormat><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><PreText></PreText><PostText></PostText><IncludeTime>False</IncludeTime><Use24HourFormat>False</Use24HourFormat></DateTimeObject><Bounds X="331" Y="648.052490234375" Width="4622" Height="221.363922119141" /></ObjectInfo><ObjectInfo><TextObject><Name>Tech</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName></LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><HorizontalAlignment>Right</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String>&lt;Tech&gt;</String><Attributes><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /></Attributes></Element></StyledText></TextObject><Bounds X="3163.158203125" Y="1277" Width="1789.84191894531" Height="187.199996948242" /></ObjectInfo><ObjectInfo><TextObject><Name>TEXT_4</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName></LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String>Decommission</String><Attributes><Font Family="Arial" Size="11" Bold="True" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /></Attributes></Element></StyledText></TextObject><Bounds X="331" Y="58" Width="4622" Height="242.819625854492" /></ObjectInfo><ObjectInfo><TextObject><Name>TEXT_5</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName></LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String>&lt;Reason&gt;</String><Attributes><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /></Attributes></Element></StyledText></TextObject><Bounds X="331" Y="967.651062011719" Width="4622" Height="187.199996948242" /></ObjectInfo><ObjectInfo><TextObject><Name>RITM#</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName></LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><HorizontalAlignment>Right</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String>RITM0XXXXX</String><Attributes><Font Family="Arial" Size="9" Bold="True" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /></Attributes></Element></StyledText></TextObject><Bounds X="3326.11669921875" Y="360" Width="1626.88342285156" Height="187.199996948242" /></ObjectInfo><ObjectInfo><BarcodeObject><Name>BARCODE</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName>RITM#</LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>True</IsVariable><Text>RITM0XXXXX</Text><Type>Code39</Type><Size>Small</Size><TextPosition>None</TextPosition><TextFont Family="Arial" Size="8" Bold="False" Italic="False" Underline="False" Strikeout="False" /><CheckSumFont Family="Arial" Size="8" Bold="False" Italic="False" Underline="False" Strikeout="False" /><TextEmbedding>None</TextEmbedding><ECLevel>0</ECLevel><HorizontalAlignment>Left</HorizontalAlignment><QuietZonesPadding Left="0" Top="0" Right="0" Bottom="0" /></BarcodeObject><Bounds X="331" Y="322.519256591797" Width="3145.45361328125" Height="265.037841796875" /></ObjectInfo></DieCutLabel>';
+			break;
+
+		case 'qurantine':
+			return '<?xml version="1.0" encoding="utf-8"?><DieCutLabel Version="8.0" Units="twips"><PaperOrientation>Landscape</PaperOrientation><Id>Address</Id><PaperName>30252 Address</PaperName><DrawCommands><RoundRectangle X="0" Y="0" Width="1581" Height="5040" Rx="270" Ry="270" /></DrawCommands><ObjectInfo><TextObject><Name>TEXT</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName></LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String>&lt;SerialNumber&gt;</String><Attributes><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /></Attributes></Element></StyledText></TextObject><Bounds X="331" Y="1277.82592773438" Width="3055.73413085938" Height="187.199996948242" /></ObjectInfo><ObjectInfo><DateTimeObject><Name>QuarantineDate</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName></LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><DateTimeFormat>LongSystemDate</DateTimeFormat><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><PreText>Date Quarantined: </PreText><PostText></PostText><IncludeTime>False</IncludeTime><Use24HourFormat>False</Use24HourFormat></DateTimeObject><Bounds X="331" Y="648.052490234375" Width="4622" Height="221.363922119141" /></ObjectInfo><ObjectInfo><TextObject><Name>Tech</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName></LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><HorizontalAlignment>Right</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String>&lt;Tech&gt;</String><Attributes><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /></Attributes></Element></StyledText></TextObject><Bounds X="3163.158203125" Y="1277" Width="1789.84191894531" Height="187.199996948242" /></ObjectInfo><ObjectInfo><TextObject><Name>TEXT_4</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName></LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String>Quarantine</String><Attributes><Font Family="Arial" Size="11" Bold="True" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /></Attributes></Element></StyledText></TextObject><Bounds X="331" Y="58" Width="4622" Height="242.819625854492" /></ObjectInfo><ObjectInfo><TextObject><Name>TEXT_5</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName></LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String>&lt;Reason&gt;</String><Attributes><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /></Attributes></Element></StyledText></TextObject><Bounds X="331" Y="967.651062011719" Width="4622" Height="187.199996948242" /></ObjectInfo><ObjectInfo><TextObject><Name>RITM#</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName></LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><HorizontalAlignment>Right</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String>RITM0XXXXX</String><Attributes><Font Family="Arial" Size="9" Bold="True" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /></Attributes></Element></StyledText></TextObject><Bounds X="3326.11669921875" Y="360" Width="1626.88342285156" Height="187.199996948242" /></ObjectInfo><ObjectInfo><BarcodeObject><Name>BARCODE</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName>RITM#</LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>True</IsVariable><Text>RITM0XXXXX</Text><Type>Code39</Type><Size>Small</Size><TextPosition>None</TextPosition><TextFont Family="Arial" Size="8" Bold="False" Italic="False" Underline="False" Strikeout="False" /><CheckSumFont Family="Arial" Size="8" Bold="False" Italic="False" Underline="False" Strikeout="False" /><TextEmbedding>None</TextEmbedding><ECLevel>0</ECLevel><HorizontalAlignment>Left</HorizontalAlignment><QuietZonesPadding Left="0" Top="0" Right="0" Bottom="0" /></BarcodeObject><Bounds X="331" Y="322.519256591797" Width="3145.45361328125" Height="265.037841796875" /></ObjectInfo></DieCutLabel>';
+			break;
+		
+		case 'repair':
+			return '<?xml version="1.0" encoding="utf-8"?><DieCutLabel Version="8.0" Units="twips"><PaperOrientation>Landscape</PaperOrientation><Id>Address</Id><PaperName>30252 Address</PaperName><DrawCommands><RoundRectangle X="0" Y="0" Width="1581" Height="5040" Rx="270" Ry="270" /></DrawCommands><ObjectInfo><TextObject><Name>TEXT</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName></LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String>&lt;SerialNumber&gt;</String><Attributes><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /></Attributes></Element></StyledText></TextObject><Bounds X="331" Y="1277.82592773438" Width="3055.73413085938" Height="187.199996948242" /></ObjectInfo><ObjectInfo><DateTimeObject><Name>QuarantineDate</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName></LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><DateTimeFormat>LongSystemDate</DateTimeFormat><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><PreText>Repair Started: </PreText><PostText></PostText><IncludeTime>False</IncludeTime><Use24HourFormat>False</Use24HourFormat></DateTimeObject><Bounds X="331" Y="648.052490234375" Width="4622" Height="221.363922119141" /></ObjectInfo><ObjectInfo><TextObject><Name>Tech</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName></LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><HorizontalAlignment>Right</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String>&lt;Tech&gt;</String><Attributes><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /></Attributes></Element></StyledText></TextObject><Bounds X="3163.158203125" Y="1277" Width="1789.84191894531" Height="187.199996948242" /></ObjectInfo><ObjectInfo><TextObject><Name>TEXT_4</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName></LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String>Repair</String><Attributes><Font Family="Arial" Size="11" Bold="True" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /></Attributes></Element></StyledText></TextObject><Bounds X="331" Y="58" Width="4622" Height="242.819625854492" /></ObjectInfo><ObjectInfo><TextObject><Name>TEXT_5</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName></LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String>&lt;Results&gt;</String><Attributes><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /></Attributes></Element></StyledText></TextObject><Bounds X="331" Y="967.651062011719" Width="4622" Height="187.199996948242" /></ObjectInfo><ObjectInfo><TextObject><Name>RITM#</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName></LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><HorizontalAlignment>Right</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String>RITM0XXXXX</String><Attributes><Font Family="Arial" Size="9" Bold="True" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /></Attributes></Element></StyledText></TextObject><Bounds X="3326.11669921875" Y="360" Width="1626.88342285156" Height="187.199996948242" /></ObjectInfo><ObjectInfo><BarcodeObject><Name>BARCODE</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName>RITM#</LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>True</IsVariable><Text>RITM0XXXXX</Text><Type>Code39</Type><Size>Small</Size><TextPosition>None</TextPosition><TextFont Family="Arial" Size="8" Bold="False" Italic="False" Underline="False" Strikeout="False" /><CheckSumFont Family="Arial" Size="8" Bold="False" Italic="False" Underline="False" Strikeout="False" /><TextEmbedding>None</TextEmbedding><ECLevel>0</ECLevel><HorizontalAlignment>Left</HorizontalAlignment><QuietZonesPadding Left="0" Top="0" Right="0" Bottom="0" /></BarcodeObject><Bounds X="331" Y="322.519256591797" Width="3145.45361328125" Height="265.037841796875" /></ObjectInfo></DieCutLabel>';
+			break;
+
+		case 'restock':
+			return '<?xml version="1.0" encoding="utf-8"?><DieCutLabel Version="8.0" Units="twips"><PaperOrientation>Landscape</PaperOrientation><Id>Address</Id><PaperName>30252 Address</PaperName><DrawCommands><RoundRectangle X="0" Y="0" Width="1581" Height="5040" Rx="270" Ry="270" /></DrawCommands><ObjectInfo><TextObject><Name>TEXT</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName></LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String>&lt;SerialNumber&gt;</String><Attributes><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /></Attributes></Element></StyledText></TextObject><Bounds X="331" Y="1277.82592773438" Width="3055.73413085938" Height="187.199996948242" /></ObjectInfo><ObjectInfo><DateTimeObject><Name>QuarantineDate</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName></LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><DateTimeFormat>LongSystemDate</DateTimeFormat><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><PreText>Restocked: </PreText><PostText></PostText><IncludeTime>False</IncludeTime><Use24HourFormat>False</Use24HourFormat></DateTimeObject><Bounds X="331" Y="648.052490234375" Width="4622" Height="221.363922119141" /></ObjectInfo><ObjectInfo><TextObject><Name>Tech</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName></LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><HorizontalAlignment>Right</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String>&lt;Tech&gt;</String><Attributes><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /></Attributes></Element></StyledText></TextObject><Bounds X="3163.158203125" Y="1277" Width="1789.84191894531" Height="187.199996948242" /></ObjectInfo><ObjectInfo><TextObject><Name>TEXT_4</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName></LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String>Restock</String><Attributes><Font Family="Arial" Size="11" Bold="True" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /></Attributes></Element></StyledText></TextObject><Bounds X="331" Y="58" Width="4622" Height="242.819625854492" /></ObjectInfo><ObjectInfo><TextObject><Name>TEXT_5</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName></LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String>&lt;Results&gt;</String><Attributes><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /></Attributes></Element></StyledText></TextObject><Bounds X="331" Y="967.651062011719" Width="4622" Height="187.199996948242" /></ObjectInfo><ObjectInfo><TextObject><Name>RITM#</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName></LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><HorizontalAlignment>Right</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String>RITM0XXXXX</String><Attributes><Font Family="Arial" Size="9" Bold="True" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /></Attributes></Element></StyledText></TextObject><Bounds X="3326.11669921875" Y="360" Width="1626.88342285156" Height="187.199996948242" /></ObjectInfo><ObjectInfo><BarcodeObject><Name>BARCODE</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName>RITM#</LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>True</IsVariable><Text>RITM0XXXXX</Text><Type>Code39</Type><Size>Small</Size><TextPosition>None</TextPosition><TextFont Family="Arial" Size="8" Bold="False" Italic="False" Underline="False" Strikeout="False" /><CheckSumFont Family="Arial" Size="8" Bold="False" Italic="False" Underline="False" Strikeout="False" /><TextEmbedding>None</TextEmbedding><ECLevel>0</ECLevel><HorizontalAlignment>Left</HorizontalAlignment><QuietZonesPadding Left="0" Top="0" Right="0" Bottom="0" /></BarcodeObject><Bounds X="331" Y="322.519256591797" Width="3145.45361328125" Height="265.037841796875" /></ObjectInfo></DieCutLabel>';
+			break;
+		
+		default:
+			return false;
+			break;
 	}
 }

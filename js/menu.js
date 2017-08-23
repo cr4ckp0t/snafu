@@ -149,6 +149,25 @@ chrome.contextMenus.create({
 	onclick: actionHandler
 });
 
+chrome.contextMenus.create({
+	title: 'Print Label',
+	contexts: ['page'],
+	id: 'printLabelParent',
+	parentId: 'snafuParent',
+	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
+});
+
+const menuLblTypes = ['build', 'decommission', 'reclaim', 'repair', 'restock']
+for (var i = 0; i < menuLblTypes.length; i++) {
+	chrome.contextMenus.create({
+		title: sprintf('%s Label', [ucwords(menuLblTypes[i])]),
+		contexts: ['page'],
+		id: 'printLabel' + menuLblTypes[i],
+		parentId: 'printLabelParent',
+		onclick: actionHandler
+	});
+}
+
 chrome.contextMenus.create({type: 'separator', parentId: 'snafuParent'});
 
 /**
@@ -531,6 +550,17 @@ function resetUserData() {
  */
 function isVarEmpty(value) {
     return (value === null || value === undefined || value === NaN || value.toString().trim() === '') ? true : false
+}
+
+/**
+ * Capitalizes the first character of each word.
+ * @param	{String}	str
+ * @return	{String}
+ */
+function ucwords(str) {
+	return str.toLowerCase().replace(/^([a-z\u00E0-\u00FC])|\s+([a-z\u00E0-\u00FC])/g, function(e) {
+		return e.toUpperCase();
+	});
 }
 
 /**

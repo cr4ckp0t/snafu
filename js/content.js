@@ -129,8 +129,7 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                     } else {
                         injectData = {
                             type: msg.type,
-                            finishDelay: items.finishDelay || null,
-                            buildLog: items.buildLog
+                            finishDelay: items.finishDelay || null
                         }
                         sendResponse({success: true, errMsg: null});
                     }
@@ -141,8 +140,7 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                 case 'sendErrorMsg':
                     injectData = {
                         type: msg.type,
-                        statusMsg: msg.statusMsg,
-                        buildLog: items.buildLog
+                        statusMsg: msg.statusMsg
                     }
                     sendResponse({success: true, errMsg: null});
                     break;
@@ -156,8 +154,7 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                             type: msg.type,
                             autoFinish: items.autoFinish || 'none',
                             finishDelay: items.finishDelay || 1.5,
-                            userInfo: msg.userInfo,
-                            buildLog: items.buildLog
+                            userInfo: msg.userInfo
                         }
                         sendResponse({success: true, errMsg: null});
                     }
@@ -178,6 +175,19 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                             buildLog: items.buildLog,
                             printLabels: items.printLabels
                         }
+                        sendResponse({success: true, errMsg: null});
+                    }
+                    break;
+
+                case 'printLabelBuild':
+                case 'printLabelDecommission':
+                case 'printLabelReclaim':
+                case 'printLabelRepair':
+                case 'printLabelRestock':
+                    if (ticketType !== 'task') {
+                        sendResponse({success: false, errMsg: 'Unable to detect an open task.'});
+                    } else {
+                        injectData = {type: msg.type}
                         sendResponse({success: true, errMsg: null});
                     }
                     break;
@@ -211,13 +221,16 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                     if (ticketType !== 'task') {
                         sendResponse({success: false, errMsg: 'Unable to detect an open task.'});
                     } else {
+                        var addToNotes;
                         // add the additional message to the quarantine notes
                         if (msg.type === 'closeQuarantineDecommission') {
-                            var addToNotes = ['and added to the decommission workflow.'];
-                        } else if (msg.type === 'closeQuarantineRepair') {
-                            var addToNotes = ['and added to the repair workflow.'];
+                            addToNotes = ['and added to the decommission workflow.'];
+                        } else if (msg.type === 'closeQuarantineRepairYes') {
+                            addToNotes = ['and added to the repair workflow.'];
+                        } else if (msg.type === 'closeQuarantineRepairNo') {
+                            addToNotes = ['and will be transported to MDC for repairs.'];
                         } else {
-                            var addToNotes = ['and return to stock for redeployment.'];
+                            addToNotes = ['and return to stock for redeployment.'];
                         }
 
                         injectData = {
@@ -227,7 +240,7 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                             field: 'state',
                             value: '3', // closed complete
                             subStatus: msg.subStatus || null,
-                            workNotes: sprintf('Device removed from quarantine %s', addToNotes),
+                            workNotes: sprintf('{BROKEN_HOSTNAME} was removed from quarantine %s', addToNotes),
                             custNotes: null,
                             buildLog: items.buildLog,
                             printLabels: items.printLabels
@@ -249,9 +262,7 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                             value: (ticketType === 'incident') ? '4' : '-5',    // on hold or pending
                             subStatus: msg.subStatus || null,
                             custNotes: (ticketType === 'incident') ? sprintf('Scheduled appointment with {INC_CUSTOMER} for %s at %s.', msg.custNotes.split('T')) : sprintf('Scheduled appointment with {REQUESTED_FOR} for %s at %s.', msg.custNotes.split('T')),
-                            workNotes: msg.workNotes || null,
-                            buildLog: items.buildLog,
-                            printLabels: items.printLabels
+                            workNotes: msg.workNotes || null
                         }
                         sendResponse({success: true, errMsg: null});
                     }
@@ -322,7 +333,7 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
         }
 
         // prevent any shenanigans
-        if (isVarEmpty(injectData) === false && isVarEmpty(injectData.type) === false) {
+        if (isVarEmpty(injectData) === false || isVarEmpty(injectData.type) === false) {
             // custom event for sending data to the injected script
             var injectEvent = document.createEvent('CustomEvent');
             injectEvent.initCustomEvent('SNAFU_Inject', true, true, injectData);
