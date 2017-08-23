@@ -59,6 +59,12 @@
 		<p>Because I don't have to worry about the other contracts that the developers of SNAP had to, I am able to automate a lot of the processes that we have to follow in order to properly handle the incidents and tasks that come our way.  This is why I am able to include code that can automatically acknowledge incidents/tasks, or close a build request by pulling the replacement device's information directly from the page.</p>
 		<p>The truth is that SNAP wasn't really all that bad of a program.  It was written quite well.  It's just they tried to cram so many different contracts, all using different customized versions of ServiceNow, into one program using various JavaScript hacks that it eventually severely impeded the performance of the program and caused ServiceNow to be sluggish as well.  In this extension there isn't any of that!</p> 
 		<br />
+		<h3>Automatic Label Printing</h3>
+		<p>
+			<div class="alert alert-warning">In order for this to work you must have the <a href="http://developers.dymo.com/2016/08/08/dymo-label-web-service-faq/" target="_blank">Dymo Web Service</a> installed.  It is <strong>not</strong> installed by the Dymo package that is included on the Software Center.  Since it has not been packaged for Windows 10 anyways, we have to install it manually.  If you have not installed it you can find the installer in the Applications folder on the Desktop Services share drive.<br /><br /><strong>If you send me a message saying you're unable to print and it turns out you didn't have the Web Service installed, you will be mocked openly! ;-)</div>
+			Beginning in version 1.1.13 [2017-08-22], SNAFU is now able to automatically print the labels we use for builds and quarantine.  This can be done automatically when you close one such ticket (this can be disabled and is disabled by default), via the context menu, or via the popup (in the Automation tab).  This will pull the information it needs from the open ticket, <em>except for reclaim and repair reasons, which it will prompt you for.</em>
+		</p>
+		<br />
 		<h3>Layout</h3>
 		<h4>Toolbar Button</h4>
 		<div id="ui-image"><img src="../images/help/toolbar-buttons.png" alt="Button" /></div>

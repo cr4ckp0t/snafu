@@ -162,7 +162,7 @@ for (var i = 0; i < menuLblTypes.length; i++) {
 	chrome.contextMenus.create({
 		title: sprintf('%s Label', [ucwords(menuLblTypes[i])]),
 		contexts: ['page'],
-		id: 'printLabel' + menuLblTypes[i],
+		id: 'printLabel' + ucwords(menuLblTypes[i]),
 		parentId: 'printLabelParent',
 		onclick: actionHandler
 	});

@@ -4,16 +4,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## 1.1.13 [2017-08-22]
 ### Added
 - Automatic handling of Smart Hands requests.
+- Label printing via the Dymo Web Framework.
+
+### Removed
+- Label files.  They are now hard-coded into js/inject.js.
 
 ### Fixed
 - Updated work note scripts to account for repair workflow changes.
 - Small type in the main content script.
-
-### ToDo
-- *In Progress:* Auto-print Dymo labels when closing certain tasks.
 
 ## 1.1.12 [2017-08-21]
 ### Fixed
