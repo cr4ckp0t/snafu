@@ -275,7 +275,6 @@ const snafuLabelFields = {
 document.addEventListener('SNAFU_Inject', function(inject) {
 	var ticketType = snafuGetTicketType();
 	var type = inject.detail.type;
-	var dymoEnv = dymo.label.framework.checkEnvironment();
 
 	// query for the user informatoin
 	if (type === 'userQuery') {
@@ -341,62 +340,57 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 		if (ticketType === false || type.indexOf('printLabel') === -1) {
 			snafuErrorMessage('The open ticket is not valid for label printing.');
 		} else {
-			if (dymoEnv.isFrameworkInstalled === true && result.isWebServicePresent === true) {
-				// make sure we have a valid printer
-				var printers = dymo.label.framework.getPrinters().filter(function(printer) { return (printer.isConnected === true && printer.isLocal === true) });
-				if (printers.length > 0) {
-		
-					// get the printer's name as well for printing
-					var printerName = printers[0]['name'];
-					if (snafuIsVarEmpty(printerName) === false) {
-						
-						// determine the label type from the ticket type
-						var labelType = type.replace('printLabel', '').toLowerCase();
-						if (snafuLabelFields[labelType] === undefined) {
-							console.warn('SNAFU: Dymo label type returned invalid.  Skipping print job. . .');
-							snafuErrorMessage('Dymo label type returned invalid.  Skipping print job. . .');
-						} else {
-							var addressLabel = dymo.label.framework.openLabelXml(snafuGetDymoLabelXml(labelType));
-							var labelFields = snafuLabelFields[labelType];
-							var reason = ''
-							var canPrint = true;
-							for (var field in labelFields) {
-								if (labelType === 'reclaim' || labelType === 'repair') {
-									if (field === 'TEXT_5') {
-										reason = prompt(snafuSprintf('Enter the reason for %s this device.  KEEP IT SHORT!', (labelType === 'reclaim') ? ['reclaiming'] : ['repairing']));
-										if (snafuIsVarEmpty(reason) === true) {
-											console.warn('SNAFU: You must provide a valid reason.');
-											snafuErrorMessage('You must provide a valid reason.  Skipping print job. . .');
-											canPrint = false;
-											break;
-										} else {
-											addressLabel.setObjectText(field, reason);
-										}
+			// make sure we have a valid printer
+			var printers = dymo.label.framework.getPrinters().filter(function(printer) { return (printer.isConnected === true && printer.isLocal === true) });
+			if (printers.length > 0) {
+	
+				// get the printer's name as well for printing
+				var printerName = printers[0]['name'];
+				if (snafuIsVarEmpty(printerName) === false) {
+					
+					// determine the label type from the ticket type
+					var labelType = type.replace('printLabel', '').toLowerCase();
+					if (snafuLabelFields[labelType] === undefined) {
+						console.warn('SNAFU: Dymo label type returned invalid.  Skipping print job. . .');
+						snafuErrorMessage('Dymo label type returned invalid.  Skipping print job. . .');
+					} else {
+						var addressLabel = dymo.label.framework.openLabelXml(snafuGetDymoLabelXml(labelType));
+						var labelFields = snafuLabelFields[labelType];
+						var reason = ''
+						var canPrint = true;
+						for (var field in labelFields) {
+							if (labelType === 'reclaim' || labelType === 'repair') {
+								if (field === 'TEXT_5') {
+									reason = prompt(snafuSprintf('Enter the reason for %s this device.  KEEP IT SHORT!', (labelType === 'reclaim') ? ['reclaiming'] : ['repairing']));
+									if (snafuIsVarEmpty(reason) === true) {
+										console.warn('SNAFU: You must provide a valid reason.');
+										snafuErrorMessage('You must provide a valid reason.  Skipping print job. . .');
+										canPrint = false;
+										break;
 									} else {
-										addressLabel.setObjectText(field, snafuReplaceWildcards(labelFields[field]));
+										addressLabel.setObjectText(field, reason);
 									}
 								} else {
 									addressLabel.setObjectText(field, snafuReplaceWildcards(labelFields[field]));
 								}
-							}
-
-							if (canPrint === false) {
-								console.warn('SNAFU: Unable to print label due to errors.');
 							} else {
-								addressLabel.print(printerName);
+								addressLabel.setObjectText(field, snafuReplaceWildcards(labelFields[field]));
 							}
 						}
-					} else {
-						console.warn('SNAFU: Unable to determine printer name.  Skipping print job. . .');
-						snafuErrorMessage('Unable to determine printer name.  Skipping print job. . .');
+
+						if (canPrint === false) {
+							console.warn('SNAFU: Unable to print label due to errors.');
+						} else {
+							addressLabel.print(printerName);
+						}
 					}
 				} else {
-					console.warn('SNAFU: No appropriate printers were found.  Skipping print job. . .');
-					snafuErrorMessage('No appropriate printers were found.  Skipping print job. . .');
+					console.warn('SNAFU: Unable to determine printer name.  Skipping print job. . .');
+					snafuErrorMessage('Unable to determine printer name.  Skipping print job. . .');
 				}
 			} else {
-				console.warn('SNAFU: %s', dymoEnv.I);
-				snafuErrorMessage(dymoEnv.I);
+				console.warn('SNAFU: No appropriate printers were found.  Skipping print job. . .');
+				snafuErrorMessage('No appropriate printers were found.  Skipping print job. . .');
 			}
 		}
 
@@ -473,65 +467,58 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 
 						// print labels
 						if (inject.detail.printLabels === true && (type.indexOf('closeQuarantine') !== -1 || type.indexOf('closeHotSwap') !== -1)) {
-							
-							// make sure the dymo web service is installed
-							if (dymoEnv.isFrameworkInstalled === true && result.isWebServicePresent === true) {
-								// make sure we have a valid printer
-								var printers = dymo.label.framework.getPrinters().filter(function(printer) { return (printer.isConnected === true && printer.isLocal === true) });
-								if (printers.length > 0) {
-						
-									// get the printer's name as well for printing
-									var printerName = printers[0]['name'];
-									if (snafuIsVarEmpty(printerName) === false) {
-										
-										// determine the label type from the ticket type
-										var labelType = (type.indexOf('closeHotSwap') !== -1) ? 'build' : type.replace('closeQuarantine', '').replace('Yes', '').replace('No', '').toLowerCase();
-										if (snafuLabelFields[labelType] === undefined) {
-											console.info(labelType);
-											console.warn('SNAFU: Dymo label type returned invalid.  Skipping print job. . .');
-											snafuErrorMessage('Dymo label type returned invalid.  Skipping print job. . .');
-										} else {
-											var addressLabel = dymo.label.framework.openLabelXml(snafuGetDymoLabelXml(labelType));
-											var labelFields = snafuLabelFields[labelType];
-											var reason = ''
-											var canPrint = true;
-											for (var field in labelFields) {
-												if (labelType === 'reclaim' || labelType === 'repair') {
-													if (field === 'TEXT_5') {
-														reason = prompt(snafuSprintf('Enter the reason for %s this device.  KEEP IT SHORT!', (labelType === 'reclaim') ? ['reclaiming'] : ['repairing']));
-														if (snafuIsVarEmpty(reason) === true) {
-															console.warn('SNAFU: You must provide a valid reason.');
-															snafuErrorMessage('You must provide a valid reason.  Skipping print job. . .');
-															canPrint = false;
-															break;
-														} else {
-															addressLabel.setObjectText(field, reason);
-														}
+							// make sure we have a valid printer
+							var printers = dymo.label.framework.getPrinters().filter(function(printer) { return (printer.isConnected === true && printer.isLocal === true) });
+							if (printers.length > 0) {
+					
+								// get the printer's name as well for printing
+								var printerName = printers[0]['name'];
+								if (snafuIsVarEmpty(printerName) === false) {
+									
+									// determine the label type from the ticket type
+									var labelType = (type.indexOf('closeHotSwap') !== -1) ? 'build' : type.replace('closeQuarantine', '').replace('Yes', '').replace('No', '').toLowerCase();
+									if (snafuLabelFields[labelType] === undefined) {
+										console.info(labelType);
+										console.warn('SNAFU: Dymo label type returned invalid.  Skipping print job. . .');
+										snafuErrorMessage('Dymo label type returned invalid.  Skipping print job. . .');
+									} else {
+										var addressLabel = dymo.label.framework.openLabelXml(snafuGetDymoLabelXml(labelType));
+										var labelFields = snafuLabelFields[labelType];
+										var reason = ''
+										var canPrint = true;
+										for (var field in labelFields) {
+											if (labelType === 'reclaim' || labelType === 'repair') {
+												if (field === 'TEXT_5') {
+													reason = prompt(snafuSprintf('Enter the reason for %s this device.  KEEP IT SHORT!', (labelType === 'reclaim') ? ['reclaiming'] : ['repairing']));
+													if (snafuIsVarEmpty(reason) === true) {
+														console.warn('SNAFU: You must provide a valid reason.');
+														snafuErrorMessage('You must provide a valid reason.  Skipping print job. . .');
+														canPrint = false;
+														break;
 													} else {
-														addressLabel.setObjectText(field, snafuReplaceWildcards(labelFields[field]));
+														addressLabel.setObjectText(field, reason);
 													}
 												} else {
 													addressLabel.setObjectText(field, snafuReplaceWildcards(labelFields[field]));
 												}
-											}
-
-											if (canPrint === false) {
-												console.warn('SNAFU: Unable to print label due to errors.');
 											} else {
-												addressLabel.print(printerName);
+												addressLabel.setObjectText(field, snafuReplaceWildcards(labelFields[field]));
 											}
 										}
-									} else {
-										console.warn('SNAFU: Unable to determine printer name.  Skipping print job. . .');
-										snafuErrorMessage('Unable to determine printer name.  Skipping print job. . .');
+
+										if (canPrint === false) {
+											console.warn('SNAFU: Unable to print label due to errors.');
+										} else {
+											addressLabel.print(printerName);
+										}
 									}
 								} else {
-									console.warn('SNAFU: No appropriate printers were found.  Skipping print job. . .');
-									snafuErrorMessage('No appropriate printers were found.  Skipping print job. . .');
+									console.warn('SNAFU: Unable to determine printer name.  Skipping print job. . .');
+									snafuErrorMessage('Unable to determine printer name.  Skipping print job. . .');
 								}
 							} else {
-								console.warn('SNAFU: %s', dymoEnv.I);
-								snafuErrorMessage(dymoEnv.I);
+								console.warn('SNAFU: No appropriate printers were found.  Skipping print job. . .');
+								snafuErrorMessage('No appropriate printers were found.  Skipping print job. . .');
 							}
 						}
 					}
@@ -674,65 +661,58 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 
 					// print labels
 					if (inject.detail.printLabels === true && (type.indexOf('closeQuarantine') !== -1 || type.indexOf('closeHotSwap') !== -1)) {
-						
-						// make sure the web service is installed
-						if (dymoEnv.isFrameworkInstalled === true && result.isWebServicePresent === true) {
-							// make sure we have a valid printer
-							var printers = dymo.label.framework.getPrinters().filter(function(printer) { return (printer.isConnected === true && printer.isLocal === true) });
-							if (printers.length > 0) {
-					
-								// get the printer's name as well for printing
-								var printerName = printers[0]['name'];
-								if (snafuIsVarEmpty(printerName) === false) {
-									
-									// determine the label type from the ticket type
-									var labelType = (type.indexOf('closeHotSwap') !== -1) ? 'build' : type.replace('closeQuarantine', '').replace('Yes', '').replace('No', '').toLowerCase();
-									if (snafuLabelFields[labelType] === undefined) {
-										console.info(labelType);
-										console.warn('SNAFU: Dymo label type returned invalid.  Skipping print job. . .');
-										snafuErrorMessage('Dymo label type returned invalid.  Skipping print job. . .');
-									} else {
-										var addressLabel = dymo.label.framework.openLabelXml(snafuGetDymoLabelXml(labelType));
-										var labelFields = snafuLabelFields[labelType];
-										var reason = ''
-										var canPrint = true;
-										for (var field in labelFields) {
-											if (labelType === 'reclaim' || labelType === 'repair') {
-												if (field === 'TEXT_5') {
-													reason = prompt(snafuSprintf('Enter the reason for %s this device.  KEEP IT SHORT!', (labelType === 'reclaim') ? ['reclaiming'] : ['repairing']));
-													if (snafuIsVarEmpty(reason) === true) {
-														console.warn('SNAFU: You must provide a valid reason.');
-														snafuErrorMessage('You must provide a valid reason.  Skipping print job. . .');
-														canPrint = false;
-														break;
-													} else {
-														addressLabel.setObjectText(field, reason);
-													}
+						// make sure we have a valid printer
+						var printers = dymo.label.framework.getPrinters().filter(function(printer) { return (printer.isConnected === true && printer.isLocal === true) });
+						if (printers.length > 0) {
+				
+							// get the printer's name as well for printing
+							var printerName = printers[0]['name'];
+							if (snafuIsVarEmpty(printerName) === false) {
+								
+								// determine the label type from the ticket type
+								var labelType = (type.indexOf('closeHotSwap') !== -1) ? 'build' : type.replace('closeQuarantine', '').replace('Yes', '').replace('No', '').toLowerCase();
+								if (snafuLabelFields[labelType] === undefined) {
+									console.info(labelType);
+									console.warn('SNAFU: Dymo label type returned invalid.  Skipping print job. . .');
+									snafuErrorMessage('Dymo label type returned invalid.  Skipping print job. . .');
+								} else {
+									var addressLabel = dymo.label.framework.openLabelXml(snafuGetDymoLabelXml(labelType));
+									var labelFields = snafuLabelFields[labelType];
+									var reason = ''
+									var canPrint = true;
+									for (var field in labelFields) {
+										if (labelType === 'reclaim' || labelType === 'repair') {
+											if (field === 'TEXT_5') {
+												reason = prompt(snafuSprintf('Enter the reason for %s this device.  KEEP IT SHORT!', (labelType === 'reclaim') ? ['reclaiming'] : ['repairing']));
+												if (snafuIsVarEmpty(reason) === true) {
+													console.warn('SNAFU: You must provide a valid reason.');
+													snafuErrorMessage('You must provide a valid reason.  Skipping print job. . .');
+													canPrint = false;
+													break;
 												} else {
-													addressLabel.setObjectText(field, snafuReplaceWildcards(labelFields[field]));
+													addressLabel.setObjectText(field, reason);
 												}
 											} else {
 												addressLabel.setObjectText(field, snafuReplaceWildcards(labelFields[field]));
 											}
-										}
-
-										if (canPrint === false) {
-											console.warn('SNAFU: Unable to print label due to errors.');
 										} else {
-											addressLabel.print(printerName);
+											addressLabel.setObjectText(field, snafuReplaceWildcards(labelFields[field]));
 										}
 									}
-								} else {
-									console.warn('SNAFU: Unable to determine printer name.  Skipping print job. . .');
-									snafuErrorMessage('Unable to determine printer name.  Skipping print job. . .');
+
+									if (canPrint === false) {
+										console.warn('SNAFU: Unable to print label due to errors.');
+									} else {
+										addressLabel.print(printerName);
+									}
 								}
 							} else {
-								console.warn('SNAFU: No appropriate printers were found.  Skipping print job. . .');
-								snafuErrorMessage('No appropriate printers were found.  Skipping print job. . .');
+								console.warn('SNAFU: Unable to determine printer name.  Skipping print job. . .');
+								snafuErrorMessage('Unable to determine printer name.  Skipping print job. . .');
 							}
 						} else {
-							console.warn('SNAFU: %s', dymoEnv.I);
-							snafuErrorMessage(dymoEnv.I);
+							console.warn('SNAFU: No appropriate printers were found.  Skipping print job. . .');
+							snafuErrorMessage('No appropriate printers were found.  Skipping print job. . .');
 						}
 					}
 				}
