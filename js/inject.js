@@ -22,7 +22,6 @@
  *  access to page variables, so we have to inject code and use Custom Events
  *  to pass data between the extension and the page.
  **/
-
 const snafuRslvComments = "My name is {TECH_NAME} and I was the technician that assisted you with {TICKET}. Thank you for the opportunity to provide you with service today with your {INC_TYPE}. If for any reason, your issue does not appear to be resolved please contact the Service Desk at (864) 455-8000.";
 const snafuAutoTickets = { 
 	// misc
@@ -208,6 +207,14 @@ const snafuAutoTickets = {
 		'enRoute': null,
 		'close': { 'script': 'Absolute installation completed on {ABS_MACHINE}.', 'value': '3' }
 	},
+	
+	// application install request
+	'app_install': {
+		'field': 'state',
+		'ack': { 'script': 'Acknowledging application install request.', 'value': '2' },
+		'enRoute': { 'script': 'Installing requested application on the device.', 'value': '2' },
+		'close': { 'script': 'Completed the requested software installation.', 'value': '3' }
+	},
 
 	// cancelled task (when closing workflow as incomplete)
 	'cancelled_task': {
@@ -241,7 +248,7 @@ const snafuLabelFields = {
 	// decommission
 	'decommission': {
 		'TEXT': '{BROKEN_SERIAL}',			// asset serial being decommissioned
-		'Tech': '{TECH_NAME}',				// technician
+		'Tech': '{LABEL_TECH}',				// technician
 		'TEXT_5': 'Decommission asset.',	// reason
 		'RITM#': '{REQUEST_ITEM}'			// ritm number
 	},
@@ -249,7 +256,7 @@ const snafuLabelFields = {
 	// reclaim task
 	'reclaim': {
 		'TEXT':	'{BROKEN_SERIAL}',		// reclaimed asset's serial number
-		'Tech': '{TECH_NAME}',			// technician
+		'Tech': '{LABEL_TECH}',			// technician
 		'TEXT_5': '{RECLAIM_REASON}',	// reason for reclaiming
 		'RITM#': '{REQUEST_ITEM}'		// ritm number
 	},
@@ -257,7 +264,7 @@ const snafuLabelFields = {
 	// repair task
 	'repair': {
 		'TEXT': '{BROKEN_SERIAL}',		// asset being repaired's serial number
-		'Tech': '{TECH_NAME}',			// technician
+		'Tech': '{LABEL_TECH}',			// technician
 		'TEXT_5': '{REPAIR_REASON}',	// repair reason
 		'RITM#': '{REQUEST_ITEM}'		// ritm number
 	},
@@ -265,7 +272,7 @@ const snafuLabelFields = {
 	// restock task
 	'restock': {
 		'TEXT': '{BROKEN_SERIAL}',				// restocked asset's serial number
-		'Tech': '{TECH_NAME}',					// technician
+		'Tech': '{LABEL_TECH}',					// technician
 		'TEXT_5': 'Passed UEFI diagnostics.',	// repair results
 		'RITM#': '{REQUEST_ITEM}'				// ritm number
 	}
@@ -464,63 +471,6 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 							snafuSetDisplayValue('cmdb_ci', '5a8d6816a1cf38003a42245d1035d56e', 'Desktop Services');
 							snafuFlash('cmdb_ci');
 						}
-
-						// print labels
-						if (inject.detail.printLabels === true && (type.indexOf('closeQuarantine') !== -1 || type.indexOf('closeHotSwap') !== -1)) {
-							// make sure we have a valid printer
-							var printers = dymo.label.framework.getPrinters().filter(function(printer) { return (printer.isConnected === true && printer.isLocal === true) });
-							if (printers.length > 0) {
-					
-								// get the printer's name as well for printing
-								var printerName = printers[0]['name'];
-								if (snafuIsVarEmpty(printerName) === false) {
-									
-									// determine the label type from the ticket type
-									var labelType = (type.indexOf('closeHotSwap') !== -1) ? 'build' : type.replace('closeQuarantine', '').replace('Yes', '').replace('No', '').toLowerCase();
-									if (snafuLabelFields[labelType] === undefined) {
-										console.info(labelType);
-										console.warn('SNAFU: Dymo label type returned invalid.  Skipping print job. . .');
-										snafuErrorMessage('Dymo label type returned invalid.  Skipping print job. . .');
-									} else {
-										var addressLabel = dymo.label.framework.openLabelXml(snafuGetDymoLabelXml(labelType));
-										var labelFields = snafuLabelFields[labelType];
-										var reason = ''
-										var canPrint = true;
-										for (var field in labelFields) {
-											if (labelType === 'reclaim' || labelType === 'repair') {
-												if (field === 'TEXT_5') {
-													reason = prompt(snafuSprintf('Enter the reason for %s this device.  KEEP IT SHORT!', (labelType === 'reclaim') ? ['reclaiming'] : ['repairing']));
-													if (snafuIsVarEmpty(reason) === true) {
-														console.warn('SNAFU: You must provide a valid reason.');
-														snafuErrorMessage('You must provide a valid reason.  Skipping print job. . .');
-														canPrint = false;
-														break;
-													} else {
-														addressLabel.setObjectText(field, reason);
-													}
-												} else {
-													addressLabel.setObjectText(field, snafuReplaceWildcards(labelFields[field]));
-												}
-											} else {
-												addressLabel.setObjectText(field, snafuReplaceWildcards(labelFields[field]));
-											}
-										}
-
-										if (canPrint === false) {
-											console.warn('SNAFU: Unable to print label due to errors.');
-										} else {
-											addressLabel.print(printerName);
-										}
-									}
-								} else {
-									console.warn('SNAFU: Unable to determine printer name.  Skipping print job. . .');
-									snafuErrorMessage('Unable to determine printer name.  Skipping print job. . .');
-								}
-							} else {
-								console.warn('SNAFU: No appropriate printers were found.  Skipping print job. . .');
-								snafuErrorMessage('No appropriate printers were found.  Skipping print job. . .');
-							}
-						}
 					}
 
 					// autofinish
@@ -558,6 +508,62 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 						case 'none':
 						default:
 							break;
+					}
+
+					// print labels
+					if (inject.detail.printLabels === true && ticketType === 'rhs_reclaim') {
+						// make sure we have a valid printer
+						var printers = dymo.label.framework.getPrinters().filter(function(printer) { return (printer.isConnected === true && printer.isLocal === true) });
+						if (printers.length > 0) {
+				
+							// get the printer's name as well for printing
+							var printerName = printers[0]['name'];
+							if (snafuIsVarEmpty(printerName) === false) {
+								
+								// determine the label type from the ticket type
+								var labelType = 'reclaim';
+								if (snafuLabelFields[labelType] === undefined) {
+									console.warn('SNAFU: Dymo label type returned invalid.  Skipping print job. . .');
+									snafuErrorMessage('Dymo label type returned invalid.  Skipping print job. . .');
+								} else {
+									var addressLabel = dymo.label.framework.openLabelXml(snafuGetDymoLabelXml(labelType));
+									var labelFields = snafuLabelFields[labelType];
+									var reason = ''
+									var canPrint = true;
+									for (var field in labelFields) {
+										if (labelType === 'reclaim' || labelType === 'repair') {
+											if (field === 'TEXT_5') {
+												reason = prompt(snafuSprintf('Enter the reason for %s this device.  KEEP IT SHORT!', (labelType === 'reclaim') ? ['reclaiming'] : ['repairing']));
+												if (snafuIsVarEmpty(reason) === true) {
+													console.warn('SNAFU: You must provide a valid reason.');
+													snafuErrorMessage('You must provide a valid reason.  Skipping print job. . .');
+													canPrint = false;
+													break;
+												} else {
+													addressLabel.setObjectText(field, reason);
+												}
+											} else {
+												addressLabel.setObjectText(field, snafuReplaceWildcards(labelFields[field]));
+											}
+										} else {
+											addressLabel.setObjectText(field, snafuReplaceWildcards(labelFields[field]));
+										}
+									}
+
+									if (canPrint === false) {
+										console.warn('SNAFU: Unable to print label due to errors.');
+									} else {
+										addressLabel.print(printerName);
+									}
+								}
+							} else {
+								console.warn('SNAFU: Unable to determine printer name.  Skipping print job. . .');
+								snafuErrorMessage('Unable to determine printer name.  Skipping print job. . .');
+							}
+						} else {
+							console.warn('SNAFU: No appropriate printers were found.  Skipping print job. . .');
+							snafuErrorMessage('No appropriate printers were found.  Skipping print job. . .');
+						}
 					}
 				}
 			}				
@@ -658,63 +664,6 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 					} else if (type.indexOf('closeHotSwap') !== -1) {
 						snafuSetValue('rhs_replacement_type', type.replace('closeHotSwap', '').toLowerCase());
 					}
-
-					// print labels
-					if (inject.detail.printLabels === true && (type.indexOf('closeQuarantine') !== -1 || type.indexOf('closeHotSwap') !== -1)) {
-						// make sure we have a valid printer
-						var printers = dymo.label.framework.getPrinters().filter(function(printer) { return (printer.isConnected === true && printer.isLocal === true) });
-						if (printers.length > 0) {
-				
-							// get the printer's name as well for printing
-							var printerName = printers[0]['name'];
-							if (snafuIsVarEmpty(printerName) === false) {
-								
-								// determine the label type from the ticket type
-								var labelType = (type.indexOf('closeHotSwap') !== -1) ? 'build' : type.replace('closeQuarantine', '').replace('Yes', '').replace('No', '').toLowerCase();
-								if (snafuLabelFields[labelType] === undefined) {
-									console.info(labelType);
-									console.warn('SNAFU: Dymo label type returned invalid.  Skipping print job. . .');
-									snafuErrorMessage('Dymo label type returned invalid.  Skipping print job. . .');
-								} else {
-									var addressLabel = dymo.label.framework.openLabelXml(snafuGetDymoLabelXml(labelType));
-									var labelFields = snafuLabelFields[labelType];
-									var reason = ''
-									var canPrint = true;
-									for (var field in labelFields) {
-										if (labelType === 'reclaim' || labelType === 'repair') {
-											if (field === 'TEXT_5') {
-												reason = prompt(snafuSprintf('Enter the reason for %s this device.  KEEP IT SHORT!', (labelType === 'reclaim') ? ['reclaiming'] : ['repairing']));
-												if (snafuIsVarEmpty(reason) === true) {
-													console.warn('SNAFU: You must provide a valid reason.');
-													snafuErrorMessage('You must provide a valid reason.  Skipping print job. . .');
-													canPrint = false;
-													break;
-												} else {
-													addressLabel.setObjectText(field, reason);
-												}
-											} else {
-												addressLabel.setObjectText(field, snafuReplaceWildcards(labelFields[field]));
-											}
-										} else {
-											addressLabel.setObjectText(field, snafuReplaceWildcards(labelFields[field]));
-										}
-									}
-
-									if (canPrint === false) {
-										console.warn('SNAFU: Unable to print label due to errors.');
-									} else {
-										addressLabel.print(printerName);
-									}
-								}
-							} else {
-								console.warn('SNAFU: Unable to determine printer name.  Skipping print job. . .');
-								snafuErrorMessage('Unable to determine printer name.  Skipping print job. . .');
-							}
-						} else {
-							console.warn('SNAFU: No appropriate printers were found.  Skipping print job. . .');
-							snafuErrorMessage('No appropriate printers were found.  Skipping print job. . .');
-						}
-					}
 				}
 
 				// if build logging is enabled and closing a hot swap, then log the build
@@ -772,6 +721,63 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 					case 'none':
 					default:
 						break;
+				}
+
+				// print labels
+				if (inject.detail.printLabels === true && (type.indexOf('closeQuarantine') !== -1 || type.indexOf('closeHotSwap') !== -1)) {
+					// make sure we have a valid printer
+					var printers = dymo.label.framework.getPrinters().filter(function(printer) { return (printer.isConnected === true && printer.isLocal === true) });
+					if (printers.length > 0) {
+			
+						// get the printer's name as well for printing
+						var printerName = printers[0]['name'];
+						if (snafuIsVarEmpty(printerName) === false) {
+							
+							// determine the label type from the ticket type
+							var labelType = (type.indexOf('closeHotSwap') !== -1) ? 'build' : type.replace('closeQuarantine', '').replace('Yes', '').replace('No', '').toLowerCase();
+							if (snafuLabelFields[labelType] === undefined) {
+								console.info(labelType);
+								console.warn('SNAFU: Dymo label type returned invalid.  Skipping print job. . .');
+								snafuErrorMessage('Dymo label type returned invalid.  Skipping print job. . .');
+							} else {
+								var addressLabel = dymo.label.framework.openLabelXml(snafuGetDymoLabelXml(labelType));
+								var labelFields = snafuLabelFields[labelType];
+								var reason = ''
+								var canPrint = true;
+								for (var field in labelFields) {
+									if (labelType === 'reclaim' || labelType === 'repair') {
+										if (field === 'TEXT_5') {
+											reason = prompt(snafuSprintf('Enter the reason for %s this device.  KEEP IT SHORT!', (labelType === 'reclaim') ? ['reclaiming'] : ['repairing']));
+											if (snafuIsVarEmpty(reason) === true) {
+												console.warn('SNAFU: You must provide a valid reason.');
+												snafuErrorMessage('You must provide a valid reason.  Skipping print job. . .');
+												canPrint = false;
+												break;
+											} else {
+												addressLabel.setObjectText(field, reason);
+											}
+										} else {
+											addressLabel.setObjectText(field, snafuReplaceWildcards(labelFields[field]));
+										}
+									} else {
+										addressLabel.setObjectText(field, snafuReplaceWildcards(labelFields[field]));
+									}
+								}
+
+								if (canPrint === false) {
+									console.warn('SNAFU: Unable to print label due to errors.');
+								} else {
+									addressLabel.print(printerName);
+								}
+							}
+						} else {
+							console.warn('SNAFU: Unable to determine printer name.  Skipping print job. . .');
+							snafuErrorMessage('Unable to determine printer name.  Skipping print job. . .');
+						}
+					} else {
+						console.warn('SNAFU: No appropriate printers were found.  Skipping print job. . .');
+						snafuErrorMessage('No appropriate printers were found.  Skipping print job. . .');
+					}
 				}
 			}
 		}
@@ -832,7 +838,7 @@ function snafuReplaceWildcards(strIn) {
 		"{REQUEST_ITEM}": "g_form.getReference('request_item').number || 'UNKNOWN';",										// ritm number
 		"{REQUESTED_BY}": "snafuUcwords(g_form.getReference('request_item.request.requested_for').name) || 'UNKNOWN';",		// task requested by
 		"{REQUESTED_FOR}": "snafuUcwords(g_form.getReference('request_item.u_requested_for').name) || 'UNKNOWN';",			// task requested for
-		"{REQUESTED_FOR_CAMPUS}": "snafuGetCampusName(g_form.getValue('requestedfor_campus')) || 'UNKNOWN';",							// requested for campus
+		"{REQUESTED_FOR_CAMPUS}": "snafuGetCampusName(g_form.getValue('requestedfor_campus')) || 'UNKNOWN';",				// requested for campus
 		"{TASK_STATE}": "g_form.getDisplayValue('state') || 'UNKNOWN';",													// task state
 
 		// hot swap only
@@ -849,7 +855,8 @@ function snafuReplaceWildcards(strIn) {
 		"{REPLACE_SERIAL}": "g_form.getReference('rhs_replacement_computer').serial_number || 'UNKNOWN';",					// replacement computer serial number
 
 		// miscellaneous
-		"{ABS_MACHINE}": "g_form.getReference('cmdb_ci').name || 'UNKNOWN';"												// absolute install device											
+		"{ABS_MACHINE}": "g_form.getReference('cmdb_ci').name || 'UNKNOWN';",												// absolute install device
+		"{LABEL_TECH}": "snafuSprintf('%s %s.', [snafuUcwords(g_form.getReference('request_item.request.requested_for').first_name), g_form.getReference('request_item.request.requested_for').last_name.charAt(0).toUpperCase()]) || 'UNKNOWN';",										
 	};
 	
 	// use regular expressions to find matches and send them for processing
@@ -973,6 +980,7 @@ function snafuGetTicketType() {
 			return 'cancelled_task';
 		} else if (shortDesc.indexOf('Smart/Remote Hands Request') !== -1) {
 			return 'smart_hands';
+
 		} else {
         	var taskName = g_form.getValue('u_task_name').toLowerCase();
 			return (taskName in snafuAutoTickets) ? taskName : 'generic_task';
@@ -1064,7 +1072,7 @@ function snafuGetDymoLabelXml(type) {
 			return '<?xml version="1.0" encoding="utf-8"?><DieCutLabel Version="8.0" Units="twips"><PaperOrientation>Landscape</PaperOrientation><Id>Address</Id><PaperName>30252 Address</PaperName><DrawCommands><RoundRectangle X="0" Y="0" Width="1581" Height="5040" Rx="270" Ry="270" /></DrawCommands><ObjectInfo><TextObject><Name>TEXT</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName></LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String>&lt;SerialNumber&gt;</String><Attributes><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /></Attributes></Element></StyledText></TextObject><Bounds X="331" Y="1277.82592773438" Width="3055.73413085938" Height="187.199996948242" /></ObjectInfo><ObjectInfo><DateTimeObject><Name>QuarantineDate</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName></LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><DateTimeFormat>LongSystemDate</DateTimeFormat><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><PreText></PreText><PostText></PostText><IncludeTime>False</IncludeTime><Use24HourFormat>False</Use24HourFormat></DateTimeObject><Bounds X="331" Y="648.052490234375" Width="4622" Height="221.363922119141" /></ObjectInfo><ObjectInfo><TextObject><Name>Tech</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName></LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><HorizontalAlignment>Right</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String>&lt;Tech&gt;</String><Attributes><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /></Attributes></Element></StyledText></TextObject><Bounds X="3163.158203125" Y="1277" Width="1789.84191894531" Height="187.199996948242" /></ObjectInfo><ObjectInfo><TextObject><Name>TEXT_4</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName></LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String>Decommission</String><Attributes><Font Family="Arial" Size="11" Bold="True" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /></Attributes></Element></StyledText></TextObject><Bounds X="331" Y="58" Width="4622" Height="242.819625854492" /></ObjectInfo><ObjectInfo><TextObject><Name>TEXT_5</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName></LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String>&lt;Reason&gt;</String><Attributes><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /></Attributes></Element></StyledText></TextObject><Bounds X="331" Y="967.651062011719" Width="4622" Height="187.199996948242" /></ObjectInfo><ObjectInfo><TextObject><Name>RITM#</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName></LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><HorizontalAlignment>Right</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String>RITM0XXXXX</String><Attributes><Font Family="Arial" Size="9" Bold="True" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /></Attributes></Element></StyledText></TextObject><Bounds X="3326.11669921875" Y="360" Width="1626.88342285156" Height="187.199996948242" /></ObjectInfo><ObjectInfo><BarcodeObject><Name>BARCODE</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName>RITM#</LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>True</IsVariable><Text>RITM0XXXXX</Text><Type>Code39</Type><Size>Small</Size><TextPosition>None</TextPosition><TextFont Family="Arial" Size="8" Bold="False" Italic="False" Underline="False" Strikeout="False" /><CheckSumFont Family="Arial" Size="8" Bold="False" Italic="False" Underline="False" Strikeout="False" /><TextEmbedding>None</TextEmbedding><ECLevel>0</ECLevel><HorizontalAlignment>Left</HorizontalAlignment><QuietZonesPadding Left="0" Top="0" Right="0" Bottom="0" /></BarcodeObject><Bounds X="331" Y="322.519256591797" Width="3145.45361328125" Height="265.037841796875" /></ObjectInfo></DieCutLabel>';
 			break;
 
-		case 'qurantine':
+		case 'reclaim':
 			return '<?xml version="1.0" encoding="utf-8"?><DieCutLabel Version="8.0" Units="twips"><PaperOrientation>Landscape</PaperOrientation><Id>Address</Id><PaperName>30252 Address</PaperName><DrawCommands><RoundRectangle X="0" Y="0" Width="1581" Height="5040" Rx="270" Ry="270" /></DrawCommands><ObjectInfo><TextObject><Name>TEXT</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName></LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String>&lt;SerialNumber&gt;</String><Attributes><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /></Attributes></Element></StyledText></TextObject><Bounds X="331" Y="1277.82592773438" Width="3055.73413085938" Height="187.199996948242" /></ObjectInfo><ObjectInfo><DateTimeObject><Name>QuarantineDate</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName></LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><DateTimeFormat>LongSystemDate</DateTimeFormat><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><PreText>Date Quarantined: </PreText><PostText></PostText><IncludeTime>False</IncludeTime><Use24HourFormat>False</Use24HourFormat></DateTimeObject><Bounds X="331" Y="648.052490234375" Width="4622" Height="221.363922119141" /></ObjectInfo><ObjectInfo><TextObject><Name>Tech</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName></LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><HorizontalAlignment>Right</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String>&lt;Tech&gt;</String><Attributes><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /></Attributes></Element></StyledText></TextObject><Bounds X="3163.158203125" Y="1277" Width="1789.84191894531" Height="187.199996948242" /></ObjectInfo><ObjectInfo><TextObject><Name>TEXT_4</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName></LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String>Quarantine</String><Attributes><Font Family="Arial" Size="11" Bold="True" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /></Attributes></Element></StyledText></TextObject><Bounds X="331" Y="58" Width="4622" Height="242.819625854492" /></ObjectInfo><ObjectInfo><TextObject><Name>TEXT_5</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName></LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String>&lt;Reason&gt;</String><Attributes><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /></Attributes></Element></StyledText></TextObject><Bounds X="331" Y="967.651062011719" Width="4622" Height="187.199996948242" /></ObjectInfo><ObjectInfo><TextObject><Name>RITM#</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName></LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><HorizontalAlignment>Right</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String>RITM0XXXXX</String><Attributes><Font Family="Arial" Size="9" Bold="True" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /></Attributes></Element></StyledText></TextObject><Bounds X="3326.11669921875" Y="360" Width="1626.88342285156" Height="187.199996948242" /></ObjectInfo><ObjectInfo><BarcodeObject><Name>BARCODE</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName>RITM#</LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>True</IsVariable><Text>RITM0XXXXX</Text><Type>Code39</Type><Size>Small</Size><TextPosition>None</TextPosition><TextFont Family="Arial" Size="8" Bold="False" Italic="False" Underline="False" Strikeout="False" /><CheckSumFont Family="Arial" Size="8" Bold="False" Italic="False" Underline="False" Strikeout="False" /><TextEmbedding>None</TextEmbedding><ECLevel>0</ECLevel><HorizontalAlignment>Left</HorizontalAlignment><QuietZonesPadding Left="0" Top="0" Right="0" Bottom="0" /></BarcodeObject><Bounds X="331" Y="322.519256591797" Width="3145.45361328125" Height="265.037841796875" /></ObjectInfo></DieCutLabel>';
 			break;
 		

@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unrelesed
+### Added
+- Automatic handling of Application Install requests.
+
+### Changed
+- Labels now use the technicians name who opened the ticket when printing labels.
+
+### Fixed
+- Reclaim labels will now print correctly.
+
 ## 1.1.14 [2017-08-23]
 ### Fixed
 - Reverted Dymo framework, which was breaking all functionality.
