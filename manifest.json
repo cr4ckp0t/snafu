@@ -1,7 +1,7 @@
 {
     "name": "SNAFU: SNow Automated Form Utilizer",
     "short_name": "SNAFU",
-    "version": "1.1.15",
+    "version": "1.1.16",
     "description": "It's like SNAP, only way better!",
     "author": "Adam Koch",
     "omnibox": {"keyword": "snafu"},
@@ -26,9 +26,9 @@
         "run_at": "document_end"
     }],
     "commands": {
-        "assignToMe": {
-            "description": "Query technician info or assign to technician.",
-            "suggested_key": { "default": "Alt+Q" }
+        "autoEnRoute": {
+            "description": "Auto en-route ticket.",
+            "suggested_key": { "default": "Alt+E" }
         },
         "savePage": {
             "description": "Save the ticket.",

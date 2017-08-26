@@ -64,6 +64,8 @@ chrome.contextMenus.create({
 	onclick: actionHandler
 });
 
+chrome.contextMenus.create({type: 'separator', parentId: 'snafuParent'});
+
 /**
  * Close Hot Swap Task
  */
@@ -148,25 +150,6 @@ chrome.contextMenus.create({
 	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
 	onclick: actionHandler
 });
-
-chrome.contextMenus.create({
-	title: 'Print Label',
-	contexts: ['page'],
-	id: 'printLabelParent',
-	parentId: 'snafuParent',
-	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
-});
-
-const menuLblTypes = ['build', 'decommission', 'reclaim', 'repair', 'restock']
-for (var i = 0; i < menuLblTypes.length; i++) {
-	chrome.contextMenus.create({
-		title: sprintf('%s Label', [ucwords(menuLblTypes[i])]),
-		contexts: ['page'],
-		id: 'printLabel' + ucwords(menuLblTypes[i]),
-		parentId: 'printLabelParent',
-		onclick: actionHandler
-	});
-}
 
 chrome.contextMenus.create({type: 'separator', parentId: 'snafuParent'});
 
@@ -354,7 +337,7 @@ chrome.contextMenus.create({
 	contexts: ['page'],
 	id: 'openBuildLog',
 	parentId: 'buildLogParent',
-	onclick: function() { chrome.tabs.create({url: chrome.runtime.getURL('html/builds.html')}); }
+	onclick: function() { openLink(chrome.runtime.getURL('html/builds.html')); }
 });
 
 chrome.contextMenus.create({type: 'separator', parentId: 'optionsParent'});
@@ -364,8 +347,43 @@ chrome.contextMenus.create({
 	contexts: ['page'],
 	id: 'optionsPage',
 	parentId: 'optionsParent',
-	onclick: function() { chrome.tabs.create({url: chrome.runtime.getURL('html/options.html')}); }
+	onclick: function() { openLink(chrome.runtime.getURL('html/options.html')); }
 });
+
+/**
+ * Labels
+ */
+chrome.contextMenus.create({
+	title: 'Print Label',
+	contexts: ['page'],
+	id: 'printLabelParent',
+	parentId: 'snafuParent'
+});
+
+const menuLblTypes = ['build', 'decommission', 'reclaim', 'repair', 'restock']
+for (var i = 0; i < menuLblTypes.length; i++) {
+	chrome.contextMenus.create({
+		title: sprintf('%s Label', [ucwords(menuLblTypes[i])]),
+		contexts: ['page'],
+		id: 'printLabel' + ucwords(menuLblTypes[i]),
+		parentId: 'printLabelParent',
+		documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
+		onclick: actionHandler
+	});
+}
+
+chrome.contextMenus.create({type: 'separator', parentId: 'printLabelParent', documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*']});
+
+chrome.contextMenus.create({
+	title: 'Broken Equipment Label',
+	contexts: ['page'],
+	id: 'printLabelBroken',
+	parentId: 'printLabelParent',
+	documentUrlPatterns: docPatterns,
+	onclick: actionHandler
+});
+
+chrome.contextMenus.create({type: 'separator', parentId: 'snafuParent'});
 
 /**
  * Miscellaneous
@@ -378,11 +396,27 @@ chrome.contextMenus.create({
 });
 
 chrome.contextMenus.create({
+	title: 'Computer Database',
+	contexts: ['page'],
+	id: 'computerDb',
+	parentId: 'miscParent',
+	onclick: function() { openLink('https://ghsprod.service-now.com/cmdb_ci_computer_list.do?sysparm_query=sys_class_name=cmdb_ci_computer') }
+});
+
+chrome.contextMenus.create({
 	title: 'Create New Incident',
 	contexts: ['page'],
 	id: 'newIncident',
 	parentId: 'miscParent',
-	onclick: function() { chrome.tabs.create({url: 'https://ghsprod.service-now.com/incident.do?sysparm_stack=incident_list.do&sys_id=-1'}); }
+	onclick: function() { openLink('https://ghsprod.service-now.com/incident.do?sysparm_stack=incident_list.do&sys_id=-1') }
+});
+
+chrome.contextMenus.create({
+	title: 'Knowledge Database',
+	contexts: ['page'],
+	id: 'knowledgeBase',
+	parentId: 'miscParent',
+	onclick: function() { openLink('https://ghsprod.service-now.com/kb_home.do') }
 });
 
 chrome.contextMenus.create({
@@ -390,7 +424,7 @@ chrome.contextMenus.create({
 	contexts: ['page'],
 	id: 'serviceCatalog',
 	parentId: 'miscParent',
-	onclick: function() { chrome.tabs.create({url: 'https://ghsprod.service-now.com/catalog_home.do?sysparm_view=catalog_default' }); }
+	onclick: function() { openLink('https://ghsprod.service-now.com/catalog_home.do?sysparm_view=catalog_default') }
 });
 
 /**
@@ -408,7 +442,7 @@ chrome.contextMenus.create({
 	contexts: ['page'],
 	id: 'faqPage',
 	parentId: 'helpParent',
-	onclick: function() { chrome.tabs.create({url: chrome.runtime.getURL('html/faq.html')}) }
+	onclick: function() { openLink(chrome.runtime.getURL('html/faq.html')) }
 });
 
 chrome.contextMenus.create({
@@ -416,7 +450,7 @@ chrome.contextMenus.create({
 	contexts: ['page'],
 	id: 'helpPage',
 	parentId: 'helpParent',
-	onclick: function() { chrome.tabs.create({url: chrome.runtime.getURL('html/help.html')}); }
+	onclick: function() { openLink(chrome.runtime.getURL('html/help.html')) }
 });
 
 // monitor user data settings to update the context menu
@@ -474,6 +508,15 @@ function actionHandler(info, tab) {
 	chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
 		chrome.tabs.sendMessage(tabs[0].id, {type: info.menuItemId}, handleResponse);
 	});
+}
+
+/**
+ * OnClick Handler For Creating Chrome Tabs
+ * @param	{String}	url
+ * @return	{Void}
+ */
+function openLink(url) {
+	chrome.tabs.create({url: url});
 }
 
 /**
