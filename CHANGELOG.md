@@ -6,11 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 ### Added
-- Auto en-route keybinding.
 - Broken equipment label.
-
-### Removed
-- Assign to me keybinding.
 
 ### Changed
 - Cleaned up and organized the context menu.

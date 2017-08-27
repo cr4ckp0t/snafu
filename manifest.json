@@ -26,9 +26,9 @@
         "run_at": "document_end"
     }],
     "commands": {
-        "autoEnRoute": {
-            "description": "Auto en-route ticket.",
-            "suggested_key": { "default": "Alt+E" }
+        "assignToMe": {
+            "description": "Query technician info or assign to technician.",
+            "suggested_key": { "default": "Alt+Q" }
         },
         "savePage": {
             "description": "Save the ticket.",
