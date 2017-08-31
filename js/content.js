@@ -182,6 +182,7 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                 case 'printLabelBuild':
                 case 'printLabelBroken':
                 case 'printLabelDecommission':
+                case 'printLabelPurchase':
                 case 'printLabelReclaim':
                 case 'printLabelRepair':
                 case 'printLabelRestock':

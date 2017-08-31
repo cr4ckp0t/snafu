@@ -254,9 +254,16 @@ const snafuLabelFields = {
 	// decommission
 	'decommission': {
 		'TEXT': '{BROKEN_SERIAL}',			// asset serial being decommissioned
-		'Tech': '{LABEL_TECH}',		// technician
+		'Tech': '{LABEL_TECH}',				// technician
 		'TEXT_5': 'Decommission asset.',	// reason
 		'RITM#': '{REQUEST_ITEM}'			// ritm number
+	},
+
+	// purchase orders
+	'purchase': {
+		'RITM': '{REQUEST_ITEM}',	// ritm number
+		'PO': '{PLACEHOLDER}',		// user will be prompted for this
+		'MORE_PO': '{PLACEHOLDER}'	// user will be prompted for this
 	},
 
 	// reclaim task
@@ -349,7 +356,7 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 		setTimeout(function() { g_form.submit(); }, inject.detail.finishDelay * 1000);
 
 	// print label from context menu
-	} else if (type === 'printLabelBroken' || type === 'printLabelBuild' || type === 'printLabelDecommission' || type === 'printLabelReclaim' || type === 'printLabelRestock' || type === 'printLabelRepair') {
+	} else if (type === 'printLabelBroken' || type === 'printLabelBuild' || type === 'printLabelDecommission' || type === 'printLabelPurchase' || type === 'printLabelReclaim' || type === 'printLabelRestock' || type === 'printLabelRepair') {
 		if (ticketType === false) {
 			snafuErrorMessage('The open ticket is not valid for label printing.');
 		} else {
@@ -372,6 +379,8 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 						var reason = '';
 						var canPrint = true;
 						for (var field in labelFields) {
+
+							// reclaim and repair labels
 							if (labelType === 'reclaim' || labelType === 'repair') {
 								if (field === 'TEXT_5') {
 									reason = prompt(snafuSprintf('Enter the reason for %s this device.  KEEP IT SHORT!', (labelType === 'reclaim') ? ['reclaiming'] : ['repairing']));
@@ -386,6 +395,8 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 								} else {
 									addressLabel.setObjectText(field, snafuReplaceWildcards(labelFields[field]));
 								}
+
+							// broken equipment labels
 							} else if (labelType === 'broken') {
 								if (field === 'EQUIP') {
 									reason = prompt('How is the equipmment broken?  KEEP IT SHORT!');
@@ -400,6 +411,8 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 								} else {
 									addressLabel.setObjectText(field, snafuReplaceWildcards(labelFields[field]));
 								}
+
+							// hot swap build labels
 							} else if (labelType === 'build') {
 								if (field === 'TEXT_4') {
 									addressLabel.setObjectText(field, g_form.getValue('rhs_software').split('\n')[0]);
@@ -413,6 +426,17 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 								} else {
 									addressLabel.setObjectText(field, snafuReplaceWildcards(labelFields[field]));
 								}
+
+							// purchase order labels
+							} else if (labelType === 'purchase') {
+								if (field === 'PO' || field === 'MORE_PO') {
+									reason = prompt('Enter up to three PO numbers. Separate them by commas with no spaces. Each one will be put on the new line.');
+									if (snafuIsVarEmpty(reason) === false) addressLabel.setObjectText(field, (reason.indexOf(',') !== -1) ? reason.replace(/,/g, '\r\n') : reason);
+								} else {
+									addressLabel.setObjectText(field, snafuReplaceWildcards(labelFields[field]));
+								}
+
+							// "the rest"
 							} else {
 								addressLabel.setObjectText(field, snafuReplaceWildcards(labelFields[field]));
 							}
@@ -1130,6 +1154,11 @@ function snafuGetDymoLabelXml(type) {
 		// decommission label
 		case 'decommission':
 			return '<?xml version="1.0" encoding="utf-8"?><DieCutLabel Version="8.0" Units="twips"><PaperOrientation>Landscape</PaperOrientation><Id>Address</Id><PaperName>30252 Address</PaperName><DrawCommands><RoundRectangle X="0" Y="0" Width="1581" Height="5040" Rx="270" Ry="270" /></DrawCommands><ObjectInfo><TextObject><Name>TEXT</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName></LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String>&lt;SerialNumber&gt;</String><Attributes><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /></Attributes></Element></StyledText></TextObject><Bounds X="331" Y="1277.82592773438" Width="3055.73413085938" Height="187.199996948242" /></ObjectInfo><ObjectInfo><DateTimeObject><Name>QuarantineDate</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName></LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><DateTimeFormat>LongSystemDate</DateTimeFormat><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><PreText></PreText><PostText></PostText><IncludeTime>False</IncludeTime><Use24HourFormat>False</Use24HourFormat></DateTimeObject><Bounds X="331" Y="648.052490234375" Width="4622" Height="221.363922119141" /></ObjectInfo><ObjectInfo><TextObject><Name>Tech</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName></LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><HorizontalAlignment>Right</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String>&lt;Tech&gt;</String><Attributes><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /></Attributes></Element></StyledText></TextObject><Bounds X="3163.158203125" Y="1277" Width="1789.84191894531" Height="187.199996948242" /></ObjectInfo><ObjectInfo><TextObject><Name>TEXT_4</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName></LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String>Decommission</String><Attributes><Font Family="Arial" Size="11" Bold="True" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /></Attributes></Element></StyledText></TextObject><Bounds X="331" Y="58" Width="4622" Height="242.819625854492" /></ObjectInfo><ObjectInfo><TextObject><Name>TEXT_5</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName></LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String>&lt;Reason&gt;</String><Attributes><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /></Attributes></Element></StyledText></TextObject><Bounds X="331" Y="967.651062011719" Width="4622" Height="187.199996948242" /></ObjectInfo><ObjectInfo><TextObject><Name>RITM#</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName></LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><HorizontalAlignment>Right</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String>RITM0XXXXX</String><Attributes><Font Family="Arial" Size="9" Bold="True" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /></Attributes></Element></StyledText></TextObject><Bounds X="3326.11669921875" Y="360" Width="1626.88342285156" Height="187.199996948242" /></ObjectInfo><ObjectInfo><BarcodeObject><Name>BARCODE</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName>RITM#</LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>True</IsVariable><Text>RITM0XXXXX</Text><Type>Code39</Type><Size>Small</Size><TextPosition>None</TextPosition><TextFont Family="Arial" Size="8" Bold="False" Italic="False" Underline="False" Strikeout="False" /><CheckSumFont Family="Arial" Size="8" Bold="False" Italic="False" Underline="False" Strikeout="False" /><TextEmbedding>None</TextEmbedding><ECLevel>0</ECLevel><HorizontalAlignment>Left</HorizontalAlignment><QuietZonesPadding Left="0" Top="0" Right="0" Bottom="0" /></BarcodeObject><Bounds X="331" Y="322.519256591797" Width="3145.45361328125" Height="265.037841796875" /></ObjectInfo></DieCutLabel>';
+			break;
+
+		// po label
+		case 'purchase':
+			return '<?xml version="1.0" encoding="utf-8"?><DieCutLabel Version="8.0" Units="twips"><PaperOrientation>Landscape</PaperOrientation><Id>FileFolder</Id><IsOutlined>false</IsOutlined><PaperName>30327 File Folder - offset</PaperName><DrawCommands><RoundRectangle X="0" Y="0" Width="806" Height="4950" Rx="180" Ry="180" /></DrawCommands><ObjectInfo><TextObject><Name>RITM</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Top</VerticalAlignment><TextFitMode>ShrinkToFit</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String xml:space="preserve">RITM0303184</String><Attributes><Font Family="Calibri" Size="12" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" HueScale="100" /></Attributes></Element></StyledText></TextObject><Bounds X="316.799987792969" Y="57.6000137329102" Width="1485" Height="301.200012207031" /></ObjectInfo><ObjectInfo><TextObject><Name>PO</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Right</HorizontalAlignment><VerticalAlignment>Top</VerticalAlignment><TextFitMode>ShrinkToFit</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String xml:space="preserve">707700-0-ISC</String><Attributes><Font Family="Calibri" Size="12" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" HueScale="100" /></Attributes></Element></StyledText></TextObject><Bounds X="3512.40008544922" Y="57.6000137329102" Width="1350" Height="691.200012207031" /></ObjectInfo><ObjectInfo><TextObject><Name>MORE_PO</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Right</HorizontalAlignment><VerticalAlignment>Top</VerticalAlignment><TextFitMode>ShrinkToFit</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText /></TextObject><Bounds X="1967.40014648438" Y="57.6000137329102" Width="1350" Height="691.200012207031" /></ObjectInfo></DieCutLabel>';
 			break;
 
 		// reclaim label

@@ -383,6 +383,15 @@ chrome.contextMenus.create({
 	onclick: actionHandler
 });
 
+chrome.contextMenus.create({
+	title: 'Purchase Order Label',
+	contexts: ['page'],
+	id: 'printLabelPurchase',
+	parentId: 'printLabelParent',
+	documentUrlPatterns: docPatterns,
+	onclick: actionHandler
+});
+
 chrome.contextMenus.create({type: 'separator', parentId: 'snafuParent'});
 
 /**

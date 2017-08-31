@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+### Added
+- Purchase Order label template.
+
 ## 1.1.16 [2017-08-31]
 ### Added
 - Broken equipment label.
