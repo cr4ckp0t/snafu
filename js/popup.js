@@ -362,6 +362,11 @@ $(document).ready(function() {
                     $('input[name=tStatus][value=' + notes.ticketStatus + ']').prop('checked', true);
                     $('#tStatus0').removeClass('active');
                     $('#tStatus' + notes.ticketStatus).addClass('active');
+
+                    // if set to on hold, make sure the sub-status is showing
+                    if (notes.ticketStatus === '1') {
+                        $('div[id=taskSubStatusWrapper]').hide();
+                    }
                 }
                 // customer notes
                 if (isVarEmpty(notes.custNotes) === false) {

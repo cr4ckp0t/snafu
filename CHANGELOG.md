@@ -10,6 +10,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 - Cleaned up and organized the context menu.
+- Builds and software are differentiated via a carriage return in the software field.
+
+### Fixed
+- Bug in js/inject.js that could lead to unexpected behavior.
+- Fixed typo in js/inject.js.
+- Sub-status will now be shown properly when keep notes is selected and On Hold is checked.
 
 ## 1.1.15 [2017-08-24]
 ### Added

@@ -238,23 +238,23 @@ const snafuLabelFields = {
 	// broken equipment
 	'broken': {
 		'TICKET': '{TICKET}',		// ticket number
-		'REASON': '{BROKEN_REASON}'	// reason the equipment stopped working
+		'EQUIP': ''	// reason the equipment stopped working
 	},
 
 	// replacement build
 	'build': {
 		'HOSTNAME_TEXT': '{REPLACE_HOSTNAME}',	// replacement build's hostname
-		'TEXT_3': 'Tech: {LABEL_TECH}',			// technician
+		'TEXT_3': '{LABEL_TECH}',			// technician
 		'TEXT_4': '{REPLACE_BUILD}',			// replacement os and build
 		'RITM#': '{REQUEST_ITEM}',				// ritm number
 		'TEXT_2': '{REPLACE_CUSTOMER}',			// customer
-		'TEXT_8': 'Office, Skype, Citrix'		// software
+		'TEXT_8': '{REPLACE_SOFTWARE}'			// software
 	},
 
 	// decommission
 	'decommission': {
 		'TEXT': '{BROKEN_SERIAL}',			// asset serial being decommissioned
-		'Tech': 'Tech: {LABEL_TECH}',		// technician
+		'Tech': '{LABEL_TECH}',		// technician
 		'TEXT_5': 'Decommission asset.',	// reason
 		'RITM#': '{REQUEST_ITEM}'			// ritm number
 	},
@@ -262,7 +262,7 @@ const snafuLabelFields = {
 	// reclaim task
 	'reclaim': {
 		'TEXT':	'{BROKEN_SERIAL}',		// reclaimed asset's serial number
-		'Tech': 'Tech: {LABEL_TECH}',	// technician
+		'Tech': '{LABEL_TECH}',	// technician
 		'TEXT_5': '{RECLAIM_REASON}',	// reason for reclaiming
 		'RITM#': '{REQUEST_ITEM}'		// ritm number
 	},
@@ -270,7 +270,7 @@ const snafuLabelFields = {
 	// repair task
 	'repair': {
 		'TEXT': '{BROKEN_SERIAL}',		// asset being repaired's serial number
-		'Tech': 'Tech: {LABEL_TECH}',	// technician
+		'Tech': '{LABEL_TECH}',	// technician
 		'TEXT_5': '{REPAIR_REASON}',	// repair reason
 		'RITM#': '{REQUEST_ITEM}'		// ritm number
 	},
@@ -278,7 +278,7 @@ const snafuLabelFields = {
 	// restock task
 	'restock': {
 		'TEXT': '{BROKEN_SERIAL}',				// restocked asset's serial number
-		'Tech': 'Tech: {LABEL_TECH}',			// technician
+		'Tech': '{LABEL_TECH}',			// technician
 		'TEXT_5': 'Passed UEFI diagnostics.',	// repair results
 		'RITM#': '{REQUEST_ITEM}'				// ritm number
 	}
@@ -349,7 +349,7 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 		setTimeout(function() { g_form.submit(); }, inject.detail.finishDelay * 1000);
 
 	// print label from context menu
-	} else if (type.indexOf('printLabel') !== -1) {
+	} else if (type === 'printLabelBroken' || type === 'printLabelBuild' || type === 'printLabelDecommission' || type === 'printLabelReclaim' || type === 'printLabelRestock' || type === 'printLabelRepair') {
 		if (ticketType === false) {
 			snafuErrorMessage('The open ticket is not valid for label printing.');
 		} else {
@@ -381,13 +381,13 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 										canPrint = false;
 										break;
 									} else {
-										addressLabel.setObjectText(field, reason);
+										addressLabel.setObjectText(field, snafuShortenLabelString(reason));
 									}
 								} else {
 									addressLabel.setObjectText(field, snafuReplaceWildcards(labelFields[field]));
 								}
-							} else if (labelType = 'broken') {
-								if (field === 'REASON') {
+							} else if (labelType === 'broken') {
+								if (field === 'EQUIP') {
 									reason = prompt('How is the equipmment broken?  KEEP IT SHORT!');
 									if (snafuIsVarEmpty(reason) === true) {
 										console.warn('SNAFU: You must provide a valid reason.');
@@ -395,8 +395,21 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 										canPrint = false;
 										break;
 									} else {
-										addressLabel.setObjectText(field, reason);
-									}d
+										addressLabel.setObjectText(field, snafuShortenLabelString(reason));
+									}
+								} else {
+									addressLabel.setObjectText(field, snafuReplaceWildcards(labelFields[field]));
+								}
+							} else if (labelType === 'build') {
+								if (field === 'TEXT_4') {
+									addressLabel.setObjectText(field, g_form.getValue('rhs_software').split('\n')[0]);
+								} else if (field === 'TEXT_8') {
+									var buildInput = g_form.getValue('rhs_software');
+									if (buildInput.indexOf('\n') !== -1) {
+										addressLabel.setObjectText(field, snafuShortenLabelString(buildInput.split('\n')[1]));
+									} else {
+										addressLabel.setObjectText(field, 'Standard software load.');
+									}
 								} else {
 									addressLabel.setObjectText(field, snafuReplaceWildcards(labelFields[field]));
 								}
@@ -531,7 +544,7 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 					}
 
 					// print labels
-					if (inject.detail.printLabels === true && ticketType === 'rhs_reclaim') {
+					if (inject.detail.printLabels === true && type === 'autoClose' && ticketType === 'rhs_reclaim') {
 						// make sure we have a valid printer
 						var printers = dymo.label.framework.getPrinters().filter(function(printer) { return (printer.isConnected === true && printer.isLocal === true) });
 						if (printers.length > 0) {
@@ -560,7 +573,7 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 													canPrint = false;
 													break;
 												} else {
-													addressLabel.setObjectText(field, reason);
+													addressLabel.setObjectText(field, snafuShortenLabelString(reason));
 												}
 											} else {
 												addressLabel.setObjectText(field, snafuReplaceWildcards(labelFields[field]));
@@ -645,9 +658,6 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 						snafuSetValue('close_notes', workNotes);
 						snafuFlash('close_notes');
 					}
-
-					// attempt to select the Resolve Information tab
-
 				}
 
 				// change the root cause ci and due date for tasks
@@ -774,7 +784,20 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 												canPrint = false;
 												break;
 											} else {
-												addressLabel.setObjectText(field, reason);
+												addressLabel.setObjectText(field, snafuShortenLabelString(reason));
+											}
+										} else {
+											addressLabel.setObjectText(field, snafuReplaceWildcards(labelFields[field]));
+										}
+									} else if (labelType === 'build') {
+										if (field === 'TEXT_4') {
+											addressLabel.setObjectText(field, g_form.getValue('rhs_software').split('\n')[0]);
+										} else if (field === 'TEXT_8') {
+											var buildInput = g_form.getValue('rhs_software');
+											if (buildInput.indexOf('\n') !== -1) {
+												addressLabel.setObjectText(field, snafuShortenLabelString(buildInput.split('\n')[1]));
+											} else {
+												addressLabel.setObjectText(field, 'Standard software load.');
 											}
 										} else {
 											addressLabel.setObjectText(field, snafuReplaceWildcards(labelFields[field]));
@@ -929,6 +952,15 @@ function snafuSprintf(template, values) {
     return template.replace(/%s/g, function() {
         return values.shift();
     });
+}
+
+/**
+ * Shortens strings destined for label printing.
+ * @param	{String}	str
+ * @return	{String}
+ */
+function snafuShortenLabelString(str) {
+	return (str.length > 35) ? str.substr(0, 34) + '...' : str;
 }
 
 /**
@@ -1087,7 +1119,7 @@ function snafuGetDymoLabelXml(type) {
 
 		// broken equipment label
 		case 'broken':
-			return ''
+			return '<?xml version="1.0" encoding="utf-8"?><DieCutLabel Version="8.0" Units="twips"><PaperOrientation>Landscape</PaperOrientation><Id>Address</Id><IsOutlined>false</IsOutlined><PaperName>30252 Address</PaperName><DrawCommands><RoundRectangle X="0" Y="0" Width="1581" Height="5040" Rx="270" Ry="270" /></DrawCommands><ObjectInfo><DateTimeObject><Name>DATE-TIME</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Right</HorizontalAlignment><VerticalAlignment>Bottom</VerticalAlignment><TextFitMode>ShrinkToFit</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><DateTimeFormat>DayAbbrMonthLongYear</DateTimeFormat><Font Family="Arial" Size="12" Bold="False" Italic="False" Underline="False" Strikeout="False" /><PreText /><PostText /><IncludeTime>False</IncludeTime><Use24HourFormat>False</Use24HourFormat></DateTimeObject><Bounds X="2973" Y="1163" Width="1980" Height="330" /></ObjectInfo><ObjectInfo><TextObject><Name>TEXT</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Top</VerticalAlignment><TextFitMode>ShrinkToFit</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String xml:space="preserve">Broken Equipment</String><Attributes><Font Family="Arial" Size="14" Bold="True" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" HueScale="100" /></Attributes></Element></StyledText></TextObject><Bounds X="331" Y="57.9999999999999" Width="2282" Height="285" /></ObjectInfo><ObjectInfo><TextObject><Name>TICKET</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Bottom</VerticalAlignment><TextFitMode>ShrinkToFit</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String xml:space="preserve">INCXXXXXXX</String><Attributes><Font Family="Arial" Size="12" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" HueScale="100" /></Attributes></Element></StyledText></TextObject><Bounds X="331" Y="1208" Width="1995" Height="285" /></ObjectInfo><ObjectInfo><TextObject><Name>EQUIP</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>ShrinkToFit</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String xml:space="preserve">Broken Equipment</String><Attributes><Font Family="Arial" Size="16" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" HueScale="100" /></Attributes></Element></StyledText></TextObject><Bounds X="331" Y="390" Width="4622" Height="720" /></ObjectInfo></DieCutLabel>'
 			break;
 
 		// build label
