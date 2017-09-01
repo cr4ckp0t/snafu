@@ -251,6 +251,28 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                     }
                     break;
 
+                // close repair task
+                case 'closeRepairOnSite':
+                case 'closeRepairDecommission':
+                    if (ticketType !== 'task') {
+                        sendResponse({success: false, errMsg: 'Unable to detect an open task.'});
+                    } else {
+                        injectData = {
+                            type: msg.type,
+                            autoFinish: items.autoFinish || 'none',
+                            finishDelay: items.finishDelay || 1.5,
+                            field: 'state',
+                            value: '3', // closed complete
+                            subStatus: msg.subStatus || null,
+                            workNotes: (msg.type === 'closeRepairOnSite') ? '{BROKEN_HOSTNAME} was repaired and returned to stock.' : '{BROKEN_HOSTNAME} will not be repaired, and will be added to decommission workflow.',
+                            custNotes: null,
+                            buildLog: items.buildLog,
+                            printLabels: items.printLabels
+                        }
+                        sendResponse({success: true, errMsg: null});
+                    }
+                    break;
+
                 // scheduled ticket
                 case 'scheduled':
                     if (ticketType === false) {

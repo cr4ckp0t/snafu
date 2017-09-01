@@ -151,6 +151,35 @@ chrome.contextMenus.create({
 	onclick: actionHandler
 });
 
+/**
+ * Close Repair Tasks
+ */
+chrome.contextMenus.create({
+	title: 'Close Repair Task',
+	contexts: ['page'],
+	id: 'closeRepairParent',
+	parentId: 'snafuParent',
+	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*']
+});
+
+chrome.contextMenus.create({
+	title: 'Repairs Completed (Restock)',
+	contexts: ['page'],
+	id: 'closeRepairOnSite',
+	parentId: 'closeRepairParent',
+	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
+	onclick: actionHandler
+});
+
+chrome.contextMenus.create({
+	title: 'Not Cost Efficient (Decommission)',
+	contexts: ['page'],
+	id: 'closeRepairDecommission',
+	parentId: 'closeRepairParent',
+	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
+	onclick: actionHandler
+});
+
 chrome.contextMenus.create({type: 'separator', parentId: 'snafuParent'});
 
 /**

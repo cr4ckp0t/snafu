@@ -4,9 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## 1.1.17 [2017-09-01]
 ### Added
-- Purchase Order label template.
+- Purchase Order label template for Whit.
+- Close Repair task to context menu and popup.
 
 ## 1.1.16 [2017-08-31]
 ### Added

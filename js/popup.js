@@ -282,6 +282,21 @@ $(document).ready(function() {
         });
     });
 
+    // send close repair task
+    $('#sendCloseRepair').click(function() {
+        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+            chrome.tabs.sendMessage(tabs[0].id, { type: 'closeRepair' + $('#closeRepair').val() });
+        });
+    });
+    
+    // manually print a label
+    $('#sendPrintLabel').click(function() {
+        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+            chrome.tabs.sendMessage(tabs[0].id, { type: 'printLabel' + $('#printLabel').val() });
+        });
+    });
+
+
     // send auto acknowledge
     $('#sendAutoAcknowledge').click(function() {
         chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
@@ -300,13 +315,6 @@ $(document).ready(function() {
     $('#sendAutoEnRoute').click(function() {
         chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
             chrome.tabs.sendMessage(tabs[0].id, { type: 'autoEnRoute' });
-        });
-    });
-    
-    // manually print a label
-    $('#sendPrintLabel').click(function() {
-        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-            chrome.tabs.sendMessage(tabs[0].id, { type: 'printLabel' + $('#printLabel').val() });
         });
     });
 

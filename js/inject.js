@@ -110,7 +110,7 @@ const snafuAutoTickets = {
 			'value': '2'
 		},
 		'enRoute': null,
-		'close': { 'script': '{BROKEN_HOSTNAME} has been repaired and returned to stock.', 'value': '3' }
+		'close': null
 	},
 	'rhs_decommission': {
 		'field': 'state',
@@ -717,6 +717,8 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 						}
 					} else if (type.indexOf('closeHotSwap') !== -1) {
 						snafuSetValue('rhs_replacement_type', type.replace('closeHotSwap', '').toLowerCase());
+					} else if (type.indexOf('closeRepair') !== -1) {
+						snafuSetValue('rhs_repair_type', type.replace('closeRepair', '').toLowerCase());
 					}
 				}
 
@@ -778,7 +780,7 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 				}
 
 				// print labels
-				if (inject.detail.printLabels === true && (type.indexOf('closeQuarantine') !== -1 || type.indexOf('closeHotSwap') !== -1)) {
+				if (inject.detail.printLabels === true && (type.indexOf('closeQuarantine') !== -1 || type.indexOf('closeHotSwap') !== -1) || type.indexOf('closeRepair') !== -1) {
 					// make sure we have a valid printer
 					var printers = dymo.label.framework.getPrinters().filter(function(printer) { return (printer.isConnected === true && printer.isLocal === true) });
 					if (printers.length > 0) {
@@ -788,7 +790,13 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 						if (snafuIsVarEmpty(printerName) === false) {
 							
 							// determine the label type from the ticket type
-							var labelType = (type.indexOf('closeHotSwap') !== -1) ? 'build' : type.replace('closeQuarantine', '').replace('Yes', '').replace('No', '').toLowerCase();
+							var labelType
+							if (type.indexOf('closeRepair') !== -1) {
+								labelType = (type.indexOf('OnSite') !== -1) ? 'restock' : 'decommission';
+							} else {
+								labelType = (type.indexOf('closeHotSwap') !== -1) ? 'build' : type.replace('closeQuarantine', '').replace('Yes', '').replace('No', '').toLowerCase();
+							}
+
 							if (snafuLabelFields[labelType] === undefined) {
 								console.info(labelType);
 								console.warn('SNAFU: Dymo label type returned invalid.  Skipping print job. . .');
