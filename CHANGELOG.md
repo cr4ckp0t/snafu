@@ -4,9 +4,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## 1.1.18 [2017-09-02]
+## 1.2.0 [2017-09-02]
 ### Added
-- Changelog with Markdown parser.
+- Changelog with Markdown parser, [Showdown](https://github.com/showdownjs/showdown).
 
 ### Fixed
 - Title of links on various pages.
