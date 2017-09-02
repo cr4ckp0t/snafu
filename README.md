@@ -33,19 +33,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ## Statistics
 ```
 F:\Projects>.\cloc.exe .\snafu
-      29 text files.
-      29 unique files.
-      12 files ignored.
+      34 text files.
+      34 unique files.
+      13 files ignored.
 
-http://cloc.sourceforge.net v 1.64  T=0.10 s (249.2 files/s, 57248.5 lines/s)
+http://cloc.sourceforge.net v 1.64  T=0.11 s (271.6 files/s, 56333.6 lines/s)
 -------------------------------------------------------------------------------
 Language                     files          blank        comment           code
 -------------------------------------------------------------------------------
-Javascript                      13            315            757           2840
-HTML                             5             47             84           1233
-CSS                              6             63             98            257
+Javascript                      15            319            777           2874
+HTML                             6             54            100           1351
+CSS                              7             74            115            301
 JSON                             1              0              0             49
 -------------------------------------------------------------------------------
-SUM:                            25            425            939           4379
+SUM:                            29            447            992           4575
 -------------------------------------------------------------------------------
 ```
