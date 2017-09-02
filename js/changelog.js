@@ -17,13 +17,26 @@
  **/
 
 $(document).ready(function() {
-	$('#version').html(chrome.app.getDetails().version);
 	$('#versionAbout').html(chrome.app.getDetails().version);
-	$('#openAll').click(function() { $('[id^=collapse]').collapse('show'); });
-	$('#closeAll').click(function() { $('[id^=collapse]').collapse('hide'); });
-	$('#toggleAll').click(function() { $('[id^=collapse]').collapse('toggle'); });
+	$('#viewOnline').click(function() { chrome.tabs.create({url: 'https://adamko.ch/snafu'}); });
+	$('#viewOnlineSafe').click(function() { chrome.tabs.create({url: 'https://adamkoch.squarespace.com/snafu'}); });
 	$('#openHelp').click(function() { chrome.tabs.create({url: chrome.runtime.getURL('html/help.html')}); });
 	$('#openOptions').click(function() { chrome.tabs.create({url: chrome.runtime.getURL('html/options.html')}); });
-	$('#openChangelog').click(function() { chrome.tabs.create({url: chrome.runtime.getURL('html/changelog.html')}); });
+	$('#openFaq').click(function() { chrome.tabs.create({url: chrome.runtime.getURL('html/faq.html')}); });
 	$('#closeWindow').click(function() { chrome.tabs.query({active: true, currentWindow: true}, function(tabs) { chrome.tabs.remove(tabs[0].id); }); });
+
+	var reader = new FileReader()
+	reader.onloadend = function(e) {
+		console.log(e.target.result);
+	}
+
+	// since we use jquery for the backbone of the extension, why not use it to read the changelog!
+	$.ajax({
+		method: 'GET',
+		url: chrome.runtime.getURL('CHANGELOG.md')
+	})
+		.done(function(text) {
+			var converter = new showdown.Converter();
+			$('#changelogText').html(converter.makeHtml(text));
+		});
 });

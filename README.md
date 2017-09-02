@@ -23,6 +23,13 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ```
 
+## Libraries Used
+- [jQuery](https://jquery.com)
+- [Bootstrap](http://getbootrap.com/)
+- [Moment.js](https://momentjs.com/)
+- [Showdown](https://github.com/showdownjs/showdown)
+- [Dymo Label Framework](http://developers.dymo.com/2010/06/02/dymo-label-framework-javascript-library-samples-print-a-label/)
+
 ## Statistics
 ```
 F:\Projects>.\cloc.exe .\snafu

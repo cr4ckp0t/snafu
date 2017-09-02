@@ -24,6 +24,7 @@ $(document).ready(function() {
 	$('#openFaq').click(function() { chrome.tabs.create({url: chrome.runtime.getURL('html/faq.html')}); });
 	$('#openHelp').click(function() { chrome.tabs.create({url: chrome.runtime.getURL('html/help.html')}); });
 	$('#openBuildLog').click(function() { chrome.tabs.create({url: chrome.runtime.getURL('html/builds.html')}); });
+	$('#openChangelog').click(function() { chrome.tabs.create({url: chrome.runtime.getURL('html/changelog.html')}); });
 	$('#closeWindow').click(function() { chrome.tabs.query({active: true, currentWindow: true}, function(tabs) { chrome.tabs.remove(tabs[0].id); }); });
 
 	$('#reloadData').click(function() { 

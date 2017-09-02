@@ -476,11 +476,19 @@ chrome.contextMenus.create({
 });
 
 chrome.contextMenus.create({
+	title: 'Changelog',
+	contexts: ['page'],
+	id: 'changelogPage',
+	parentId: 'helpParent',
+	onclick: function() { openLink(chrome.runtime.getURL('html/changelog.html')); }
+});
+
+chrome.contextMenus.create({
 	title: 'FAQ',
 	contexts: ['page'],
 	id: 'faqPage',
 	parentId: 'helpParent',
-	onclick: function() { openLink(chrome.runtime.getURL('html/faq.html')) }
+	onclick: function() { openLink(chrome.runtime.getURL('html/faq.html')); }
 });
 
 chrome.contextMenus.create({
@@ -488,7 +496,7 @@ chrome.contextMenus.create({
 	contexts: ['page'],
 	id: 'helpPage',
 	parentId: 'helpParent',
-	onclick: function() { openLink(chrome.runtime.getURL('html/help.html')) }
+	onclick: function() { openLink(chrome.runtime.getURL('html/help.html')); }
 });
 
 // monitor user data settings to update the context menu

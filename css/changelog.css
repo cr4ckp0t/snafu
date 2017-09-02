@@ -33,43 +33,27 @@ a:hover {
 	text-decoration: underline;
 }
 
-a.faq:link, a.faq:active, a.faq:link {
-	color: #fff;
-	text-decoration: none;
-	cursor: pointer;
-}
-
-a.faq:hover {
-	color: #fff;
-	text-decoration: underline;
-	cursor: pointer;
-}
-
-span.answer {
-	font-weight: bold;
-	font-size: 16px;
-}
-
 div#content {
 	width: 40%;
 	margin: 0 auto;
 }
 
-div#aboutExtension {
-	margin: 0 auto;
-}
-
-h1#header {
+h1 {
 	color: #3eb049;
 	font-weight: bold;
 }
 
-h1#header small {
-	font-style: italic;
+h2 {
+	font-weight: bold;
 }
 
-ul.navbar-nav li a {
-	cursor: pointer;
+h3 {
+	color: grey;
+	text-indent: 15px;
+}
+
+div#aboutExtension {
+	margin: 0 auto;
 }
 
 table#aboutTable td {
