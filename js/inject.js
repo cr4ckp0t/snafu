@@ -241,10 +241,20 @@ const snafuLabelFields = {
 		'EQUIP': ''	// reason the equipment stopped working
 	},
 
+	// replacement build acknowledgement
+	'buildack': {
+		'RITM': '{REQUEST_ITEM}',			// ritm
+		'TECH': '{LABEL_TECH}',				// tech's name
+		'BUILD': '{REPLACE_BUILD}',			// build type
+		'MODEL': '{BROKEN_MODEL}',			// model of broken device
+		'APPS': '{REPLACE_SOFTWARE}',		// additional applications
+		'ENDUSER': '{REPLACE_CUSTOMER}',	// end user
+	},
+
 	// replacement build
 	'build': {
 		'HOSTNAME_TEXT': '{REPLACE_HOSTNAME}',	// replacement build's hostname
-		'TEXT_3': '{LABEL_TECH}',			// technician
+		'TEXT_3': '{LABEL_TECH}',				// technician
 		'TEXT_4': '{REPLACE_BUILD}',			// replacement os and build
 		'RITM#': '{REQUEST_ITEM}',				// ritm number
 		'TEXT_2': '{REPLACE_CUSTOMER}',			// customer
@@ -356,7 +366,7 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 		setTimeout(function() { g_form.submit(); }, inject.detail.finishDelay * 1000);
 
 	// print label from context menu
-	} else if (type === 'printLabelBroken' || type === 'printLabelBuild' || type === 'printLabelDecommission' || type === 'printLabelPurchase' || type === 'printLabelReclaim' || type === 'printLabelRestock' || type === 'printLabelRepair') {
+	} else if (type === 'printLabelBroken' || type === 'printLabelBuild' || type === 'printLabelBuildAck' || type === 'printLabelDecommission' || type === 'printLabelPurchase' || type === 'printLabelReclaim' || type === 'printLabelRestock' || type === 'printLabelRepair') {
 		if (ticketType === false) {
 			snafuErrorMessage('The open ticket is not valid for label printing.');
 		} else {
@@ -381,60 +391,59 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 						for (var field in labelFields) {
 
 							// reclaim and repair labels
-							if (labelType === 'reclaim' || labelType === 'repair') {
-								if (field === 'TEXT_5') {
-									reason = prompt(snafuSprintf('Enter the reason for %s this device.  KEEP IT SHORT!', (labelType === 'reclaim') ? ['reclaiming'] : ['repairing']));
-									if (snafuIsVarEmpty(reason) === true) {
-										console.warn('SNAFU: You must provide a valid reason.');
-										snafuErrorMessage('You must provide a valid reason.  Skipping print job. . .');
-										canPrint = false;
-										break;
-									} else {
-										addressLabel.setObjectText(field, snafuShortenLabelString(reason));
-									}
+							if ((labelType === 'reclaim' || labelType === 'repair') && field === 'TEXT_5') {
+								reason = prompt(snafuSprintf('Enter the reason for %s this device.  KEEP IT SHORT!', (labelType === 'reclaim') ? ['reclaiming'] : ['repairing']));
+								if (snafuIsVarEmpty(reason) === true) {
+									console.warn('SNAFU: You must provide a valid reason.');
+									snafuErrorMessage('You must provide a valid reason.  Skipping print job. . .');
+									canPrint = false;
+									break;
 								} else {
-									addressLabel.setObjectText(field, snafuReplaceWildcards(labelFields[field]));
+									addressLabel.setObjectText(field, snafuShortenLabelString(reason));
 								}
 
 							// broken equipment labels
-							} else if (labelType === 'broken') {
-								if (field === 'EQUIP') {
-									reason = prompt('How is the equipmment broken?  KEEP IT SHORT!');
-									if (snafuIsVarEmpty(reason) === true) {
-										console.warn('SNAFU: You must provide a valid reason.');
-										snafuErrorMessage('You must provide a valid reason.  Skipping print job. . .');
-										canPrint = false;
-										break;
-									} else {
-										addressLabel.setObjectText(field, snafuShortenLabelString(reason));
-									}
+							} else if (labelType === 'broken' && field === 'EQUIP') {
+								reason = prompt('How is the equipmment broken?  KEEP IT SHORT!');
+								if (snafuIsVarEmpty(reason) === true) {
+									console.warn('SNAFU: You must provide a valid reason.');
+									snafuErrorMessage('You must provide a valid reason.  Skipping print job. . .');
+									canPrint = false;
+									break;
 								} else {
-									addressLabel.setObjectText(field, snafuReplaceWildcards(labelFields[field]));
+									addressLabel.setObjectText(field, snafuShortenLabelString(reason));
 								}
 
 							// hot swap build labels
-							} else if (labelType === 'build') {
+							} else if (labelType === 'build' && (field === 'TEXT_4' || field === 'TEXT_8')) {
 								if (field === 'TEXT_4') {
 									addressLabel.setObjectText(field, g_form.getValue('rhs_software').split('\n')[0]);
-								} else if (field === 'TEXT_8') {
+								} else {
 									var buildInput = g_form.getValue('rhs_software');
 									if (buildInput.indexOf('\n') !== -1) {
 										addressLabel.setObjectText(field, snafuShortenLabelString(buildInput.split('\n')[1]));
 									} else {
 										addressLabel.setObjectText(field, 'Standard software load.');
 									}
+								}
+							
+							// build ack labels
+							} else if (labelType === 'buildack' && (field === 'BUILD' || field === 'APPS')) {
+								if (field === 'BUILD') {
+									addressLabel.setObjectText(field, g_form.getValue('rhs_software').split('\n')[0]);
 								} else {
-									addressLabel.setObjectText(field, snafuReplaceWildcards(labelFields[field]));
+									var buildInput = g_form.getValue('rhs_software');
+									if (buildInput.indexOf('\n') !== -1) {
+										addressLabel.setObjectText(field, snafuShortenLabelString(buildInput.split('\n')[1]));
+									} else {
+										addressLabel.setObjectText(field, 'Standard software load.');
+									}
 								}
 
 							// purchase order labels
-							} else if (labelType === 'purchase') {
-								if (field === 'PO' || field === 'MORE_PO') {
-									reason = prompt('Enter up to three PO numbers. Separate them by commas with no spaces. Each one will be put on the new line.');
-									if (snafuIsVarEmpty(reason) === false) addressLabel.setObjectText(field, (reason.indexOf(',') !== -1) ? reason.replace(/,/g, '\r\n') : reason);
-								} else {
-									addressLabel.setObjectText(field, snafuReplaceWildcards(labelFields[field]));
-								}
+							} else if (labelType === 'purchase' && (field === 'PO' || field === 'MORE_PO')) {
+								reason = prompt('Enter up to three PO numbers. Separate them by commas with no spaces. Each one will be put on the new line.');
+								if (snafuIsVarEmpty(reason) === false) addressLabel.setObjectText(field, (reason.indexOf(',') !== -1) ? reason.replace(/,/g, '\r\n') : reason);
 
 							// "the rest"
 							} else {
@@ -568,7 +577,7 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 					}
 
 					// print labels
-					if (inject.detail.printLabels === true && type === 'autoClose' && ticketType === 'rhs_reclaim') {
+					if (inject.detail.printLabels === true && ((type === 'autoClose' && ticketType === 'rhs_reclaim') || (type === 'autoAcknowledge' && ticketType === 'rhs_build'))) {
 						// make sure we have a valid printer
 						var printers = dymo.label.framework.getPrinters().filter(function(printer) { return (printer.isConnected === true && printer.isLocal === true) });
 						if (printers.length > 0) {
@@ -578,7 +587,7 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 							if (snafuIsVarEmpty(printerName) === false) {
 								
 								// determine the label type from the ticket type
-								var labelType = 'reclaim';
+								var labelType = (ticketType === 'rhs_build') ? 'buildack' : 'reclaim';
 								if (snafuLabelFields[labelType] === undefined) {
 									console.warn('SNAFU: Dymo label type returned invalid.  Skipping print job. . .');
 									snafuErrorMessage('Dymo label type returned invalid.  Skipping print job. . .');
@@ -588,20 +597,32 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 									var reason = ''
 									var canPrint = true;
 									for (var field in labelFields) {
-										if (labelType === 'reclaim' || labelType === 'repair') {
-											if (field === 'TEXT_5') {
-												reason = prompt(snafuSprintf('Enter the reason for %s this device.  KEEP IT SHORT!', (labelType === 'reclaim') ? ['reclaiming'] : ['repairing']));
-												if (snafuIsVarEmpty(reason) === true) {
-													console.warn('SNAFU: You must provide a valid reason.');
-													snafuErrorMessage('You must provide a valid reason.  Skipping print job. . .');
-													canPrint = false;
-													break;
-												} else {
-													addressLabel.setObjectText(field, snafuShortenLabelString(reason));
-												}
+										// reclaim label
+										if (labelType === 'reclaim' && field === 'TEXT_5') {
+											reason = prompt(snafuSprintf('Enter the reason for %s this device.  KEEP IT SHORT!', (labelType === 'reclaim') ? ['reclaiming'] : ['repairing']));
+											if (snafuIsVarEmpty(reason) === true) {
+												console.warn('SNAFU: You must provide a valid reason.');
+												snafuErrorMessage('You must provide a valid reason.  Skipping print job. . .');
+												canPrint = false;
+												break;
 											} else {
-												addressLabel.setObjectText(field, snafuReplaceWildcards(labelFields[field]));
+												addressLabel.setObjectText(field, snafuShortenLabelString(reason));
 											}
+
+										// build ack labels
+										} else if (labelType === 'buildack' && (field === 'BUILD' || field === 'APPS')) {
+											if (field === 'BUILD') {
+												addressLabel.setObjectText(field, g_form.getValue('rhs_software').split('\n')[0]);
+											} else {
+												var buildInput = g_form.getValue('rhs_software');
+												if (buildInput.indexOf('\n') !== -1) {
+													addressLabel.setObjectText(field, snafuShortenLabelString(buildInput.split('\n')[1]));
+												} else {
+													addressLabel.setObjectText(field, 'Standard software load.');
+												}
+											}
+										
+										// catch the rest
 										} else {
 											addressLabel.setObjectText(field, snafuReplaceWildcards(labelFields[field]));
 										}
@@ -807,33 +828,32 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 								var reason = ''
 								var canPrint = true;
 								for (var field in labelFields) {
-									if (labelType === 'reclaim' || labelType === 'repair') {
-										if (field === 'TEXT_5') {
-											reason = prompt(snafuSprintf('Enter the reason for %s this device.  KEEP IT SHORT!', (labelType === 'reclaim') ? ['reclaiming'] : ['repairing']));
-											if (snafuIsVarEmpty(reason) === true) {
-												console.warn('SNAFU: You must provide a valid reason.');
-												snafuErrorMessage('You must provide a valid reason.  Skipping print job. . .');
-												canPrint = false;
-												break;
-											} else {
-												addressLabel.setObjectText(field, snafuShortenLabelString(reason));
-											}
+									// reclaim and repair labels
+									if ((labelType === 'reclaim' || labelType === 'repair') && field === 'TEXT_5') {
+										reason = prompt(snafuSprintf('Enter the reason for %s this device.  KEEP IT SHORT!', (labelType === 'reclaim') ? ['reclaiming'] : ['repairing']));
+										if (snafuIsVarEmpty(reason) === true) {
+											console.warn('SNAFU: You must provide a valid reason.');
+											snafuErrorMessage('You must provide a valid reason.  Skipping print job. . .');
+											canPrint = false;
+											break;
 										} else {
-											addressLabel.setObjectText(field, snafuReplaceWildcards(labelFields[field]));
+											addressLabel.setObjectText(field, snafuShortenLabelString(reason));
 										}
-									} else if (labelType === 'build') {
+		
+									// hot swap build labels
+									} else if (labelType === 'build' && (field === 'TEXT_4' || field === 'TEXT_8')) {
 										if (field === 'TEXT_4') {
 											addressLabel.setObjectText(field, g_form.getValue('rhs_software').split('\n')[0]);
-										} else if (field === 'TEXT_8') {
+										} else {
 											var buildInput = g_form.getValue('rhs_software');
 											if (buildInput.indexOf('\n') !== -1) {
 												addressLabel.setObjectText(field, snafuShortenLabelString(buildInput.split('\n')[1]));
 											} else {
 												addressLabel.setObjectText(field, 'Standard software load.');
 											}
-										} else {
-											addressLabel.setObjectText(field, snafuReplaceWildcards(labelFields[field]));
 										}
+
+									// "the rest"
 									} else {
 										addressLabel.setObjectText(field, snafuReplaceWildcards(labelFields[field]));
 									}
@@ -1157,6 +1177,11 @@ function snafuGetDymoLabelXml(type) {
 		// build label
 		case 'build':
 			return '<?xml version="1.0" encoding="utf-8"?><DieCutLabel Version="8.0" Units="twips"><PaperOrientation>Landscape</PaperOrientation><Id>Address</Id><IsOutlined>false</IsOutlined><PaperName>30252 Address</PaperName><DrawCommands><RoundRectangle X="0" Y="0" Width="1581" Height="5040" Rx="270" Ry="270" /></DrawCommands><ObjectInfo><TextObject><Name>TEXT</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String xml:space="preserve">Host Name:</String><Attributes><Font Family="Arial" Size="12" Bold="True" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" HueScale="100" /></Attributes></Element></StyledText></TextObject><Bounds X="331" Y="472.311157226563" Width="1350" Height="360" /></ObjectInfo><ObjectInfo><TextObject><Name>HOSTNAME_TEXT</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String xml:space="preserve">DTXXXXXXXXXX</String><Attributes><Font Family="Arial" Size="12" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" HueScale="100" /></Attributes></Element></StyledText></TextObject><Bounds X="1727.69787597656" Y="480.576568603516" Width="3099.9208984375" Height="345" /></ObjectInfo><ObjectInfo><DateTimeObject><Name>DATE-TIME</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><DateTimeFormat>LongSystemDate</DateTimeFormat><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><PreText>Date Built: </PreText><PostText /><IncludeTime>False</IncludeTime><Use24HourFormat>False</Use24HourFormat></DateTimeObject><Bounds X="331" Y="843.150024414063" Width="3535.39453125" Height="216" /></ObjectInfo><ObjectInfo><TextObject><Name>TEXT_3</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Right</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String xml:space="preserve">Tech: Adam Koch</String><Attributes><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" HueScale="100" /></Attributes></Element></StyledText></TextObject><Bounds X="3513" Y="849.599975585938" Width="1440" Height="216" /></ObjectInfo><ObjectInfo><TextObject><Name>TEXT_4</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Right</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String xml:space="preserve">W7, &lt;BUILD&gt;</String><Attributes><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" HueScale="100" /></Attributes></Element></StyledText></TextObject><Bounds X="2634.90649414063" Y="58" Width="2318.09350585938" Height="216" /></ObjectInfo><ObjectInfo><TextObject><Name>TEXT_5</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String xml:space="preserve">Apps:</String><Attributes><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" HueScale="100" /></Attributes></Element></StyledText></TextObject><Bounds X="331" Y="1064.25" Width="452" Height="210" /></ObjectInfo><ObjectInfo><TextObject><Name>TEXT_6</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String xml:space="preserve">Customer:</String><Attributes><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" HueScale="100" /></Attributes></Element></StyledText></TextObject><Bounds X="331" Y="1277" Width="827" Height="216" /></ObjectInfo><ObjectInfo><TextObject><Name>RITM#</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Right</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String xml:space="preserve">RITMXXXXXXX</String><Attributes><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" HueScale="100" /></Attributes></Element></StyledText></TextObject><Bounds X="3105.6259765625" Y="242.37272644043" Width="1847.3740234375" Height="216" /></ObjectInfo><ObjectInfo><TextObject><Name>TEXT_2</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Top</VerticalAlignment><TextFitMode>ShrinkToFit</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String xml:space="preserve">&lt;CUSTOMER&gt;</String><Attributes><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" HueScale="100" /></Attributes></Element></StyledText></TextObject><Bounds X="1248" Y="1268" Width="2880" Height="225" /></ObjectInfo><ObjectInfo><TextObject><Name>TEXT_8</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Top</VerticalAlignment><TextFitMode>ShrinkToFit</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String xml:space="preserve">Office, Skype</String><Attributes><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" HueScale="100" /></Attributes></Element></StyledText></TextObject><Bounds X="858" Y="1058" Width="2880" Height="210" /></ObjectInfo><ObjectInfo><BarcodeObject><Name>BARCODE</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName>HOSTNAME_TEXT</LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>True</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><Text>DTXXXXXXXXXX</Text><Type>Code39</Type><Size>Small</Size><TextPosition>None</TextPosition><TextFont Family="Arial" Size="8" Bold="False" Italic="False" Underline="False" Strikeout="False" /><CheckSumFont Family="Arial" Size="8" Bold="False" Italic="False" Underline="False" Strikeout="False" /><TextEmbedding>None</TextEmbedding><ECLevel>0</ECLevel><HorizontalAlignment>Left</HorizontalAlignment><QuietZonesPadding Left="0" Top="0" Right="0" Bottom="0" /></BarcodeObject><Bounds X="331" Y="133" Width="3180" Height="285" /></ObjectInfo></DieCutLabel>';
+			break;
+
+		// build ack label
+		case 'buildack':
+			return '<?xml version="1.0" encoding="utf-8"?><DieCutLabel Version="8.0" Units="twips"><PaperOrientation>Landscape</PaperOrientation><Id>Address</Id><IsOutlined>false</IsOutlined><PaperName>30252 Address</PaperName><DrawCommands><RoundRectangle X="0" Y="0" Width="1581" Height="5040" Rx="270" Ry="270" /></DrawCommands><ObjectInfo><TextObject><Name>RITM</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Top</VerticalAlignment><TextFitMode>ShrinkToFit</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String xml:space="preserve">RITM0123456</String><Attributes><Font Family="Arial" Size="14" Bold="True" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" HueScale="100" /></Attributes></Element></StyledText></TextObject><Bounds X="331" Y="57.9999999999999" Width="2085" Height="345" /></ObjectInfo><ObjectInfo><TextObject><Name>TEXT_1</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>ShrinkToFit</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String xml:space="preserve">Tech:</String><Attributes><Font Family="Arial" Size="12" Bold="True" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" HueScale="100" /></Attributes></Element></StyledText></TextObject><Bounds X="331" Y="345" Width="734.999999999999" Height="285" /></ObjectInfo><ObjectInfo><TextObject><Name>BUILD</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Right</HorizontalAlignment><VerticalAlignment>Top</VerticalAlignment><TextFitMode>ShrinkToFit</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String xml:space="preserve">Other-Mandatory</String><Attributes><Font Family="Arial" Size="12" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" HueScale="100" /></Attributes></Element></StyledText></TextObject><Bounds X="2358" Y="57.9999999999999" Width="2595" Height="285" /></ObjectInfo><ObjectInfo><TextObject><Name>TEXT__1</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>ShrinkToFit</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String xml:space="preserve">Apps:</String><Attributes><Font Family="Arial" Size="12" Bold="True" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" HueScale="100" /></Attributes></Element></StyledText></TextObject><Bounds X="331" Y="630" Width="734.999999999999" Height="285" /></ObjectInfo><ObjectInfo><TextObject><Name>TEXT__2</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>ShrinkToFit</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String xml:space="preserve">EU:</String><Attributes><Font Family="Arial" Size="12" Bold="True" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" HueScale="100" /></Attributes></Element></StyledText></TextObject><Bounds X="331" Y="1208" Width="464.999999999999" Height="285" /></ObjectInfo><ObjectInfo><TextObject><Name>TECH</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Top</VerticalAlignment><TextFitMode>ShrinkToFit</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String xml:space="preserve">Adam K.</String><Attributes><Font Family="Arial" Size="12" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" HueScale="100" /></Attributes></Element></StyledText></TextObject><Bounds X="1143" Y="345" Width="1875" Height="285" /></ObjectInfo><ObjectInfo><TextObject><Name>APPS</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Top</VerticalAlignment><TextFitMode>ShrinkToFit</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String xml:space="preserve">Standard software load.</String><Attributes><Font Family="Arial" Size="12" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" HueScale="100" /></Attributes></Element></StyledText></TextObject><Bounds X="1143" Y="645" Width="3810" Height="285" /></ObjectInfo><ObjectInfo><TextObject><Name>TEXT___1</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>ShrinkToFit</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String xml:space="preserve">Model:</String><Attributes><Font Family="Arial" Size="12" Bold="True" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" HueScale="100" /></Attributes></Element></StyledText></TextObject><Bounds X="331" Y="915" Width="854.999999999999" Height="285" /></ObjectInfo><ObjectInfo><TextObject><Name>MODEL</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Top</VerticalAlignment><TextFitMode>ShrinkToFit</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String xml:space="preserve">800 G1 USDT</String><Attributes><Font Family="Arial" Size="12" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" HueScale="100" /></Attributes></Element></StyledText></TextObject><Bounds X="1143" Y="930" Width="3810" Height="285" /></ObjectInfo><ObjectInfo><TextObject><Name>ENDUSER</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Top</VerticalAlignment><TextFitMode>ShrinkToFit</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String xml:space="preserve">Anya Decoteau</String><Attributes><Font Family="Arial" Size="12" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" HueScale="100" /></Attributes></Element></StyledText></TextObject><Bounds X="1143" Y="1208" Width="3810" Height="285" /></ObjectInfo><ObjectInfo><DateTimeObject><Name>DATE-TIME</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Right</HorizontalAlignment><VerticalAlignment>Top</VerticalAlignment><TextFitMode>ShrinkToFit</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><DateTimeFormat>DayAbbrMonthYear</DateTimeFormat><Font Family="Arial" Size="12" Bold="False" Italic="False" Underline="False" Strikeout="False" /><PreText /><PostText /><IncludeTime>False</IncludeTime><Use24HourFormat>False</Use24HourFormat></DateTimeObject><Bounds X="3228" Y="345" Width="1725" Height="285" /></ObjectInfo></DieCutLabel>';
 			break;
 		
 		// decommission label

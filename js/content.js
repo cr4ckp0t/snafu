@@ -180,6 +180,7 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                     break;
 
                 case 'printLabelBuild':
+                case 'printLabelBuildAck':
                 case 'printLabelBroken':
                 case 'printLabelDecommission':
                 case 'printLabelPurchase':

@@ -389,12 +389,12 @@ chrome.contextMenus.create({
 	parentId: 'snafuParent'
 });
 
-const menuLblTypes = ['build', 'decommission', 'reclaim', 'repair', 'restock']
+const menuLblTypes = ['build', 'buildack', 'decommission', 'reclaim', 'repair', 'restock']
 for (var i = 0; i < menuLblTypes.length; i++) {
 	chrome.contextMenus.create({
-		title: sprintf('%s Label', [ucwords(menuLblTypes[i])]),
+		title: sprintf('%s Label', [(menuLblTypes[i] === 'buildack') ? 'Build Acknowledgement' : ucwords(menuLblTypes[i])]),
 		contexts: ['page'],
-		id: 'printLabel' + ucwords(menuLblTypes[i]),
+		id: sprintf('printLabel%s', [(menuLblTypes[i] === 'buildack') ? 'BuildAck' : ucwords(menuLblTypes[i])]),
 		parentId: 'printLabelParent',
 		documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
 		onclick: actionHandler
