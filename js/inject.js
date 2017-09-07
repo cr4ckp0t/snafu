@@ -447,7 +447,7 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 
 							// "the rest"
 							} else {
-								addressLabel.setObjectText(field, snafuReplaceWildcards(labelFields[field]));
+								addressLabel.setObjectText(field, snafuShortenLabelString(snafuReplaceWildcards(labelFields[field])));
 							}
 						}
 
@@ -624,7 +624,7 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 										
 										// catch the rest
 										} else {
-											addressLabel.setObjectText(field, snafuReplaceWildcards(labelFields[field]));
+											addressLabel.setObjectText(field, snafuShortenLabelString(snafuReplaceWildcards(labelFields[field])));
 										}
 									}
 
@@ -855,7 +855,7 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 
 									// "the rest"
 									} else {
-										addressLabel.setObjectText(field, snafuReplaceWildcards(labelFields[field]));
+										addressLabel.setObjectText(field, snafuShortenLabelString(snafuReplaceWildcards(labelFields[field])));
 									}
 								}
 
