@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### ToDo
+- Detect laptop or desktop via incident root cause to select appropriate resolve reason.
+- Quarantine and repair logs.
+
 ## 1.2.1 [2019-09-07]
 ### Added
 - Build acknowledgement label.
@@ -11,9 +17,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Cleaned up label printing code.
 - All strings sent to labels will be run through the shortening function.
-
-### ToDo
-- Quarantine and repair logs.
 
 ## 1.2.0 [2017-09-02]
 ### Added
