@@ -58,7 +58,7 @@ chrome.contextMenus.create({
 chrome.contextMenus.create({
 	title: 'Auto Close',
 	contexts: ['page'],
-	id: 'autoClosure',
+	id: 'autoClose',
 	parentId: 'snafuParent',
 	documentUrlPatterns: docPatterns,
 	onclick: actionHandler

@@ -4,13 +4,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## 1.2.2 [2017-09-12]
+### Added
+- Labels will only manually print for tickets for which they're designed.
+    - For example, can't manually print a restock label for a build.
+- Added label printing for Reimage Only acknowledgements and builds.
+
+### Changed
+- Script when closing reimage reclaim tasks.
 
 ### ToDo
 - Detect laptop or desktop via incident root cause to select appropriate resolve reason.
-- Quarantine and repair logs.
+- Repair/decommission logs (maybe?).
 
-## 1.2.1 [2019-09-07]
+## 1.2.1 [2017-09-07]
 ### Added
 - Build acknowledgement label.
 
