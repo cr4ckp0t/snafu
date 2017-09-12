@@ -677,6 +677,19 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 														addressLabel.setObjectText(field, 'Standard software load.');
 													}
 												}
+
+											// reimage only labels
+											} else if (labelType === 'reimage' && (field === 'TEXT_4' || field === 'TEXT_8')) {
+												if (field === 'TEXT_4') {
+													addressLabel.setObjectText(field, g_form.getValue('rhs_software').split('\n')[0]);
+												} else {
+													var buildInput = g_form.getValue('rhs_software');
+													if (buildInput.indexOf('\n') !== -1) {
+														addressLabel.setObjectText(field, snafuShortenLabelString(buildInput.split('\n')[1]));
+													} else {
+														addressLabel.setObjectText(field, 'Standard software load.');
+													}
+												}
 											
 											// catch the rest
 											} else {
