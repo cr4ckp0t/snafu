@@ -164,7 +164,7 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                 case 'autoHandle':
                 case 'autoAcknowledge':
                 case 'autoEnRoute':
-                case 'autoClosure':
+                case 'autoClose':
                     if (ticketType === false) {
                         sendResponse({success: false, errMsg: 'Unable to detect an open task or incident.'});
                     } else {
@@ -358,7 +358,7 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
         }
 
         // prevent any shenanigans
-        if (isVarEmpty(injectData) === false || isVarEmpty(injectData.type) === false) {
+        if (isVarEmpty(injectData) === false && "type" in injectData) {
             // custom event for sending data to the injected script
             var injectEvent = document.createEvent('CustomEvent');
             injectEvent.initCustomEvent('SNAFU_Inject', true, true, injectData);

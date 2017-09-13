@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.2.4 [2017-09-13]
+### Fixed
+- Fixed bug with automatic closures.
+
 ## 1.2.3 [2017-09-12]
 ### Fixed
 - Reimage build labels will now print the software correctly.

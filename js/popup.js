@@ -307,7 +307,7 @@ $(document).ready(function() {
     // send auto closure
     $('#sendAutoClosure').click(function() {
         chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-            chrome.tabs.sendMessage(tabs[0].id, { type: 'autoClosure' });
+            chrome.tabs.sendMessage(tabs[0].id, { type: 'autoClose' });
         });
     });
 
