@@ -237,9 +237,10 @@ const snafuAutoTickets = {
 const snafuLabelFields = {
 	// broken equipment
 	'broken': {
-		'ticketType': true,		// to force correct printing
-		'TICKET': '{TICKET}',	// ticket number
-		'EQUIP': ''				// reason the equipment stopped working
+		'ticketType': true,			// to force correct printing
+		'TICKET': '{TICKET}',		// ticket number
+		'TECH': '{LABEL_INC_TECH}',	// technician
+		'EQUIP': ''			 		// reason the equipment stopped working
 	},
 
 	// replacement build acknowledgement
@@ -331,13 +332,23 @@ const snafuLabelFields = {
 	}
 }
 
+// attempt to set the resolve types via the root cause ci
 const snafuResolveTypes = {
 	// hardware types
 	'DT': { 'type_1': 'Hardware', 'type_2': 'Desktop' },
-	'Keyboard': { 'type_1': 'Hardware', 'type_2': 'Keyboard' },
 	'LT': { 'type_1': 'Hardware', 'type_2': 'Laptop' },
-	'Monitor': { 'type_1': 'Hardware', 'type_2': 'Monitor' },
-	'Mouse': { 'type_1': 'Hardware', 'type_2': 'Mouse' },
+	'TB': { 'type_1': 'Hardware', 'type_2': 'Tablet' },
+
+	// generic hardware
+	'keyboard': { 'type_1': 'Hardware', 'type_2': 'Keyboard' },
+	'monitor': { 'type_1': 'Hardware', 'type_2': 'Monitor' },
+	'mouse': { 'type_1': 'Hardware', 'type_2': 'Mouse' },
+	'barcode': { 'type_1': 'Hardware', 'type_2': 'Scanner-W' },
+	'scanner': { 'type_1': 'Hardware', 'type_2': 'Scanner-W' },
+
+	// printers
+	'logic': { 'type_1': 'Software', 'type_2': 'Configuration' },
+	'printer': { 'type_1': 'Hardware', 'type_2': 'Printer' },
 }
 
 // listen for triggers on the custom event for passing text
@@ -447,7 +458,7 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 
 								// broken equipment labels
 								} else if (labelType === 'broken' && field === 'EQUIP') {
-									reason = prompt('How is the equipmment broken?  KEEP IT SHORT!');
+									reason = prompt('What equipment is broken?  KEEP IT SHORT!');
 									if (snafuIsVarEmpty(reason) === true) {
 										console.warn('SNAFU: You must provide a valid reason.');
 										snafuErrorMessage('You must provide a valid reason.  Skipping print job. . .');
@@ -769,8 +780,14 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 					snafuSetValue('u_customer_communication', 'Spoke to Customer');
 					snafuFlash('u_customer_communication');
 
-					// set to desktop/laptop if appropriate
+					// attempt to set the resolve types based on information in the ticket
+					var resolveTypes = snafuGetResolveType(g_form.getReference('cmdb_ci').name);
+					if (resolveTypes !== false) {
+						snafuSetValue('u_dell_resolve_1', resolveTypes.type_1);
 
+						// set the second one 500ms after the first to allow it to populate
+						setTimeout(function() { snafuSetValue('u_dell_resolve_2', resolveTypes.type_2) }, 500);	
+					}
 
 					if (snafuIsVarEmpty(workNotes) === false) {
 						snafuSetValue('close_notes', workNotes);
@@ -1046,6 +1063,7 @@ function snafuReplaceWildcards(strIn) {
 		// miscellaneous
 		"{ABS_MACHINE}": "g_form.getReference('cmdb_ci').name || 'UNKNOWN';",												// absolute install device
 		"{LABEL_TECH}": "snafuSprintf('%s %s.', [snafuUcwords(g_form.getReference('request_item.request.requested_for').first_name), g_form.getReference('request_item.request.requested_for').last_name.charAt(0).toUpperCase()]) || 'UNKNOWN';",										
+		"{LABEL_INC_TECH}": "snafuSprintf('%s %s.', [snafuUcwords(g_form.getReference('assigned_to').first_name), g_form.getReference('assigned_to').last_name.charAt(0).toUpperCase()]) || 'UNKNOWN';",
 	};
 	
 	// use regular expressions to find matches and send them for processing
@@ -1208,6 +1226,28 @@ function snafuIsResolveCode(field, value) {
 }
 
 /**
+ * Attempts to determine the resolve types.
+ * @param	{String}	cmdb
+ * @return	{String|Boolean}
+ */
+function snafuGetResolveType(cmdb) {
+	var firstTwo = cmdb.substr(0, 2).toUpperCase();
+	// dt, lt, or tb
+	if (firstTwo in snafuResolveTypes) {
+		return snafuResolveTypes[firstTwo];	
+	} else {
+		for (var keyword in snafuResolveTypes) {
+			if (keyword !== 'DT' && keyword !== 'LT' && keyword !== 'TB') {
+				if (cmdb.toLowerCase().indexOf(keyword) !== -1) {
+					return snafuResolveTypes[keyword];
+				}
+			}
+		}
+		return false;
+	}
+}
+
+/**
  * Determines campus from ID.
  * @param	{String}	uid
  * @return	{String}
@@ -1279,7 +1319,7 @@ function snafuGetDymoLabelXml(type) {
 
 		// broken equipment label
 		case 'broken':
-			return '<?xml version="1.0" encoding="utf-8"?><DieCutLabel Version="8.0" Units="twips"><PaperOrientation>Landscape</PaperOrientation><Id>Address</Id><IsOutlined>false</IsOutlined><PaperName>30252 Address</PaperName><DrawCommands><RoundRectangle X="0" Y="0" Width="1581" Height="5040" Rx="270" Ry="270" /></DrawCommands><ObjectInfo><DateTimeObject><Name>DATE-TIME</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Right</HorizontalAlignment><VerticalAlignment>Bottom</VerticalAlignment><TextFitMode>ShrinkToFit</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><DateTimeFormat>DayAbbrMonthLongYear</DateTimeFormat><Font Family="Arial" Size="12" Bold="False" Italic="False" Underline="False" Strikeout="False" /><PreText /><PostText /><IncludeTime>False</IncludeTime><Use24HourFormat>False</Use24HourFormat></DateTimeObject><Bounds X="2973" Y="1163" Width="1980" Height="330" /></ObjectInfo><ObjectInfo><TextObject><Name>TEXT</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Top</VerticalAlignment><TextFitMode>ShrinkToFit</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String xml:space="preserve">Broken Equipment</String><Attributes><Font Family="Arial" Size="14" Bold="True" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" HueScale="100" /></Attributes></Element></StyledText></TextObject><Bounds X="331" Y="57.9999999999999" Width="2282" Height="285" /></ObjectInfo><ObjectInfo><TextObject><Name>TICKET</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Bottom</VerticalAlignment><TextFitMode>ShrinkToFit</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String xml:space="preserve">INCXXXXXXX</String><Attributes><Font Family="Arial" Size="12" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" HueScale="100" /></Attributes></Element></StyledText></TextObject><Bounds X="331" Y="1208" Width="1995" Height="285" /></ObjectInfo><ObjectInfo><TextObject><Name>EQUIP</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>ShrinkToFit</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String xml:space="preserve">Broken Equipment</String><Attributes><Font Family="Arial" Size="16" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" HueScale="100" /></Attributes></Element></StyledText></TextObject><Bounds X="331" Y="390" Width="4622" Height="720" /></ObjectInfo></DieCutLabel>'
+			return '<?xml version="1.0" encoding="utf-8"?><DieCutLabel Version="8.0" Units="twips"><PaperOrientation>Landscape</PaperOrientation><Id>Address</Id><IsOutlined>false</IsOutlined><PaperName>30252 Address</PaperName><DrawCommands><RoundRectangle X="0" Y="0" Width="1581" Height="5040" Rx="270" Ry="270" /></DrawCommands><ObjectInfo><DateTimeObject><Name>DATE-TIME</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Right</HorizontalAlignment><VerticalAlignment>Top</VerticalAlignment><TextFitMode>ShrinkToFit</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><DateTimeFormat>DayAbbrMonthLongYear</DateTimeFormat><Font Family="Arial" Size="12" Bold="False" Italic="False" Underline="False" Strikeout="False" /><PreText /><PostText /><IncludeTime>False</IncludeTime><Use24HourFormat>False</Use24HourFormat></DateTimeObject><Bounds X="2973" Y="57.9999999999999" Width="1980" Height="330" /></ObjectInfo><ObjectInfo><TextObject><Name>TEXT</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Top</VerticalAlignment><TextFitMode>ShrinkToFit</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String xml:space="preserve">Broken Equipment</String><Attributes><Font Family="Arial" Size="14" Bold="True" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" HueScale="100" /></Attributes></Element></StyledText></TextObject><Bounds X="331" Y="57.9999999999999" Width="2282" Height="285" /></ObjectInfo><ObjectInfo><TextObject><Name>TICKET</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Bottom</VerticalAlignment><TextFitMode>ShrinkToFit</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String xml:space="preserve">INCXXXXXXX</String><Attributes><Font Family="Arial" Size="12" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" HueScale="100" /></Attributes></Element></StyledText></TextObject><Bounds X="331" Y="1208" Width="1995" Height="285" /></ObjectInfo><ObjectInfo><TextObject><Name>EQUIP</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>ShrinkToFit</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String xml:space="preserve">Broken Equipment</String><Attributes><Font Family="Arial" Size="16" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" HueScale="100" /></Attributes></Element></StyledText></TextObject><Bounds X="331" Y="390" Width="4622" Height="720" /></ObjectInfo><ObjectInfo><TextObject><Name>TECH</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Right</HorizontalAlignment><VerticalAlignment>Bottom</VerticalAlignment><TextFitMode>ShrinkToFit</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String xml:space="preserve">Adam K.</String><Attributes><Font Family="Arial" Size="12" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" HueScale="100" /></Attributes></Element></StyledText></TextObject><Bounds X="2823" Y="1208" Width="2130" Height="285" /></ObjectInfo></DieCutLabel>';
 			break;
 
 		// build & reimage labels
