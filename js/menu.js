@@ -421,6 +421,15 @@ chrome.contextMenus.create({
 	onclick: actionHandler
 });
 
+chrome.contextMenus.create({
+	title: 'Prebuilt Device Label',
+	contexts: ['page'],
+	id: 'printLabelPrebuilt',
+	parentId: 'printLabelParent',
+	documentUrlPatterns: docPatterns,
+	onclick: actionHandler
+});
+
 chrome.contextMenus.create({type: 'separator', parentId: 'snafuParent'});
 
 /**

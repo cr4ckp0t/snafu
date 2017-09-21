@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.2.6 [2017-09-21]
+### Added
+- Prebuilt device label.
+
+### Changed
+- Updated automation to accomodate requested Service Now changes.
+
 ## 1.2.5 [2017-09-14]
 ### Added
 - VERY basic resolve type detection based on the Root Cause CI of an incident.

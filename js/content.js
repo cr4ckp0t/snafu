@@ -184,10 +184,11 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                 case 'printLabelBroken':
                 case 'printLabelDecommission':
                 case 'printLabelPurchase':
+                case 'printLabelPrebuilt':
                 case 'printLabelReclaim':
                 case 'printLabelRepair':
                 case 'printLabelRestock':
-                    if (msg.type !== 'printLabelBroken' && ticketType !== 'task') {
+                    if ((msg.type !== 'printLabelPurchase' && msg.type !== 'printLabelPrebuilt' && msg.type !== 'printLabelBroken') && ticketType !== 'task') {
                         sendResponse({success: false, errMsg: 'Unable to detect an open task.'});
                     } else {
                         injectData = {type: msg.type}

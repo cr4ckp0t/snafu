@@ -22,24 +22,24 @@
  *  access to page variables, so we have to inject code and use Custom Events
  *  to pass data between the extension and the page.
  **/
-const snafuRslvComments = "My name is {TECH_NAME} and I was the technician that assisted you with {TICKET}. Thank you for the opportunity to provide you with service today with your {INC_TYPE}. If for any reason, your issue does not appear to be resolved please contact the Service Desk at (864) 455-8000.";
+//const snafuRslvComments = "My name is {TECH_NAME} and I was the technician that assisted you with {TICKET}. Thank you for the opportunity to provide you with service today with your {INC_TYPE}. If for any reason, your issue does not appear to be resolved please contact the Service Desk at (864) 455-8000.";
 const snafuAutoTickets = { 
 	// misc
 	'generic_task': {
 		'field': 'state',
-		'ack': { 'script': 'Acknowledging task.', 'value': '2' },
+		'ack': { 'script': 'Acknowledging task. Contacting {REQUESTED_FOR} at the number provided.', 'value': '2' },
 		'enRoute': { 'script': 'En route to complete task', 'value': '2' },
 		'close': null
 	},
 	'generic_incident': {
 		'field': 'incident_state',
-		'ack': { 'script': 'Acknowledging incident.', 'value': '3' },
+		'ack': { 'script': 'Acknowledging incident. Calling {INC_CUST_FNAME} at {INC_CUR_PHONE}.', 'value': '3' },
 		'enRoute': { 'script': 'En route to troubleshoot the device.', 'value': '3' },
 		'close': null
 	},
 	'general_request': {
 		'field': 'state',
-		'ack': { 'script': 'Acknowledging general request task.', 'value': '2' },
+		'ack': { 'script': 'Acknowledging general request task. Contacting {REQUESTED_FOR} at the number provided.', 'value': '2' },
 		'enRoute': { 'script': 'En route to complete the general request.', 'value': '2' },
 		'close': null
 	},
@@ -47,13 +47,13 @@ const snafuAutoTickets = {
 	// equipment move/remove
 	'equip_removal': {
 		'field': 'state',
-		'ack': { 'script': 'Acknowledging equipment removal.', 'value': '2' },
+		'ack': { 'script': 'Acknowledging equipment removal. Contacting {REQUESTED_FOR} at the number provided.', 'value': '2' },
 		'enRoute': { 'script': 'En route to complete equipment removal', 'value': '2' },
 		'close': { 'script': 'Equipment removed, per {REQUESTED_BY}\'s request.', 'value': '3' }
 	},
 	'equip_disconnect': {
 		'field': 'state',
-		'ack': { 'script': 'Acknowledging equipment disconnect task.', 'value': '2' },
+		'ack': { 'script': 'Acknowledging equipment disconnect task. Contacting {REQUESTED_FOR} at the number provided.', 'value': '2' },
 		'enRoute': { 'script': 'En route to complete equipment disconnect.', 'value': '2' },
 		'close': { 'script': 'Equipment disconnected, per {REQUESTED_BY}\'s request.', 'value': '3' }
 	},
@@ -148,7 +148,7 @@ const snafuAutoTickets = {
 	},
 	'po_install_items': {
 		'field': 'state',
-		'ack': { 'script': 'Acknowledging equipment install task.', 'value': '2' },
+		'ack': { 'script': 'Acknowledging equipment install task. Contacting {REQUESTED_FOR} at the number provided.', 'value': '2' },
 		'enRoute': { 'script': 'En route to complete equipment installation.', 'value': '2' },
 		'close': { 'script': 'Installed equipment and attached signed completion sheet.', 'value': '3' }
 	},
@@ -168,7 +168,7 @@ const snafuAutoTickets = {
 	},
 	'spr_install': {
 		'field': 'state',
-		'ack': { 'script': 'Acknowledging SPR install task.', 'value': '2' },
+		'ack': { 'script': 'Acknowledging SPR install task. Contacting {REQUESTED_FOR} at the number provided.', 'value': '2' },
 		'enRoute': { 'script': 'En route to complete SPR installation.', 'value': '2' },
 		'close': { 'script': 'Completed SPR installation and attached signed completion sheet.', 'value': '3' }
 	},
@@ -189,7 +189,7 @@ const snafuAutoTickets = {
 	},
 	'loaner_deploy': {
 		'field': 'state',
-		'ack': { 'script': 'Acknowledging loaner deployment task.', 'value': '2' },
+		'ack': { 'script': 'Acknowledging loaner deployment task. Contacting {REQUESTED_FOR} at the number provided.', 'value': '2' },
 		'enRoute': { 'script': 'En route to complete loaner deployment.', 'value': '2' },
 		'close': { 'script': 'Delivered requested loaner device(s) and attached signed loaner form.', 'value': '3' }
 	},
@@ -211,7 +211,7 @@ const snafuAutoTickets = {
 	// application install request
 	'app_install': {
 		'field': 'state',
-		'ack': { 'script': 'Acknowledging application install request.', 'value': '2' },
+		'ack': { 'script': 'Acknowledging application install request. Contacting {REQUESTED_FOR} at the number provided.', 'value': '2' },
 		'enRoute': { 'script': 'Installing requested application on the device.', 'value': '2' },
 		'close': { 'script': 'Completed the requested software installation.', 'value': '3' }
 	},
@@ -227,7 +227,7 @@ const snafuAutoTickets = {
 	// smart hands request
 	'smart_hands': {
 		'field': 'state',
-		'ack': { 'script': 'Acknowledging Smart Hands request.', 'value': '2' },
+		'ack': { 'script': 'Acknowledging Smart Hands request. Contacting {REQUESTED_FOR} at the number provided.', 'value': '2' },
 		'enRoute': { 'script': 'En route to complete the Smart Hands request.', 'value': '2' },
 		'close': { 'script': 'Completed Smart Hands request.', 'value': '3' }
 	}
@@ -280,6 +280,14 @@ const snafuLabelFields = {
 		'RITM': '{REQUEST_ITEM}',	// ritm number
 		'PO': '{PLACEHOLDER}',		// user will be prompted for this
 		'MORE_PO': '{PLACEHOLDER}'	// user will be prompted for this
+	},
+
+	// prebuilt device
+	'prebuilt': {
+		'ticketType': true,					// to force correct printing
+		'BUILD_TYPE': '{PREBUILT_BUILD}',	// placeholder
+		'HOSTNAME': '{PREBUILT_HOST}',		// placeholder
+		'ASSET_TAG': '{PREBUILT_ASSET}'		// placeholder
 	},
 
 	// reclaim task
@@ -416,7 +424,17 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 		setTimeout(function() { g_form.submit(); }, inject.detail.finishDelay * 1000);
 
 	// print label from context menu
-	} else if (type === 'printLabelBroken' || type === 'printLabelBuild' || type === 'printLabelBuildAck' || type === 'printLabelDecommission' || type === 'printLabelPurchase' || type === 'printLabelReclaim' || type === 'printLabelRestock' || type === 'printLabelRepair') {
+	} else if (
+		type === 'printLabelBroken' || 
+		type === 'printLabelBuild' || 
+		type === 'printLabelBuildAck' || 
+		type === 'printLabelDecommission' || 
+		type === 'printLabelPurchase' || 
+		type === 'printLabelPrebuilt' ||
+		type === 'printLabelReclaim' || 
+		type === 'printLabelRestock' || 
+		type === 'printLabelRepair'
+	) {
 		if (ticketType === false) {
 			snafuErrorMessage('The open ticket is not valid for label printing.');
 		} else {
@@ -454,6 +472,7 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 										break;
 									} else {
 										addressLabel.setObjectText(field, snafuShortenLabelString(reason));
+										reason = '';
 									}
 
 								// broken equipment labels
@@ -466,6 +485,7 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 										break;
 									} else {
 										addressLabel.setObjectText(field, snafuShortenLabelString(reason));
+										reason = '';
 									}
 
 								// hot swap build labels
@@ -502,6 +522,24 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 									reason = prompt('Enter up to three PO numbers. Separate them by commas with no spaces. Each one will be put on the new line.');
 									if (snafuIsVarEmpty(reason) === false) addressLabel.setObjectText(field, (reason.indexOf(',') !== -1) ? reason.replace(/,/g, '\r\n') : reason);
 
+								// prebuilt device label
+								} else if (labelType === 'prebuilt') {
+									if (field === 'BUILD_TYPE') {
+										reason = prompt('What is the build type (GrMH-MANDATORY, etc.) of the prebuilt device?');
+									} else if (field === 'HOSTNAME') {
+										reason = prompt('What is the device\'s hostname?');
+									} else {
+										reason = prompt('What is the device\'s asset tag?');
+									}
+
+									if (snafuIsVarEmpty(reason) === true) {
+										console.warn('SNAFU: You must provide valid input.');
+										snafuErrorMessage('You must provide valid input.  Skipping print job. . .');
+										canPrint = false;
+									} else {
+										addressLabel.setObjectText(field, snafuShortenLabelString(reason));
+										reason = ''; // reset it for the next field
+									}
 								// "the rest"
 								} else {
 									addressLabel.setObjectText(field, snafuShortenLabelString(snafuReplaceWildcards(labelFields[field])));
@@ -575,8 +613,8 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 
 					// set the work notes
 					if (snafuIsVarEmpty(ticketAction.script) === false) {
-						snafuSetValue('work_notes', snafuReplaceWildcards(ticketAction.script));
-						snafuFlash('work_notes');
+						snafuSetValue('comments', snafuReplaceWildcards(ticketAction.script));
+						snafuFlash('comments');
 					}
 
 					// if a task, set root cause ci and due date
@@ -769,8 +807,8 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 
 				// set the resolve message if it is a resolved code (incident only)
 				if (field === 'incident_state' && value === '6') {
-					snafuSetValue('comments', snafuReplaceWildcards(snafuRslvComments));
-					snafuFlash('comments');
+					//snafuSetValue('comments', snafuReplaceWildcards(snafuRslvComments));
+					//snafuFlash('comments');
 
 					// set to Problem Resolved
 					snafuSetValue('close_code', 'Problem Resolved');
@@ -793,10 +831,9 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 						snafuSetValue('close_notes', workNotes);
 						snafuFlash('close_notes');
 					}
-				}
 
 				// change the root cause ci and due date for tasks
-				if (field === 'state') {
+				} else if (field === 'state') {
 					var dueDate = snafuGetDueDate();
 
 					// due date
@@ -1342,6 +1379,11 @@ function snafuGetDymoLabelXml(type) {
 		// po label
 		case 'purchase':
 			return '<?xml version="1.0" encoding="utf-8"?><DieCutLabel Version="8.0" Units="twips"><PaperOrientation>Landscape</PaperOrientation><Id>FileFolder</Id><IsOutlined>false</IsOutlined><PaperName>30327 File Folder - offset</PaperName><DrawCommands><RoundRectangle X="0" Y="0" Width="806" Height="4950" Rx="180" Ry="180" /></DrawCommands><ObjectInfo><TextObject><Name>RITM</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Top</VerticalAlignment><TextFitMode>ShrinkToFit</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String xml:space="preserve">RITM0303184</String><Attributes><Font Family="Calibri" Size="12" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" HueScale="100" /></Attributes></Element></StyledText></TextObject><Bounds X="316.799987792969" Y="57.6000137329102" Width="1485" Height="301.200012207031" /></ObjectInfo><ObjectInfo><TextObject><Name>PO</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Right</HorizontalAlignment><VerticalAlignment>Top</VerticalAlignment><TextFitMode>ShrinkToFit</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String xml:space="preserve">707700-0-ISC</String><Attributes><Font Family="Calibri" Size="12" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" HueScale="100" /></Attributes></Element></StyledText></TextObject><Bounds X="3512.40008544922" Y="57.6000137329102" Width="1350" Height="691.200012207031" /></ObjectInfo><ObjectInfo><TextObject><Name>MORE_PO</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Right</HorizontalAlignment><VerticalAlignment>Top</VerticalAlignment><TextFitMode>ShrinkToFit</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText /></TextObject><Bounds X="1967.40014648438" Y="57.6000137329102" Width="1350" Height="691.200012207031" /></ObjectInfo></DieCutLabel>';
+			break;
+
+		// prebuilt label
+		case 'prebuilt':
+			return '<?xml version="1.0" encoding="utf-8"?><DieCutLabel Version="8.0" Units="twips"><PaperOrientation>Landscape</PaperOrientation><Id>Address</Id><IsOutlined>false</IsOutlined><PaperName>30252 Address</PaperName><DrawCommands><RoundRectangle X="0" Y="0" Width="1581" Height="5040" Rx="270" Ry="270" /></DrawCommands><ObjectInfo><TextObject><Name>BUILD_TYPE</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>True</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Top</VerticalAlignment><TextFitMode>ShrinkToFit</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String xml:space="preserve">&lt;BUILD&gt;</String><Attributes><Font Family="Arial" Size="14" Bold="True" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" HueScale="100" /></Attributes></Element></StyledText></TextObject><Bounds X="331" Y="57.9999999999999" Width="3212" Height="315" /></ObjectInfo><ObjectInfo><TextObject><Name>ASSET_TAG_LABEL</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Right</HorizontalAlignment><VerticalAlignment>Top</VerticalAlignment><TextFitMode>AlwaysFit</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String xml:space="preserve">Asset Tag:</String><Attributes><Font Family="Arial" Size="9" Bold="True" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" HueScale="100" /></Attributes></Element></StyledText></TextObject><Bounds X="331" Y="990" Width="1155" Height="210" /></ObjectInfo><ObjectInfo><TextObject><Name>ASSET_TAG</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Top</VerticalAlignment><TextFitMode>ShrinkToFit</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String xml:space="preserve">GENERIC</String><Attributes><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" HueScale="100" /></Attributes></Element></StyledText></TextObject><Bounds X="1683" Y="998.000000000001" Width="3270" Height="209.999999999999" /></ObjectInfo><ObjectInfo><BarcodeObject><Name>ASSET_TAG_BARCODE</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName>ASSET_TAG</LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>True</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><Text>GENERIC</Text><Type>Code39</Type><Size>Medium</Size><TextPosition>None</TextPosition><TextFont Family="Arial" Size="8" Bold="False" Italic="False" Underline="False" Strikeout="False" /><CheckSumFont Family="Arial" Size="8" Bold="False" Italic="False" Underline="False" Strikeout="False" /><TextEmbedding>None</TextEmbedding><ECLevel>0</ECLevel><HorizontalAlignment>Left</HorizontalAlignment><QuietZonesPadding Left="0" Top="0" Right="0" Bottom="0" /></BarcodeObject><Bounds X="466" Y="1268" Width="4487" Height="225" /></ObjectInfo><ObjectInfo><TextObject><Name>HOSTNAME_LABEL</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Right</HorizontalAlignment><VerticalAlignment>Top</VerticalAlignment><TextFitMode>AlwaysFit</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String xml:space="preserve">Hostname:</String><Attributes><Font Family="Arial" Size="9" Bold="True" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" HueScale="100" /></Attributes></Element></StyledText></TextObject><Bounds X="331" Y="405" Width="1155" Height="210" /></ObjectInfo><ObjectInfo><TextObject><Name>HOSTNAME</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Top</VerticalAlignment><TextFitMode>ShrinkToFit</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String xml:space="preserve">GENERIC</String><Attributes><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" HueScale="100" /></Attributes></Element></StyledText></TextObject><Bounds X="1683" Y="413.000000000001" Width="3270" Height="209.999999999999" /></ObjectInfo><ObjectInfo><BarcodeObject><Name>HOSTNAME_BARCODE</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName>HOSTNAME</LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>True</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><Text>GENERIC</Text><Type>Code39</Type><Size>Medium</Size><TextPosition>None</TextPosition><TextFont Family="Arial" Size="8" Bold="False" Italic="False" Underline="False" Strikeout="False" /><CheckSumFont Family="Arial" Size="8" Bold="False" Italic="False" Underline="False" Strikeout="False" /><TextEmbedding>None</TextEmbedding><ECLevel>0</ECLevel><HorizontalAlignment>Left</HorizontalAlignment><QuietZonesPadding Left="0" Top="0" Right="0" Bottom="0" /></BarcodeObject><Bounds X="466" Y="683" Width="4487" Height="225" /></ObjectInfo><ObjectInfo><DateTimeObject><Name>DATE-TIME</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Right</HorizontalAlignment><VerticalAlignment>Top</VerticalAlignment><TextFitMode>ShrinkToFit</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><DateTimeFormat>ShortSystemDate</DateTimeFormat><Font Family="Arial" Size="12" Bold="False" Italic="False" Underline="False" Strikeout="False" /><PreText /><PostText /><IncludeTime>False</IncludeTime><Use24HourFormat>False</Use24HourFormat></DateTimeObject><Bounds X="3633" Y="57.9999999999999" Width="1320" Height="270" /></ObjectInfo></DieCutLabel>';
 			break;
 
 		// reclaim label
