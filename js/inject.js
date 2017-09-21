@@ -830,6 +830,9 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 					if (snafuIsVarEmpty(workNotes) === false) {
 						snafuSetValue('close_notes', workNotes);
 						snafuFlash('close_notes');
+					} else if (snafuIsVarEmpty(custNotes) === false) {
+						snafuSetValue('close_notes', custNotes);
+						snafuFlash('close_notes');
 					}
 
 				// change the root cause ci and due date for tasks
