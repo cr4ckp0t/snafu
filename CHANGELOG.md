@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## 1.2.7 [2017-09-21]
 ### Fixed
 - Close notes will be filled from work or customer notes.
 - Typo preventing certain functionality in the injected script.
