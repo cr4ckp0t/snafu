@@ -537,7 +537,7 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 										snafuErrorMessage('You must provide valid input.  Skipping print job. . .');
 										canPrint = false;
 									} else {
-										addressLabel.setObjectText(field, snafuShortenLabelString(reason));
+										addressLabel.setObjectText(field, snafuShortenLabelString(reason.toUpperCase()));
 										reason = ''; // reset it for the next field
 									}
 								// "the rest"
