@@ -206,7 +206,12 @@ $(document).ready(function() {
                     type: 'sendEquipment',
                     tState: '3',    // closed complete
                     workNotes: equipWorkNotes,
-                    custNotes: null
+                    custNotes: null,
+                    equipLabel: {
+                        'HOSTNAME_TEXT': $('#compHost').val(),
+                        'TEXT_4': $('#compBuild').val(),
+                        'TEXT_8': 'Standard software load.'
+                    }
                 }, function(response) {
                     chrome.storage.sync.get(['debug', 'closePopup', 'keepNotes', 'clearNotes'], function(items) {
                         if (chrome.runtime.lastError) {

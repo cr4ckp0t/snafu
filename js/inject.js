@@ -22,8 +22,7 @@
  *  access to page variables, so we have to inject code and use Custom Events
  *  to pass data between the extension and the page.
  **/
-//const snafuRslvComments = "My name is {TECH_NAME} and I was the technician that assisted you with {TICKET}. Thank you for the opportunity to provide you with service today with your {INC_TYPE}. If for any reason, your issue does not appear to be resolved please contact the Service Desk at (864) 455-8000.";
-const snafuAutoTickets = { 
+ const snafuAutoTickets = { 
 	// misc
 	'generic_task': {
 		'field': 'state',
@@ -144,7 +143,7 @@ const snafuAutoTickets = {
 		'field': 'state',
 		'ack': { 'script': 'Acknowledging equipment delivery task.', 'value': '2' },
 		'enRoute': { 'script': 'En route to complete equipment delivery.', 'value': '2' },
-		'close': { 'script': 'Completed equipment delivery to staging at {REQUESTED_FOR_CAMPUS}.', 'value': '3' }
+		'close': { 'script': 'Delivered equipment to {REQUESTED_FOR_CAMPUS} Staging. Desktop Support will call End User and set up date and time to install equipment.', 'value': '3' }
 	},
 	'po_install_items': {
 		'field': 'state',
@@ -164,7 +163,7 @@ const snafuAutoTickets = {
 		'field': 'state',
 		'ack': { 'script': 'Acknowledging SPR delivery task.', 'value': '2' },
 		'enRoute': { 'script': 'En route to complete SPR delivery.', 'value': '2' },
-		'close': { 'script': 'Completed SPR delivery.', 'value': '3' }
+		'close': { 'script': 'Delivered equipment to {REQUESTED_FOR_CAMPUS} Staging. Desktop Support will call End User and set up date and time to install equipment.', 'value': '3' }
 	},
 	'spr_install': {
 		'field': 'state',
@@ -274,6 +273,17 @@ const snafuLabelFields = {
 		'RITM#': '{REQUEST_ITEM}'			// ritm number
 	},
 
+	// equipment configuration
+	'equipment': {
+		'ticketType': 'po_configure_pc',		// to force correct printing
+		'HOSTNAME_TEXT': '{REPLACE_HOSTNAME}',	// replacement build's hostname
+		'TEXT_3': '{LABEL_INC_TECH}',			// technician
+		'TEXT_4': '{REPLACE_BUILD}',			// replacement os and build
+		'RITM#': '{REQUEST_ITEM}',				// ritm number
+		'TEXT_2': '{REQUESTED_FOR}',			// customer
+		'TEXT_8': '{REPLACE_SOFTWARE}'			// software
+	},
+
 	// purchase orders
 	'purchase': {
 		'ticketType': true,			// to force correct printing
@@ -359,10 +369,16 @@ const snafuResolveTypes = {
 	'printer': { 'type_1': 'Hardware', 'type_2': 'Printer' },
 }
 
+console.info(g_form.getReference('cmdb_ci'));
+
 // listen for triggers on the custom event for passing text
 document.addEventListener('SNAFU_Inject', function(inject) {
 	var ticketType = snafuGetTicketType();
 	var type = inject.detail.type;
+	var labelSettings = inject.detail.labels;
+	var query;
+
+	//swal({   title: "Are you sure?",   text: "You will not be able to recover this imaginary file!",   type: "warning",   showCancelButton: true,   confirmButtonColor: "#DD6B55",   confirmButtonText: "Yes, delete it!",   closeOnConfirm: false }, function(){   swal("Deleted!", "Your imaginary file has been deleted.", "success"); });
 
 	// query for the user informatoin
 	if (type === 'userQuery') {
@@ -371,7 +387,7 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 
 		if (snafuIsVarEmpty(assignedTo.name) === false && snafuIsVarEmpty(assignmentGroup.name) === false) {
 			// query the user info sent by the options page
-			var query = document.createEvent('CustomEvent');
+			query = document.createEvent('CustomEvent');
 			query.initCustomEvent('SNAFU_UserQuery', true, true, {
 				fullName: snafuUcwords(assignedTo.name),
 				userId: assignedTo.sys_id,
@@ -635,131 +651,137 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 						}
 					}
 
-					// autofinish
-					switch (inject.detail.autoFinish) {
-						// save (stay on ticket's page)
-						case 'save':
-							// not going to let incidents be autosaved
-							if (ticket.field === 'state' || (ticket.field === 'incident_state' && ticketAction.value !== '6')) {
-								// delay 1.5 seconds
-								setTimeout(function() { g_form.save(); }, inject.detail.finishDelay * 1000);
-							}
-							break;
-						
-						// update (go back to last page)
-						case 'update':
-							// not going to let incident be autoupdated
-							if (ticket.field === 'state' || (ticket.field === 'incident_state' && ticketAction.value !== '6')) {
-								// delay 1.5 seconds
-								setTimeout(function() { g_form.submit(); }, inject.detail.finishDelay * 1000);
-							}
-							break;
+					if (type !== 'autoClose') {
+						snafuEndTicketInteraction(inject.detail.autoFinish, inject.detail.finishDelay, ticket.field, ticketAction.value);
+					} else {
+						// action performed is depends on reminder
+						switch (inject.detail.remind) {
+							
+							// open computer database tab
+							case 'open':
+								// attempt to get the root cause's sys_id
+								var rootCause = snafuGetRootCauseSysId();
 
-						// auto (save all updates except closures, which are updated. incidents are never automatically resolved)
-						case 'auto':
-							// if a closure then update, otherwise save
-							if (ticket.field === 'state' && (ticketAction.value === '3' || ticketAction.value === '4')) {
-								// update
-								setTimeout(function() { g_form.submit(); }, inject.detail.finishDelay * 1000);
-							} else if (ticket.field === 'state' || (ticket.field === 'incident_state' && ticketAction.value !== '6')) {
-								setTimeout(function() { g_form.save(); }, inject.detail.finishDelay * 1000);
-							}
-							break;
-						
-						// neither
-						case 'none':
-						default:
-							break;
+								// open a tab using a custom javascript event
+								query = document.createEvent('CustomEvent');
+								query.initCustomEvent('SNAFU_OpenTab', true, true, {
+									url: (rootCause !== false) ? snafuSprintf('https://ghsprod.service-now.com/cmdb_ci_computer.do?sys_id=%s', [rootCause]) : 'https://ghsprod.service-now.com/cmdb_ci_computer_list.do'
+								});
+								document.dispatchEvent(query);
+								break;
+
+							// popup using sweet alerts
+							case 'popup':
+								swal({
+									title: 'Update Computer Location Information',
+									text: 'Don\'t forget to update the device\'s location information in Service Now.',
+									icon: 'info',
+
+								});
+								break;
+
+							// no reminder
+							case 'none':
+							default:
+								// save, update, auto, none
+								snafuEndTicketInteraction(inject.detail.autoFinish, inject.detail.finishDelay, ticket.field, ticketAction.value);
+								break;
+						}
 					}
 
 					// print labels
-					if (inject.detail.printLabels === true && (
+					if (
+						(
 							type === 'autoClose' && (ticketType === 'rhs_reclaim' || ticketType === 'rhs_reimage')
 						) || (
 							type === 'autoAcknowledge' && (ticketType === 'rhs_build' || ticketType === 'rhs_reimage')
 						)
 					) {
-						// make sure we have a valid printer
-						var printers = dymo.label.framework.getPrinters().filter(function(printer) { return (printer.isConnected === true && printer.isLocal === true) });
-						if (printers.length > 0) {
-				
-							// get the printer's name as well for printing
-							var printerName = printers[0]['name'];
-							if (snafuIsVarEmpty(printerName) === false) {
-								
-								// determine the label type from the ticket type
-								var labelType = snafuGetLabelType(type, ticketType);
-								if (snafuLabelFields[labelType] === undefined) {
-									console.warn('SNAFU: Dymo label type returned invalid.  Skipping print job. . .');
-									snafuErrorMessage('Dymo label type returned invalid.  Skipping print job. . .');
-								} else {
-									var addressLabel = dymo.label.framework.openLabelXml(snafuGetDymoLabelXml(labelType));
-									var labelFields = snafuLabelFields[labelType];
-									var reason = ''
-									var canPrint = true;
-									for (var field in labelFields) {
-										if (field !== 'ticketType') {
-											// reclaim label
-											if (labelType === 'reclaim' && field === 'TEXT_5') {
-												reason = prompt(snafuSprintf('Enter the reason for %s this device.  KEEP IT SHORT!', (labelType === 'reclaim') ? ['reclaiming'] : ['repairing']));
-												if (snafuIsVarEmpty(reason) === true) {
-													console.warn('SNAFU: You must provide a valid reason.');
-													snafuErrorMessage('You must provide a valid reason.  Skipping print job. . .');
-													canPrint = false;
-													break;
-												} else {
-													addressLabel.setObjectText(field, snafuShortenLabelString(reason));
-												}
+						// determine the label type from the ticket type
+						var labelType = snafuGetLabelType(type, ticketType);
 
-											// build ack labels
-											} else if (
-												(labelType === 'buildack' || labelType === 'reimageack') &&
-												(field === 'BUILD' || field === 'APPS')
-											) {
-												if (field === 'BUILD') {
-													addressLabel.setObjectText(field, g_form.getValue('rhs_software').split('\n')[0]);
-												} else {
-													var buildInput = g_form.getValue('rhs_software');
-													if (buildInput.indexOf('\n') !== -1) {
-														addressLabel.setObjectText(field, snafuShortenLabelString(buildInput.split('\n')[1]));
+						// make sure we do want to print these labels
+						if (labelSettings[labelType] === true) {
+							// make sure we have a valid printer
+							var printers = dymo.label.framework.getPrinters().filter(function(printer) { return (printer.isConnected === true && printer.isLocal === true) });
+							if (printers.length > 0) {
+					
+								// get the printer's name as well for printing
+								var printerName = printers[0]['name'];
+								if (snafuIsVarEmpty(printerName) === false) {
+									
+									if (snafuLabelFields[labelType] === undefined) {
+										console.warn('SNAFU: Dymo label type returned invalid.  Skipping print job. . .');
+										snafuErrorMessage('Dymo label type returned invalid.  Skipping print job. . .');
+									} else {
+										var addressLabel = dymo.label.framework.openLabelXml(snafuGetDymoLabelXml(labelType));
+										var labelFields = snafuLabelFields[labelType];
+										var reason = ''
+										var canPrint = true;
+										for (var field in labelFields) {
+											if (field !== 'ticketType') {
+												// reclaim label
+												if (labelType === 'reclaim' && field === 'TEXT_5') {
+													reason = prompt(snafuSprintf('Enter the reason for %s this device.  KEEP IT SHORT!', (labelType === 'reclaim') ? ['reclaiming'] : ['repairing']));
+													if (snafuIsVarEmpty(reason) === true) {
+														console.warn('SNAFU: You must provide a valid reason.');
+														snafuErrorMessage('You must provide a valid reason.  Skipping print job. . .');
+														canPrint = false;
+														break;
 													} else {
-														addressLabel.setObjectText(field, 'Standard software load.');
+														addressLabel.setObjectText(field, snafuShortenLabelString(reason));
 													}
-												}
 
-											// reimage only labels
-											} else if (labelType === 'reimage' && (field === 'TEXT_4' || field === 'TEXT_8')) {
-												if (field === 'TEXT_4') {
-													addressLabel.setObjectText(field, g_form.getValue('rhs_software').split('\n')[0]);
-												} else {
-													var buildInput = g_form.getValue('rhs_software');
-													if (buildInput.indexOf('\n') !== -1) {
-														addressLabel.setObjectText(field, snafuShortenLabelString(buildInput.split('\n')[1]));
+												// build ack labels
+												} else if (
+													(labelType === 'buildack' || labelType === 'reimageack') &&
+													(field === 'BUILD' || field === 'APPS')
+												) {
+													if (field === 'BUILD') {
+														addressLabel.setObjectText(field, g_form.getValue('rhs_software').split('\n')[0]);
 													} else {
-														addressLabel.setObjectText(field, 'Standard software load.');
+														var buildInput = g_form.getValue('rhs_software');
+														if (buildInput.indexOf('\n') !== -1) {
+															addressLabel.setObjectText(field, snafuShortenLabelString(buildInput.split('\n')[1]));
+														} else {
+															addressLabel.setObjectText(field, 'Standard software load.');
+														}
 													}
+
+												// reimage only labels
+												} else if (labelType === 'reimage' && (field === 'TEXT_4' || field === 'TEXT_8')) {
+													if (field === 'TEXT_4') {
+														addressLabel.setObjectText(field, g_form.getValue('rhs_software').split('\n')[0]);
+													} else {
+														var buildInput = g_form.getValue('rhs_software');
+														if (buildInput.indexOf('\n') !== -1) {
+															addressLabel.setObjectText(field, snafuShortenLabelString(buildInput.split('\n')[1]));
+														} else {
+															addressLabel.setObjectText(field, 'Standard software load.');
+														}
+													}
+												
+												// catch the rest
+												} else {
+													addressLabel.setObjectText(field, snafuShortenLabelString(snafuReplaceWildcards(labelFields[field])));
 												}
-											
-											// catch the rest
-											} else {
-												addressLabel.setObjectText(field, snafuShortenLabelString(snafuReplaceWildcards(labelFields[field])));
 											}
 										}
-									}
 
-									if (canPrint === false) {
-										console.warn('SNAFU: Unable to print label due to errors.');
-									} else {
-										addressLabel.print(printerName);
+										if (canPrint === false) {
+											console.warn('SNAFU: Unable to print label due to errors.');
+										} else {
+											addressLabel.print(printerName);
+										}
 									}
+								} else {
+									console.warn('SNAFU: Unable to determine printer name.  Skipping print job. . .');
+									snafuErrorMessage('Unable to determine printer name.  Skipping print job. . .');
 								}
 							} else {
-								console.warn('SNAFU: Unable to determine printer name.  Skipping print job. . .');
-								snafuErrorMessage('Unable to determine printer name.  Skipping print job. . .');
+								console.warn('SNAFU: No appropriate printers were found.  Skipping print job. . .');
+								snafuErrorMessage('No appropriate printers were found.  Skipping print job. . .');
 							}
-						} else {
-							console.warn('SNAFU: No appropriate printers were found.  Skipping print job. . .');
-							snafuErrorMessage('No appropriate printers were found.  Skipping print job. . .');
 						}
 					}
 				}
@@ -770,12 +792,11 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 
 	// handle everything else
 	} else {
+		//console.info(inject.detail);
 		// make sure ticket is assigned
 		if (snafuIsResolveCode(inject.detail.field, inject.detail.value) === true && g_form.getReference('assigned_to').currentRow === -1) {
 			snafuErrorMessage('Unable to send update to unassigned ticket.  Please assign it to yourself and try again.');
 		} else {
-			var ticketType = snafuGetTicketType();
-			var type = inject.detail.type;
 			var field = inject.detail.field;
 			var value = inject.detail.value;
 			var workNotes = (snafuIsVarEmpty(inject.detail.workNotes) === false) ? snafuReplaceWildcards(inject.detail.workNotes) : null;
@@ -892,137 +913,112 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 					snafuInfoMessage('Build saved to the log.');
 					document.dispatchEvent(buildLogQuery);
 				}
-
-				// autofinish
-				switch (inject.detail.autoFinish) {
-					// save (stay on ticket's page)
-					case 'save':
-						// not going to let incidents be autosaved
-						if (field === 'state' || (field === 'incident_state' && value !== '6')) {
-							// delay 1.5 seconds
-							setTimeout(function() { g_form.save(); }, inject.detail.finishDelay * 1000);
-						}
-						break;
-					
-					// update (go back to last page)
-					case 'update':
-						// not going to let incident be autoupdated
-						if (field === 'state' || (field === 'incident_state' && value !== '6')) {
-							// delay 1.5 seconds
-							setTimeout(function() { g_form.submit(); }, inject.detail.finishDelay * 1000);
-						}
-						break;
-
-					// auto (save all updates except closures, which are updated. incidents are never automatically resolved)
-					case 'auto':
-						// if a closure then update, otherwise save
-						if (field === 'state' && (value === '3' || value === '4')) {
-							// update
-							setTimeout(function() { g_form.submit(); }, inject.detail.finishDelay * 1000);
-						} else if (field === 'state' || (field === 'incident_state' && value !== '6')) {
-							setTimeout(function() { g_form.save(); }, inject.detail.finishDelay * 1000);
-						}
-						break;
-					
-					// neither
-					case 'none':
-					default:
-						break;
-				}
+				
+				// save, update, auto, none
+				snafuEndTicketInteraction(inject.detail.autoFinish, inject.detail.finishDelay, field, value);
 
 				// print labels
-				if (inject.detail.printLabels === true && (type.indexOf('closeQuarantine') !== -1 || type.indexOf('closeHotSwap') !== -1) || type.indexOf('closeRepair') !== -1) {
-					// make sure we have a valid printer
-					var printers = dymo.label.framework.getPrinters().filter(function(printer) { return (printer.isConnected === true && printer.isLocal === true) });
-					if (printers.length > 0) {
-			
-						// get the printer's name as well for printing
-						var printerName = printers[0]['name'];
-						if (snafuIsVarEmpty(printerName) === false) {
-							
-							// determine the label type from the ticket type
-							var labelType
-							if (type.indexOf('closeRepair') !== -1) {
-								labelType = (type.indexOf('OnSite') !== -1) ? 'restock' : 'decommission';
-							} else {
-								labelType = (type.indexOf('closeHotSwap') !== -1) ? 'build' : type.replace('closeQuarantine', '').replace('Yes', '').replace('No', '').toLowerCase();
-							}
+				if (type === 'sendEquipment' || type.indexOf('closeQuarantine') !== -1 || type.indexOf('closeHotSwap') !== -1 || type.indexOf('closeRepair') !== -1) {
+					// determine the label type from the ticket type
+					var labelType
+					if (type === 'sendEquipment') {
+						labelType = 'equipment';
+					} else if (type.indexOf('closeRepair') !== -1) {
+						labelType = (type.indexOf('OnSite') !== -1) ? 'restock' : 'decommission';
+					} else {
+						labelType = (type.indexOf('closeHotSwap') !== -1) ? 'build' : type.replace('closeQuarantine', '').replace('Yes', '').replace('No', '').toLowerCase();
+					}
 
-							if (snafuLabelFields[labelType] === undefined) {
-								console.info(labelType);
-								console.warn('SNAFU: Dymo label type returned invalid.  Skipping print job. . .');
-								snafuErrorMessage('Dymo label type returned invalid.  Skipping print job. . .');
-							} else {
-								var addressLabel = dymo.label.framework.openLabelXml(snafuGetDymoLabelXml(labelType));
-								var labelFields = snafuLabelFields[labelType];
-								var reason = ''
-								var canPrint = true;
-								for (var field in labelFields) {
-									if (field !== 'ticketType') {
-										// reclaim and repair labels
-										if ((labelType === 'reclaim' || labelType === 'repair') && field === 'TEXT_5') {
-											reason = prompt(snafuSprintf('Enter the reason for %s this device.  KEEP IT SHORT!', (labelType === 'reclaim') ? ['reclaiming'] : ['repairing']));
-											if (snafuIsVarEmpty(reason) === true) {
-												console.warn('SNAFU: You must provide a valid reason.');
-												snafuErrorMessage('You must provide a valid reason.  Skipping print job. . .');
-												canPrint = false;
-												break;
-											} else {
-												addressLabel.setObjectText(field, snafuShortenLabelString(reason));
-											}
+					// make sure we automatically print this label type
+					if (labelSettings[labelType] === true) {
+						// make sure we have a valid printer
+						var printers = dymo.label.framework.getPrinters().filter(function(printer) { return (printer.isConnected === true && printer.isLocal === true) });
+						if (printers.length > 0) {
+				
+							// get the printer's name as well for printing
+							var printerName = printers[0]['name'];
+							if (snafuIsVarEmpty(printerName) === false) {
 
-										// build ack labels
-										} else if (
-											(labelType === 'buildack' || labelType === 'reimageack') &&
-											(field === 'BUILD' || field === 'APPS')
-										) {
-											if (field === 'BUILD') {
-												addressLabel.setObjectText(field, g_form.getValue('rhs_software').split('\n')[0]);
-											} else {
-												var buildInput = g_form.getValue('rhs_software');
-												if (buildInput.indexOf('\n') !== -1) {
-													addressLabel.setObjectText(field, snafuShortenLabelString(buildInput.split('\n')[1]));
+								if (snafuLabelFields[labelType] === undefined) {
+									console.info(labelType);
+									console.warn('SNAFU: Dymo label type returned invalid.  Skipping print job. . .');
+									snafuErrorMessage('Dymo label type returned invalid.  Skipping print job. . .');
+								} else {
+									var addressLabel = dymo.label.framework.openLabelXml(snafuGetDymoLabelXml(labelType));
+									var labelFields = snafuLabelFields[labelType];
+									var reason = ''
+									var canPrint = true;
+									for (var field in labelFields) {
+										if (field !== 'ticketType') {
+											// reclaim and repair labels
+											if ((labelType === 'reclaim' || labelType === 'repair') && field === 'TEXT_5') {
+												reason = prompt(snafuSprintf('Enter the reason for %s this device.  KEEP IT SHORT!', (labelType === 'reclaim') ? ['reclaiming'] : ['repairing']));
+												if (snafuIsVarEmpty(reason) === true) {
+													console.warn('SNAFU: You must provide a valid reason.');
+													snafuErrorMessage('You must provide a valid reason.  Skipping print job. . .');
+													canPrint = false;
+													break;
 												} else {
-													addressLabel.setObjectText(field, 'Standard software load.');
+													addressLabel.setObjectText(field, snafuShortenLabelString(reason));
 												}
-											}
-			
-										// hot swap build labels
-										} else if (
-											(labelType === 'build' || labelType === 'reimage') && 
-											(field === 'TEXT_4' || field === 'TEXT_8')
-										) {
-											if (field === 'TEXT_4') {
-												addressLabel.setObjectText(field, g_form.getValue('rhs_software').split('\n')[0]);
-											} else {
-												var buildInput = g_form.getValue('rhs_software');
-												if (buildInput.indexOf('\n') !== -1) {
-													addressLabel.setObjectText(field, snafuShortenLabelString(buildInput.split('\n')[1]));
-												} else {
-													addressLabel.setObjectText(field, 'Standard software load.');
-												}
-											}
 
-										// "the rest"
-										} else {
-											addressLabel.setObjectText(field, snafuShortenLabelString(snafuReplaceWildcards(labelFields[field])));
+											// build ack labels
+											} else if (
+												(labelType === 'buildack' || labelType === 'reimageack') &&
+												(field === 'BUILD' || field === 'APPS')
+											) {
+												if (field === 'BUILD') {
+													addressLabel.setObjectText(field, g_form.getValue('rhs_software').split('\n')[0]);
+												} else {
+													var buildInput = g_form.getValue('rhs_software');
+													if (buildInput.indexOf('\n') !== -1) {
+														addressLabel.setObjectText(field, snafuShortenLabelString(buildInput.split('\n')[1]));
+													} else {
+														addressLabel.setObjectText(field, 'Standard software load.');
+													}
+												}
+				
+											// hot swap build labels
+											} else if (
+												(labelType === 'build' || labelType === 'reimage') && 
+												(field === 'TEXT_4' || field === 'TEXT_8')
+											) {
+												if (field === 'TEXT_4') {
+													addressLabel.setObjectText(field, g_form.getValue('rhs_software').split('\n')[0]);
+												} else {
+													var buildInput = g_form.getValue('rhs_software');
+													if (buildInput.indexOf('\n') !== -1) {
+														addressLabel.setObjectText(field, snafuShortenLabelString(buildInput.split('\n')[1]));
+													} else {
+														addressLabel.setObjectText(field, 'Standard software load.');
+													}
+												}
+
+											// equipment configuration labels
+											} else if (labelType === 'equipment' && (field === 'HOSTNAME_TEXT' || field === 'TEXT_8' || field === 'TEXT_4')) {
+												addressLabel.setObjectText(field, snafuShortenLabelString(inject.detail.equipLabel[field]));
+
+											// "the rest"
+											} else {
+												addressLabel.setObjectText(field, snafuShortenLabelString(snafuReplaceWildcards(labelFields[field])));
+											}
 										}
 									}
-								}
 
-								if (canPrint === false) {
-									console.warn('SNAFU: Unable to print label due to errors.');
-								} else {
-									addressLabel.print(printerName);
+									if (canPrint === false) {
+										console.warn('SNAFU: Unable to print label due to errors.');
+									} else {
+										addressLabel.print(printerName);
+									}
 								}
+							} else {
+								console.warn('SNAFU: Unable to determine printer name.  Skipping print job. . .');
+								snafuErrorMessage('Unable to determine printer name.  Skipping print job. . .');
 							}
 						} else {
-							console.warn('SNAFU: Unable to determine printer name.  Skipping print job. . .');
-							snafuErrorMessage('Unable to determine printer name.  Skipping print job. . .');
+							console.warn('SNAFU: No appropriate printers were found.  Skipping print job. . .');
+							snafuErrorMessage('No appropriate printers were found.  Skipping print job. . .');
 						}
-					} else {
-						console.warn('SNAFU: No appropriate printers were found.  Skipping print job. . .');
-						snafuErrorMessage('No appropriate printers were found.  Skipping print job. . .');
 					}
 				}
 			}
@@ -1094,7 +1090,7 @@ function snafuReplaceWildcards(strIn) {
 		"{BROKEN_SERIAL}": "g_form.getReference('rhs_comp_name').serial_number || 'UNKNOWN';",								// broken computer serial number
 		"{RELATED_INC}": "g_form.getReference('rhs_inc').number || 'UNKNOWN';",												// incident requiring hot swap
 		"{REPLACE_ASSET}": "g_form.getReference('rhs_replacement_computer').asset_tag || 'UNKNOWN';",						// replacement computer asset tag
-		"{REPLACE_BUILD}": "g_form.getValue('rhs_software') || 'UNKNOWN';",													// replacement computer build
+		"{REPLACE_BUILD}": "g_form.getValue('rhs_software').replace(\/(?:\\r\\n|\\r|\\n)\/g, ', ') || 'UNKNOWN';",				// replacement computer build
 		"{REPLACE_CUSTOMER}": "snafuUcwords(g_form.getReference('rhs_user').name) || 'UNKNOWN';",							// user requiring the hot swap
 		"{REPLACE_HOSTNAME}": "g_form.getReference('rhs_replacement_computer').name || 'UNKNOWN';",							// replacement computer hostname
 		"{REPLACE_MODEL}": "snafuGetComputerModel(g_form.getReference('rhs_replacement_computer').model_id) || 'UNKNOWN';",	// replacement computer model
@@ -1250,6 +1246,72 @@ function snafuGetTicketType() {
 }
 
 /**
+ * Attempt to pull the sys_id of a desktop/laptop (or return false)
+ * @param	{String}	ticket
+ * @return	{String|Boolean}
+ */
+function snafuGetRootCauseSysId(ticket) {
+	var rootCause = g_form.getReference('cmdb_ci');
+
+	switch (ticket) {
+
+		// incident's will come from the root cause ci
+		case 'generic_incident':
+			return (rootCause.name.substr(0, 2).toLowerCase() === 'lt' || rootCause.name.substr(0,2).toLowerCase() === 'dt' || rootCause.name.substr(0, 2).toLowerCase() === 'tb') ? rootCause.sys_id : false;
+			break;
+
+		default: break;
+	}
+}
+
+/**
+ * Save or updates (or does nothing) to the ticket at the end.
+ * @param	{String}	action
+ * @param	{Int}		delay
+ * @param	{String}	field
+ * @param	{String}	value
+ * @return	{Void}
+ */
+function snafuEndTicketInteraction(action, delay, field, value) {
+	// autofinish
+	switch (action) {
+		// save (stay on ticket's page)
+		case 'save':
+			// not going to let incidents be autosaved
+			if (field === 'state' || (field === 'incident_state' && value !== '6')) {
+				// delay 1.5 seconds
+				setTimeout(function() { g_form.save(); }, delay * 1000);
+			}
+			break;
+		
+		// update (go back to last page)
+		case 'update':
+			// not going to let incident be autoupdated
+			if (field === 'state' || (field === 'incident_state' && value !== '6')) {
+				// delay 1.5 seconds
+				setTimeout(function() { g_form.submit(); }, delay * 1000);
+			}
+			break;
+
+		// auto (save all updates except closures, which are updated. incidents are never automatically resolved)
+		case 'auto':
+			// if a closure then update, otherwise save
+			if (field === 'state' && (value === '3' || value === '4')) {
+				// update
+				setTimeout(function() { g_form.submit(); }, delay * 1000);
+			} else if (field === 'state' || (field === 'incident_state' && value !== '6')) {
+				setTimeout(function() { g_form.save(); }, delay * 1000);
+			}
+			break;
+		
+		// neither
+		case 'none':
+		default:
+			break;
+	}
+}
+
+/**
  * Determines if the status provided is a resolve code.
  * @param	{String}	field
  * @param	{String}	value
@@ -1362,9 +1424,10 @@ function snafuGetDymoLabelXml(type) {
 			return '<?xml version="1.0" encoding="utf-8"?><DieCutLabel Version="8.0" Units="twips"><PaperOrientation>Landscape</PaperOrientation><Id>Address</Id><IsOutlined>false</IsOutlined><PaperName>30252 Address</PaperName><DrawCommands><RoundRectangle X="0" Y="0" Width="1581" Height="5040" Rx="270" Ry="270" /></DrawCommands><ObjectInfo><DateTimeObject><Name>DATE-TIME</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Right</HorizontalAlignment><VerticalAlignment>Top</VerticalAlignment><TextFitMode>ShrinkToFit</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><DateTimeFormat>DayAbbrMonthLongYear</DateTimeFormat><Font Family="Arial" Size="12" Bold="False" Italic="False" Underline="False" Strikeout="False" /><PreText /><PostText /><IncludeTime>False</IncludeTime><Use24HourFormat>False</Use24HourFormat></DateTimeObject><Bounds X="2973" Y="57.9999999999999" Width="1980" Height="330" /></ObjectInfo><ObjectInfo><TextObject><Name>TEXT</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Top</VerticalAlignment><TextFitMode>ShrinkToFit</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String xml:space="preserve">Broken Equipment</String><Attributes><Font Family="Arial" Size="14" Bold="True" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" HueScale="100" /></Attributes></Element></StyledText></TextObject><Bounds X="331" Y="57.9999999999999" Width="2282" Height="285" /></ObjectInfo><ObjectInfo><TextObject><Name>TICKET</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Bottom</VerticalAlignment><TextFitMode>ShrinkToFit</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String xml:space="preserve">INCXXXXXXX</String><Attributes><Font Family="Arial" Size="12" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" HueScale="100" /></Attributes></Element></StyledText></TextObject><Bounds X="331" Y="1208" Width="1995" Height="285" /></ObjectInfo><ObjectInfo><TextObject><Name>EQUIP</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>ShrinkToFit</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String xml:space="preserve">Broken Equipment</String><Attributes><Font Family="Arial" Size="16" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" HueScale="100" /></Attributes></Element></StyledText></TextObject><Bounds X="331" Y="390" Width="4622" Height="720" /></ObjectInfo><ObjectInfo><TextObject><Name>TECH</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Right</HorizontalAlignment><VerticalAlignment>Bottom</VerticalAlignment><TextFitMode>ShrinkToFit</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String xml:space="preserve">Adam K.</String><Attributes><Font Family="Arial" Size="12" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" HueScale="100" /></Attributes></Element></StyledText></TextObject><Bounds X="2823" Y="1208" Width="2130" Height="285" /></ObjectInfo></DieCutLabel>';
 			break;
 
-		// build & reimage labels
+		// build, equipment, and reimage labels
 		case 'build':
 		case 'reimage':
+		case 'equipment':
 			return '<?xml version="1.0" encoding="utf-8"?><DieCutLabel Version="8.0" Units="twips"><PaperOrientation>Landscape</PaperOrientation><Id>Address</Id><IsOutlined>false</IsOutlined><PaperName>30252 Address</PaperName><DrawCommands><RoundRectangle X="0" Y="0" Width="1581" Height="5040" Rx="270" Ry="270" /></DrawCommands><ObjectInfo><TextObject><Name>TEXT</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String xml:space="preserve">Host Name:</String><Attributes><Font Family="Arial" Size="12" Bold="True" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" HueScale="100" /></Attributes></Element></StyledText></TextObject><Bounds X="331" Y="472.311157226563" Width="1350" Height="360" /></ObjectInfo><ObjectInfo><TextObject><Name>HOSTNAME_TEXT</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String xml:space="preserve">DTXXXXXXXXXX</String><Attributes><Font Family="Arial" Size="12" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" HueScale="100" /></Attributes></Element></StyledText></TextObject><Bounds X="1727.69787597656" Y="480.576568603516" Width="3099.9208984375" Height="345" /></ObjectInfo><ObjectInfo><DateTimeObject><Name>DATE-TIME</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><DateTimeFormat>LongSystemDate</DateTimeFormat><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><PreText>Date Built: </PreText><PostText /><IncludeTime>False</IncludeTime><Use24HourFormat>False</Use24HourFormat></DateTimeObject><Bounds X="331" Y="843.150024414063" Width="3535.39453125" Height="216" /></ObjectInfo><ObjectInfo><TextObject><Name>TEXT_3</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Right</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String xml:space="preserve">Tech: Adam Koch</String><Attributes><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" HueScale="100" /></Attributes></Element></StyledText></TextObject><Bounds X="3513" Y="849.599975585938" Width="1440" Height="216" /></ObjectInfo><ObjectInfo><TextObject><Name>TEXT_4</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Right</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String xml:space="preserve">W7, &lt;BUILD&gt;</String><Attributes><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" HueScale="100" /></Attributes></Element></StyledText></TextObject><Bounds X="2634.90649414063" Y="58" Width="2318.09350585938" Height="216" /></ObjectInfo><ObjectInfo><TextObject><Name>TEXT_5</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String xml:space="preserve">Apps:</String><Attributes><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" HueScale="100" /></Attributes></Element></StyledText></TextObject><Bounds X="331" Y="1064.25" Width="452" Height="210" /></ObjectInfo><ObjectInfo><TextObject><Name>TEXT_6</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String xml:space="preserve">Customer:</String><Attributes><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" HueScale="100" /></Attributes></Element></StyledText></TextObject><Bounds X="331" Y="1277" Width="827" Height="216" /></ObjectInfo><ObjectInfo><TextObject><Name>RITM#</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Right</HorizontalAlignment><VerticalAlignment>Middle</VerticalAlignment><TextFitMode>None</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String xml:space="preserve">RITMXXXXXXX</String><Attributes><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" HueScale="100" /></Attributes></Element></StyledText></TextObject><Bounds X="3105.6259765625" Y="242.37272644043" Width="1847.3740234375" Height="216" /></ObjectInfo><ObjectInfo><TextObject><Name>TEXT_2</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Top</VerticalAlignment><TextFitMode>ShrinkToFit</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String xml:space="preserve">&lt;CUSTOMER&gt;</String><Attributes><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" HueScale="100" /></Attributes></Element></StyledText></TextObject><Bounds X="1248" Y="1268" Width="2880" Height="225" /></ObjectInfo><ObjectInfo><TextObject><Name>TEXT_8</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName /><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>False</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><HorizontalAlignment>Left</HorizontalAlignment><VerticalAlignment>Top</VerticalAlignment><TextFitMode>ShrinkToFit</TextFitMode><UseFullFontHeight>True</UseFullFontHeight><Verticalized>False</Verticalized><StyledText><Element><String xml:space="preserve">Office, Skype</String><Attributes><Font Family="Arial" Size="9" Bold="False" Italic="False" Underline="False" Strikeout="False" /><ForeColor Alpha="255" Red="0" Green="0" Blue="0" HueScale="100" /></Attributes></Element></StyledText></TextObject><Bounds X="858" Y="1058" Width="2880" Height="210" /></ObjectInfo><ObjectInfo><BarcodeObject><Name>BARCODE</Name><ForeColor Alpha="255" Red="0" Green="0" Blue="0" /><BackColor Alpha="0" Red="255" Green="255" Blue="255" /><LinkedObjectName>HOSTNAME_TEXT</LinkedObjectName><Rotation>Rotation0</Rotation><IsMirrored>False</IsMirrored><IsVariable>True</IsVariable><GroupID>-1</GroupID><IsOutlined>False</IsOutlined><Text>DTXXXXXXXXXX</Text><Type>Code39</Type><Size>Small</Size><TextPosition>None</TextPosition><TextFont Family="Arial" Size="8" Bold="False" Italic="False" Underline="False" Strikeout="False" /><CheckSumFont Family="Arial" Size="8" Bold="False" Italic="False" Underline="False" Strikeout="False" /><TextEmbedding>None</TextEmbedding><ECLevel>0</ECLevel><HorizontalAlignment>Left</HorizontalAlignment><QuietZonesPadding Left="0" Top="0" Right="0" Bottom="0" /></BarcodeObject><Bounds X="331" Y="133" Width="3180" Height="285" /></ObjectInfo></DieCutLabel>';
 			break;
 

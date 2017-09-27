@@ -86,9 +86,10 @@ chrome.runtime.onStartup.addListener(function() {
 		'keepNotes',
 		'clearNotes',
 		'closeAlerts',
+		'remind',
 		'buildLog',
 		'builds',
-		'printLabels',
+		'labels',
 	], function(items) {
 		if (chrome.runtime.lastError) {
 			console.error('SNAFU: Sync Get Error: %s', chrome.runtime.lastError.message);
@@ -103,9 +104,23 @@ chrome.runtime.onStartup.addListener(function() {
 			if (isVarEmpty(items.keepNotes) === true) settingsToCreate['keepNotes'] = false;
 			if (isVarEmpty(items.clearNotes) === true) settingsToCreate['clearNotes'] = true;
 			if (isVarEmpty(items.closeAlerts) === true) settingsToCreate['closeAlerts'] = true;
+			if (isVarEmpty(items.remind) === true) settingsToCreate['remind'] = 'popup';
 			if (isVarEmpty(items.buildLog) === true) settingsToCreate['buildLog'] = false;
 			if (isVarEmpty(items.builds) === true) settingsToCreate['builds'] = {};
 			if (isVarEmpty(items.printLabels) === true) settingsToCreate['printLabels'] = false;
+			if (isVarEmpty(items.labels) === true) {
+				settingsToCreate['labels'] = {
+					build: true,
+					buildAck: true,
+					decommission: true,
+					equipment: true,
+					reclaim: true,
+					reimage: true,
+					reimageack: true,
+					repair: true,
+					restock: true
+				}
+			}
 			if (isVarEmpty(items.canned) === true) {
 				settingsToCreate['canned'] = {
 					'callingUser': 'Calling {INC_CUST_FNAME} at {INC_CUR_PHONE}.',

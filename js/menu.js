@@ -25,7 +25,7 @@ chrome.contextMenus.create({
 	title: 'SNAFU',
 	contexts: ['page'],
 	id: 'snafuParent',
-	documentUrlPatterns: docPatterns
+	documentUrlPatterns: ['https://ghsprod.service-now.com/*']
 });
 
 /**
@@ -322,16 +322,29 @@ chrome.contextMenus.create({
 });
 
 chrome.contextMenus.create({
-	title: 'Build Log',
+	title: 'Computer Reminders',
 	contexts: ['page'],
-	id: 'buildLogParent',
+	id: 'remindParent',
 	parentId: 'optionsParent'
 });
 
+const reminders = {'none': 'None', 'popup': 'Popup Reminder', 'open': 'Open Computer Database'}
+for (var opt in reminders) {
+	chrome.contextMenus.create({
+		title: reminders[opt],
+		type: 'radio',
+		contexts: ['page'],
+		id: 'remind-' + opt,
+		parentId: 'remindParent',
+		checked: false,
+		onclick: optionsHandler
+	});
+}
+
 chrome.contextMenus.create({
-	title: 'Print Labels',
+	title: 'Build Log',
 	contexts: ['page'],
-	id: 'printLabelsParent',
+	id: 'buildLogParent',
 	parentId: 'optionsParent'
 });
 
@@ -342,7 +355,7 @@ chrome.contextMenus.create({
 	parentId: 'optionsParent'
 });
 
-const toggleOptions = ['closePopup', 'keepNotes', 'clearNotes', 'sendEnter', 'closeAlerts', 'buildLog', 'printLabels', 'debug'];
+const toggleOptions = ['closePopup', 'keepNotes', 'clearNotes', 'sendEnter', 'closeAlerts', 'buildLog', 'debug'];
 const objToggle = {'enable': 'Enabled', 'disable': 'Disabled'};
 
 for (var i = 0; i < toggleOptions.length; i++) {
@@ -386,7 +399,8 @@ chrome.contextMenus.create({
 	title: 'Print Label',
 	contexts: ['page'],
 	id: 'printLabelParent',
-	parentId: 'snafuParent'
+	parentId: 'snafuParent',
+	documentUrlPatterns: docPatterns
 });
 
 const menuLblTypes = ['build', 'buildack', 'decommission', 'reclaim', 'repair', 'restock']
@@ -524,6 +538,10 @@ chrome.storage.onChanged.addListener(function(changes, area) {
 			['save', 'update', 'auto', 'none'].forEach(function(opt) {
 				chrome.contextMenus.update('autoFinish-' + opt, {checked: (changes.autoFinish.newValue === opt) ? true : false});
 			});
+		} else if ('remind' in changes) {
+			['none', 'popup', 'open'].forEach(function(opt) {
+				chrome.contextMenus.update('remind-' + opt, {checked: (changes.remind.newValue === opt) ? true : false});
+			});
 		} else if ('closePopup' in changes) {
 			// set the closePopup radio
 			updateRadio('closePopup', changes.closePopup.newValue);
@@ -544,8 +562,6 @@ chrome.storage.onChanged.addListener(function(changes, area) {
 			updateRadio('clearNotes', changes.clearNotes.newValue);
 		} else if ('closeAlerts' in changes) {
 			updateRadio('closeAlerts', changes.closeAlerts.newValue);
-		} else if ('printLabels' in changes) {
-			updateRadio('printLabels', changes.printLabels.newValue);
 		}
 	}
 });
@@ -583,26 +599,15 @@ function openLink(url) {
 function optionsHandler(info, tab) {
 	var setting = info.menuItemId.substring(0, info.menuItemId.indexOf('-'));
 	var value = info.menuItemId.substring(info.menuItemId.indexOf('-') + 1);
-	if (setting === 'autoFinish') {
-		chrome.storage.sync.set({autoFinish: value}, function() {
-			if (chrome.runtime.lastError) {
-				console.error('SNAFU autoFinish Set Error: %s', chrome.runtime.lastError.message);
-			} else {
-				console.info('SNAFU: Updated autoFinish.');
-			}
-		});
-	} else {
-		var newSetting = {}
-		newSetting[setting] = (value === 'enable') ? true : false;
-		chrome.storage.sync.set(newSetting, function() {
-			if (chrome.runtime.lastError) {
-				console.error('SNAFU %s Set Error: %s', setting, chrome.runtime.lastError.message);
-			} else {
-				console.info('SNAFU: Updated %s.', setting);
-			}	
-		});
-	}
-
+	var newSetting = {}
+	newSetting[setting] = (setting === 'autoFinish' || setting === 'remind') ? value : (value === 'enable') ? true : false;
+	chrome.storage.sync.set(newSetting, function() {
+		if (chrome.runtime.lastError) {
+			console.error('SNAFU %s Set Error: %s', setting, chrome.runtime.lastError.message);
+		} else {
+			console.info('SNAFU: Updated %s.', setting);
+		}	
+	});
 	updateOptionMenus();
 }
 
@@ -691,7 +696,7 @@ function handleResponse(response) {
  * @return	{Void}
  */
 function updateOptionMenus() {
-	chrome.storage.sync.get(['debug', 'autoFinish', 'closePopup', 'sendEnter', 'keepNotes', 'closeAlerts', 'buildLog', 'printLabels', 'userId', 'userName', 'userEmail', 'fullName', 'groupName', 'groupId'], function(items) {
+	chrome.storage.sync.get(['debug', 'autoFinish', 'closePopup', 'sendEnter', 'keepNotes', 'closeAlerts', 'remind', 'buildLog', 'userId', 'userName', 'userEmail', 'fullName', 'groupName', 'groupId'], function(items) {
 		if (chrome.runtime.lastError) {
 			console.error('SNAFU User Sync Error: %s', chrome.runtime.lastError.message);
 		} else {
@@ -708,8 +713,13 @@ function updateOptionMenus() {
 				chrome.contextMenus.update('autoFinish-' + opt, {checked: (items.autoFinish === opt) ? true : false});
 			});
 
+			// set the reminder radio
+			['none', 'popup', 'open'].forEach(function(opt) {
+				chrome.contextMenus.update('remind-' + opt, {checked: (items.remind === opt) ? true : false});
+			});
+
 			// update radios
-			var radios = ['closePopup', 'debug', 'sendEnter', 'keepNotes', 'clearNotes', 'closeAlerts', 'buildLog', 'printLabels'];
+			var radios = ['closePopup', 'debug', 'sendEnter', 'keepNotes', 'clearNotes', 'closeAlerts', 'buildLog'];
 			for (var i = 0; i < radios.length; i++) {
 				updateRadio(radios[i], items[radios[i]]);
 			}

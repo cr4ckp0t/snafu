@@ -107,7 +107,7 @@ document.addEventListener('SNAFU_UserQuery', function(userData) {
 });
 
 chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
-    chrome.storage.sync.get(['autoFinish', 'finishDelay', 'buildLog', 'printLabels', 'debug'], function(items) {
+    chrome.storage.sync.get(['autoFinish', 'finishDelay', 'buildLog', 'labels', 'remind', 'debug'], function(items) {
         if (chrome.runtime.lastError) {
             console.error('SNAFU Sync Get Error: %s', chrome.runtime.lastError.message);
         } else {
@@ -173,7 +173,8 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                             autoFinish: items.autoFinish || 'none',
                             finishDelay: items.finishDelay || 1.,
                             buildLog: items.buildLog,
-                            printLabels: items.printLabels
+                            labels: items.labels,
+                            remind: items.remind,
                         }
                         sendResponse({success: true, errMsg: null});
                     }
@@ -211,7 +212,8 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                             workNotes: 'Computer has been built. One {REPLACE_MODEL} has been built {REPLACE_BUILD}. Tag {REPLACE_ASSET} HostName {REPLACE_HOSTNAME}. Resolving Task.',
                             custNotes: null,
                             buildLog: items.buildLog,
-                            printLabels: items.printLabels
+                            labels: items.labels,
+                            remind: items.remind,
                         }
                         sendResponse({success: true, errMsg: null});
                     }
@@ -247,7 +249,8 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                             workNotes: sprintf('{BROKEN_HOSTNAME} was removed from quarantine %s', addToNotes),
                             custNotes: null,
                             buildLog: items.buildLog,
-                            printLabels: items.printLabels
+                            labels: items.labels,
+                            remind: items.remind,
                         }
                         sendResponse({success: true, errMsg: null});
                     }
@@ -269,7 +272,8 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                             workNotes: (msg.type === 'closeRepairOnSite') ? '{BROKEN_HOSTNAME} was repaired and returned to stock.' : '{BROKEN_HOSTNAME} will not be repaired, and will be added to decommission workflow.',
                             custNotes: null,
                             buildLog: items.buildLog,
-                            printLabels: items.printLabels
+                            labels: items.labels,
+                            remind: items.remind,
                         }
                         sendResponse({success: true, errMsg: null});
                     }
@@ -288,7 +292,8 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                             value: (ticketType === 'incident') ? '4' : '-5',    // on hold or pending
                             subStatus: msg.subStatus || null,
                             custNotes: (ticketType === 'incident') ? sprintf('Scheduled appointment with {INC_CUSTOMER} for %s at %s.', msg.custNotes.split('T')) : sprintf('Scheduled appointment with {REQUESTED_FOR} for %s at %s.', msg.custNotes.split('T')),
-                            workNotes: msg.workNotes || null
+                            workNotes: msg.workNotes || null,
+                            remind: items.remind,
                         }
                         sendResponse({success: true, errMsg: null});
                     }
@@ -325,7 +330,8 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                             workNotes: msg.workNotes || null,
                             custNotes: msg.custNotes || null,
                             buildLog: items.buildLog,
-                            printLabels: items.printLabels
+                            labels: items.labels,
+                            remind: items.remind,
                         }
                         sendResponse({success: true, errMsg: null});
                     }
@@ -346,7 +352,9 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                             workNotes: msg.workNotes || null,
                             custNotes: 'My name is {TECH_NAME} and I have completed the build process for your workstation. The next step is for the system to be delivered to our technicians supporting your campus or ambulatory location so they can schedule an appropriate time to come to your desk and install the system. Please be sure to watch for communication regarding the delivery and installation of your computer at your desk.',
                             buildLog: items.buildLog,
-                            printLabels: items.printLabels
+                            labels: items.labels,
+                            equipLabel: msg.equipLabel,
+                            remind: items.remind,
                         }
                         sendResponse({success: true, errMsg: null});
                     }

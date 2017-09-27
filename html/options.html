@@ -61,7 +61,7 @@
                 <div id="content" class="panel panel-primary">
                     <div class="panel-heading">
                         <div class="panel-title">
-                            <strong>Options</strong>
+                            <strong>General Options</strong>
                         </div>
                     </div>
                     <div class="panel-body">
@@ -128,6 +128,16 @@
                         <div class="extraInfo">Automatically close the Epic Hyperspace and BCA device alerts that appear in incidents.</div>
                         <br />
                         <div class="input-group">
+                            <span class="input-group-addon" id="remindAddon">Computer Reminder</span>
+                            <select id="remind" class="form-control" aria-describedby="remindAddon">
+                                <option value="none">None</option>
+                                <option value="popup">Popup Reminder</option>
+                                <option value="open">Open Computer Database</option>
+                            </select>
+                        </div>
+                        <div class="extraInfo">Choose a reminder to update a computer's location information at ticket close.</div>
+                        <br />
+                        <div class="input-group">
                             <span class="input-group-addon" id="buildLogAddon">Log Builds</span>
                             <select id="buildLog" class="form-control" aria-describedby="buildLogAddon">
                                 <option value="enable">Enabled</option>
@@ -141,15 +151,6 @@
                         </div>
                         <div class="extraInfo">Log Hot Swap, Reimage, and Equipment Order builds automatically.</div>
                         <br />
-                        <divr class="input-group">
-                            <span class="input-group-addon" id="printLabelsAddon">Print Labels</span>
-                            <select id="printLabels" class="form-control" aria-describedby="printLabelsAddon">
-                                <option value="enable">Enabled</option>
-                                <option value="disable">Disabled</option>
-                            </select>
-                        </divr>
-                        <div class="extraInfo">Automatically print label when closing certain tasks (builds, quarantine, etc.).</div>
-                        <br />
                         <div class="input-group">
                             <span class="input-group-addon" id="debugAddon">Debug Mode</span>
                             <select id="debugMode" class="form-control" aria-describedby="debugAddon">
@@ -160,8 +161,102 @@
                         <div class="extraInfo">You can leave this disabled unless told to enable.</div>
                     </div>
                 </div>
+                <div id="content" class="panel panel-primary">
+                    <div class="panel-heading">
+                        <div class="panel-title"><strong>Canned Messages</strong></div>
+                    </div>
+                    <div class="panel-body">
+                        <div class="form-group">
+                            <label for="cannedMsgs" class="textareaLabel">Canned Messages</label>
+                            <textarea id="cannedMsgs" class="form-control" rows="6" cols="50"></textarea>
+                            <div class="extraInfo">Put each message on its own line in the format of {label}|{message}.</div>
+                        </div>
+                    </div>
+                </div>
             </td>
             <td width="50%" style="vertical-align:top;padding-left:10px;" align="left">
+                <div id="content" class="panel panel-primary">
+                    <div class="panel-heading">
+                        <div class="panel-title">
+                            <strong>Automatic Label Printing</strong>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <div class="extraInfo">Pick which labels you would like to automatically print.</div>
+                        <br />
+                        <div class="input-group">
+                            <span class="input-group-addon" id="labelBuildAddon">Builds (Hot Swaps)</span>
+                            <select id="labelBuild" class="form-control" aria-describedby="labelBuildAddon">
+                                <option value="enable">Enabled</option>
+                                <option value="disable">Disabled</option>
+                            </select>
+                        </div>
+                        <br />
+                        <div class="input-group">
+                            <span class="input-group-addon" id="labelBuildAckAddon">Build Acknowledgements</span>
+                            <select id="labelBuildack" class="form-control" aria-describedby="labelBuildAckAddon">
+                                <option value="enable">Enabled</option>
+                                <option value="disable">Disabled</option>
+                            </select>
+                        </div>
+                        <br />
+                        <div class="input-group">
+                            <span class="input-group-addon" id="labelDecommissionAddon">Decommissions</span>
+                            <select id="labelDecommission" class="form-control" aria-describedby="labelDecommissionAddon">
+                                <option value="enable">Enabled</option>
+                                <option value="disable">Disabled</option>
+                            </select>
+                        </div>
+                        <br />
+                        <div class="input-group">
+                            <span class="input-group-addon" id="labelEquipmentAddon">Equipment Orders</span>
+                            <select id="labelEquipment" class="form-control" aria-describedby="labelEquipmentAddon">
+                                <option value="enable">Enabled</option>
+                                <option value="disable">Disabled</option>
+                            </select>
+                        </div>
+                        <br />
+                        <div class="input-group">
+                            <span class="input-group-addon" id="labelReclaimAddon">Reclaims</span>
+                            <select id="labelReclaim" class="form-control" aria-describedby="labelReclaimAddon">
+                                <option value="enable">Enabled</option>
+                                <option value="disable">Disabled</option>
+                            </select>
+                        </div>
+                        <br />
+                        <div class="input-group">
+                            <span class="input-group-addon" id="labelReimageAddon">Reimage Builds</span>
+                            <select id="labelReimage" class="form-control" aria-describedby="labelReimageAddon">
+                                <option value="enable">Enabled</option>
+                                <option value="disable">Disabled</option>
+                            </select>
+                        </div>
+                        <br />
+                        <div class="input-group">
+                            <span class="input-group-addon" id="labelReimageAckAddon">Reimage Acknowledgements</span>
+                            <select id="labelReimageack" class="form-control" aria-describedby="labelReimageAckAddon">
+                                <option value="enable">Enabled</option>
+                                <option value="disable">Disabled</option>
+                            </select>
+                        </div>
+                        <br />
+                        <div class="input-group">
+                            <span class="input-group-addon" id="labelRepairAddon">Repairs</span>
+                            <select id="labelRepair" class="form-control" aria-describedby="labelRepairAddon">
+                                <option value="enable">Enabled</option>
+                                <option value="disable">Disabled</option>
+                            </select>
+                        </div>
+                        <br />
+                        <div class="input-group">
+                            <span class="input-group-addon" id="labelRestockAddon">Restocks</span>
+                            <select id="labelRestock" class="form-control" aria-describedby="labelRestockAddon">
+                                <option value="enable">Enabled</option>
+                                <option value="disable">Disabled</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>  
                 <div id="content" class="panel panel-primary">
                     <div class="panel-heading">
                         <div class="panel-title"><strong>ServiceNow User Information</strong></div>
@@ -195,18 +290,6 @@
                         <div class="input-group">
                             <span class="input-group-addon" id="groupIdAddon">Group ID</span>
                             <input type="text" class="form-control" id="groupId" aria-describedby="groupIdAddon" readonly />
-                        </div>
-                    </div>
-                </div>
-                <div id="content" class="panel panel-primary">
-                    <div class="panel-heading">
-                        <div class="panel-title"><strong>Canned Messages</strong></div>
-                    </div>
-                    <div class="panel-body">
-                        <div class="form-group">
-                            <label for="cannedMsgs" class="textareaLabel">Canned Messages</label>
-                            <textarea id="cannedMsgs" class="form-control" rows="6" cols="50"></textarea>
-                            <div class="extraInfo">Put each message on its own line in the format of {label}|{message}.</div>
                         </div>
                     </div>
                 </div>

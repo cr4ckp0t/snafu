@@ -83,24 +83,17 @@ function saveSettings() {
 		finishDelay: $('#finishDelay').val(),
 		closeAlerts: ($('#closeAlerts').val() === 'enable') ? true : false,
 		buildLog: ($('#buildLog').val() === 'enable') ? true : false,
-		printLabels: ($('#printLabels').val() === 'enable') ? true : false,
-		alarms: {
-			clockIn: {
-				enabled: $('#clockInToggle').is(':checked'),
-				time: $('#clockInTime').val()
-			},
-			lunchOut: {
-				enabled: $('#lunchOutToggle').is(':checked'),
-				time: $('#lunchOutTime').val()
-			},
-			lunchIn: {
-				enabled: $('#lunchInToggle').is(':checked'),
-				time: $('#lunchInTime').val()
-			},
-			clockOut: {
-				enabled: $('#clockOutToggle').is(':checked'),
-				time: $('#clockOutTime').val()
-			}
+		remind: $('#remind').val(),
+		labels: {
+			build: ($('#labelBuild').val() === 'enable') ? true : false,
+			buildAck:($('#labelBuildack').val() === 'enable') ? true : false,
+			decommission: ($('#labelDecommission').val() === 'enable') ? true : false,
+			equipment: ($('#labelEquipment').val() === 'enable') ? true : false,
+			reclaim: ($('#labelReclaim').val() === 'enable') ? true : false,
+			reimage: ($('#labelReimage').val() === 'enable') ? true : false,
+			reimageack: ($('#labelReimageack').val() === 'enable') ? true : false,
+			repair: ($('#labelRepair').val() === 'enable') ? true : false,
+			restock: ($('#labelRestock').val() === 'enable') ? true : false
 		}
 	}, function() {
 		if (chrome.runtime.lastError) {
@@ -128,9 +121,10 @@ function loadSettings() {
 		'keepNotes',
 		'clearNotes',
 		'closeAlerts',
+		'remind',
 		'buildLog',
 		'builds',
-		'printLabels',
+		'labels',
 		'userId',
 		'userName',
 		'userEmail',
@@ -142,6 +136,7 @@ function loadSettings() {
 			console.error('SNAFU Sync Get Error: %s', chrome.runtime.lastError.message);
 		} else {
 			var settingsToCreate = {}
+			var labelTypes = ['build', 'buildack', 'decommission', 'equipment', 'reclaim', 'reimage', 'reimageack', 'repair', 'restock'];
 
 			// debug settings
 			if (isVarEmpty(items.debug) === true) {
@@ -221,13 +216,35 @@ function loadSettings() {
 			} else {
 				$('#closeAlerts').val((items.closeAlerts === true) ? 'enable' : 'disable');
 			}
-
-			// print labels automatically
-			if (isVarEmpty(items.printLabels) === true) {
-				settingsToCreate['printLabels'] = false;
-				$('#printLabels').val('disable');
+			
+			// computer location reminder
+			if (isVarEmpty(items.remind) === true) {
+				settingsToCreate['remind'] = 'popup';
+				$('#remind').val('popup');
 			} else {
-				$('#printLabels').val((items.printLabels === true) ? 'enable' : 'disable');
+				$('#remind').val(items.remind);
+			}
+
+			// label printing
+			if (isVarEmpty(items.labels) === true) {
+				settingsToCreate['labels'] = {
+					build: true,
+					buildAck: true,
+					decommission: true,
+					equipment: true,
+					reclaim: true,
+					reimage: true,
+					reimageack: true,
+					repair: true,
+					restock: true
+				}
+				for (var i = 0; i < labelTypes.length; i++) {
+					$('#label' + ucwords(labelTypes[i])).val('enable');
+				}
+			} else {
+				for (var i = 0; i < labelTypes.length; i++) {
+					$('#label' + ucwords(labelTypes[i])).val((items.labels[labelTypes[i]] === true) ? 'enable' : 'disable');
+				}
 			}
 
 			// build log
@@ -307,6 +324,17 @@ function sprintf(template, values) {
     return template.replace(/%s/g, function() {
         return values.shift();
     });
+}
+
+/**
+ * Capitalizes the first character of each word.
+ * @param	{String}	str
+ * @return	{String}
+ */
+function ucwords(str) {
+	return str.toLowerCase().replace(/^([a-z\u00E0-\u00FC])|\s+([a-z\u00E0-\u00FC])/g, function(e) {
+		return e.toUpperCase();
+	});
 }
 
 /**
