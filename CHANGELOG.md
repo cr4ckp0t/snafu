@@ -7,14 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## Unreleased
 ### Added
 - Print build label when using Equipment Install form.
+- Open computer database when various actions are taken (closing incidents, hot swaps, etc.).
 
 ### Changed
 - Hostname of pre-built devices will be automatically uppercased.
 - Script used when auto-closing deliveries, per Eric's request.
 - Ability to select which labels to automatically print.
-
-### ToDo
-- Open computer database when various actions are taken (closing incidents, hot swaps, etc.).
 
 ## 1.2.7 [2017-09-21]
 ### Fixed

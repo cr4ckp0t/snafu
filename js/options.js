@@ -219,8 +219,8 @@ function loadSettings() {
 			
 			// computer location reminder
 			if (isVarEmpty(items.remind) === true) {
-				settingsToCreate['remind'] = 'popup';
-				$('#remind').val('popup');
+				settingsToCreate['remind'] = 'open';
+				$('#remind').val('open');
 			} else {
 				$('#remind').val(items.remind);
 			}

@@ -55,7 +55,7 @@ chrome.commands.onCommand.addListener(function(command) {
 // receive messages to open tabs
 chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
 	if (isVarEmpty(msg.url) === false) {
-		chrome.tabs.create({url: msg.url});
+		chrome.tabs.create({url: msg.url, active: false});
 	}
 });
 
@@ -111,10 +111,9 @@ chrome.runtime.onStartup.addListener(function() {
 			if (isVarEmpty(items.keepNotes) === true) settingsToCreate['keepNotes'] = false;
 			if (isVarEmpty(items.clearNotes) === true) settingsToCreate['clearNotes'] = true;
 			if (isVarEmpty(items.closeAlerts) === true) settingsToCreate['closeAlerts'] = true;
-			if (isVarEmpty(items.remind) === true) settingsToCreate['remind'] = 'popup';
+			if (isVarEmpty(items.remind) === true) settingsToCreate['remind'] = 'open';
 			if (isVarEmpty(items.buildLog) === true) settingsToCreate['buildLog'] = false;
 			if (isVarEmpty(items.builds) === true) settingsToCreate['builds'] = {};
-			if (isVarEmpty(items.printLabels) === true) settingsToCreate['printLabels'] = false;
 			if (isVarEmpty(items.labels) === true) {
 				settingsToCreate['labels'] = {
 					build: true,

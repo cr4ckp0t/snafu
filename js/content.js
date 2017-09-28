@@ -430,7 +430,7 @@ function sprintf(template, values) {
  * @return	{Void}
  */
 function handleResponse(response) {
-	chrome.storage.sync.get(['debug'], function(items) {
+	/*chrome.storage.sync.get(['debug'], function(items) {
 		if (chrome.runtime.lastError) {
 			console.error('SNAFU Sync Get Error: %s', chrome.runtime.lastError.message);
 		} else {
@@ -446,7 +446,8 @@ function handleResponse(response) {
 				}
 			}
 		}
-	});
+    });*/
+    return;
 }
 
 /**

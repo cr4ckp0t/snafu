@@ -369,6 +369,9 @@ const snafuResolveTypes = {
 	'printer': { 'type_1': 'Hardware', 'type_2': 'Printer' },
 }
 
+// tickets that will trigger a reminder to update the location information
+const snafuReminderTickets = ['generic_incident', 'rhs_reimage_return', 'rhs_build', 'rhs_reclaim', 'rhs_restock', 'rhs_repair', 'rhs_decommission'];
+
 // listen for triggers on the custom event for passing text
 document.addEventListener('SNAFU_Inject', function(inject) {
 	var ticketType = snafuGetTicketType();
@@ -647,7 +650,7 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 						}
 					}
 
-					if (type !== 'autoClose') {
+					if (type !== 'autoClose' || snafuReminderTickets.indexOf(ticketType) === -1) {
 						snafuEndTicketInteraction(inject.detail.autoFinish, inject.detail.finishDelay, ticket.field, ticketAction.value);
 					} else {
 						// action performed is depends on reminder
@@ -655,6 +658,9 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 							
 							// open computer database tab
 							case 'open':
+								// save, update, auto, none
+								snafuEndTicketInteraction(inject.detail.autoFinish, inject.detail.finishDelay, ticket.field, ticketAction.value);
+
 								// attempt to get the root cause's sys_id
 								var rootCause = snafuGetRootCauseSysId(ticketType);
 
@@ -664,13 +670,13 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 									url: (rootCause !== false) ? snafuSprintf('https://ghsprod.service-now.com/cmdb_ci_computer.do?sys_id=%s', [rootCause]) : 'https://ghsprod.service-now.com/cmdb_ci_computer_list.do'
 								});
 								document.dispatchEvent(query);
-
-								// save, update, auto, none
-								snafuEndTicketInteraction(inject.detail.autoFinish, inject.detail.finishDelay, ticket.field, ticketAction.value);
 								break;
 
 							// popup using sweet alerts
 							case 'popup':
+								// save, update, auto, none
+								snafuEndTicketInteraction(inject.detail.autoFinish, inject.detail.finishDelay, ticket.field, ticketAction.value);
+
 								swal({
 									title: 'Update Computer Location Information',
 									text: 'Don\'t forget to update the device\'s location information in Service Now.',
@@ -689,8 +695,6 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 										});
 										document.dispatchEvent(query);
 									}
-									// save, update, auto, none
-									snafuEndTicketInteraction(inject.detail.autoFinish, inject.detail.finishDelay, ticket.field, ticketAction.value);
 								});
 								break;
 
@@ -928,7 +932,7 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 					document.dispatchEvent(buildLogQuery);
 				}
 				
-				if (snafuIsResolveCode(field, value) === false) {
+				if (snafuIsResolveCode(field, value) === false || snafuReminderTickets.indexOf(ticketType) === -1) {
 					// save, update, auto, none
 					snafuEndTicketInteraction(inject.detail.autoFinish, inject.detail.finishDelay, field, value);
 				} else {
@@ -937,6 +941,9 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 						
 						// open computer database tab
 						case 'open':
+							// save, update, auto, none
+							snafuEndTicketInteraction(inject.detail.autoFinish, inject.detail.finishDelay, field, value);
+
 							// attempt to get the root cause's sys_id
 							var rootCause = snafuGetRootCauseSysId(ticketType);
 
@@ -946,9 +953,6 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 								url: (rootCause !== false) ? snafuSprintf('https://ghsprod.service-now.com/cmdb_ci_computer.do?sys_id=%s', [rootCause]) : 'https://ghsprod.service-now.com/cmdb_ci_computer_list.do'
 							});
 							document.dispatchEvent(query);
-							
-							// save, update, auto, none
-							snafuEndTicketInteraction(inject.detail.autoFinish, inject.detail.finishDelay, field, value);
 							break;
 
 						// popup using sweet alerts
@@ -964,6 +968,8 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 								closeOnCancel: true
 							},
 							function (openTab) {
+								// save, update, auto, none
+								snafuEndTicketInteraction(inject.detail.autoFinish, inject.detail.finishDelay, field, value);
 								if (!openTab) {
 									var rootCause = snafuGetRootCauseSysId(ticketType);
 
@@ -974,8 +980,6 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 									});
 									document.dispatchEvent(query);
 								}
-								// save, update, auto, none
-								snafuEndTicketInteraction(inject.detail.autoFinish, inject.detail.finishDelay, field, value);
 							});
 							break;
 
@@ -983,7 +987,7 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 						case 'none':
 						default:
 							// save, update, auto, none
-							snafuEndTicketInteraction(inject.detail.autoFinish, inject.detail.finishDelay, ticket.field, ticketAction.value);
+							snafuEndTicketInteraction(inject.detail.autoFinish, inject.detail.finishDelay, field, value);
 							break;
 					}
 				}
@@ -1322,13 +1326,22 @@ function snafuGetTicketType() {
  * @return	{String|Boolean}
  */
 function snafuGetRootCauseSysId(ticket) {
-	var rootCause = g_form.getReference('cmdb_ci');
-
 	switch (ticket) {
 
 		// incident's will come from the root cause ci
 		case 'generic_incident':
+			var rootCause = g_form.getReference('cmdb_ci');
 			return (rootCause.name.substr(0, 2).toLowerCase() === 'lt' || rootCause.name.substr(0,2).toLowerCase() === 'dt' || rootCause.name.substr(0, 2).toLowerCase() === 'tb') ? rootCause.sys_id : false;
+			break;
+
+		// asset management workflow uses the broken device's hostname
+		case 'rhs_reimage_return':
+		case 'rhs_build':
+		case 'rhs_reclaim':
+		case 'rhs_restock':
+		case 'rhs_repair':
+		case 'rhs_decommission':
+			return g_form.getReference('rhs_comp_name').sys_id || false;
 			break;
 
 		default: 
