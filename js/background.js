@@ -52,6 +52,13 @@ chrome.commands.onCommand.addListener(function(command) {
 	}
 });
 
+// receive messages to open tabs
+chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
+	if (isVarEmpty(msg.url) === false) {
+		chrome.tabs.create({url: msg.url});
+	}
+});
+
 // only activate the icon if service now is the active tab
 chrome.runtime.onInstalled.addListener(function() {
     chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {

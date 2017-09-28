@@ -369,16 +369,12 @@ const snafuResolveTypes = {
 	'printer': { 'type_1': 'Hardware', 'type_2': 'Printer' },
 }
 
-console.info(g_form.getReference('cmdb_ci'));
-
 // listen for triggers on the custom event for passing text
 document.addEventListener('SNAFU_Inject', function(inject) {
 	var ticketType = snafuGetTicketType();
 	var type = inject.detail.type;
 	var labelSettings = inject.detail.labels;
 	var query;
-
-	//swal({   title: "Are you sure?",   text: "You will not be able to recover this imaginary file!",   type: "warning",   showCancelButton: true,   confirmButtonColor: "#DD6B55",   confirmButtonText: "Yes, delete it!",   closeOnConfirm: false }, function(){   swal("Deleted!", "Your imaginary file has been deleted.", "success"); });
 
 	// query for the user informatoin
 	if (type === 'userQuery') {
@@ -660,7 +656,7 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 							// open computer database tab
 							case 'open':
 								// attempt to get the root cause's sys_id
-								var rootCause = snafuGetRootCauseSysId();
+								var rootCause = snafuGetRootCauseSysId(ticketType);
 
 								// open a tab using a custom javascript event
 								query = document.createEvent('CustomEvent');
@@ -668,6 +664,9 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 									url: (rootCause !== false) ? snafuSprintf('https://ghsprod.service-now.com/cmdb_ci_computer.do?sys_id=%s', [rootCause]) : 'https://ghsprod.service-now.com/cmdb_ci_computer_list.do'
 								});
 								document.dispatchEvent(query);
+
+								// save, update, auto, none
+								snafuEndTicketInteraction(inject.detail.autoFinish, inject.detail.finishDelay, ticket.field, ticketAction.value);
 								break;
 
 							// popup using sweet alerts
@@ -676,7 +675,22 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 									title: 'Update Computer Location Information',
 									text: 'Don\'t forget to update the device\'s location information in Service Now.',
 									icon: 'info',
-
+									buttons: {
+										openTab: 'Open Computer Database',
+										gotIt: 'Got It!'
+									}
+								})
+								.then((value) => {
+									if (value === 'openTab') {
+										// open a tab using a custom javascript event
+										query = document.createEvent('CustomEvent');
+										query.initCustomEvent('SNAFU_OpenTab', true, true, {
+											url: (rootCause !== false) ? snafuSprintf('https://ghsprod.service-now.com/cmdb_ci_computer.do?sys_id=%s', [rootCause]) : 'https://ghsprod.service-now.com/cmdb_ci_computer_list.do'
+										});
+										document.dispatchEvent(query);
+									}
+									// save, update, auto, none
+									snafuEndTicketInteraction(inject.detail.autoFinish, inject.detail.finishDelay, ticket.field, ticketAction.value);
 								});
 								break;
 
@@ -914,8 +928,65 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 					document.dispatchEvent(buildLogQuery);
 				}
 				
-				// save, update, auto, none
-				snafuEndTicketInteraction(inject.detail.autoFinish, inject.detail.finishDelay, field, value);
+				if (snafuIsResolveCode(field, value) === false) {
+					// save, update, auto, none
+					snafuEndTicketInteraction(inject.detail.autoFinish, inject.detail.finishDelay, field, value);
+				} else {
+					// action performed is depends on reminder
+					switch (inject.detail.remind) {
+						
+						// open computer database tab
+						case 'open':
+							// attempt to get the root cause's sys_id
+							var rootCause = snafuGetRootCauseSysId(ticketType);
+
+							// open a tab using a custom javascript event
+							query = document.createEvent('CustomEvent');
+							query.initCustomEvent('SNAFU_OpenTab', true, true, {
+								url: (rootCause !== false) ? snafuSprintf('https://ghsprod.service-now.com/cmdb_ci_computer.do?sys_id=%s', [rootCause]) : 'https://ghsprod.service-now.com/cmdb_ci_computer_list.do'
+							});
+							document.dispatchEvent(query);
+							
+							// save, update, auto, none
+							snafuEndTicketInteraction(inject.detail.autoFinish, inject.detail.finishDelay, field, value);
+							break;
+
+						// popup using sweet alerts
+						case 'popup':
+							sweetAlert({
+								title: 'Update Computer Location Information',
+								text: 'Don\'t forget to update the device\'s location information in Service Now.',
+								type: 'warning',
+								showCancelButton: true,
+								cancelButtonText: 'Open Computer Database',
+								confirmButtonText: 'Got It!',
+								closeOnConfirm: true,
+								closeOnCancel: true
+							},
+							function (openTab) {
+								if (!openTab) {
+									var rootCause = snafuGetRootCauseSysId(ticketType);
+
+									// open a tab using a custom javascript event
+									query = document.createEvent('CustomEvent');
+									query.initCustomEvent('SNAFU_OpenTab', true, true, {
+										url: (rootCause !== false) ? snafuSprintf('https://ghsprod.service-now.com/cmdb_ci_computer.do?sys_id=%s', [rootCause]) : 'https://ghsprod.service-now.com/cmdb_ci_computer_list.do'
+									});
+									document.dispatchEvent(query);
+								}
+								// save, update, auto, none
+								snafuEndTicketInteraction(inject.detail.autoFinish, inject.detail.finishDelay, field, value);
+							});
+							break;
+
+						// no reminder
+						case 'none':
+						default:
+							// save, update, auto, none
+							snafuEndTicketInteraction(inject.detail.autoFinish, inject.detail.finishDelay, ticket.field, ticketAction.value);
+							break;
+					}
+				}
 
 				// print labels
 				if (type === 'sendEquipment' || type.indexOf('closeQuarantine') !== -1 || type.indexOf('closeHotSwap') !== -1 || type.indexOf('closeRepair') !== -1) {
@@ -1260,7 +1331,9 @@ function snafuGetRootCauseSysId(ticket) {
 			return (rootCause.name.substr(0, 2).toLowerCase() === 'lt' || rootCause.name.substr(0,2).toLowerCase() === 'dt' || rootCause.name.substr(0, 2).toLowerCase() === 'tb') ? rootCause.sys_id : false;
 			break;
 
-		default: break;
+		default: 
+			return false;
+			break;
 	}
 }
 

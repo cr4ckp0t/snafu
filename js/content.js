@@ -78,6 +78,11 @@ document.addEventListener('SNAFU_BuildLogQuery', function(build) {
     }
 });
 
+// open tab event trigger
+document.addEventListener('SNAFU_OpenTab', function(tab) {
+    chrome.runtime.sendMessage({url: tab.detail.url}, handleResponse);
+});
+
 // listen for triggers on the custom event for passing text
 document.addEventListener('SNAFU_UserQuery', function(userData) {
     if (isVarEmpty(userData.detail.fullName) || isVarEmpty(userData.detail.userName) || isVarEmpty(userData.detail.userId) || isVarEmpty(userData.detail.userEmail) || isVarEmpty(userData.detail.groupName) || isVarEmpty(userData.detail.groupId)) {
