@@ -370,7 +370,7 @@ const snafuResolveTypes = {
 }
 
 // tickets that will trigger a reminder to update the location information
-const snafuReminderTickets = ['generic_incident', 'rhs_reimage_return', 'rhs_build', 'rhs_reclaim', 'rhs_restock', 'rhs_repair', 'rhs_decommission'];
+const snafuReminderTickets = ['generic_incident', 'rhs_reimage_return', 'rhs_build', 'rhs_reclaim', 'rhs_restock', 'rhs_repair', 'rhs_decommission', 'po_install_items', 'spr_install'];
 
 // listen for triggers on the custom event for passing text
 document.addEventListener('SNAFU_Inject', function(inject) {

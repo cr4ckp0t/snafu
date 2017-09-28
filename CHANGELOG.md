@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 ### Added
+- Equipment and SPR installs added to computer reminders.
+
+## 1.2.8 [2017-09-30]
+### Added
 - Print build label when using Equipment Install form.
 - Open computer database when various actions are taken (closing incidents, hot swaps, etc.).
 
