@@ -4,11 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## 1.2.9 [2017-09-29]
 ### Added
-- Equipment and SPR installs added to computer reminders.
+- Removals, Disconnects, and installs added to computer reminders.
 
-## 1.2.8 [2017-09-30]
+### Fixed
+- Injected data handling is cleaner and more robust.
+
+## 1.2.8 [2017-09-28]
 ### Added
 - Print build label when using Equipment Install form.
 - Open computer database when various actions are taken (closing incidents, hot swaps, etc.).

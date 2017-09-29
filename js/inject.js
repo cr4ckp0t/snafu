@@ -370,7 +370,19 @@ const snafuResolveTypes = {
 }
 
 // tickets that will trigger a reminder to update the location information
-const snafuReminderTickets = ['generic_incident', 'rhs_reimage_return', 'rhs_build', 'rhs_reclaim', 'rhs_restock', 'rhs_repair', 'rhs_decommission', 'po_install_items', 'spr_install'];
+const snafuReminderTickets = [
+	'generic_incident',
+	'rhs_reimage_return',
+	'rhs_build',
+	'rhs_reclaim',
+	'rhs_restock',
+	'rhs_repair',
+	'rhs_decommission',
+	'po_install_items',
+	'spr_install',
+	'equip_removal',
+	'equip_reconnect'
+];
 
 // listen for triggers on the custom event for passing text
 document.addEventListener('SNAFU_Inject', function(inject) {
@@ -379,8 +391,16 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 	var labelSettings = inject.detail.labels;
 	var query;
 
+	// incomplete inject data
+	if (!inject.detail) {
+		snafuErrorMessage('Injected script received incomplete data. Stopping execution.');
+
+	// error handling
+	} else if (type === 'error') {
+		snafuErrorMessage(inject.detail.errMsg);
+
 	// query for the user informatoin
-	if (type === 'userQuery') {
+	} else if (type === 'userQuery') {
 		var assignedTo = g_form.getReference('assigned_to');
 		var assignmentGroup = g_form.getReference('assignment_group');
 
@@ -650,9 +670,8 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 						}
 					}
 
-					if (type !== 'autoClose' || snafuReminderTickets.indexOf(ticketType) === -1) {
-						snafuEndTicketInteraction(inject.detail.autoFinish, inject.detail.finishDelay, ticket.field, ticketAction.value);
-					} else {
+					// reminders
+					if (type === 'autoClose' && snafuReminderTickets.indexOf(ticketType) !== -1) {
 						// action performed is depends on reminder
 						switch (inject.detail.remind) {
 							
@@ -705,6 +724,8 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 								snafuEndTicketInteraction(inject.detail.autoFinish, inject.detail.finishDelay, ticket.field, ticketAction.value);
 								break;
 						}
+					} else {
+						snafuEndTicketInteraction(inject.detail.autoFinish, inject.detail.finishDelay, ticket.field, ticketAction.value);
 					}
 
 					// print labels
@@ -810,7 +831,6 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 
 	// handle everything else
 	} else {
-		//console.info(inject.detail);
 		// make sure ticket is assigned
 		if (snafuIsResolveCode(inject.detail.field, inject.detail.value) === true && g_form.getReference('assigned_to').currentRow === -1) {
 			snafuErrorMessage('Unable to send update to unassigned ticket.  Please assign it to yourself and try again.');
@@ -846,9 +866,6 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 
 				// set the resolve message if it is a resolved code (incident only)
 				if (field === 'incident_state' && value === '6') {
-					//snafuSetValue('comments', snafuReplaceWildcards(snafuRslvComments));
-					//snafuFlash('comments');
-
 					// set to Problem Resolved
 					snafuSetValue('close_code', 'Problem Resolved');
 					snafuFlash('close_code');
@@ -932,10 +949,8 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 					document.dispatchEvent(buildLogQuery);
 				}
 				
-				if (snafuIsResolveCode(field, value) === false || snafuReminderTickets.indexOf(ticketType) === -1) {
-					// save, update, auto, none
-					snafuEndTicketInteraction(inject.detail.autoFinish, inject.detail.finishDelay, field, value);
-				} else {
+				// reminders
+				if (snafuIsResolveCode(field, value) === true && snafuReminderTickets.indexOf(ticketType) !== -1) {
 					// action performed is depends on reminder
 					switch (inject.detail.remind) {
 						
@@ -990,6 +1005,8 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 							snafuEndTicketInteraction(inject.detail.autoFinish, inject.detail.finishDelay, field, value);
 							break;
 					}
+				} else {
+					snafuEndTicketInteraction(inject.detail.autoFinish, inject.detail.finishDelay, field, value);
 				}
 
 				// print labels

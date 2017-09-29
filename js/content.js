@@ -130,13 +130,15 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                 case 'savePage':
                 case 'updatePage':
                     if (ticketType === false) {
-                        sendResponse({success: false, errMsg: 'Unable to detect an open task or incident.'});
+                        injectData = {
+                            type: 'error',
+                            errMsg: 'Task type is invalid for this operation.'
+                        }
                     } else {
                         injectData = {
                             type: msg.type,
                             finishDelay: items.finishDelay || null
                         }
-                        sendResponse({success: true, errMsg: null});
                     }
                     break;
                 
@@ -147,13 +149,15 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                         type: msg.type,
                         statusMsg: msg.statusMsg
                     }
-                    sendResponse({success: true, errMsg: null});
                     break;
 
                 // assign to me
                 case 'assignToMe':
                     if (ticketType === false) {
-                        sendResponse({success: false, errMsg: 'Unable to detect an open task or incident.'});
+                        injectData = {
+                            type: 'error',
+                            errMsg: 'Task type is invalid for this operation.'
+                        }
                     } else {
                         injectData = {
                             type: msg.type,
@@ -161,7 +165,6 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                             finishDelay: items.finishDelay || 1.5,
                             userInfo: msg.userInfo
                         }
-                        sendResponse({success: true, errMsg: null});
                     }
                     break;
 
@@ -171,17 +174,19 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                 case 'autoEnRoute':
                 case 'autoClose':
                     if (ticketType === false) {
-                        sendResponse({success: false, errMsg: 'Unable to detect an open task or incident.'});
+                        injectData = {
+                            type: 'error',
+                            errMsg: 'Task type is invalid for this operation.'
+                        }
                     } else {
                         injectData = {
                             type: msg.type,
                             autoFinish: items.autoFinish || 'none',
-                            finishDelay: items.finishDelay || 1.,
+                            finishDelay: items.finishDelay || 1.5,
                             buildLog: items.buildLog,
                             labels: items.labels,
                             remind: items.remind,
                         }
-                        sendResponse({success: true, errMsg: null});
                     }
                     break;
 
@@ -195,17 +200,22 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                 case 'printLabelRepair':
                 case 'printLabelRestock':
                     if ((msg.type !== 'printLabelPurchase' && msg.type !== 'printLabelPrebuilt' && msg.type !== 'printLabelBroken') && ticketType !== 'task') {
-                        sendResponse({success: false, errMsg: 'Unable to detect an open task.'});
+                        injectData = {
+                            type: 'error',
+                            errMsg: 'Task type is invalid for this operation.'
+                        }
                     } else {
                         injectData = {type: msg.type}
-                        sendResponse({success: true, errMsg: null});
                     }
                     break;
                 
                 case 'closeHotSwapNew':
                 case 'closeHotSwapRepurposed':
                     if (ticketType !== 'task') {
-                        sendResponse({success: false, errMsg: 'Unable to detect an open task.'});
+                        injectData = {
+                            type: 'error',
+                            errMsg: 'Task type is invalid for this operation.'
+                        }
                     } else {
                         injectData = {
                             type: msg.type,
@@ -220,7 +230,6 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                             labels: items.labels,
                             remind: items.remind,
                         }
-                        sendResponse({success: true, errMsg: null});
                     }
                     break;
                 
@@ -230,7 +239,10 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                 case 'closeQuarantineRepairNo':
                 case 'closeQuarantineRestock':
                     if (ticketType !== 'task') {
-                        sendResponse({success: false, errMsg: 'Unable to detect an open task.'});
+                        injectData = {
+                            type: 'error',
+                            errMsg: 'Task type is invalid for this operation.'
+                        }
                     } else {
                         var addToNotes;
                         // add the additional message to the quarantine notes
@@ -257,7 +269,6 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                             labels: items.labels,
                             remind: items.remind,
                         }
-                        sendResponse({success: true, errMsg: null});
                     }
                     break;
 
@@ -265,7 +276,10 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                 case 'closeRepairOnSite':
                 case 'closeRepairDecommission':
                     if (ticketType !== 'task') {
-                        sendResponse({success: false, errMsg: 'Unable to detect an open task.'});
+                        injectData = {
+                            type: 'error',
+                            errMsg: 'Task type is invalid for this operation.'
+                        }
                     } else {
                         injectData = {
                             type: msg.type,
@@ -280,14 +294,16 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                             labels: items.labels,
                             remind: items.remind,
                         }
-                        sendResponse({success: true, errMsg: null});
                     }
                     break;
 
                 // scheduled ticket
                 case 'scheduled':
                     if (ticketType === false) {
-                        sendResponse({success: false, errMsg: 'Unable to detect task or incident.'});
+                        injectData = {
+                            type: 'error',
+                            errMsg: 'Task type is invalid for this operation.'
+                        }
                     } else {
                         injectData = {
                             type: msg.type,
@@ -300,7 +316,6 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                             workNotes: msg.workNotes || null,
                             remind: items.remind,
                         }
-                        sendResponse({success: true, errMsg: null});
                     }
                     break;
 
@@ -309,7 +324,10 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                     // prevent closing incident as incomplete
                     if (ticketType === 'incident' && msg.tState === '3') msg.tState = '2';
                     if (ticketType === false) {
-                        sendResponse({success: false, errMsg: 'ServiceNow must be active tab.'});
+                        injectData = {
+                            type: 'error',
+                            errMsg: 'Task type is invalid for this operation.'
+                        }
                     } else {
                         // closing incident, so open resolve information tab
                         if (ticketType === 'incident' && msg.tState === '2') {
@@ -338,14 +356,16 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                             labels: items.labels,
                             remind: items.remind,
                         }
-                        sendResponse({success: true, errMsg: null});
                     }
                     break;
 
                 // send an equipment build
                 case 'sendEquipment':
                     if (ticketType !== 'task') {
-                        sendResponse({success: false, errMsg: 'Unable to detect an open task.'});
+                        injectData = {
+                            type: 'error',
+                            errMsg: 'Task type is invalid for this operation.'
+                        }
                     } else {
                         injectData = {
                             type: msg.type,
@@ -361,28 +381,24 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                             equipLabel: msg.equipLabel,
                             remind: items.remind,
                         }
-                        sendResponse({success: true, errMsg: null});
                     }
                     break;
 
                 default: 
-                    injectData = null;
+                    injectData = false;
                     break;
             }
         }
 
         // prevent any shenanigans
-        if (isVarEmpty(injectData) === false && "type" in injectData) {
-            // custom event for sending data to the injected script
-            var injectEvent = document.createEvent('CustomEvent');
-            injectEvent.initCustomEvent('SNAFU_Inject', true, true, injectData);
-            document.dispatchEvent(injectEvent);
-        } else {
-            if (items.debug === true) {
-                console.error('SNAFU: Incomplete injectData object.');
-                console.error(injectData);
-            }
+        if (isVarEmpty(injectData) === true || !("type" in injectData)) {
+            injectData = false;
         }
+
+        // custom event for sending data to the injected script
+        var injectEvent = document.createEvent('CustomEvent');
+        injectEvent.initCustomEvent('SNAFU_Inject', true, true, injectData);
+        document.dispatchEvent(injectEvent);
     });
 });
 
