@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+### Changed
+- No longer using SweetAlerts for reminders, it was preventing the save/update. Now using basic JavaScript alert() function.
+
 ## 1.2.9 [2017-09-29]
 ### Added
 - Removals, Disconnects, and installs added to computer reminders.

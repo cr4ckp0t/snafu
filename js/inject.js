@@ -693,28 +693,10 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 
 							// popup using sweet alerts
 							case 'popup':
+								alert('Don\'t forget to update the device\'s location information.');
+								
 								// save, update, auto, none
 								snafuEndTicketInteraction(inject.detail.autoFinish, inject.detail.finishDelay, ticket.field, ticketAction.value);
-
-								swal({
-									title: 'Update Computer Location Information',
-									text: 'Don\'t forget to update the device\'s location information in Service Now.',
-									icon: 'info',
-									buttons: {
-										openTab: 'Open Computer Database',
-										gotIt: 'Got It!'
-									}
-								})
-								.then((value) => {
-									if (value === 'openTab') {
-										// open a tab using a custom javascript event
-										query = document.createEvent('CustomEvent');
-										query.initCustomEvent('SNAFU_OpenTab', true, true, {
-											url: (rootCause !== false) ? snafuSprintf('https://ghsprod.service-now.com/cmdb_ci_computer.do?sys_id=%s', [rootCause]) : 'https://ghsprod.service-now.com/cmdb_ci_computer_list.do'
-										});
-										document.dispatchEvent(query);
-									}
-								});
 								break;
 
 							// no reminder
@@ -972,6 +954,7 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 
 						// popup using sweet alerts
 						case 'popup':
+							/*
 							sweetAlert({
 								title: 'Update Computer Location Information',
 								text: 'Don\'t forget to update the device\'s location information in Service Now.',
@@ -996,6 +979,11 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 									document.dispatchEvent(query);
 								}
 							});
+							*/
+							alert('Don\'t forget to update the device\'s location information.');
+
+							// save, update, auto, none
+							snafuEndTicketInteraction(inject.detail.autoFinish, inject.detail.finishDelay, field, value);
 							break;
 
 						// no reminder
