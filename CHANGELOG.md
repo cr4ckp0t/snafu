@@ -4,9 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## 1.2.10 [2017-10-01]
 ### Changed
 - No longer using SweetAlerts for reminders, it was preventing the save/update. Now using basic JavaScript alert() function.
+- Cleaned up inject code.
 
 ## 1.2.9 [2017-09-29]
 ### Added

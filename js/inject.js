@@ -404,7 +404,7 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 		var assignedTo = g_form.getReference('assigned_to');
 		var assignmentGroup = g_form.getReference('assignment_group');
 
-		if (snafuIsVarEmpty(assignedTo.name) === false && snafuIsVarEmpty(assignmentGroup.name) === false) {
+		if (!snafuIsVarEmpty(assignedTo.name) && !snafuIsVarEmpty(assignmentGroup.name)) {
 			// query the user info sent by the options page
 			query = document.createEvent('CustomEvent');
 			query.initCustomEvent('SNAFU_UserQuery', true, true, {
@@ -470,7 +470,7 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 		type === 'printLabelRestock' || 
 		type === 'printLabelRepair'
 	) {
-		if (ticketType === false) {
+		if (!ticketType) {
 			snafuErrorMessage('The open ticket is not valid for label printing.');
 		} else {
 			// make sure we have a valid printer
@@ -479,7 +479,7 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 	
 				// get the printer's name as well for printing
 				var printerName = printers[0]['name'];
-				if (snafuIsVarEmpty(printerName) === false) {
+				if (!snafuIsVarEmpty(printerName)) {
 					
 					// determine the label type from the ticket type
 					var labelType = (ticketType === 'rhs_reimage' && (type === 'printLabelBuild' || type === 'printLabelBuildAck')) ? type.replace('printLabelBuild', 'reimage').toLowerCase() : type.replace('printLabel', '').toLowerCase();
@@ -555,7 +555,7 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 								// purchase order labels
 								} else if (labelType === 'purchase' && (field === 'PO' || field === 'MORE_PO')) {
 									reason = prompt('Enter up to three PO numbers. Separate them by commas with no spaces. Each one will be put on the new line.');
-									if (snafuIsVarEmpty(reason) === false) addressLabel.setObjectText(field, (reason.indexOf(',') !== -1) ? reason.replace(/,/g, '\r\n') : reason);
+									if (!snafuIsVarEmpty(reason)) addressLabel.setObjectText(field, (reason.indexOf(',') !== -1) ? reason.replace(/,/g, '\r\n') : reason);
 
 								// prebuilt device label
 								} else if (labelType === 'prebuilt') {
@@ -582,7 +582,7 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 							}
 						}
 
-						if (canPrint === false) {
+						if (!canPrint) {
 							console.warn('SNAFU: Unable to print label due to errors.');
 						} else {
 							addressLabel.print(printerName);
@@ -600,7 +600,7 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 
 	// auto ticket detection
 	} else if (type === 'autoEnRoute' || type === 'autoHandle' || type === 'autoAcknowledge' || type === 'autoClose') {
-		if (ticketType === false) {
+		if (!ticketType) {
 			snafuErrorMessage('No task or incident detected.');
 		} else if (ticketType in snafuAutoTickets) {
 			var ticket = snafuAutoTickets[ticketType];
@@ -628,7 +628,7 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 				}
 			}
 
-			if (error === true ) {
+			if (error === true) {
 				snafuErrorMessage('Ticket has already been closed.');
 			} else {
 				if (type === 'autoEnRoute') {
@@ -641,13 +641,13 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 					snafuErrorMessage(snafuSprintf('Unable to complete action "%s" on this ticket type (%s).', [type, ticketType]));
 				} else {
 					// set the field with value
-					if (snafuIsVarEmpty(ticket.field) === false && snafuIsVarEmpty(ticketAction.value) === false) {
+					if (!snafuIsVarEmpty(ticket.field) && !snafuIsVarEmpty(ticketAction.value)) {
 						snafuSetValue(ticket.field, ticketAction.value);
 						snafuFlash(ticket.field);
 					}
 
 					// set the work notes
-					if (snafuIsVarEmpty(ticketAction.script) === false) {
+					if (!snafuIsVarEmpty(ticketAction.script)) {
 						snafuSetValue('comments', snafuReplaceWildcards(ticketAction.script));
 						snafuFlash('comments');
 					}
@@ -729,7 +729,7 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 					
 								// get the printer's name as well for printing
 								var printerName = printers[0]['name'];
-								if (snafuIsVarEmpty(printerName) === false) {
+								if (!snafuIsVarEmpty(printerName)) {
 									
 									if (snafuLabelFields[labelType] === undefined) {
 										console.warn('SNAFU: Dymo label type returned invalid.  Skipping print job. . .');
@@ -789,7 +789,7 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 											}
 										}
 
-										if (canPrint === false) {
+										if (!canPrint) {
 											console.warn('SNAFU: Unable to print label due to errors.');
 										} else {
 											addressLabel.print(printerName);
@@ -819,8 +819,8 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 		} else {
 			var field = inject.detail.field;
 			var value = inject.detail.value;
-			var workNotes = (snafuIsVarEmpty(inject.detail.workNotes) === false) ? snafuReplaceWildcards(inject.detail.workNotes) : null;
-			var custNotes = (snafuIsVarEmpty(inject.detail.custNotes) === false) ? snafuReplaceWildcards(inject.detail.custNotes) : null;
+			var workNotes = (!snafuIsVarEmpty(inject.detail.workNotes)) ? snafuReplaceWildcards(inject.detail.workNotes) : null;
+			var custNotes = (!snafuIsVarEmpty(inject.detail.custNotes)) ? snafuReplaceWildcards(inject.detail.custNotes) : null;
 
 			if (type.indexOf('closeQuarantine') !== -1 && ticketType !== 'rhs_restock') {
 				snafuErrorMessage('Open ticket is not for a quarantined asset');
@@ -829,19 +829,19 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 			} else {
 
 				// set field with value
-				if (snafuIsVarEmpty(field) === false && snafuIsVarEmpty(value) === false) {
+				if (!snafuIsVarEmpty(field) && !snafuIsVarEmpty(value)) {
 					snafuSetValue(field, value);
 					snafuFlash(field)
 				}
 
 				// customer notes (comments)
-				if (snafuIsVarEmpty(custNotes) === false) {
+				if (!snafuIsVarEmpty(custNotes)) {
 					snafuSetValue('comments', custNotes);
 					snafuFlash('comments');
 				}
 
 				// work notes
-				if (snafuIsVarEmpty(workNotes) === false) {
+				if (!snafuIsVarEmpty(workNotes)) {
 					snafuSetValue('work_notes', workNotes);
 					snafuFlash('work_notes');
 				}
@@ -858,17 +858,17 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 
 					// attempt to set the resolve types based on information in the ticket
 					var resolveTypes = snafuGetResolveType(g_form.getReference('cmdb_ci').name);
-					if (resolveTypes !== false) {
+					if (!resolveTypes) {
 						snafuSetValue('u_dell_resolve_1', resolveTypes.type_1);
 
 						// set the second one 500ms after the first to allow it to populate
 						setTimeout(function() { snafuSetValue('u_dell_resolve_2', resolveTypes.type_2) }, 500);	
 					}
 
-					if (snafuIsVarEmpty(workNotes) === false) {
+					if (!snafuIsVarEmpty(workNotes)) {
 						snafuSetValue('close_notes', workNotes);
 						snafuFlash('close_notes');
-					} else if (snafuIsVarEmpty(custNotes) === false) {
+					} else if (!snafuIsVarEmpty(custNotes)) {
 						snafuSetValue('close_notes', custNotes);
 						snafuFlash('close_notes');
 					}
@@ -891,7 +891,7 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 					}
 
 					// if setting to pending and sub-status is set, then set the select
-					if (value === '-5' && snafuIsVarEmpty(inject.detail.subStatus) === false) {
+					if (value === '-5' && !snafuIsVarEmpty(inject.detail.subStatus)) {
 						snafuSetValue('u_sub_state', inject.detail.subStatus);
 						snafuFlash('u_sub_state');
 					}
@@ -1017,7 +1017,7 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 				
 							// get the printer's name as well for printing
 							var printerName = printers[0]['name'];
-							if (snafuIsVarEmpty(printerName) === false) {
+							if (!snafuIsVarEmpty(printerName)) {
 
 								if (snafuLabelFields[labelType] === undefined) {
 									console.info(labelType);
@@ -1085,7 +1085,7 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 										}
 									}
 
-									if (canPrint === false) {
+									if (!canPrint) {
 										console.warn('SNAFU: Unable to print label due to errors.');
 									} else {
 										addressLabel.print(printerName);
