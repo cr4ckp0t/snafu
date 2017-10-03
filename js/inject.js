@@ -26,19 +26,19 @@
 	// misc
 	'generic_task': {
 		'field': 'state',
-		'ack': { 'script': 'Acknowledging task. Contacting {REQUESTED_FOR} at the number provided.', 'value': '2' },
+		'ack': { 'script': 'Acknowledging task.', 'value': '2' },
 		'enRoute': { 'script': 'En route to complete task', 'value': '2' },
 		'close': null
 	},
 	'generic_incident': {
 		'field': 'incident_state',
-		'ack': { 'script': 'Acknowledging incident. Calling {INC_CUST_FNAME} at {INC_CUR_PHONE}.', 'value': '3' },
+		'ack': { 'script': 'Acknowledging incident. Contacting {INC_CUST_FNAME} at {INC_CUR_PHONE}.', 'value': '3' },
 		'enRoute': { 'script': 'En route to troubleshoot the device.', 'value': '3' },
 		'close': null
 	},
 	'general_request': {
 		'field': 'state',
-		'ack': { 'script': 'Acknowledging general request task. Contacting {REQUESTED_FOR} at the number provided.', 'value': '2' },
+		'ack': { 'script': 'Acknowledging general request task.', 'value': '2' },
 		'enRoute': { 'script': 'En route to complete the general request.', 'value': '2' },
 		'close': null
 	},
@@ -46,13 +46,13 @@
 	// equipment move/remove
 	'equip_removal': {
 		'field': 'state',
-		'ack': { 'script': 'Acknowledging equipment removal. Contacting {REQUESTED_FOR} at the number provided.', 'value': '2' },
+		'ack': { 'script': 'Acknowledging equipment removal.', 'value': '2' },
 		'enRoute': { 'script': 'En route to complete equipment removal', 'value': '2' },
 		'close': { 'script': 'Equipment removed, per {REQUESTED_BY}\'s request.', 'value': '3' }
 	},
 	'equip_disconnect': {
 		'field': 'state',
-		'ack': { 'script': 'Acknowledging equipment disconnect task. Contacting {REQUESTED_FOR} at the number provided.', 'value': '2' },
+		'ack': { 'script': 'Acknowledging equipment disconnect task.', 'value': '2' },
 		'enRoute': { 'script': 'En route to complete equipment disconnect.', 'value': '2' },
 		'close': { 'script': 'Equipment disconnected, per {REQUESTED_BY}\'s request.', 'value': '3' }
 	},
@@ -147,7 +147,7 @@
 	},
 	'po_install_items': {
 		'field': 'state',
-		'ack': { 'script': 'Acknowledging equipment install task. Contacting {REQUESTED_FOR} at the number provided.', 'value': '2' },
+		'ack': { 'script': 'Acknowledging equipment install task.', 'value': '2' },
 		'enRoute': { 'script': 'En route to complete equipment installation.', 'value': '2' },
 		'close': { 'script': 'Installed equipment and attached signed completion sheet.', 'value': '3' }
 	},
@@ -167,7 +167,7 @@
 	},
 	'spr_install': {
 		'field': 'state',
-		'ack': { 'script': 'Acknowledging SPR install task. Contacting {REQUESTED_FOR} at the number provided.', 'value': '2' },
+		'ack': { 'script': 'Acknowledging SPR install task.', 'value': '2' },
 		'enRoute': { 'script': 'En route to complete SPR installation.', 'value': '2' },
 		'close': { 'script': 'Completed SPR installation and attached signed completion sheet.', 'value': '3' }
 	},
@@ -188,7 +188,7 @@
 	},
 	'loaner_deploy': {
 		'field': 'state',
-		'ack': { 'script': 'Acknowledging loaner deployment task. Contacting {REQUESTED_FOR} at the number provided.', 'value': '2' },
+		'ack': { 'script': 'Acknowledging loaner deployment task.', 'value': '2' },
 		'enRoute': { 'script': 'En route to complete loaner deployment.', 'value': '2' },
 		'close': { 'script': 'Delivered requested loaner device(s) and attached signed loaner form.', 'value': '3' }
 	},
@@ -210,7 +210,7 @@
 	// application install request
 	'app_install': {
 		'field': 'state',
-		'ack': { 'script': 'Acknowledging application install request. Contacting {REQUESTED_FOR} at the number provided.', 'value': '2' },
+		'ack': { 'script': 'Acknowledging application install request.', 'value': '2' },
 		'enRoute': { 'script': 'Installing requested application on the device.', 'value': '2' },
 		'close': { 'script': 'Completed the requested software installation.', 'value': '3' }
 	},
@@ -226,7 +226,7 @@
 	// smart hands request
 	'smart_hands': {
 		'field': 'state',
-		'ack': { 'script': 'Acknowledging Smart Hands request. Contacting {REQUESTED_FOR} at the number provided.', 'value': '2' },
+		'ack': { 'script': 'Acknowledging Smart Hands request.', 'value': '2' },
 		'enRoute': { 'script': 'En route to complete the Smart Hands request.', 'value': '2' },
 		'close': { 'script': 'Completed Smart Hands request.', 'value': '3' }
 	}
@@ -244,7 +244,7 @@ const snafuLabelFields = {
 
 	// replacement build acknowledgement
 	'buildack': {
-		'ticketType': 'rhs_build',			// to force correct printing
+		'ticketType': ['rhs_build'],		// to force correct printing
 		'RITM': '{REQUEST_ITEM}',			// ritm
 		'TECH': '{LABEL_TECH}',				// tech's name
 		'BUILD': '{REPLACE_BUILD}',			// build type
@@ -255,7 +255,7 @@ const snafuLabelFields = {
 
 	// replacement build
 	'build': {
-		'ticketType': 'rhs_build',				// to force correct printing
+		'ticketType': ['rhs_build'],			// to force correct printing
 		'HOSTNAME_TEXT': '{REPLACE_HOSTNAME}',	// replacement build's hostname
 		'TEXT_3': '{LABEL_TECH}',				// technician
 		'TEXT_4': '{REPLACE_BUILD}',			// replacement os and build
@@ -266,16 +266,16 @@ const snafuLabelFields = {
 
 	// decommission
 	'decommission': {
-		'ticketType': 'rhs_restock',		// to force correct printing
-		'TEXT': '{BROKEN_SERIAL}',			// asset serial being decommissioned
-		'Tech': '{LABEL_TECH}',				// technician
-		'TEXT_5': 'Decommission asset.',	// reason
-		'RITM#': '{REQUEST_ITEM}'			// ritm number
+		'ticketType': ['rhs_restock', 'rhs_decommission'],		// to force correct printing
+		'TEXT': '{BROKEN_SERIAL}',								// asset serial being decommissioned
+		'Tech': '{LABEL_TECH}',									// technician
+		'TEXT_5': 'Decommission asset.',						// reason
+		'RITM#': '{REQUEST_ITEM}'								// ritm number
 	},
 
 	// equipment configuration
 	'equipment': {
-		'ticketType': 'po_configure_pc',		// to force correct printing
+		'ticketType': ['po_configure_pc'],		// to force correct printing
 		'HOSTNAME_TEXT': '{REPLACE_HOSTNAME}',	// replacement build's hostname
 		'TEXT_3': '{LABEL_INC_TECH}',			// technician
 		'TEXT_4': '{REPLACE_BUILD}',			// replacement os and build
@@ -302,7 +302,7 @@ const snafuLabelFields = {
 
 	// reclaim task
 	'reclaim': {
-		'ticketType': 'rhs_reclaim',	// to force correct printing
+		'ticketType': ['rhs_reclaim'],	// to force correct printing
 		'TEXT':	'{BROKEN_SERIAL}',		// reclaimed asset's serial number
 		'Tech': '{LABEL_TECH}',			// technician
 		'TEXT_5': '{RECLAIM_REASON}',	// reason for reclaiming
@@ -311,7 +311,7 @@ const snafuLabelFields = {
 
 	// reimage ack
 	'reimageack': {
-		'ticketType': 'rhs_reimage',		// to force correct printing
+		'ticketType': ['rhs_reimage'],		// to force correct printing
 		'RITM': '{REQUEST_ITEM}',			// ritm
 		'TECH': '{LABEL_TECH}',				// tech's name
 		'BUILD': '{REPLACE_BUILD}',			// build type
@@ -322,7 +322,7 @@ const snafuLabelFields = {
 
 	// reimage
 	'reimage': {
-		'ticketType': 'rhs_reimage',			// to force correct printing
+		'ticketType': ['rhs_reimage'],			// to force correct printing
 		'HOSTNAME_TEXT': '{BROKEN_HOSTNAME}',	// replacement build's hostname
 		'TEXT_3': '{LABEL_TECH}',				// technician
 		'TEXT_4': '{REPLACE_BUILD}',			// replacement os and build
@@ -333,16 +333,16 @@ const snafuLabelFields = {
 
 	// repair task
 	'repair': {
-		'ticketType': 'rhs_restock',	// to force correct printing
-		'TEXT': '{BROKEN_SERIAL}',		// asset being repaired's serial number
-		'Tech': '{LABEL_TECH}',			// technician
-		'TEXT_5': '{REPAIR_REASON}',	// repair reason
-		'RITM#': '{REQUEST_ITEM}'		// ritm number
+		'ticketType': ['rhs_restock', 'rhs_repair'],	// to force correct printing
+		'TEXT': '{BROKEN_SERIAL}',						// asset being repaired's serial number
+		'Tech': '{LABEL_TECH}',							// technician
+		'TEXT_5': '{REPAIR_REASON}',					// repair reason
+		'RITM#': '{REQUEST_ITEM}'						// ritm number
 	},
 
 	// restock task
 	'restock': {
-		'ticketType': 'rhs_restock',			// to force correct printing
+		'ticketType': ['rhs_restock'],			// to force correct printing
 		'TEXT': '{BROKEN_SERIAL}',				// restocked asset's serial number
 		'Tech': '{LABEL_TECH}',					// technician
 		'TEXT_5': 'Passed UEFI diagnostics.',	// repair results
@@ -488,7 +488,7 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 					if (labelFields === undefined) {
 						console.warn('SNAFU: Dymo label type returned invalid.  Skipping print job. . .');
 						snafuErrorMessage('Dymo label type returned invalid.  Skipping print job. . .');
-					} else if (labelFields['ticketType'] !== true && labelFields['ticketType'] !== ticketType) {
+					} else if (labelFields['ticketType'] !== true && labelFields['ticketType'].indexOf(ticketType) === -1) {
 						console.warn(snafuSprintf('SNAFU: You can\'t print label type "%s" on ticket type "%s".', [labelType, ticketType]));
 						snafuErrorMessage(snafuSprintf('You can\'t print label type "%s" on ticket type "%s".', [labelType, ticketType]));
 					} else {
