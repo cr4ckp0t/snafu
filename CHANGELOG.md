@@ -4,9 +4,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased [2017-10-02]
+## 1.2.11 [2017-10-06]
+### Added
+- Better error checking for eval'd code using in wildcards.
+- Labels can now be printed on multiple tickets, as long as the needed information is available.
+- Loaner reclaims added to tasks that can print reclaim labels.
+
 ### Changed
 - Tweaked acknowledgement messages for tasks.
+
+### Fixed
+- Bug with incident resolve types.
 
 ## 1.2.10 [2017-10-01]
 ### Changed

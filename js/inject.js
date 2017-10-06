@@ -32,7 +32,7 @@
 	},
 	'generic_incident': {
 		'field': 'incident_state',
-		'ack': { 'script': 'Acknowledging incident. Contacting {INC_CUST_FNAME} at {INC_CUR_PHONE}.', 'value': '3' },
+		'ack': { 'script': 'Acknowledging incident.', 'value': '3' },
 		'enRoute': { 'script': 'En route to troubleshoot the device.', 'value': '3' },
 		'close': null
 	},
@@ -302,11 +302,11 @@ const snafuLabelFields = {
 
 	// reclaim task
 	'reclaim': {
-		'ticketType': ['rhs_reclaim'],	// to force correct printing
-		'TEXT':	'{BROKEN_SERIAL}',		// reclaimed asset's serial number
-		'Tech': '{LABEL_TECH}',			// technician
-		'TEXT_5': '{RECLAIM_REASON}',	// reason for reclaiming
-		'RITM#': '{REQUEST_ITEM}'		// ritm number
+		'ticketType': ['rhs_reclaim', 'loaner_reclaim'],	// to force correct printing
+		'TEXT':	'{BROKEN_SERIAL}',							// reclaimed asset's serial number
+		'Tech': '{LABEL_TECH}',								// technician
+		'TEXT_5': '{RECLAIM_REASON}',						// reason for reclaiming
+		'RITM#': '{REQUEST_ITEM}'							// ritm number
 	},
 
 	// reimage ack
@@ -858,7 +858,7 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 
 					// attempt to set the resolve types based on information in the ticket
 					var resolveTypes = snafuGetResolveType(g_form.getReference('cmdb_ci').name);
-					if (!resolveTypes) {
+					if (resolveTypes !== false) {
 						snafuSetValue('u_dell_resolve_1', resolveTypes.type_1);
 
 						// set the second one 500ms after the first to allow it to populate
@@ -1124,62 +1124,62 @@ function snafuReplaceWildcards(strIn) {
 	// object containing the code to be eval'd as a replacement for the wildcards
 	const wildcards = {
 		// global
-		"{ASSIGN_GROUP}": "g_form.getReference('assignment_group').name || 'UNKNOWN';",										// assignment group
-		"{OPENED}": "g_form.getValue('opened_at') || 'UNKNOWN';",															// date/time ticket opened
-		"{OPENED_BY}": "g_form.getValue('opened_by_label') || 'UNKNOWN';",													// who opened the ticket
-		"{ROOT_CAUSE}": "g_form.getReference('cmdb_ci').name || 'UNKNOWN';",												// root cause ci field
-		"{TECH_NAME}": "snafuUcwords(g_form.getReference('assigned_to').name) || 'UNKNOWN';",								// technician's name
-		"{TICKET}": "g_form.getValue('number') || 'UNKNOWN';",																// task/incident number
-
+		"{ASSIGN_GROUP}": "(snafuIsVarEmpty(g_form.getReference('assignment_group')) === false) ? g_form.getReference('assignment_group').name : 'UNKNOWN';",
+		"{OPENED}": "(snafuIsVarEmpty(g_form.getValue('opened_at')) === false) ? g_form.getValue('opened_at') : 'UNKNOWN';",
+		"{OPENED_BY}": "(snafuIsVarEmpty(g_form.getValue('opened_by_label')) === false) ? g_form.getValue('opened_by_label') : 'UNKNOWN';",
+		"{ROOT_CAUSE}": "(snafuIsVarEmpty(g_form.getReference('cmdb_ci')) === false) ? g_form.getReference('cmdb_ci').name : 'UNKNOWN';",
+		"{TECH_NAME}": "(snafuIsVarEmpty(g_form.getReference('assigned_to')) === false) ? snafuUcwords(g_form.getReference('assigned_to').name) : 'UNKNOWN';",
+		"{TICKET}": "(snafuIsVarEmpty(g_form.getValue('number')) === false) ? g_form.getValue('number') : 'UNKNOWN';",
+		
 		//incident only
-		"{INC_ADDR}": "snafuUcwords(g_form.getReference('u_street_address').u_name) || 'UNKNOWN';",							// incident street address
-		"{INC_ADD_LOC}": "g_form.getValue('u_location_description') || 'UNKNOWN';",											// incident additional location information
-		"{INC_ALT_PHONE}": "g_form.getValue('u_alternate_phone') || 'UNKNOWN';",											// alternative phone number
-		"{INC_CAMPUS}": "g_form.getValue('u_campus') || 'UNKNOWN';",														// campus
-		"{INC_CUR_PHONE}": "g_form.getValue('u_current_phone') || 'UNKNOWN';",												// current phone number
-		"{INC_CUSTOMER}": "snafuUcwords(g_form.getReference('caller_id').name) || 'UNKNOWN';",								// customer who called in the incident
-		"{INC_CUST_FNAME}": "snafuUcwords(g_form.getReference('caller_id').first_name) || 'UNKNOWN';",						// customer's first name
-		"{INC_CUST_LNAME}": "snafuUcwords(g_form.getReference('caller_id').last_name) || 'UNKNOWN';",						// customer's last name
-		"{INC_DETAIL_DESC}": "g_form.getValue('description') || 'UNKNOWN';",												// detailed description
-		"{INC_EMAIL}": "g_form.getReference('caller_id').email.toLowerCase() || 'UNKNOWN';",								// customer's email
-		"{INC_IMPACT}": "g_form.getValue('impact') || 'UNKNOWN';",															// incident impact
-		"{INC_KB}": "g_form.getReference('u_kb_article').number || 'UNKNOWN';",												// knowledgebase article
-		"{INC_LOC_TYPE}": "g_form.getValue('u_location_type') || 'UNKNOWN';",												// location type
-		"{INC_PRACTICE}": "snafuUcwords(g_form.getReference('u_practice_name').name) || 'UNKNOWN';",						// practice name
-		"{INC_PRIORITY}": "g_form.getValue('priority') || 'UNKNOWN';",														// incident priority
-		"{INC_SHORT_DESC}": "g_form.getValue('short_description') || 'UNKNOWN';",											// short description
-		"{INC_STATE}": "g_form.getDisplayValue('incident_state') || 'UNKNOWN';",											// incident state
-		"{INC_TYPE}": "g_form.getValue('u_incident_type') || 'UNKNOWN';",													// incident type
-		"{INC_TYPE_2}": "g_form.getValue('u_incident_type_2') || 'UNKNOWN';",												// incident type 2
-		"{INC_TYPE_3}": "g_form.getValue('u_incident_type_3') || 'UNKNOWN';",												// incident type 3
-		"{INC_URGENCY}": "g_form.getValue('urgency') || 'UNKNOWN';",														// incident urgency
-
+		"{INC_ADDR}": "(snafuIsVarEmpty(g_form.getReference('u_street_address')) === false) ? snafuUcwords(g_form.getReference('u_street_address').u_name) : 'UNKNOWN';",
+		"{INC_ADD_LOC}": "(snafuIsVarEmpty(g_form.getValue('u_location_description')) === false) ? g_form.getValue('u_location_description') : 'UNKNOWN';",
+		"{INC_ALT_PHONE}": "(snafuIsVarEmpty(g_form.getValue('u_alternate_phone')) === false) ? g_form.getValue('u_alternate_phone') : 'UNKNOWN';",
+		"{INC_CAMPUS}": "(snafuIsVarEmpty(g_form.getValue('u_campus')) === false) ? g_form.getValue('u_campus') : 'UNKNOWN';",
+		"{INC_CUR_PHONE}": "(snafuIsVarEmpty(g_form.getValue('u_current_phone')) === false) ? g_form.getValue('u_current_phone') : 'UNKNOWN';",
+		"{INC_CUSTOMER}": "(snafuIsVarEmpty(g_form.getReference('caller_id')) === false) ? snafuUcwords(g_form.getReference('caller_id').name) : 'UNKNOWN';",
+		"{INC_CUST_FNAME}": "(snafuIsVarEmpty(g_form.getReference('caller_id')) === false) ? snafuUcwords(g_form.getReference('caller_id').first_name) : 'UNKNOWN';",
+		"{INC_CUST_LNAME}": "(snafuIsVarEmpty(g_form.getReference('caller_id')) === false) ? snafuUcwords(g_form.getReference('caller_id').last_name) : 'UNKNOWN';",
+		"{INC_DETAIL_DESC}": "(snafuIsVarEmpty(g_form.getValue('description')) === false) ? g_form.getValue('description') : 'UNKNOWN';",
+		"{INC_EMAIL}": "(snafuIsVarEmpty(g_form.getReference('caller_id')) === false) ? g_form.getReference('caller_id').email.toLowerCase() : 'UNKNOWN';",
+		"{INC_IMPACT}": "(snafuIsVarEmpty(g_form.getValue('impact')) === false) ? g_form.getValue('impact') : 'UNKNOWN';",
+		"{INC_KB}": "(snafuIsVarEmpty(g_form.getReference('u_kb_article')) === false) ? g_form.getReference('u_kb_article').number : 'UNKNOWN';",
+		"{INC_LOC_TYPE}": "(snafuIsVarEmpty(g_form.getValue('u_location_type')) === false) ? g_form.getValue('u_location_type') : 'UNKNOWN';",
+		"{INC_PRACTICE}": "(snafuIsVarEmpty(g_form.getReference('u_practice_name')) === false) ? snafuUcwords(g_form.getReference('u_practice_name').name) : 'UNKNOWN';",
+		"{INC_PRIORITY}": "(snafuIsVarEmpty(g_form.getValue('priority')) === false) ? g_form.getValue('priority') : 'UNKNOWN';",
+		"{INC_SHORT_DESC}": "(snafuIsVarEmpty(g_form.getValue('short_description')) === false) ? g_form.getValue('short_description') : 'UNKNOWN';",
+		"{INC_STATE}": "(snafuIsVarEmpty(g_form.getDisplayValue('incident_state')) === false) ? g_form.getDisplayValue('incident_state') : 'UNKNOWN';",
+		"{INC_TYPE}": "(snafuIsVarEmpty(g_form.getValue('u_incident_type')) === false) ? g_form.getValue('u_incident_type') : 'UNKNOWN';",
+		"{INC_TYPE_2}": "(snafuIsVarEmpty(g_form.getValue('u_incident_type_2')) === false) ? g_form.getValue('u_incident_type_2') : 'UNKNOWN';",
+		"{INC_TYPE_3}": "(snafuIsVarEmpty(g_form.getValue('u_incident_type_3')) === false) ? g_form.getValue('u_incident_type_3') : 'UNKNOWN';",
+		"{INC_URGENCY}": "(snafuIsVarEmpty(g_form.getValue('urgency')) === false) ? g_form.getValue('urgency') : 'UNKNOWN';",
+		
 		// task only	
-		"{CATEGORY_ITEM}": "g_form.getValue('cat_item') || 'UNKNOWN';",														// category item
-		"{DUE_DATE}": "g_form.getValue('due_date') || 'UNKNOWN';",															// due date
-		"{REQUEST_ITEM}": "g_form.getReference('request_item').number || 'UNKNOWN';",										// ritm number
-		"{REQUESTED_BY}": "snafuUcwords(g_form.getReference('request_item.request.requested_for').name) || 'UNKNOWN';",		// task requested by
-		"{REQUESTED_FOR}": "snafuUcwords(g_form.getReference('request_item.u_requested_for').name) || 'UNKNOWN';",			// task requested for
-		"{REQUESTED_FOR_CAMPUS}": "snafuGetCampusName(g_form.getValue('requestedfor_campus')) || 'UNKNOWN';",				// requested for campus
-		"{TASK_STATE}": "g_form.getDisplayValue('state') || 'UNKNOWN';",													// task state
-
+		"{CATEGORY_ITEM}": "(snafuIsVarEmpty(g_form.getValue('cat_item')) === false) ? g_form.getValue('cat_item') : 'UNKNOWN';",
+		"{DUE_DATE}": "(snafuIsVarEmpty(g_form.getValue('due_date')) === false) ? g_form.getValue('due_date') : 'UNKNOWN';",
+		"{REQUEST_ITEM}": "(snafuIsVarEmpty(g_form.getReference('request_item')) === false) ? g_form.getReference('request_item').number : 'UNKNOWN';",
+		"{REQUESTED_BY}": "(snafuIsVarEmpty(g_form.getReference('request_item.request.requested_for')) === false) ? snafuUcwords(g_form.getReference('request_item.request.requested_for').name) : 'UNKNOWN';",
+		"{REQUESTED_FOR}": "(snafuIsVarEmpty(g_form.getReference('request_item.u_requested_for')) === false) ? snafuUcwords(g_form.getReference('request_item.u_requested_for').name) : 'UNKNOWN';",
+		"{REQUESTED_FOR_CAMPUS}": "(snafuIsVarEmpty(g_form.getValue('requestedfor_campus')) === false) ? snafuGetCampusName(g_form.getValue('requestedfor_campus')) : 'UNKNOWN';",
+		"{TASK_STATE}": "(snafuIsVarEmpty(g_form.getDisplayValue('state')) === false) ? g_form.getDisplayValue('state') : 'UNKNOWN';",
+		
 		// hot swap only
-		"{BROKEN_ASSET}": "g_form.getReference('rhs_comp_name').asset_tag || 'UNKNOWN';",									// broken computer asset tag
-		"{BROKEN_HOSTNAME}": "g_form.getReference('rhs_comp_name').name || 'UNKNOWN';",										// broken computer hostname
-		"{BROKEN_MODEL}": "snafuGetComputerModel(g_form.getReference('rhs_comp_name').model_id) || 'UNKNOWN';",				// broken computer model
-		"{BROKEN_SERIAL}": "g_form.getReference('rhs_comp_name').serial_number || 'UNKNOWN';",								// broken computer serial number
-		"{RELATED_INC}": "g_form.getReference('rhs_inc').number || 'UNKNOWN';",												// incident requiring hot swap
-		"{REPLACE_ASSET}": "g_form.getReference('rhs_replacement_computer').asset_tag || 'UNKNOWN';",						// replacement computer asset tag
-		"{REPLACE_BUILD}": "g_form.getValue('rhs_software').replace(\/(?:\\r\\n|\\r|\\n)\/g, ', ') || 'UNKNOWN';",				// replacement computer build
-		"{REPLACE_CUSTOMER}": "snafuUcwords(g_form.getReference('rhs_user').name) || 'UNKNOWN';",							// user requiring the hot swap
-		"{REPLACE_HOSTNAME}": "g_form.getReference('rhs_replacement_computer').name || 'UNKNOWN';",							// replacement computer hostname
-		"{REPLACE_MODEL}": "snafuGetComputerModel(g_form.getReference('rhs_replacement_computer').model_id) || 'UNKNOWN';",	// replacement computer model
-		"{REPLACE_SERIAL}": "g_form.getReference('rhs_replacement_computer').serial_number || 'UNKNOWN';",					// replacement computer serial number
-
+		"{BROKEN_ASSET}": "(snafuIsVarEmpty(g_form.getReference('rhs_comp_name')) === false) ? g_form.getReference('rhs_comp_name').asset_tag : 'UNKNOWN';",
+		"{BROKEN_HOSTNAME}": "(snafuIsVarEmpty(g_form.getReference('rhs_comp_name')) === false) ? g_form.getReference('rhs_comp_name').name : 'UNKNOWN';",
+		"{BROKEN_MODEL}": "(snafuIsVarEmpty(g_form.getReference('rhs_comp_name')) === false) ? snafuGetComputerModel(g_form.getReference('rhs_comp_name').model_id) : 'UNKNOWN';",
+		"{BROKEN_SERIAL}": "(snafuIsVarEmpty(g_form.getReference('rhs_comp_name')) === false) ? g_form.getReference('rhs_comp_name').serial_number : 'UNKNOWN';",
+		"{RELATED_INC}": "(snafuIsVarEmpty(g_form.getReference('rhs_inc')) === false) ? g_form.getReference('rhs_inc').number : 'UNKNOWN';",
+		"{REPLACE_ASSET}": "(snafuIsVarEmpty(g_form.getReference('rhs_replacement_computer')) === false) ? g_form.getReference('rhs_replacement_computer').asset_tag : 'UNKNOWN';",
+		"{REPLACE_BUILD}": "(snafuIsVarEmpty(g_form.getValue('rhs_software')) === false) ? g_form.getValue('rhs_software').replace(\/(?:\\r\\n|\\r|\\n)\/g, ', ') : 'UNKNOWN';",
+		"{REPLACE_CUSTOMER}": "(snafuIsVarEmpty(g_form.getReference('rhs_user')) === false) ? snafuUcwords(g_form.getReference('rhs_user').name) : 'UNKNOWN';",
+		"{REPLACE_HOSTNAME}": "(snafuIsVarEmpty(g_form.getReference('rhs_replacement_computer')) === false) ? g_form.getReference('rhs_replacement_computer').name : 'UNKNOWN';",
+		"{REPLACE_MODEL}": "(snafuIsVarEmpty(g_form.getReference('rhs_replacement_computer')) === false) ? snafuGetComputerModel(g_form.getReference('rhs_replacement_computer').model_id) : 'UNKNOWN';",
+		"{REPLACE_SERIAL}": "(snafuIsVarEmpty(g_form.rhs_replacement_computer('serial_number')) === false) ? g_form.rhs_replacement_computer('serial_number') : 'UNKNOWN';",
+		
 		// miscellaneous
-		"{ABS_MACHINE}": "g_form.getReference('cmdb_ci').name || 'UNKNOWN';",												// absolute install device
-		"{LABEL_TECH}": "snafuSprintf('%s %s.', [snafuUcwords(g_form.getReference('request_item.request.requested_for').first_name), g_form.getReference('request_item.request.requested_for').last_name.charAt(0).toUpperCase()]) || 'UNKNOWN';",										
-		"{LABEL_INC_TECH}": "snafuSprintf('%s %s.', [snafuUcwords(g_form.getReference('assigned_to').first_name), g_form.getReference('assigned_to').last_name.charAt(0).toUpperCase()]) || 'UNKNOWN';",
+		"{ABS_MACHINE}": "(snafuIsVarEmpty(g_form.getReference('cmdb_ci')) === false) ? g_form.getReference('cmdb_ci').name : 'UNKNOWN';",
+		"{LABEL_TECH}": "(snafuIsVarEmpty(g_form.getReference('request_item.request.requested_for')) === false) ? snafuSprintf('%s %s.', [snafuUcwords(g_form.getReference('request_item.request.requested_for').first_name), g_form.getReference('request_item.request.requested_for').last_name.charAt(0).toUpperCase()]) : 'UNKNOWN';",										
+		"{LABEL_INC_TECH}": "(snafuIsVarEmpty(g_form.getReference('assigned_to')) === false) ? snafuSprintf('%s %s.', [snafuUcwords(g_form.getReference('assigned_to').first_name), g_form.getReference('assigned_to').last_name.charAt(0).toUpperCase()]) : 'UNKNOWN';",
 	};
 	
 	// use regular expressions to find matches and send them for processing
@@ -1279,7 +1279,11 @@ function snafuFlash(field) {
  * @return	{Void}
  */
 function snafuInfoMessage(msg) {
-	g_form.addInfoMessage(snafuSprintf('SNAFU: %s', [msg]));
+	if (snafuIsVarEmpty(g_form) === false) {
+		g_form.addInfoMessage(snafuSprintf('SNAFU: %s', [msg]));
+	} else {
+		console.info(msg);
+	}
 }
 
 /**
@@ -1288,7 +1292,11 @@ function snafuInfoMessage(msg) {
  * @return	{Void}
  */
 function snafuErrorMessage(msg) {
-	g_form.addErrorMessage(snafuSprintf('SNAFU Error: %s', [msg]));
+	if (snafuIsVarEmpty(g_form) === false) {
+		g_form.addErrorMessage(snafuSprintf('SNAFU Error: %s', [msg]));
+	} else {
+		console.error(msg);
+	}
 }
 
 /**
