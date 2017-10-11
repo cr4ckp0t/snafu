@@ -172,6 +172,7 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                 case 'autoHandle':
                 case 'autoAcknowledge':
                 case 'autoEnRoute':
+                case 'autoPending':
                 case 'autoClose':
                     if (ticketType === false) {
                         injectData = {

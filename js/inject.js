@@ -25,210 +25,246 @@
  const snafuAutoTickets = { 
 	// misc
 	'generic_task': {
-		'field': 'state',
-		'ack': { 'script': 'Acknowledging task.', 'value': '2' },
-		'enRoute': { 'script': 'En route to complete task', 'value': '2' },
-		'close': null
+		field: 'state',
+		ack: { script: 'Acknowledging task.', value: '2' },
+		enRoute: { script: 'En route to complete task', value: '2' },
+		pending: { script: 'Placing task on hold.', value: '-5' },
+		close: null
 	},
 	'generic_incident': {
-		'field': 'incident_state',
-		'ack': { 'script': 'Acknowledging incident.', 'value': '3' },
-		'enRoute': { 'script': 'En route to troubleshoot the device.', 'value': '3' },
-		'close': null
+		field: 'incident_state',
+		ack: { script: 'Acknowledging incident.', value: '3' },
+		enRoute: { script: 'En route to troubleshoot the device.', value: '3' },
+		pending: null,
+		close: null
 	},
 	'general_request': {
-		'field': 'state',
-		'ack': { 'script': 'Acknowledging general request task.', 'value': '2' },
-		'enRoute': { 'script': 'En route to complete the general request.', 'value': '2' },
-		'close': null
+		field: 'state',
+		ack: { script: 'Acknowledging general request task.', value: '2' },
+		enRoute: { script: 'En route to complete the general request.', value: '2' },
+		pending: { script: 'Placing general request on hold.', value: '-5' },
+		close: null
 	},
 
 	// equipment move/remove
 	'equip_removal': {
-		'field': 'state',
-		'ack': { 'script': 'Acknowledging equipment removal.', 'value': '2' },
-		'enRoute': { 'script': 'En route to complete equipment removal', 'value': '2' },
-		'close': { 'script': 'Equipment removed, per {REQUESTED_BY}\'s request.', 'value': '3' }
+		field: 'state',
+		ack: { script: 'Acknowledging equipment removal.', value: '2' },
+		enRoute: { script: 'En route to complete equipment removal', value: '2' },
+		pending: { script: 'Placing equipment removal request on hold.', value: '-5' },
+		close: { script: 'Equipment removed, per {REQUESTED_BY}\'s request.', value: '3' }
 	},
 	'equip_disconnect': {
-		'field': 'state',
-		'ack': { 'script': 'Acknowledging equipment disconnect task.', 'value': '2' },
-		'enRoute': { 'script': 'En route to complete equipment disconnect.', 'value': '2' },
-		'close': { 'script': 'Equipment disconnected, per {REQUESTED_BY}\'s request.', 'value': '3' }
+		field: 'state',
+		ack: { script: 'Acknowledging equipment disconnect task.', value: '2' },
+		enRoute: { script: 'En route to complete equipment disconnect.', value: '2' },
+		pending: { script: 'Placing equipment disconnect request on hold.', value: '-5' },
+		close: { script: 'Equipment disconnected, per {REQUESTED_BY}\'s request.', value: '3' }
 	},
 	'equip_reconnect': {
-		'field': 'state',
-		'ack': { 'script': 'Acknowledging equipment reconnect task.', 'value': '2' },
-		'enRoute': { 'script': 'En route to complete equipment reconnect.', 'value': '2' },
-		'close': { 'script': 'Equipment reconnected and tested, per {REQUESTED_BY}\'s request.', 'value': '3' }
+		field: 'state',
+		ack: { script: 'Acknowledging equipment reconnect task.', value: '2' },
+		enRoute: { script: 'En route to complete equipment reconnect.', value: '2' },
+		pending: { script: 'Placing equipment reconnect request on hold.', value: '-5' },
+		close: { script: 'Equipment reconnected and tested, per {REQUESTED_BY}\'s request.', value: '3' }
 	},
 	
 	// reimage only workflow
 	'rhs_reclaim_reimage':	{
-		'field': 'state',
-		'ack': { 'script': 'Acknowledging reclaim for device reimage.', 'value': '2' },
-		'enRoute': { 'script': 'En route to complete reimage reclaim.', 'value': '2' },
-		'close': { 'script': '{BROKEN_HOSTNAME} has been reclaimed for reimaging.', 'value': '3' }
+		field: 'state',
+		ack: { script: 'Acknowledging reclaim for device reimage.', value: '2' },
+		enRoute: { script: 'En route to complete reimage reclaim.', value: '2' },
+		pending: null,
+		close: { script: '{BROKEN_HOSTNAME} has been reclaimed for reimaging.', value: '3' }
 	},
 	'rhs_reimage': {
-		'field': 'state',
-		'ack': { 'script': 'Acknowledging reimage task.', 'value': '2' },
-		'enRoute': null,
-		'close': { 'script': 'Computer has been built. One {BROKEN_MODEL} has been built {REPLACE_BUILD}. Tag {BROKEN_ASSET} HostName {BROKEN_HOSTNAME}. Resolving Task.', 'value': '3' }
+		field: 'state',
+		ack: { script: 'Acknowledging reimage task.', value: '2' },
+		enRoute: null,
+		pending: null,
+		close: { script: 'Computer has been built. One {BROKEN_MODEL} has been built {REPLACE_BUILD}. Tag {BROKEN_ASSET} HostName {BROKEN_HOSTNAME}. Resolving Task.', value: '3' }
 	},
 	'rhs_reimage_return': {
-		'field': 'state',
-		'ack': { 'script': 'Acknowledging reimage return task.', 'value': '2' },
-		'enRoute': { 'script': 'En route to return {BROKEN_HOSTNAME}.', 'value': '2' },
-		'close': { 'script': 'Device has been returned to the customer.', 'value': '3' }
+		field: 'state',
+		ack: { script: 'Acknowledging reimage return task.', value: '2' },
+		enRoute: { script: 'En route to return {BROKEN_HOSTNAME}.', value: '2' },
+		pending: null,
+		close: { script: 'Device has been returned to the customer.', value: '3' }
 	},
 
 	// asset management workflow
 	'rhs_build': {
-		'field': 'state',
-		'ack': { 'script': 'Acknowledging build request.', 'value': '2' },
-		'enRoute': null,
-		'close': null
+		field: 'state',
+		ack: { script: 'Acknowledging build request.', value: '2' },
+		enRoute: null,
+		pending: null,
+		close: null
 	},
 	'rhs_reclaim': {
-		'field': 'state',
-		'ack': { 'script': 'Acknowledging reclaim task.', 'value': '2' },
-		'enRoute': { 'script': 'En route to complete {BROKEN_HOSTNAME} reclaim.', 'value': '2' },
-		'close': { 'script': '{BROKEN_HOSTNAME} has been reclaimed and added to quarantine.', 'value': '3' }
+		field: 'state',
+		ack: { script: 'Acknowledging reclaim task.', value: '2' },
+		enRoute: { script: 'En route to complete {BROKEN_HOSTNAME} reclaim.', value: '2' },
+		pending: null,
+		close: { script: '{BROKEN_HOSTNAME} has been reclaimed and added to quarantine.', value: '3' }
 	},
 	'rhs_restock': {
-		'field': 'state',
-		'ack': { 'script': 'Acknowledging quarantine task.', 'value': '2' },
-		'enRoute': null,
-		'close': null
+		field: 'state',
+		ack: { script: 'Acknowledging quarantine task.', value: '2' },
+		enRoute: null,
+		pending: null,
+		close: null
 	},
 	'rhs_repair': {
-		'field': 'state',
-		'ack': {
-			'script': 'Acknowledging repair task.',
-			'value': '2'
-		},
-		'enRoute': null,
-		'close': null
+		field: 'state',
+		ack: { script: 'Acknowledging repair task.', value: '2' },
+		enRoute: null,
+		pending: { script: 'Placing repair task on hold.', value: '-5' },
+		close: null
 	},
 	'rhs_decommission': {
-		'field': 'state',
-		'ack': { 'script': 'Acknowledging decommission task.', 'value': '2' },
-		'enRoute': null,
-		'close': { 'script': '{BROKEN_HOSTNAME} has been decommissioned.', 'value': '3' }
+		field: 'state',
+		ack: { script: 'Acknowledging decommission task.', value: '2' },
+		enRoute: null,
+		pending: { script: 'Placing decommission task on hold.', value: '-5' },
+		close: { script: '{BROKEN_HOSTNAME} has been decommissioned.', value: '3' }
 	},
 
 	// mdc deliver workflow
 	'1st_deliver_mdc': {
-		'field': 'state',
-		'ack': { 'script': 'Acknowledging MDC Staging delivery task.', 'value': '2' },
-		'enRoute': { 'script': 'En route to complete MDC Staging delivery.', 'value': '2' },
-		'close': null
+		field: 'state',
+		ack: { script: 'Acknowledging MDC Staging delivery task.', value: '2' },
+		enRoute: { script: 'En route to complete MDC Staging delivery.', value: '2' },
+		pending: { script: 'Placing delivery task on hold.', value: '-5' },
+		close: null
 	},
 	'deliver_mdc': {
-		'field': 'state',
-		'ack': { 'script': 'Acknowledging MDC Disposal task.', 'value': '2' },
-		'enRoute': null,
-		'close': null
+		field: 'state',
+		ack: { script: 'Acknowledging MDC Disposal task.', value: '2' },
+		enRoute: null,
+		pending: { script: 'Placing disposal task on hold.', value: '-5' },
+		close: null
 	},
 
 	// purchase order workflow
 	'po_configure_pc': {
-		'field': 'state',
-		'ack': { 'script': 'Acknowledging equipment configuration task.', 'value': '2' },
-		'enRoute': null,
-		'close': null
+		field: 'state',
+		ack: { script: 'Acknowledging equipment configuration task.', value: '2' },
+		enRoute: null,
+		pending: null,
+		close: null
 	},
 	'po_deploy_items': {
-		'field': 'state',
-		'ack': { 'script': 'Acknowledging equipment delivery task.', 'value': '2' },
-		'enRoute': { 'script': 'En route to complete equipment delivery.', 'value': '2' },
-		'close': { 'script': 'Delivered equipment to {REQUESTED_FOR_CAMPUS} Staging. Desktop Support will call End User and set up date and time to install equipment.', 'value': '3' }
+		field: 'state',
+		ack: { script: 'Acknowledging equipment delivery task.', value: '2' },
+		enRoute: { script: 'En route to complete equipment delivery.', value: '2' },
+		pending: { script: 'Placing equipment delivery task on hold.', value: '-5' },
+		close: { script: 'Delivered equipment to {REQUESTED_FOR_CAMPUS} Staging. Desktop Support will call End User and set up date and time to install equipment.', value: '3' }
 	},
 	'po_install_items': {
-		'field': 'state',
-		'ack': { 'script': 'Acknowledging equipment install task.', 'value': '2' },
-		'enRoute': { 'script': 'En route to complete equipment installation.', 'value': '2' },
-		'close': { 'script': 'Installed equipment and attached signed completion sheet.', 'value': '3' }
+		field: 'state',
+		ack: { script: 'Acknowledging equipment install task.', value: '2' },
+		enRoute: { script: 'En route to complete equipment installation.', value: '2' },
+		pending: { script: 'Placing equipment install task on hold.', value: '-5' },
+		close: { script: 'Installed equipment and attached signed completion sheet.', value: '3' }
 	},
 
 	// spr workflow
 	'spr_configure': {
-		'field': 'state',
-		'ack': { 'script': 'Acknowledging SPR configuration task.', 'value': '2' },
-		'enRoute': null,
-		'close': null
+		field: 'state',
+		ack: { script: 'Acknowledging SPR configuration task.', value: '2' },
+		enRoute: null,
+		pending: null,
+		close: null
 	},
 	'spr_delivery': {
-		'field': 'state',
-		'ack': { 'script': 'Acknowledging SPR delivery task.', 'value': '2' },
-		'enRoute': { 'script': 'En route to complete SPR delivery.', 'value': '2' },
-		'close': { 'script': 'Delivered equipment to {REQUESTED_FOR_CAMPUS} Staging. Desktop Support will call End User and set up date and time to install equipment.', 'value': '3' }
+		field: 'state',
+		ack: { script: 'Acknowledging SPR delivery task.', value: '2' },
+		enRoute: { script: 'En route to complete SPR delivery.', value: '2' },
+		pending: { script: 'Placing SPR delivery task on hold.', value: '-5' },
+		close: { script: 'Delivered equipment to {REQUESTED_FOR_CAMPUS} Staging. Desktop Support will call End User and set up date and time to install equipment.', value: '3' }
 	},
 	'spr_install': {
-		'field': 'state',
-		'ack': { 'script': 'Acknowledging SPR install task.', 'value': '2' },
-		'enRoute': { 'script': 'En route to complete SPR installation.', 'value': '2' },
-		'close': { 'script': 'Completed SPR installation and attached signed completion sheet.', 'value': '3' }
+		field: 'state',
+		ack: { script: 'Acknowledging SPR install task.', value: '2' },
+		enRoute: { script: 'En route to complete SPR installation.', value: '2' },
+		pending: { script: 'Placing SPR install task on hold.', value: '-5' },
+		close: { script: 'Completed SPR installation and attached signed completion sheet.', value: '3' }
 	},
 
 	// equipment pull workflow
 	'equip_pull': {
-		'field': 'state', 'ack': { 'script': 'Acknowledging equipment pull request.', 'value': '2' },
-		'enRoute': null,
-		'close': { 'script': 'Equipment pulled for delivery.', 'value': '3' }
+		field: 'state', ack: { script: 'Acknowledging equipment pull request.', value: '2' },
+		enRoute: null,
+		pending: null,
+		close: { script: 'Equipment pulled for delivery.', value: '3' }
 	},
 
 	// loaner workflow
 	'loaner_build': {
-		'field': 'state',
-		'ack': { 'script': 'Acknowledging loaner request build.', 'value': '2' },
-		'enRoute': null,
-		'close': null
+		field: 'state',
+		ack: { script: 'Acknowledging loaner request build.', value: '2' },
+		enRoute: null,
+		pending: null,
+		close: null
 	},
 	'loaner_deploy': {
-		'field': 'state',
-		'ack': { 'script': 'Acknowledging loaner deployment task.', 'value': '2' },
-		'enRoute': { 'script': 'En route to complete loaner deployment.', 'value': '2' },
-		'close': { 'script': 'Delivered requested loaner device(s) and attached signed loaner form.', 'value': '3' }
+		field: 'state',
+		ack: { script: 'Acknowledging loaner deployment task.', value: '2' },
+		enRoute: { script: 'En route to complete loaner deployment.', value: '2' },
+		pending: { script: 'Placing loaner deployment task on hold.', value: '-5' },
+		close: { script: 'Delivered requested loaner device(s) and attached signed loaner form.', value: '3' }
 	},
 	'loaner_reclaim': {
-		'field': 'state',
-		'ack': { 'script': 'Acknowledging loaner reclaim task.', 'value': '2' },
-		'enRoute': { 'script': 'En route to complete loaner reclaim.', 'value': '2' },
-		'close': { 'script': 'Loaner device reclaimed.', 'value': '3' }
+		field: 'state',
+		ack: { script: 'Acknowledging loaner reclaim task.', value: '2' },
+		enRoute: { script: 'En route to complete loaner reclaim.', value: '2' },
+		pending: { script: 'Placing loaner reclaim task on hold.', value: '-5' },
+		close: { script: 'Loaner device reclaimed.', value: '3' }
 	},
 
 	// install absolute task
 	'absolute_install': {
-		'field': 'state',
-		'ack': { 'script': 'Acknowledging Absolute install request.', 'value': '2' },
-		'enRoute': null,
-		'close': { 'script': 'Absolute installation completed on {ABS_MACHINE}.', 'value': '3' }
+		field: 'state',
+		ack: { script: 'Acknowledging Absolute install request.', value: '2' },
+		enRoute: null,
+		pending: null,
+		close: { script: 'Absolute installation completed on {ABS_MACHINE}.', value: '3' }
 	},
 	
 	// application install request
 	'app_install': {
-		'field': 'state',
-		'ack': { 'script': 'Acknowledging application install request.', 'value': '2' },
-		'enRoute': { 'script': 'Installing requested application on the device.', 'value': '2' },
-		'close': { 'script': 'Completed the requested software installation.', 'value': '3' }
+		field: 'state',
+		ack: { script: 'Acknowledging application install request.', value: '2' },
+		enRoute: { script: 'Installing requested application on the device.', value: '2' },
+		pending: { script: 'Placing application install request on hold.', value: '-5' },
+		close: { script: 'Completed the requested software installation.', value: '3' }
 	},
 
 	// cancelled task (when closing workflow as incomplete)
 	'cancelled_task': {
-		'field': 'state',
-		'ack': { 'script': 'Acknowledging cancelled task workflow.', 'value': '2' },
-		'enRoute': null,
-		'close': { 'script': 'Updated {BROKEN_HOSTNAME}\'s location information.', 'value': '3' }
+		field: 'state',
+		ack: { script: 'Acknowledging cancelled task workflow.', value: '2' },
+		enRoute: null,
+		pending: null,
+		close: { script: 'Updated {BROKEN_HOSTNAME}\'s location information.', value: '3' }
+	},
+
+	// application access request
+	'app_not_listed_access': {
+		field: 'state',
+		ack: { script: 'Acknowledging Application Access request.', value: '2' },
+		enRoute: null,
+		pending: { script: 'Placing Application Access request on hold.', value: '-5' },
+		close: null
 	},
 
 	// smart hands request
 	'smart_hands': {
-		'field': 'state',
-		'ack': { 'script': 'Acknowledging Smart Hands request.', 'value': '2' },
-		'enRoute': { 'script': 'En route to complete the Smart Hands request.', 'value': '2' },
-		'close': { 'script': 'Completed Smart Hands request.', 'value': '3' }
+		field: 'state',
+		ack: { script: 'Acknowledging Smart Hands request.', value: '2' },
+		enRoute: { script: 'En route to complete the Smart Hands request.', value: '2' },
+		pending: { script: 'Placing Smart Hands request on hold.', value: '-5' },
+		close: { script: 'Completed Smart Hands request.', value: '3' }
 	}
 }
 
@@ -394,581 +430,565 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 	// incomplete inject data
 	if (!inject.detail) {
 		snafuErrorMessage('Injected script received incomplete data. Stopping execution.');
+	} else {
 
-	// error handling
-	} else if (type === 'error') {
-		snafuErrorMessage(inject.detail.errMsg);
+		switch (type) {
 
-	// query for the user informatoin
-	} else if (type === 'userQuery') {
-		var assignedTo = g_form.getReference('assigned_to');
-		var assignmentGroup = g_form.getReference('assignment_group');
-
-		if (!snafuIsVarEmpty(assignedTo.name) && !snafuIsVarEmpty(assignmentGroup.name)) {
-			// query the user info sent by the options page
-			query = document.createEvent('CustomEvent');
-			query.initCustomEvent('SNAFU_UserQuery', true, true, {
-				fullName: snafuUcwords(assignedTo.name),
-				userId: assignedTo.sys_id,
-				userName: assignedTo.user_name,
-				userEmail: assignedTo.email,
-				groupName: snafuUcwords(assignmentGroup.name),
-				groupId: assignmentGroup.sys_id
-			});
-			snafuInfoMessage('Saved your user information.');
-			document.dispatchEvent(query);
-		} else {
-			snafuErrorMessage('SNAFU: Unable to pull your user information or incomplete information found.');
-		}
-	
-	// assign task or incident to the user
-	} else if (type === 'assignToMe') {
-		snafuSetDisplayValue('assignment_group', inject.detail.userInfo.groupId, inject.detail.userInfo.groupName);
-		snafuFlash('assignment_group');
-		snafuSetDisplayValue('assigned_to', inject.detail.userInfo.userId, inject.detail.userInfo.fullName.toUpperCase());
-		snafuFlash('assigned_to');
-		switch (inject.detail.autoFinish) {
-			case 'auto':
-			case 'save':
-				setTimeout(function() { g_form.save(); }, 1000);
+			// error handling
+			case 'error':
+				snafuErrorMessage(inject.detail.errMsg);
 				break;
-			case 'update':
-				setTimeout(function() { g_form.submit(); }, 1000);
+
+			// query for the user information
+			case 'userQuery':
+				var assignedTo = g_form.getReference('assigned_to');
+				var assignmentGroup = g_form.getReference('assignment_group');
+
+				if (!snafuIsVarEmpty(assignedTo.name) && !snafuIsVarEmpty(assignmentGroup.name)) {
+					// query the user info sent by the options page
+					query = document.createEvent('CustomEvent');
+					query.initCustomEvent('SNAFU_UserQuery', true, true, {
+						fullName: snafuUcwords(assignedTo.name),
+						userId: assignedTo.sys_id,
+						userName: assignedTo.user_name,
+						userEmail: assignedTo.email,
+						groupName: snafuUcwords(assignmentGroup.name),
+						groupId: assignmentGroup.sys_id
+					});
+					snafuInfoMessage('Saved your user information.');
+					document.dispatchEvent(query);
+				} else {
+					snafuErrorMessage('SNAFU: Unable to pull your user information or incomplete information found.');
+				}
 				break;
-			case 'none':
-			default:
+	
+			
+			// assign task or incident to the user
+			case 'assignToMe':
+				snafuSetDisplayValue('assignment_group', inject.detail.userInfo.groupId, inject.detail.userInfo.groupName);
+				snafuFlash('assignment_group');
+				snafuSetDisplayValue('assigned_to', inject.detail.userInfo.userId, inject.detail.userInfo.fullName.toUpperCase());
+				snafuFlash('assigned_to');
+				switch (inject.detail.autoFinish) {
+					case 'auto':
+					case 'save':
+						setTimeout(function() { g_form.save(); }, 1000);
+						break;
+					case 'update':
+						setTimeout(function() { g_form.submit(); }, 1000);
+						break;
+					case 'none':
+					default:
+						break;
+				}
 				break;
-		}
 
-	// send success (info) messagea
-	} else if (type === 'sendSuccessMsg') {
-		snafuInfoMessage(inject.detail.statusMsg);
+			// send success (info) message
+			case 'sendSuccessMsg':
+				snafuInfoMessage(inject.detail.statusMsg);
+				break;
 	
-	// send error message
-	} else if (type === 'sendErrorMsg') {
-		snafuErrorMessage(inject.detail.statusMsg);
+			// send error message
+			case 'sendErrorMsg':
+				snafuErrorMessage(inject.detail.statusMsg);
+				break;
 
-	// save the page (via keybinding)
-	} else if (type === 'savePage') {
-		snafuInfoMessage(snafuSprintf('Saving page in %s seconds.  Please wait...', [inject.detail.finishDelay]));
-		setTimeout(function() { g_form.save(); }, inject.detail.finishDelay * 1000);
+			// save the page (via keybinding)
+			case 'savePage':
+				snafuInfoMessage(snafuSprintf('Saving page in %s seconds.  Please wait...', [inject.detail.finishDelay]));
+				setTimeout(function() { g_form.save(); }, inject.detail.finishDelay * 1000);
+				break;
 
-	// update the page (via keybinding)
-	} else if (type === 'updatePage') {
-		snafuInfoMessage(snafuSprintf('Updating page in %s seconds.  Please wait...', [inject.detail.finishDelay]));
-		setTimeout(function() { g_form.submit(); }, inject.detail.finishDelay * 1000);
+			// update the page (via keybinding)
+			case 'updatePage':
+				snafuInfoMessage(snafuSprintf('Updating page in %s seconds.  Please wait...', [inject.detail.finishDelay]));
+				setTimeout(function() { g_form.submit(); }, inject.detail.finishDelay * 1000);
+				break;
 
-	// print label from context menu
-	} else if (
-		type === 'printLabelBroken' || 
-		type === 'printLabelBuild' || 
-		type === 'printLabelBuildAck' || 
-		type === 'printLabelDecommission' || 
-		type === 'printLabelPurchase' || 
-		type === 'printLabelPrebuilt' ||
-		type === 'printLabelReclaim' || 
-		type === 'printLabelRestock' || 
-		type === 'printLabelRepair'
-	) {
-		if (!ticketType) {
-			snafuErrorMessage('The open ticket is not valid for label printing.');
-		} else {
-			// make sure we have a valid printer
-			var printers = dymo.label.framework.getPrinters().filter(function(printer) { return (printer.isConnected === true && printer.isLocal === true) });
-			if (printers.length > 0) {
-	
-				// get the printer's name as well for printing
-				var printerName = printers[0]['name'];
-				if (!snafuIsVarEmpty(printerName)) {
-					
-					// determine the label type from the ticket type
-					var labelType = (ticketType === 'rhs_reimage' && (type === 'printLabelBuild' || type === 'printLabelBuildAck')) ? type.replace('printLabelBuild', 'reimage').toLowerCase() : type.replace('printLabel', '').toLowerCase();
-					var labelFields = snafuLabelFields[labelType];
-
-					if (labelFields === undefined) {
-						console.warn('SNAFU: Dymo label type returned invalid.  Skipping print job. . .');
-						snafuErrorMessage('Dymo label type returned invalid.  Skipping print job. . .');
-					} else if (labelFields['ticketType'] !== true && labelFields['ticketType'].indexOf(ticketType) === -1) {
-						console.warn(snafuSprintf('SNAFU: You can\'t print label type "%s" on ticket type "%s".', [labelType, ticketType]));
-						snafuErrorMessage(snafuSprintf('You can\'t print label type "%s" on ticket type "%s".', [labelType, ticketType]));
-					} else {
-						var addressLabel = dymo.label.framework.openLabelXml(snafuGetDymoLabelXml(labelType));
-						var reason = '';
-						var canPrint = true;
-						for (var field in labelFields) {
-							if (field !== 'ticketType') {
-								// reclaim and repair labels
-								if ((labelType === 'reclaim' || labelType === 'repair') && field === 'TEXT_5') {
-									reason = prompt(snafuSprintf('Enter the reason for %s this device.  KEEP IT SHORT!', (labelType === 'reclaim') ? ['reclaiming'] : ['repairing']));
-									if (snafuIsVarEmpty(reason) === true) {
-										console.warn('SNAFU: You must provide a valid reason.');
-										snafuErrorMessage('You must provide a valid reason.  Skipping print job. . .');
-										canPrint = false;
-										break;
-									} else {
-										addressLabel.setObjectText(field, snafuShortenLabelString(reason));
-										reason = '';
-									}
-
-								// broken equipment labels
-								} else if (labelType === 'broken' && field === 'EQUIP') {
-									reason = prompt('What equipment is broken?  KEEP IT SHORT!');
-									if (snafuIsVarEmpty(reason) === true) {
-										console.warn('SNAFU: You must provide a valid reason.');
-										snafuErrorMessage('You must provide a valid reason.  Skipping print job. . .');
-										canPrint = false;
-										break;
-									} else {
-										addressLabel.setObjectText(field, snafuShortenLabelString(reason));
-										reason = '';
-									}
-
-								// hot swap build labels
-								} else if (labelType === 'build' && (field === 'TEXT_4' || field === 'TEXT_8')) {
-									if (field === 'TEXT_4') {
-										addressLabel.setObjectText(field, g_form.getValue('rhs_software').split('\n')[0]);
-									} else {
-										var buildInput = g_form.getValue('rhs_software');
-										if (buildInput.indexOf('\n') !== -1) {
-											addressLabel.setObjectText(field, snafuShortenLabelString(buildInput.split('\n')[1]));
-										} else {
-											addressLabel.setObjectText(field, 'Standard software load.');
-										}
-									}
-								
-								// build ack labels
-								} else if (
-									(labelType === 'buildack' || labelType === 'reimageack') &&
-									(field === 'BUILD' || field === 'APPS')
-								) {
-									if (field === 'BUILD') {
-										addressLabel.setObjectText(field, g_form.getValue('rhs_software').split('\n')[0]);
-									} else {
-										var buildInput = g_form.getValue('rhs_software');
-										if (buildInput.indexOf('\n') !== -1) {
-											addressLabel.setObjectText(field, snafuShortenLabelString(buildInput.split('\n')[1]));
-										} else {
-											addressLabel.setObjectText(field, 'Standard software load.');
-										}
-									}
-
-								// purchase order labels
-								} else if (labelType === 'purchase' && (field === 'PO' || field === 'MORE_PO')) {
-									reason = prompt('Enter up to three PO numbers. Separate them by commas with no spaces. Each one will be put on the new line.');
-									if (!snafuIsVarEmpty(reason)) addressLabel.setObjectText(field, (reason.indexOf(',') !== -1) ? reason.replace(/,/g, '\r\n') : reason);
-
-								// prebuilt device label
-								} else if (labelType === 'prebuilt') {
-									if (field === 'BUILD_TYPE') {
-										reason = prompt('What is the build type (GrMH-MANDATORY, etc.) of the prebuilt device?');
-									} else if (field === 'HOSTNAME') {
-										reason = prompt('What is the device\'s hostname?');
-									} else {
-										reason = prompt('What is the device\'s asset tag?');
-									}
-
-									if (snafuIsVarEmpty(reason) === true) {
-										console.warn('SNAFU: You must provide valid input.');
-										snafuErrorMessage('You must provide valid input.  Skipping print job. . .');
-										canPrint = false;
-									} else {
-										addressLabel.setObjectText(field, snafuShortenLabelString(reason.toUpperCase()));
-										reason = ''; // reset it for the next field
-									}
-								// "the rest"
-								} else {
-									addressLabel.setObjectText(field, snafuShortenLabelString(snafuReplaceWildcards(labelFields[field])));
-								}
-							}
-						}
-
-						if (!canPrint) {
-							console.warn('SNAFU: Unable to print label due to errors.');
-						} else {
-							addressLabel.print(printerName);
-						}
-					}
+			// print label from context menu
+			case 'printLabelBroken':
+			case 'printLabelBuild':
+			case 'printLabelBuildAck':
+			case 'printLabelDecommission':
+			case 'printLabelPurchase':
+			case 'printLabelPrebuilt':
+			case 'printLabelReclaim': 
+			case 'printLabelRestock': 
+			case 'printLabelRepair':
+				if (!ticketType) {
+					snafuErrorMessage('The open ticket is not valid for label printing.');
 				} else {
-					console.warn('SNAFU: Unable to determine printer name.  Skipping print job. . .');
-					snafuErrorMessage('Unable to determine printer name.  Skipping print job. . .');
-				}
-			} else {
-				console.warn('SNAFU: No appropriate printers were found.  Skipping print job. . .');
-				snafuErrorMessage('No appropriate printers were found.  Skipping print job. . .');
-			}
-		}
-
-	// auto ticket detection
-	} else if (type === 'autoEnRoute' || type === 'autoHandle' || type === 'autoAcknowledge' || type === 'autoClose') {
-		if (!ticketType) {
-			snafuErrorMessage('No task or incident detected.');
-		} else if (ticketType in snafuAutoTickets) {
-			var ticket = snafuAutoTickets[ticketType];
-			var error = false;
-			// determine ack or close
-			if (type === 'autoHandle') {
-				var ticketStatus = (ticketType === 'generic_incident') ? g_form.getValue('incident_state') : g_form.getValue('state');
-				if (ticketType === 'generic_incident') {
-					if (ticketStatus === '6') {
-						// if ticket is resolved then abort
-						error = true;
-					} else {
-						// if status is 1 (New) or 2 (Assigned) then auto-acknowledge, otherwise auto-close
-						type = (ticketStatus === '1' || ticketStatus === '2') ? 'autoAcknowledge' : 'autoClose';
-					} 
-				} else {
-					if (ticketStatus === '3' || ticketStatus === '4') {
-						// if ticket is closed then abort
-						error = true;
-					} else {
-						// if status is 1 (Open) then auto-acknowledge, otherwise auto-close
-						type = (ticketStatus === '1') ? 'autoAcknowledge' : 'autoClose';
-						//console.log(type, ticketStatus)
-					}
-				}
-			}
-
-			if (error === true) {
-				snafuErrorMessage('Ticket has already been closed.');
-			} else {
-				if (type === 'autoEnRoute') {
-					var ticketAction = ticket.enRoute;
-				} else {
-					var ticketAction = (type === 'autoAcknowledge') ? ticket.ack : ticket.close;
-				}
-				
-				if (snafuIsVarEmpty(ticketAction) === true) {
-					snafuErrorMessage(snafuSprintf('Unable to complete action "%s" on this ticket type (%s).', [type, ticketType]));
-				} else {
-					// set the field with value
-					if (!snafuIsVarEmpty(ticket.field) && !snafuIsVarEmpty(ticketAction.value)) {
-						snafuSetValue(ticket.field, ticketAction.value);
-						snafuFlash(ticket.field);
-					}
-
-					// set the work notes
-					if (!snafuIsVarEmpty(ticketAction.script)) {
-						snafuSetValue('comments', snafuReplaceWildcards(ticketAction.script));
-						snafuFlash('comments');
-					}
-
-					// if a task, set root cause ci and due date
-					if (ticket.field === 'state') {
-						var dueDate = snafuGetDueDate();
-
-						// due date
-						if (g_form.getValue('due_date') !== dueDate) {
-							snafuSetValue('due_date', dueDate);
-							snafuFlash('due_date');
-						}
-
-						// root cause ci
-						// desktop services value is 5a8d6816a1cf38003a42245d1035d56e
-						if (ticketType !== 'absolute_install' && g_form.getValue('cmdb_ci') !== '5a8d6816a1cf38003a42245d1035d56e') {
-							snafuSetDisplayValue('cmdb_ci', '5a8d6816a1cf38003a42245d1035d56e', 'Desktop Services');
-							snafuFlash('cmdb_ci');
-						}
-					}
-
-					// reminders
-					if (type === 'autoClose' && snafuReminderTickets.indexOf(ticketType) !== -1) {
-						// action performed is depends on reminder
-						switch (inject.detail.remind) {
+					// make sure we have a valid printer
+					var printers = dymo.label.framework.getPrinters().filter(function(printer) { return (printer.isConnected === true && printer.isLocal === true) });
+					if (printers.length > 0) {
+			
+						// get the printer's name as well for printing
+						var printerName = printers[0]['name'];
+						if (!snafuIsVarEmpty(printerName)) {
 							
-							// open computer database tab
-							case 'open':
-								// save, update, auto, none
-								snafuEndTicketInteraction(inject.detail.autoFinish, inject.detail.finishDelay, ticket.field, ticketAction.value);
+							// determine the label type from the ticket type
+							var labelType = (ticketType === 'rhs_reimage' && (type === 'printLabelBuild' || type === 'printLabelBuildAck')) ? type.replace('printLabelBuild', 'reimage').toLowerCase() : type.replace('printLabel', '').toLowerCase();
+							var labelFields = snafuLabelFields[labelType];
 
-								// attempt to get the root cause's sys_id
-								var rootCause = snafuGetRootCauseSysId(ticketType);
+							if (labelFields === undefined) {
+								console.warn('SNAFU: Dymo label type returned invalid.  Skipping print job. . .');
+								snafuErrorMessage('Dymo label type returned invalid.  Skipping print job. . .');
+							} else if (labelFields['ticketType'] !== true && labelFields['ticketType'].indexOf(ticketType) === -1) {
+								console.warn(snafuSprintf('SNAFU: You can\'t print label type "%s" on ticket type "%s".', [labelType, ticketType]));
+								snafuErrorMessage(snafuSprintf('You can\'t print label type "%s" on ticket type "%s".', [labelType, ticketType]));
+							} else {
+								var addressLabel = dymo.label.framework.openLabelXml(snafuGetDymoLabelXml(labelType));
+								var reason = '';
+								var canPrint = true;
+								for (var field in labelFields) {
+									if (field !== 'ticketType') {
+										// reclaim and repair labels
+										if ((labelType === 'reclaim' || labelType === 'repair') && field === 'TEXT_5') {
+											reason = prompt(snafuSprintf('Enter the reason for %s this device.  KEEP IT SHORT!', (labelType === 'reclaim') ? ['reclaiming'] : ['repairing']));
+											if (snafuIsVarEmpty(reason) === true) {
+												console.warn('SNAFU: You must provide a valid reason.');
+												snafuErrorMessage('You must provide a valid reason.  Skipping print job. . .');
+												canPrint = false;
+												break;
+											} else {
+												addressLabel.setObjectText(field, snafuShortenLabelString(reason));
+												reason = '';
+											}
 
-								// open a tab using a custom javascript event
-								query = document.createEvent('CustomEvent');
-								query.initCustomEvent('SNAFU_OpenTab', true, true, {
-									url: (rootCause !== false) ? snafuSprintf('https://ghsprod.service-now.com/cmdb_ci_computer.do?sys_id=%s', [rootCause]) : 'https://ghsprod.service-now.com/cmdb_ci_computer_list.do'
-								});
-								document.dispatchEvent(query);
-								break;
+										// broken equipment labels
+										} else if (labelType === 'broken' && field === 'EQUIP') {
+											reason = prompt('What equipment is broken?  KEEP IT SHORT!');
+											if (snafuIsVarEmpty(reason) === true) {
+												console.warn('SNAFU: You must provide a valid reason.');
+												snafuErrorMessage('You must provide a valid reason.  Skipping print job. . .');
+												canPrint = false;
+												break;
+											} else {
+												addressLabel.setObjectText(field, snafuShortenLabelString(reason));
+												reason = '';
+											}
 
-							// popup using sweet alerts
-							case 'popup':
-								alert('Don\'t forget to update the device\'s location information.');
-								
-								// save, update, auto, none
-								snafuEndTicketInteraction(inject.detail.autoFinish, inject.detail.finishDelay, ticket.field, ticketAction.value);
-								break;
-
-							// no reminder
-							case 'none':
-							default:
-								// save, update, auto, none
-								snafuEndTicketInteraction(inject.detail.autoFinish, inject.detail.finishDelay, ticket.field, ticketAction.value);
-								break;
-						}
-					} else {
-						snafuEndTicketInteraction(inject.detail.autoFinish, inject.detail.finishDelay, ticket.field, ticketAction.value);
-					}
-
-					// print labels
-					if (
-						(
-							type === 'autoClose' && (ticketType === 'rhs_reclaim' || ticketType === 'rhs_reimage')
-						) || (
-							type === 'autoAcknowledge' && (ticketType === 'rhs_build' || ticketType === 'rhs_reimage')
-						)
-					) {
-						// determine the label type from the ticket type
-						var labelType = snafuGetLabelType(type, ticketType);
-
-						// make sure we do want to print these labels
-						if (labelSettings[labelType] === true) {
-							// make sure we have a valid printer
-							var printers = dymo.label.framework.getPrinters().filter(function(printer) { return (printer.isConnected === true && printer.isLocal === true) });
-							if (printers.length > 0) {
-					
-								// get the printer's name as well for printing
-								var printerName = printers[0]['name'];
-								if (!snafuIsVarEmpty(printerName)) {
-									
-									if (snafuLabelFields[labelType] === undefined) {
-										console.warn('SNAFU: Dymo label type returned invalid.  Skipping print job. . .');
-										snafuErrorMessage('Dymo label type returned invalid.  Skipping print job. . .');
-									} else {
-										var addressLabel = dymo.label.framework.openLabelXml(snafuGetDymoLabelXml(labelType));
-										var labelFields = snafuLabelFields[labelType];
-										var reason = ''
-										var canPrint = true;
-										for (var field in labelFields) {
-											if (field !== 'ticketType') {
-												// reclaim label
-												if (labelType === 'reclaim' && field === 'TEXT_5') {
-													reason = prompt(snafuSprintf('Enter the reason for %s this device.  KEEP IT SHORT!', (labelType === 'reclaim') ? ['reclaiming'] : ['repairing']));
-													if (snafuIsVarEmpty(reason) === true) {
-														console.warn('SNAFU: You must provide a valid reason.');
-														snafuErrorMessage('You must provide a valid reason.  Skipping print job. . .');
-														canPrint = false;
-														break;
-													} else {
-														addressLabel.setObjectText(field, snafuShortenLabelString(reason));
-													}
-
-												// build ack labels
-												} else if (
-													(labelType === 'buildack' || labelType === 'reimageack') &&
-													(field === 'BUILD' || field === 'APPS')
-												) {
-													if (field === 'BUILD') {
-														addressLabel.setObjectText(field, g_form.getValue('rhs_software').split('\n')[0]);
-													} else {
-														var buildInput = g_form.getValue('rhs_software');
-														if (buildInput.indexOf('\n') !== -1) {
-															addressLabel.setObjectText(field, snafuShortenLabelString(buildInput.split('\n')[1]));
-														} else {
-															addressLabel.setObjectText(field, 'Standard software load.');
-														}
-													}
-
-												// reimage only labels
-												} else if (labelType === 'reimage' && (field === 'TEXT_4' || field === 'TEXT_8')) {
-													if (field === 'TEXT_4') {
-														addressLabel.setObjectText(field, g_form.getValue('rhs_software').split('\n')[0]);
-													} else {
-														var buildInput = g_form.getValue('rhs_software');
-														if (buildInput.indexOf('\n') !== -1) {
-															addressLabel.setObjectText(field, snafuShortenLabelString(buildInput.split('\n')[1]));
-														} else {
-															addressLabel.setObjectText(field, 'Standard software load.');
-														}
-													}
-												
-												// catch the rest
+										// hot swap build labels
+										} else if (labelType === 'build' && (field === 'TEXT_4' || field === 'TEXT_8')) {
+											if (field === 'TEXT_4') {
+												addressLabel.setObjectText(field, g_form.getValue('rhs_software').split('\n')[0]);
+											} else {
+												var buildInput = g_form.getValue('rhs_software');
+												if (buildInput.indexOf('\n') !== -1) {
+													addressLabel.setObjectText(field, snafuShortenLabelString(buildInput.split('\n')[1]));
 												} else {
-													addressLabel.setObjectText(field, snafuShortenLabelString(snafuReplaceWildcards(labelFields[field])));
+													addressLabel.setObjectText(field, 'Standard software load.');
 												}
 											}
-										}
+										
+										// build ack labels
+										} else if (
+											(labelType === 'buildack' || labelType === 'reimageack') &&
+											(field === 'BUILD' || field === 'APPS')
+										) {
+											if (field === 'BUILD') {
+												addressLabel.setObjectText(field, g_form.getValue('rhs_software').split('\n')[0]);
+											} else {
+												var buildInput = g_form.getValue('rhs_software');
+												if (buildInput.indexOf('\n') !== -1) {
+													addressLabel.setObjectText(field, snafuShortenLabelString(buildInput.split('\n')[1]));
+												} else {
+													addressLabel.setObjectText(field, 'Standard software load.');
+												}
+											}
 
-										if (!canPrint) {
-											console.warn('SNAFU: Unable to print label due to errors.');
+										// purchase order labels
+										} else if (labelType === 'purchase' && (field === 'PO' || field === 'MORE_PO')) {
+											reason = prompt('Enter up to three PO numbers. Separate them by commas with no spaces. Each one will be put on the new line.');
+											if (!snafuIsVarEmpty(reason)) addressLabel.setObjectText(field, (reason.indexOf(',') !== -1) ? reason.replace(/,/g, '\r\n') : reason);
+
+										// prebuilt device label
+										} else if (labelType === 'prebuilt') {
+											if (field === 'BUILD_TYPE') {
+												reason = prompt('What is the build type (GrMH-MANDATORY, etc.) of the prebuilt device?');
+											} else if (field === 'HOSTNAME') {
+												reason = prompt('What is the device\'s hostname?');
+											} else {
+												reason = prompt('What is the device\'s asset tag?');
+											}
+
+											if (snafuIsVarEmpty(reason) === true) {
+												console.warn('SNAFU: You must provide valid input.');
+												snafuErrorMessage('You must provide valid input.  Skipping print job. . .');
+												canPrint = false;
+											} else {
+												addressLabel.setObjectText(field, snafuShortenLabelString(reason.toUpperCase()));
+												reason = ''; // reset it for the next field
+											}
+										// "the rest"
 										} else {
-											addressLabel.print(printerName);
+											addressLabel.setObjectText(field, snafuShortenLabelString(snafuReplaceWildcards(labelFields[field])));
 										}
 									}
-								} else {
-									console.warn('SNAFU: Unable to determine printer name.  Skipping print job. . .');
-									snafuErrorMessage('Unable to determine printer name.  Skipping print job. . .');
 								}
+
+								if (!canPrint) {
+									console.warn('SNAFU: Unable to print label due to errors.');
+								} else {
+									addressLabel.print(printerName);
+								}
+							}
+						} else {
+							console.warn('SNAFU: Unable to determine printer name.  Skipping print job. . .');
+							snafuErrorMessage('Unable to determine printer name.  Skipping print job. . .');
+						}
+					} else {
+						console.warn('SNAFU: No appropriate printers were found.  Skipping print job. . .');
+						snafuErrorMessage('No appropriate printers were found.  Skipping print job. . .');
+					}
+				}
+				break;
+
+			// auto ticket detection
+			case 'autoEnRoute':
+			case 'autoHandle':
+			case 'autoAcknowledge':
+			case 'autoClose':
+			case 'autoPending':
+				if (!ticketType) {
+					snafuErrorMessage('No task or incident detected.');
+				} else if (ticketType in snafuAutoTickets) {
+					var ticket = snafuAutoTickets[ticketType];
+					var error = false;
+					// determine ack or close
+					if (type === 'autoHandle') {
+						var ticketStatus = (ticketType === 'generic_incident') ? g_form.getValue('incident_state') : g_form.getValue('state');
+						if (ticketType === 'generic_incident') {
+							if (ticketStatus === '6') {
+								// if ticket is resolved then abort
+								error = true;
 							} else {
-								console.warn('SNAFU: No appropriate printers were found.  Skipping print job. . .');
-								snafuErrorMessage('No appropriate printers were found.  Skipping print job. . .');
+								// if status is 1 (New) or 2 (Assigned) then auto-acknowledge, otherwise auto-close
+								type = (ticketStatus === '1' || ticketStatus === '2') ? 'autoAcknowledge' : 'autoClose';
+							} 
+						} else {
+							if (ticketStatus === '3' || ticketStatus === '4') {
+								// if ticket is closed then abort
+								error = true;
+							} else {
+								// if status is 1 (Open) then auto-acknowledge, otherwise auto-close
+								type = (ticketStatus === '1') ? 'autoAcknowledge' : 'autoClose';
+								//console.log(type, ticketStatus)
 							}
 						}
 					}
-				}
-			}				
-		} else {
-			snafuErrorMessage('Unknown ticket type detected.');
-		}
 
-	// handle everything else
-	} else {
-		// make sure ticket is assigned
-		if (snafuIsResolveCode(inject.detail.field, inject.detail.value) === true && g_form.getReference('assigned_to').currentRow === -1) {
-			snafuErrorMessage('Unable to send update to unassigned ticket.  Please assign it to yourself and try again.');
-		} else {
-			var field = inject.detail.field;
-			var value = inject.detail.value;
-			var workNotes = (!snafuIsVarEmpty(inject.detail.workNotes)) ? snafuReplaceWildcards(inject.detail.workNotes) : null;
-			var custNotes = (!snafuIsVarEmpty(inject.detail.custNotes)) ? snafuReplaceWildcards(inject.detail.custNotes) : null;
-
-			if (type.indexOf('closeQuarantine') !== -1 && ticketType !== 'rhs_restock') {
-				snafuErrorMessage('Open ticket is not for a quarantined asset');
-			} else if (type.indexOf('closeHotSwap') !== -1 && ticketType !== 'rhs_build') {
-				snafuErrorMessage('Open ticket is not for a Hot Swap build.');
-			} else {
-
-				// set field with value
-				if (!snafuIsVarEmpty(field) && !snafuIsVarEmpty(value)) {
-					snafuSetValue(field, value);
-					snafuFlash(field)
-				}
-
-				// customer notes (comments)
-				if (!snafuIsVarEmpty(custNotes)) {
-					snafuSetValue('comments', custNotes);
-					snafuFlash('comments');
-				}
-
-				// work notes
-				if (!snafuIsVarEmpty(workNotes)) {
-					snafuSetValue('work_notes', workNotes);
-					snafuFlash('work_notes');
-				}
-
-				// set the resolve message if it is a resolved code (incident only)
-				if (field === 'incident_state' && value === '6') {
-					// set to Problem Resolved
-					snafuSetValue('close_code', 'Problem Resolved');
-					snafuFlash('close_code');
-
-					// spoke to customer
-					snafuSetValue('u_customer_communication', 'Spoke to Customer');
-					snafuFlash('u_customer_communication');
-
-					// attempt to set the resolve types based on information in the ticket
-					var resolveTypes = snafuGetResolveType(g_form.getReference('cmdb_ci').name);
-					if (resolveTypes !== false) {
-						snafuSetValue('u_dell_resolve_1', resolveTypes.type_1);
-
-						// set the second one 500ms after the first to allow it to populate
-						setTimeout(function() { snafuSetValue('u_dell_resolve_2', resolveTypes.type_2) }, 500);	
-					}
-
-					if (!snafuIsVarEmpty(workNotes)) {
-						snafuSetValue('close_notes', workNotes);
-						snafuFlash('close_notes');
-					} else if (!snafuIsVarEmpty(custNotes)) {
-						snafuSetValue('close_notes', custNotes);
-						snafuFlash('close_notes');
-					}
-
-				// change the root cause ci and due date for tasks
-				} else if (field === 'state') {
-					var dueDate = snafuGetDueDate();
-
-					// due date
-					if (g_form.getValue('due_date') !== dueDate) {
-						snafuSetValue('due_date', dueDate);
-						snafuFlash('due_date');
-					}
-
-					// root cause ci
-					// desktop services value is 5a8d6816a1cf38003a42245d1035d56e
-					if (g_form.getValue('cmdb_ci') !== '5a8d6816a1cf38003a42245d1035d56e') {
-						snafuSetDisplayValue('cmdb_ci', '5a8d6816a1cf38003a42245d1035d56e', 'Desktop Services');
-						snafuFlash('cmdb_ci');
-					}
-
-					// if setting to pending and sub-status is set, then set the select
-					if (value === '-5' && !snafuIsVarEmpty(inject.detail.subStatus)) {
-						snafuSetValue('u_sub_state', inject.detail.subStatus);
-						snafuFlash('u_sub_state');
-					}
-
-					// set quarantine select, if needed
-					if (type.indexOf('closeQuarantine') !== -1) {
-						if (type !== 'closeQuarantineRepairYes' && type !== 'closeQuarantineRepairNo') {
-							snafuSetValue('rhs_restock_status', type.replace('closeQuarantine', '').toLowerCase());
-						} else {
-							snafuSetValue('rhs_restock_status', 'repair');
-							snafuSetValue('asset_repair_type', type.replace('closeQuarantineRepair', ''));
-						}
-					} else if (type.indexOf('closeHotSwap') !== -1) {
-						snafuSetValue('rhs_replacement_type', type.replace('closeHotSwap', '').toLowerCase());
-					} else if (type.indexOf('closeRepair') !== -1) {
-						snafuSetValue('rhs_repair_type', type.replace('closeRepair', '').toLowerCase());
-					}
-				}
-
-				// if build logging is enabled and closing a hot swap, then log the build
-				if (inject.detail.buildLog === true && type.indexOf('closeHotSwap') !== -1 && ticketType === 'rhs_build') {
-					// query the user info sent by the options page
-					var buildLogQuery = document.createEvent('CustomEvent');
-					var replacement = g_form.getReference('rhs_replacement_computer');
-					var requestItem = g_form.getReference('request_item');
-					buildLogQuery.initCustomEvent('SNAFU_BuildLogQuery', true, true, {
-						sysId: requestItem.sys_id,
-						ritm: requestItem.number,
-						hostname: replacement.name,
-						assetTag: replacement.asset_tag,
-						dateTime: Date.now(),
-						build: g_form.getValue('rhs_software'),
-						model: snafuGetComputerModel(replacement.model_id),
-						newUsed: type.replace('closeHotSwap', '').toLowerCase()
-					});
-					snafuInfoMessage('Build saved to the log.');
-					document.dispatchEvent(buildLogQuery);
-				}
-				
-				// reminders
-				if (snafuIsResolveCode(field, value) === true && snafuReminderTickets.indexOf(ticketType) !== -1) {
-					// action performed is depends on reminder
-					switch (inject.detail.remind) {
+					if (error === true) {
+						snafuErrorMessage('Ticket has already been closed.');
+					} else {
+						var ticketAction = ticket[snafuGetTicketAction(type)];
 						
-						// open computer database tab
-						case 'open':
-							// save, update, auto, none
-							snafuEndTicketInteraction(inject.detail.autoFinish, inject.detail.finishDelay, field, value);
+						if (snafuIsVarEmpty(ticketAction) === true) {
+							snafuErrorMessage(snafuSprintf('Unable to complete action "%s" on this ticket type (%s).', [type, ticketType]));
+						} else {
+							// set the field with value
+							if (!snafuIsVarEmpty(ticket.field) && !snafuIsVarEmpty(ticketAction.value)) {
+								snafuSetValue(ticket.field, ticketAction.value);
+								snafuFlash(ticket.field);
+							}
 
-							// attempt to get the root cause's sys_id
-							var rootCause = snafuGetRootCauseSysId(ticketType);
+							// set the work notes
+							if (!snafuIsVarEmpty(ticketAction.script)) {
+								snafuSetValue('comments', snafuReplaceWildcards(ticketAction.script));
+								snafuFlash('comments');
+							}
 
-							// open a tab using a custom javascript event
-							query = document.createEvent('CustomEvent');
-							query.initCustomEvent('SNAFU_OpenTab', true, true, {
-								url: (rootCause !== false) ? snafuSprintf('https://ghsprod.service-now.com/cmdb_ci_computer.do?sys_id=%s', [rootCause]) : 'https://ghsprod.service-now.com/cmdb_ci_computer_list.do'
+							// if a task, set root cause ci and due date
+							if (ticket.field === 'state') {
+								var dueDate = snafuGetDueDate();
+
+								// due date
+								if (g_form.getValue('due_date') !== dueDate) {
+									snafuSetValue('due_date', dueDate);
+									snafuFlash('due_date');
+								}
+
+								// root cause ci
+								// desktop services value is 5a8d6816a1cf38003a42245d1035d56e
+								if (ticketType !== 'absolute_install' && g_form.getValue('cmdb_ci') !== '5a8d6816a1cf38003a42245d1035d56e') {
+									snafuSetDisplayValue('cmdb_ci', '5a8d6816a1cf38003a42245d1035d56e', 'Desktop Services');
+									snafuFlash('cmdb_ci');
+								}
+							}
+
+							// reminders
+							if (type === 'autoClose' && snafuReminderTickets.indexOf(ticketType) !== -1) {
+								// action performed is depends on reminder
+								switch (inject.detail.remind) {
+									
+									// open computer database tab
+									case 'open':
+										// save, update, auto, none
+										snafuEndTicketInteraction(inject.detail.autoFinish, inject.detail.finishDelay, ticket.field, ticketAction.value);
+
+										// attempt to get the root cause's sys_id
+										var rootCause = snafuGetRootCauseSysId(ticketType);
+
+										// open a tab using a custom javascript event
+										query = document.createEvent('CustomEvent');
+										query.initCustomEvent('SNAFU_OpenTab', true, true, {
+											url: (rootCause !== false) ? snafuSprintf('https://ghsprod.service-now.com/cmdb_ci_computer.do?sys_id=%s', [rootCause]) : 'https://ghsprod.service-now.com/cmdb_ci_computer_list.do'
+										});
+										document.dispatchEvent(query);
+										break;
+
+									// popup using sweet alerts
+									case 'popup':
+										alert('Don\'t forget to update the device\'s location information.');
+										
+										// save, update, auto, none
+										snafuEndTicketInteraction(inject.detail.autoFinish, inject.detail.finishDelay, ticket.field, ticketAction.value);
+										break;
+
+									// no reminder
+									case 'none':
+									default:
+										// save, update, auto, none
+										snafuEndTicketInteraction(inject.detail.autoFinish, inject.detail.finishDelay, ticket.field, ticketAction.value);
+										break;
+								}
+							} else {
+								snafuEndTicketInteraction(inject.detail.autoFinish, inject.detail.finishDelay, ticket.field, ticketAction.value);
+							}
+
+							// print labels
+							if (
+								(
+									type === 'autoClose' && (ticketType === 'rhs_reclaim' || ticketType === 'rhs_reimage')
+								) || (
+									type === 'autoAcknowledge' && (ticketType === 'rhs_build' || ticketType === 'rhs_reimage')
+								)
+							) {
+								// determine the label type from the ticket type
+								var labelType = snafuGetLabelType(type, ticketType);
+
+								// make sure we do want to print these labels
+								if (labelSettings[labelType] === true) {
+									// make sure we have a valid printer
+									var printers = dymo.label.framework.getPrinters().filter(function(printer) { return (printer.isConnected === true && printer.isLocal === true) });
+									if (printers.length > 0) {
+							
+										// get the printer's name as well for printing
+										var printerName = printers[0]['name'];
+										if (!snafuIsVarEmpty(printerName)) {
+											
+											if (snafuLabelFields[labelType] === undefined) {
+												console.warn('SNAFU: Dymo label type returned invalid.  Skipping print job. . .');
+												snafuErrorMessage('Dymo label type returned invalid.  Skipping print job. . .');
+											} else {
+												var addressLabel = dymo.label.framework.openLabelXml(snafuGetDymoLabelXml(labelType));
+												var labelFields = snafuLabelFields[labelType];
+												var reason = ''
+												var canPrint = true;
+												for (var field in labelFields) {
+													if (field !== 'ticketType') {
+														// reclaim label
+														if (labelType === 'reclaim' && field === 'TEXT_5') {
+															reason = prompt(snafuSprintf('Enter the reason for %s this device.  KEEP IT SHORT!', (labelType === 'reclaim') ? ['reclaiming'] : ['repairing']));
+															if (snafuIsVarEmpty(reason) === true) {
+																console.warn('SNAFU: You must provide a valid reason.');
+																snafuErrorMessage('You must provide a valid reason.  Skipping print job. . .');
+																canPrint = false;
+																break;
+															} else {
+																addressLabel.setObjectText(field, snafuShortenLabelString(reason));
+															}
+
+														// build ack labels
+														} else if (
+															(labelType === 'buildack' || labelType === 'reimageack') &&
+															(field === 'BUILD' || field === 'APPS')
+														) {
+															if (field === 'BUILD') {
+																addressLabel.setObjectText(field, g_form.getValue('rhs_software').split('\n')[0]);
+															} else {
+																var buildInput = g_form.getValue('rhs_software');
+																if (buildInput.indexOf('\n') !== -1) {
+																	addressLabel.setObjectText(field, snafuShortenLabelString(buildInput.split('\n')[1]));
+																} else {
+																	addressLabel.setObjectText(field, 'Standard software load.');
+																}
+															}
+
+														// reimage only labels
+														} else if (labelType === 'reimage' && (field === 'TEXT_4' || field === 'TEXT_8')) {
+															if (field === 'TEXT_4') {
+																addressLabel.setObjectText(field, g_form.getValue('rhs_software').split('\n')[0]);
+															} else {
+																var buildInput = g_form.getValue('rhs_software');
+																if (buildInput.indexOf('\n') !== -1) {
+																	addressLabel.setObjectText(field, snafuShortenLabelString(buildInput.split('\n')[1]));
+																} else {
+																	addressLabel.setObjectText(field, 'Standard software load.');
+																}
+															}
+														
+														// catch the rest
+														} else {
+															addressLabel.setObjectText(field, snafuShortenLabelString(snafuReplaceWildcards(labelFields[field])));
+														}
+													}
+												}
+
+												if (!canPrint) {
+													console.warn('SNAFU: Unable to print label due to errors.');
+												} else {
+													addressLabel.print(printerName);
+												}
+											}
+										} else {
+											console.warn('SNAFU: Unable to determine printer name.  Skipping print job. . .');
+											snafuErrorMessage('Unable to determine printer name.  Skipping print job. . .');
+										}
+									} else {
+										console.warn('SNAFU: No appropriate printers were found.  Skipping print job. . .');
+										snafuErrorMessage('No appropriate printers were found.  Skipping print job. . .');
+									}
+								}
+							}
+						}
+					}				
+				} else {
+					snafuErrorMessage('Unknown ticket type detected.');
+				}
+				break;
+
+			// handle everything else
+			default:
+				// make sure ticket is assigned
+				if (snafuIsResolveCode(inject.detail.field, inject.detail.value) === true && g_form.getReference('assigned_to').currentRow === -1) {
+					snafuErrorMessage('Unable to send update to unassigned ticket.  Please assign it to yourself and try again.');
+				} else {
+					var field = inject.detail.field;
+					var value = inject.detail.value;
+					var workNotes = (!snafuIsVarEmpty(inject.detail.workNotes)) ? snafuReplaceWildcards(inject.detail.workNotes) : null;
+					var custNotes = (!snafuIsVarEmpty(inject.detail.custNotes)) ? snafuReplaceWildcards(inject.detail.custNotes) : null;
+
+					if (type.indexOf('closeQuarantine') !== -1 && ticketType !== 'rhs_restock') {
+						snafuErrorMessage('Open ticket is not for a quarantined asset');
+					} else if (type.indexOf('closeHotSwap') !== -1 && ticketType !== 'rhs_build') {
+						snafuErrorMessage('Open ticket is not for a Hot Swap build.');
+					} else {
+
+						// set field with value
+						if (!snafuIsVarEmpty(field) && !snafuIsVarEmpty(value)) {
+							snafuSetValue(field, value);
+							snafuFlash(field)
+						}
+
+						// customer notes (comments)
+						if (!snafuIsVarEmpty(custNotes)) {
+							snafuSetValue('comments', custNotes);
+							snafuFlash('comments');
+						}
+
+						// work notes
+						if (!snafuIsVarEmpty(workNotes)) {
+							snafuSetValue('work_notes', workNotes);
+							snafuFlash('work_notes');
+						}
+
+						// set the resolve message if it is a resolved code (incident only)
+						if (field === 'incident_state' && value === '6') {
+							// set to Problem Resolved
+							snafuSetValue('close_code', 'Problem Resolved');
+							snafuFlash('close_code');
+
+							// spoke to customer
+							snafuSetValue('u_customer_communication', 'Spoke to Customer');
+							snafuFlash('u_customer_communication');
+
+							// attempt to set the resolve types based on information in the ticket
+							var resolveTypes = snafuGetResolveType(g_form.getReference('cmdb_ci').name);
+							if (resolveTypes !== false) {
+								snafuSetValue('u_dell_resolve_1', resolveTypes.type_1);
+
+								// set the second one 500ms after the first to allow it to populate
+								setTimeout(function() { snafuSetValue('u_dell_resolve_2', resolveTypes.type_2) }, 500);	
+							}
+
+							if (!snafuIsVarEmpty(workNotes)) {
+								snafuSetValue('close_notes', workNotes);
+								snafuFlash('close_notes');
+							} else if (!snafuIsVarEmpty(custNotes)) {
+								snafuSetValue('close_notes', custNotes);
+								snafuFlash('close_notes');
+							}
+
+						// change the root cause ci and due date for tasks
+						} else if (field === 'state') {
+							var dueDate = snafuGetDueDate();
+
+							// due date
+							if (g_form.getValue('due_date') !== dueDate) {
+								snafuSetValue('due_date', dueDate);
+								snafuFlash('due_date');
+							}
+
+							// root cause ci
+							// desktop services value is 5a8d6816a1cf38003a42245d1035d56e
+							if (g_form.getValue('cmdb_ci') !== '5a8d6816a1cf38003a42245d1035d56e') {
+								snafuSetDisplayValue('cmdb_ci', '5a8d6816a1cf38003a42245d1035d56e', 'Desktop Services');
+								snafuFlash('cmdb_ci');
+							}
+
+							// if setting to pending and sub-status is set, then set the select
+							if (value === '-5' && !snafuIsVarEmpty(inject.detail.subStatus)) {
+								snafuSetValue('u_sub_state', inject.detail.subStatus);
+								snafuFlash('u_sub_state');
+							}
+
+							// set quarantine select, if needed
+							if (type.indexOf('closeQuarantine') !== -1) {
+								if (type !== 'closeQuarantineRepairYes' && type !== 'closeQuarantineRepairNo') {
+									snafuSetValue('rhs_restock_status', type.replace('closeQuarantine', '').toLowerCase());
+								} else {
+									snafuSetValue('rhs_restock_status', 'repair');
+									snafuSetValue('asset_repair_type', type.replace('closeQuarantineRepair', ''));
+								}
+							} else if (type.indexOf('closeHotSwap') !== -1) {
+								snafuSetValue('rhs_replacement_type', type.replace('closeHotSwap', '').toLowerCase());
+							} else if (type.indexOf('closeRepair') !== -1) {
+								snafuSetValue('rhs_repair_type', type.replace('closeRepair', '').toLowerCase());
+							}
+						}
+
+						// if build logging is enabled and closing a hot swap, then log the build
+						if (inject.detail.buildLog === true && type.indexOf('closeHotSwap') !== -1 && ticketType === 'rhs_build') {
+							// query the user info sent by the options page
+							var buildLogQuery = document.createEvent('CustomEvent');
+							var replacement = g_form.getReference('rhs_replacement_computer');
+							var requestItem = g_form.getReference('request_item');
+							buildLogQuery.initCustomEvent('SNAFU_BuildLogQuery', true, true, {
+								sysId: requestItem.sys_id,
+								ritm: requestItem.number,
+								hostname: replacement.name,
+								assetTag: replacement.asset_tag,
+								dateTime: Date.now(),
+								build: g_form.getValue('rhs_software'),
+								model: snafuGetComputerModel(replacement.model_id),
+								newUsed: type.replace('closeHotSwap', '').toLowerCase()
 							});
-							document.dispatchEvent(query);
-							break;
+							snafuInfoMessage('Build saved to the log.');
+							document.dispatchEvent(buildLogQuery);
+						}
+						
+						// reminders
+						if (snafuIsResolveCode(field, value) === true && snafuReminderTickets.indexOf(ticketType) !== -1) {
+							// action performed is depends on reminder
+							switch (inject.detail.remind) {
+								
+								// open computer database tab
+								case 'open':
+									// save, update, auto, none
+									snafuEndTicketInteraction(inject.detail.autoFinish, inject.detail.finishDelay, field, value);
 
-						// popup using sweet alerts
-						case 'popup':
-							/*
-							sweetAlert({
-								title: 'Update Computer Location Information',
-								text: 'Don\'t forget to update the device\'s location information in Service Now.',
-								type: 'warning',
-								showCancelButton: true,
-								cancelButtonText: 'Open Computer Database',
-								confirmButtonText: 'Got It!',
-								closeOnConfirm: true,
-								closeOnCancel: true
-							},
-							function (openTab) {
-								// save, update, auto, none
-								snafuEndTicketInteraction(inject.detail.autoFinish, inject.detail.finishDelay, field, value);
-								if (!openTab) {
+									// attempt to get the root cause's sys_id
 									var rootCause = snafuGetRootCauseSysId(ticketType);
 
 									// open a tab using a custom javascript event
@@ -977,131 +997,135 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 										url: (rootCause !== false) ? snafuSprintf('https://ghsprod.service-now.com/cmdb_ci_computer.do?sys_id=%s', [rootCause]) : 'https://ghsprod.service-now.com/cmdb_ci_computer_list.do'
 									});
 									document.dispatchEvent(query);
-								}
-							});
-							*/
-							alert('Don\'t forget to update the device\'s location information.');
+									break;
 
-							// save, update, auto, none
-							snafuEndTicketInteraction(inject.detail.autoFinish, inject.detail.finishDelay, field, value);
-							break;
+								// popup
+								case 'popup':
+									alert('Don\'t forget to update the device\'s location information.');
 
-						// no reminder
-						case 'none':
-						default:
-							// save, update, auto, none
-							snafuEndTicketInteraction(inject.detail.autoFinish, inject.detail.finishDelay, field, value);
-							break;
-					}
-				} else {
-					snafuEndTicketInteraction(inject.detail.autoFinish, inject.detail.finishDelay, field, value);
-				}
+									// save, update, auto, none
+									snafuEndTicketInteraction(inject.detail.autoFinish, inject.detail.finishDelay, field, value);
+									break;
 
-				// print labels
-				if (type === 'sendEquipment' || type.indexOf('closeQuarantine') !== -1 || type.indexOf('closeHotSwap') !== -1 || type.indexOf('closeRepair') !== -1) {
-					// determine the label type from the ticket type
-					var labelType
-					if (type === 'sendEquipment') {
-						labelType = 'equipment';
-					} else if (type.indexOf('closeRepair') !== -1) {
-						labelType = (type.indexOf('OnSite') !== -1) ? 'restock' : 'decommission';
-					} else {
-						labelType = (type.indexOf('closeHotSwap') !== -1) ? 'build' : type.replace('closeQuarantine', '').replace('Yes', '').replace('No', '').toLowerCase();
-					}
-
-					// make sure we automatically print this label type
-					if (labelSettings[labelType] === true) {
-						// make sure we have a valid printer
-						var printers = dymo.label.framework.getPrinters().filter(function(printer) { return (printer.isConnected === true && printer.isLocal === true) });
-						if (printers.length > 0) {
-				
-							// get the printer's name as well for printing
-							var printerName = printers[0]['name'];
-							if (!snafuIsVarEmpty(printerName)) {
-
-								if (snafuLabelFields[labelType] === undefined) {
-									console.info(labelType);
-									console.warn('SNAFU: Dymo label type returned invalid.  Skipping print job. . .');
-									snafuErrorMessage('Dymo label type returned invalid.  Skipping print job. . .');
-								} else {
-									var addressLabel = dymo.label.framework.openLabelXml(snafuGetDymoLabelXml(labelType));
-									var labelFields = snafuLabelFields[labelType];
-									var reason = ''
-									var canPrint = true;
-									for (var field in labelFields) {
-										if (field !== 'ticketType') {
-											// reclaim and repair labels
-											if ((labelType === 'reclaim' || labelType === 'repair') && field === 'TEXT_5') {
-												reason = prompt(snafuSprintf('Enter the reason for %s this device.  KEEP IT SHORT!', (labelType === 'reclaim') ? ['reclaiming'] : ['repairing']));
-												if (snafuIsVarEmpty(reason) === true) {
-													console.warn('SNAFU: You must provide a valid reason.');
-													snafuErrorMessage('You must provide a valid reason.  Skipping print job. . .');
-													canPrint = false;
-													break;
-												} else {
-													addressLabel.setObjectText(field, snafuShortenLabelString(reason));
-												}
-
-											// build ack labels
-											} else if (
-												(labelType === 'buildack' || labelType === 'reimageack') &&
-												(field === 'BUILD' || field === 'APPS')
-											) {
-												if (field === 'BUILD') {
-													addressLabel.setObjectText(field, g_form.getValue('rhs_software').split('\n')[0]);
-												} else {
-													var buildInput = g_form.getValue('rhs_software');
-													if (buildInput.indexOf('\n') !== -1) {
-														addressLabel.setObjectText(field, snafuShortenLabelString(buildInput.split('\n')[1]));
-													} else {
-														addressLabel.setObjectText(field, 'Standard software load.');
-													}
-												}
-				
-											// hot swap build labels
-											} else if (
-												(labelType === 'build' || labelType === 'reimage') && 
-												(field === 'TEXT_4' || field === 'TEXT_8')
-											) {
-												if (field === 'TEXT_4') {
-													addressLabel.setObjectText(field, g_form.getValue('rhs_software').split('\n')[0]);
-												} else {
-													var buildInput = g_form.getValue('rhs_software');
-													if (buildInput.indexOf('\n') !== -1) {
-														addressLabel.setObjectText(field, snafuShortenLabelString(buildInput.split('\n')[1]));
-													} else {
-														addressLabel.setObjectText(field, 'Standard software load.');
-													}
-												}
-
-											// equipment configuration labels
-											} else if (labelType === 'equipment' && (field === 'HOSTNAME_TEXT' || field === 'TEXT_8' || field === 'TEXT_4')) {
-												addressLabel.setObjectText(field, snafuShortenLabelString(inject.detail.equipLabel[field]));
-
-											// "the rest"
-											} else {
-												addressLabel.setObjectText(field, snafuShortenLabelString(snafuReplaceWildcards(labelFields[field])));
-											}
-										}
-									}
-
-									if (!canPrint) {
-										console.warn('SNAFU: Unable to print label due to errors.');
-									} else {
-										addressLabel.print(printerName);
-									}
-								}
-							} else {
-								console.warn('SNAFU: Unable to determine printer name.  Skipping print job. . .');
-								snafuErrorMessage('Unable to determine printer name.  Skipping print job. . .');
+								// no reminder
+								case 'none':
+								default:
+									// save, update, auto, none
+									snafuEndTicketInteraction(inject.detail.autoFinish, inject.detail.finishDelay, field, value);
+									break;
 							}
 						} else {
-							console.warn('SNAFU: No appropriate printers were found.  Skipping print job. . .');
-							snafuErrorMessage('No appropriate printers were found.  Skipping print job. . .');
+							snafuEndTicketInteraction(inject.detail.autoFinish, inject.detail.finishDelay, field, value);
+						}
+
+						// print labels
+						if (type === 'sendEquipment' || type.indexOf('closeQuarantine') !== -1 || type.indexOf('closeHotSwap') !== -1 || type.indexOf('closeRepair') !== -1) {
+							// determine the label type from the ticket type
+							var labelType
+							if (type === 'sendEquipment') {
+								labelType = 'equipment';
+							} else if (type.indexOf('closeRepair') !== -1) {
+								labelType = (type.indexOf('OnSite') !== -1) ? 'restock' : 'decommission';
+							} else {
+								labelType = (type.indexOf('closeHotSwap') !== -1) ? 'build' : type.replace('closeQuarantine', '').replace('Yes', '').replace('No', '').toLowerCase();
+							}
+
+							// make sure we automatically print this label type
+							if (labelSettings[labelType] === true) {
+								// make sure we have a valid printer
+								var printers = dymo.label.framework.getPrinters().filter(function(printer) { return (printer.isConnected === true && printer.isLocal === true) });
+								if (printers.length > 0) {
+						
+									// get the printer's name as well for printing
+									var printerName = printers[0]['name'];
+									if (!snafuIsVarEmpty(printerName)) {
+
+										if (snafuLabelFields[labelType] === undefined) {
+											console.info(labelType);
+											console.warn('SNAFU: Dymo label type returned invalid.  Skipping print job. . .');
+											snafuErrorMessage('Dymo label type returned invalid.  Skipping print job. . .');
+										} else {
+											var addressLabel = dymo.label.framework.openLabelXml(snafuGetDymoLabelXml(labelType));
+											var labelFields = snafuLabelFields[labelType];
+											var reason = ''
+											var canPrint = true;
+											for (var field in labelFields) {
+												if (field !== 'ticketType') {
+													// reclaim and repair labels
+													if ((labelType === 'reclaim' || labelType === 'repair') && field === 'TEXT_5') {
+														reason = prompt(snafuSprintf('Enter the reason for %s this device.  KEEP IT SHORT!', (labelType === 'reclaim') ? ['reclaiming'] : ['repairing']));
+														if (snafuIsVarEmpty(reason) === true) {
+															console.warn('SNAFU: You must provide a valid reason.');
+															snafuErrorMessage('You must provide a valid reason.  Skipping print job. . .');
+															canPrint = false;
+															break;
+														} else {
+															addressLabel.setObjectText(field, snafuShortenLabelString(reason));
+														}
+
+													// build ack labels
+													} else if (
+														(labelType === 'buildack' || labelType === 'reimageack') &&
+														(field === 'BUILD' || field === 'APPS')
+													) {
+														if (field === 'BUILD') {
+															addressLabel.setObjectText(field, g_form.getValue('rhs_software').split('\n')[0]);
+														} else {
+															var buildInput = g_form.getValue('rhs_software');
+															if (buildInput.indexOf('\n') !== -1) {
+																addressLabel.setObjectText(field, snafuShortenLabelString(buildInput.split('\n')[1]));
+															} else {
+																addressLabel.setObjectText(field, 'Standard software load.');
+															}
+														}
+						
+													// hot swap build labels
+													} else if (
+														(labelType === 'build' || labelType === 'reimage') && 
+														(field === 'TEXT_4' || field === 'TEXT_8')
+													) {
+														if (field === 'TEXT_4') {
+															addressLabel.setObjectText(field, g_form.getValue('rhs_software').split('\n')[0]);
+														} else {
+															var buildInput = g_form.getValue('rhs_software');
+															if (buildInput.indexOf('\n') !== -1) {
+																addressLabel.setObjectText(field, snafuShortenLabelString(buildInput.split('\n')[1]));
+															} else {
+																addressLabel.setObjectText(field, 'Standard software load.');
+															}
+														}
+
+													// equipment configuration labels
+													} else if (labelType === 'equipment' && (field === 'HOSTNAME_TEXT' || field === 'TEXT_8' || field === 'TEXT_4')) {
+														addressLabel.setObjectText(field, snafuShortenLabelString(inject.detail.equipLabel[field]));
+
+													// "the rest"
+													} else {
+														addressLabel.setObjectText(field, snafuShortenLabelString(snafuReplaceWildcards(labelFields[field])));
+													}
+												}
+											}
+
+											if (!canPrint) {
+												console.warn('SNAFU: Unable to print label due to errors.');
+											} else {
+												addressLabel.print(printerName);
+											}
+										}
+									} else {
+										console.warn('SNAFU: Unable to determine printer name.  Skipping print job. . .');
+										snafuErrorMessage('Unable to determine printer name.  Skipping print job. . .');
+									}
+								} else {
+									console.warn('SNAFU: No appropriate printers were found.  Skipping print job. . .');
+									snafuErrorMessage('No appropriate printers were found.  Skipping print job. . .');
+								}
+							}
 						}
 					}
 				}
-			}
+				break;
+			
 		}
 	}
 });
@@ -1320,7 +1344,6 @@ function snafuGetTicketType() {
 			return 'cancelled_task';
 		} else if (shortDesc.indexOf('Smart/Remote Hands Request') !== -1) {
 			return 'smart_hands';
-
 		} else {
         	var taskName = g_form.getValue('u_task_name').toLowerCase();
 			return (taskName in snafuAutoTickets) ? taskName : 'generic_task';
@@ -1331,6 +1354,21 @@ function snafuGetTicketType() {
         // it's neither
         return false;
     }
+}
+
+/**
+ * Returns the ticket action, based on the ticket type.
+ * @param	{String}	type
+ * @return	{Object}
+ */
+function snafuGetTicketAction(type) {
+	var actions = {
+		'autoAcknowledge': function() { return 'ack'; },
+		'autoClose': function() { return 'close'; },
+		'autoEnRoute': function() { return 'enRoute'; },
+		'autoPending': function() { return 'pending'; },
+	}
+	return actions[type]();
 }
 
 /**
@@ -1417,12 +1455,16 @@ function snafuEndTicketInteraction(action, delay, field, value) {
  * @return	{Boolean}
  */
 function snafuIsResolveCode(field, value) {
-	if (field === 'incident_state') {
-		return (value === '6') ? true : false;
-	} else if (field === 'state') {
-		return (value === '3') ? true : false;
-	} else {
-		return false
+	switch (field) {
+		case 'incident_state':
+			return (value === '6') ? true : false;
+			break;
+		case 'state':
+			return (value === '3') ? true : false;
+			break;
+		default:
+			return false;
+			break;
 	}
 }
 

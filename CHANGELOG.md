@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+### Added
+- Auto On-Hold menu option.
+- Task type app_not_listed_access handling.
+
+### Changed
+- Cleaned up menu code.
+- Cleaned up inject code to make it more efficient/lightweight.
+
+### ToDo
+- Import/export settings
+
 ## 1.2.11 [2017-10-06]
 ### Added
 - Better error checking for eval'd code using in wildcards.

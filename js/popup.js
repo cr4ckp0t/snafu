@@ -323,6 +323,13 @@ $(document).ready(function() {
         });
     });
 
+    // send auto pending
+    $('#sendAutoPending').click(function() {
+        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+            chrome.tabs.sendMessage(tabs[0].id, { type: 'autoPending' });
+        });
+    });
+
     // run the time calculator
     $('#calculateTime').click(function() {
         // validate the info

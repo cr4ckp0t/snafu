@@ -17,6 +17,12 @@
  **/
 
 const docPatterns = ['https://ghsprod.service-now.com/sc_task.do?*', 'https://ghsprod.service-now.com/incident.do?*', 'https://ghsprod.service-now.com/u_absolute_install.do?*'];
+const docPatternsChoose = {
+	global: 'https://ghsprod.service-now.com/*',
+	task: 'https://ghsprod.service-now.com/sc_task.do?*',
+	incident: 'https://ghsprod.service-now.com/incident.do?*',
+	absolute: 'https://ghsprod.service-now.com/u_absolute_install.do?*'
+}
 
 /**
  * Uber Parent
@@ -25,7 +31,7 @@ chrome.contextMenus.create({
 	title: 'SNAFU',
 	contexts: ['page'],
 	id: 'snafuParent',
-	documentUrlPatterns: ['https://ghsprod.service-now.com/*']
+	documentUrlPatterns: [docPatternsChoose.global]
 });
 
 /**
@@ -53,6 +59,18 @@ chrome.contextMenus.create({
 });
 
 /**
+ * Auto Pending
+ */
+chrome.contextMenus.create({
+	title: 'Auto Pending',
+	contexts: ['page'],
+	id: 'autoPending',
+	parentId: 'snafuParent',
+	documentUrlPatterns: docPatterns.task,
+	onclick: actionHandler
+});
+
+/**
  * Auto Closure
  */
 chrome.contextMenus.create({
@@ -74,7 +92,7 @@ chrome.contextMenus.create({
 	contexts: ['page'],
 	id: 'closeHotSwapParent',
 	parentId: 'snafuParent',
-	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*']
+	documentUrlPatterns: [docPatternsChoose.task]
 });
 
 chrome.contextMenus.create({
@@ -82,7 +100,7 @@ chrome.contextMenus.create({
 	contexts: ['page'],
 	id: 'closeHotSwapNew',
 	parentId: 'closeHotSwapParent',
-	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
+	documentUrlPatterns: [docPatternsChoose.task],
 	onclick: actionHandler
 });
 
@@ -91,7 +109,7 @@ chrome.contextMenus.create({
 	contexts: ['page'],
 	id: 'closeHotSwapRepurposed',
 	parentId: 'closeHotSwapParent',
-	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
+	documentUrlPatterns: [docPatternsChoose.task],
 	onclick: actionHandler
 });
 
@@ -103,7 +121,7 @@ chrome.contextMenus.create({
 	contexts: ['page'],
 	id: 'closeQuarantineParent',
 	parentId: 'snafuParent',
-	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*']
+	documentUrlPatterns: [docPatternsChoose.task]
 });
 
 chrome.contextMenus.create({
@@ -111,7 +129,7 @@ chrome.contextMenus.create({
 	contexts: ['page'],
 	id: 'closeQuarantineDecommission',
 	parentId: 'closeQuarantineParent',
-	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
+	documentUrlPatterns: [docPatternsChoose.task],
 	onclick: actionHandler
 });
 
@@ -120,7 +138,7 @@ chrome.contextMenus.create({
 	contexts: ['page'],
 	id: 'closeQuarantineRepairParent',
 	parentId: 'closeQuarantineParent',
-	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*']
+	documentUrlPatterns: [docPatternsChoose.task]
 });
 
 chrome.contextMenus.create({
@@ -128,7 +146,7 @@ chrome.contextMenus.create({
 	contexts: ['page'],
 	id: 'closeQuarantineRepairYes',
 	parentId: 'closeQuarantineRepairParent',
-	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
+	documentUrlPatterns: [docPatternsChoose.task],
 	onclick: actionHandler
 });
 
@@ -137,7 +155,7 @@ chrome.contextMenus.create({
 	contexts: ['page'],
 	id: 'closeQuarantineRepairNo',
 	parentId: 'closeQuarantineRepairParent',
-	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
+	documentUrlPatterns: [docPatternsChoose.task],
 	onclick: actionHandler
 });
 
@@ -147,7 +165,7 @@ chrome.contextMenus.create({
 	contexts: ['page'],
 	id: 'closeQuarantineRestock',
 	parentId: 'closeQuarantineParent',
-	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
+	documentUrlPatterns: [docPatternsChoose.task],
 	onclick: actionHandler
 });
 
@@ -159,7 +177,7 @@ chrome.contextMenus.create({
 	contexts: ['page'],
 	id: 'closeRepairParent',
 	parentId: 'snafuParent',
-	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*']
+	documentUrlPatterns: [docPatternsChoose.task]
 });
 
 chrome.contextMenus.create({
@@ -167,7 +185,7 @@ chrome.contextMenus.create({
 	contexts: ['page'],
 	id: 'closeRepairOnSite',
 	parentId: 'closeRepairParent',
-	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
+	documentUrlPatterns: [docPatternsChoose.task],
 	onclick: actionHandler
 });
 
@@ -176,7 +194,7 @@ chrome.contextMenus.create({
 	contexts: ['page'],
 	id: 'closeRepairDecommission',
 	parentId: 'closeRepairParent',
-	documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
+	documentUrlPatterns: [docPatternsChoose.task],
 	onclick: actionHandler
 });
 
@@ -410,12 +428,12 @@ for (var i = 0; i < menuLblTypes.length; i++) {
 		contexts: ['page'],
 		id: sprintf('printLabel%s', [(menuLblTypes[i] === 'buildack') ? 'BuildAck' : ucwords(menuLblTypes[i])]),
 		parentId: 'printLabelParent',
-		documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*'],
+		documentUrlPatterns: [docPatternsChoose.task],
 		onclick: actionHandler
 	});
 }
 
-chrome.contextMenus.create({type: 'separator', parentId: 'printLabelParent', documentUrlPatterns: ['https://ghsprod.service-now.com/sc_task.do?*']});
+chrome.contextMenus.create({type: 'separator', parentId: 'printLabelParent', documentUrlPatterns: [docPatternsChoose.task]});
 
 chrome.contextMenus.create({
 	title: 'Broken Equipment Label',
@@ -526,9 +544,9 @@ chrome.contextMenus.create({
 chrome.storage.onChanged.addListener(function(changes, area) {
 	if (area === 'sync') {
 		if ('userId' in changes) {
-			chrome.contextMenus.update('assignIncToMe', {documentUrlPatterns: (isVarEmpty(changes.userId.newValue) === true) ? ['https://make/it/hidden/'] : ['https://ghsprod.service-now.com/incident.do?*']});
-			chrome.contextMenus.update('assignTaskToMe', {documentUrlPatterns: (isVarEmpty(changes.userId.newValue) === true) ? ['https://make/it/hidden/'] : ['https://ghsprod.service-now.com/sc_task.do?*']});
-			chrome.contextMenus.update('assignSeparator', {documentUrlPatterns: (isVarEmpty(changes.userId.newValue) === true) ? ['https://make/it/hidden/'] : ['https://ghsprod.service-now.com/incident.do?*', 'https://ghsprod.service-now.com/sc_task.do?*']});
+			chrome.contextMenus.update('assignIncToMe', {documentUrlPatterns: (isVarEmpty(changes.userId.newValue) === true) ? ['https://make/it/hidden/'] : [docPatternsChoose.incident]});
+			chrome.contextMenus.update('assignTaskToMe', {documentUrlPatterns: (isVarEmpty(changes.userId.newValue) === true) ? ['https://make/it/hidden/'] : [docPatternsChoose.task]});
+			chrome.contextMenus.update('assignSeparator', {documentUrlPatterns: (isVarEmpty(changes.userId.newValue) === true) ? ['https://make/it/hidden/'] : [docPatternsChoose.incident, docPatternsChoose.task]});
 			chrome.contextMenus.update('queryOrReset', {
 				title: (isVarEmpty(changes.userId.newValue) === true) ? 'Query User Data' : 'Reset User Data',
 				onclick: (isVarEmpty(changes.userId.newValue) === true) ? queryUserData : resetUserData
@@ -700,9 +718,9 @@ function updateOptionMenus() {
 		if (chrome.runtime.lastError) {
 			console.error('SNAFU User Sync Error: %s', chrome.runtime.lastError.message);
 		} else {
-			chrome.contextMenus.update('assignIncToMe', {documentUrlPatterns: (isVarEmpty(items.userId) === true) ? ['https://make/it/hidden/'] : ['https://ghsprod.service-now.com/incident.do?*']});
-			chrome.contextMenus.update('assignTaskToMe', {documentUrlPatterns: (isVarEmpty(items.userId) === true) ? ['https://make/it/hidden/'] : ['https://ghsprod.service-now.com/sc_task.do?*']});
-			chrome.contextMenus.update('assignSeparator', {documentUrlPatterns: (isVarEmpty(items.userId) === true) ? ['https://make/it/hidden/'] : ['https://ghsprod.service-now.com/incident.do?*', 'https://ghsprod.service-now.com/sc_task.do?*']});
+			chrome.contextMenus.update('assignIncToMe', {documentUrlPatterns: (isVarEmpty(items.userId) === true) ? ['https://make/it/hidden/'] : [docPatternsChoose.incident]});
+			chrome.contextMenus.update('assignTaskToMe', {documentUrlPatterns: (isVarEmpty(items.userId) === true) ? ['https://make/it/hidden/'] : [docPatternsChoose.task]});
+			chrome.contextMenus.update('assignSeparator', {documentUrlPatterns: (isVarEmpty(items.userId) === true) ? ['https://make/it/hidden/'] : [docPatternsChoose.incident, docPatternsChoose.task]});
 			chrome.contextMenus.update('queryOrReset', {
 				title: (isVarEmpty(items.userId) === true) ? 'Query User Data' : 'Reset User Data',
 				onclick: (isVarEmpty(items.userId) === true) ? queryUserData : resetUserData
