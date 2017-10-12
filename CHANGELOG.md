@@ -12,9 +12,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Cleaned up menu code.
 - Cleaned up inject code to make it more efficient/lightweight.
+- Consolidated Dymo label printing code.
 
-### ToDo
-- Import/export settings
+### Fixed
+- Build Acknowledgement setting fixed.
+- Fixed bug when creating settings.
 
 ## 1.2.11 [2017-10-06]
 ### Added

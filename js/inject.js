@@ -378,11 +378,11 @@ const snafuLabelFields = {
 
 	// restock task
 	'restock': {
-		'ticketType': ['rhs_restock'],			// to force correct printing
-		'TEXT': '{BROKEN_SERIAL}',				// restocked asset's serial number
-		'Tech': '{LABEL_TECH}',					// technician
-		'TEXT_5': 'Passed UEFI diagnostics.',	// repair results
-		'RITM#': '{REQUEST_ITEM}'				// ritm number
+		'ticketType': ['rhs_restock', 'rhs_repair'],	// to force correct printing
+		'TEXT': '{BROKEN_SERIAL}',						// restocked asset's serial number
+		'Tech': '{LABEL_TECH}',							// technician
+		'TEXT_5': 'Passed UEFI diagnostics.',			// repair results
+		'RITM#': '{REQUEST_ITEM}'						// ritm number
 	}
 }
 
@@ -425,7 +425,7 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 	var ticketType = snafuGetTicketType();
 	var type = inject.detail.type;
 	var labelSettings = inject.detail.labels;
-	var query;
+	var labelType, query;
 
 	// incomplete inject data
 	if (!inject.detail) {
@@ -434,12 +434,16 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 
 		switch (type) {
 
-			// error handling
+			/**
+			 * basic error handling
+			 */
 			case 'error':
 				snafuErrorMessage(inject.detail.errMsg);
 				break;
 
-			// query for the user information
+			/**
+			 * pull technician info from ticket
+			 */
 			case 'userQuery':
 				var assignedTo = g_form.getReference('assigned_to');
 				var assignmentGroup = g_form.getReference('assignment_group');
@@ -463,7 +467,9 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 				break;
 	
 			
-			// assign task or incident to the user
+			/**
+			 * assign ticket to oneself
+			 */
 			case 'assignToMe':
 				snafuSetDisplayValue('assignment_group', inject.detail.userInfo.groupId, inject.detail.userInfo.groupName);
 				snafuFlash('assignment_group');
@@ -483,29 +489,39 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 				}
 				break;
 
-			// send success (info) message
+			/**
+			 * send success (info) message
+			 */
 			case 'sendSuccessMsg':
 				snafuInfoMessage(inject.detail.statusMsg);
 				break;
 	
-			// send error message
+			/**
+			 * send error message
+			 */
 			case 'sendErrorMsg':
 				snafuErrorMessage(inject.detail.statusMsg);
 				break;
 
-			// save the page (via keybinding)
+			/**
+			 * save the page via keybinding
+			 */
 			case 'savePage':
 				snafuInfoMessage(snafuSprintf('Saving page in %s seconds.  Please wait...', [inject.detail.finishDelay]));
 				setTimeout(function() { g_form.save(); }, inject.detail.finishDelay * 1000);
 				break;
 
-			// update the page (via keybinding)
+			/**
+			 * update the page via keybinding
+			 */
 			case 'updatePage':
 				snafuInfoMessage(snafuSprintf('Updating page in %s seconds.  Please wait...', [inject.detail.finishDelay]));
 				setTimeout(function() { g_form.submit(); }, inject.detail.finishDelay * 1000);
 				break;
 
-			// print label from context menu
+			/**
+			 * Print Label From Context Menu
+			 */
 			case 'printLabelBroken':
 			case 'printLabelBuild':
 			case 'printLabelBuildAck':
@@ -519,124 +535,10 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 					snafuErrorMessage('The open ticket is not valid for label printing.');
 				} else {
 					// make sure we have a valid printer
-					var printers = dymo.label.framework.getPrinters().filter(function(printer) { return (printer.isConnected === true && printer.isLocal === true) });
-					if (printers.length > 0) {
-			
-						// get the printer's name as well for printing
-						var printerName = printers[0]['name'];
-						if (!snafuIsVarEmpty(printerName)) {
-							
-							// determine the label type from the ticket type
-							var labelType = (ticketType === 'rhs_reimage' && (type === 'printLabelBuild' || type === 'printLabelBuildAck')) ? type.replace('printLabelBuild', 'reimage').toLowerCase() : type.replace('printLabel', '').toLowerCase();
-							var labelFields = snafuLabelFields[labelType];
-
-							if (labelFields === undefined) {
-								console.warn('SNAFU: Dymo label type returned invalid.  Skipping print job. . .');
-								snafuErrorMessage('Dymo label type returned invalid.  Skipping print job. . .');
-							} else if (labelFields['ticketType'] !== true && labelFields['ticketType'].indexOf(ticketType) === -1) {
-								console.warn(snafuSprintf('SNAFU: You can\'t print label type "%s" on ticket type "%s".', [labelType, ticketType]));
-								snafuErrorMessage(snafuSprintf('You can\'t print label type "%s" on ticket type "%s".', [labelType, ticketType]));
-							} else {
-								var addressLabel = dymo.label.framework.openLabelXml(snafuGetDymoLabelXml(labelType));
-								var reason = '';
-								var canPrint = true;
-								for (var field in labelFields) {
-									if (field !== 'ticketType') {
-										// reclaim and repair labels
-										if ((labelType === 'reclaim' || labelType === 'repair') && field === 'TEXT_5') {
-											reason = prompt(snafuSprintf('Enter the reason for %s this device.  KEEP IT SHORT!', (labelType === 'reclaim') ? ['reclaiming'] : ['repairing']));
-											if (snafuIsVarEmpty(reason) === true) {
-												console.warn('SNAFU: You must provide a valid reason.');
-												snafuErrorMessage('You must provide a valid reason.  Skipping print job. . .');
-												canPrint = false;
-												break;
-											} else {
-												addressLabel.setObjectText(field, snafuShortenLabelString(reason));
-												reason = '';
-											}
-
-										// broken equipment labels
-										} else if (labelType === 'broken' && field === 'EQUIP') {
-											reason = prompt('What equipment is broken?  KEEP IT SHORT!');
-											if (snafuIsVarEmpty(reason) === true) {
-												console.warn('SNAFU: You must provide a valid reason.');
-												snafuErrorMessage('You must provide a valid reason.  Skipping print job. . .');
-												canPrint = false;
-												break;
-											} else {
-												addressLabel.setObjectText(field, snafuShortenLabelString(reason));
-												reason = '';
-											}
-
-										// hot swap build labels
-										} else if (labelType === 'build' && (field === 'TEXT_4' || field === 'TEXT_8')) {
-											if (field === 'TEXT_4') {
-												addressLabel.setObjectText(field, g_form.getValue('rhs_software').split('\n')[0]);
-											} else {
-												var buildInput = g_form.getValue('rhs_software');
-												if (buildInput.indexOf('\n') !== -1) {
-													addressLabel.setObjectText(field, snafuShortenLabelString(buildInput.split('\n')[1]));
-												} else {
-													addressLabel.setObjectText(field, 'Standard software load.');
-												}
-											}
-										
-										// build ack labels
-										} else if (
-											(labelType === 'buildack' || labelType === 'reimageack') &&
-											(field === 'BUILD' || field === 'APPS')
-										) {
-											if (field === 'BUILD') {
-												addressLabel.setObjectText(field, g_form.getValue('rhs_software').split('\n')[0]);
-											} else {
-												var buildInput = g_form.getValue('rhs_software');
-												if (buildInput.indexOf('\n') !== -1) {
-													addressLabel.setObjectText(field, snafuShortenLabelString(buildInput.split('\n')[1]));
-												} else {
-													addressLabel.setObjectText(field, 'Standard software load.');
-												}
-											}
-
-										// purchase order labels
-										} else if (labelType === 'purchase' && (field === 'PO' || field === 'MORE_PO')) {
-											reason = prompt('Enter up to three PO numbers. Separate them by commas with no spaces. Each one will be put on the new line.');
-											if (!snafuIsVarEmpty(reason)) addressLabel.setObjectText(field, (reason.indexOf(',') !== -1) ? reason.replace(/,/g, '\r\n') : reason);
-
-										// prebuilt device label
-										} else if (labelType === 'prebuilt') {
-											if (field === 'BUILD_TYPE') {
-												reason = prompt('What is the build type (GrMH-MANDATORY, etc.) of the prebuilt device?');
-											} else if (field === 'HOSTNAME') {
-												reason = prompt('What is the device\'s hostname?');
-											} else {
-												reason = prompt('What is the device\'s asset tag?');
-											}
-
-											if (snafuIsVarEmpty(reason) === true) {
-												console.warn('SNAFU: You must provide valid input.');
-												snafuErrorMessage('You must provide valid input.  Skipping print job. . .');
-												canPrint = false;
-											} else {
-												addressLabel.setObjectText(field, snafuShortenLabelString(reason.toUpperCase()));
-												reason = ''; // reset it for the next field
-											}
-										// "the rest"
-										} else {
-											addressLabel.setObjectText(field, snafuShortenLabelString(snafuReplaceWildcards(labelFields[field])));
-										}
-									}
-								}
-
-								if (!canPrint) {
-									console.warn('SNAFU: Unable to print label due to errors.');
-								} else {
-									addressLabel.print(printerName);
-								}
-							}
-						} else {
-							console.warn('SNAFU: Unable to determine printer name.  Skipping print job. . .');
-							snafuErrorMessage('Unable to determine printer name.  Skipping print job. . .');
-						}
+					if (snafuHasValidPrinter() === true) {
+						// determine the label type from the ticket type
+						labelType = (ticketType === 'rhs_reimage' && (type === 'printLabelBuild' || type === 'printLabelBuildAck')) ? type.replace('printLabelBuild', 'reimage').toLowerCase() : type.replace('printLabel', '').toLowerCase();
+						snafuPrintLabel(ticketType, labelType);
 					} else {
 						console.warn('SNAFU: No appropriate printers were found.  Skipping print job. . .');
 						snafuErrorMessage('No appropriate printers were found.  Skipping print job. . .');
@@ -644,7 +546,9 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 				}
 				break;
 
-			// auto ticket detection
+			/**
+			 * auto ticket handling
+			 */
 			case 'autoEnRoute':
 			case 'autoHandle':
 			case 'autoAcknowledge':
@@ -765,86 +669,13 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 								)
 							) {
 								// determine the label type from the ticket type
-								var labelType = snafuGetLabelType(type, ticketType);
+								labelType = snafuGetLabelType(type, ticketType);
 
 								// make sure we do want to print these labels
 								if (labelSettings[labelType] === true) {
 									// make sure we have a valid printer
-									var printers = dymo.label.framework.getPrinters().filter(function(printer) { return (printer.isConnected === true && printer.isLocal === true) });
-									if (printers.length > 0) {
-							
-										// get the printer's name as well for printing
-										var printerName = printers[0]['name'];
-										if (!snafuIsVarEmpty(printerName)) {
-											
-											if (snafuLabelFields[labelType] === undefined) {
-												console.warn('SNAFU: Dymo label type returned invalid.  Skipping print job. . .');
-												snafuErrorMessage('Dymo label type returned invalid.  Skipping print job. . .');
-											} else {
-												var addressLabel = dymo.label.framework.openLabelXml(snafuGetDymoLabelXml(labelType));
-												var labelFields = snafuLabelFields[labelType];
-												var reason = ''
-												var canPrint = true;
-												for (var field in labelFields) {
-													if (field !== 'ticketType') {
-														// reclaim label
-														if (labelType === 'reclaim' && field === 'TEXT_5') {
-															reason = prompt(snafuSprintf('Enter the reason for %s this device.  KEEP IT SHORT!', (labelType === 'reclaim') ? ['reclaiming'] : ['repairing']));
-															if (snafuIsVarEmpty(reason) === true) {
-																console.warn('SNAFU: You must provide a valid reason.');
-																snafuErrorMessage('You must provide a valid reason.  Skipping print job. . .');
-																canPrint = false;
-																break;
-															} else {
-																addressLabel.setObjectText(field, snafuShortenLabelString(reason));
-															}
-
-														// build ack labels
-														} else if (
-															(labelType === 'buildack' || labelType === 'reimageack') &&
-															(field === 'BUILD' || field === 'APPS')
-														) {
-															if (field === 'BUILD') {
-																addressLabel.setObjectText(field, g_form.getValue('rhs_software').split('\n')[0]);
-															} else {
-																var buildInput = g_form.getValue('rhs_software');
-																if (buildInput.indexOf('\n') !== -1) {
-																	addressLabel.setObjectText(field, snafuShortenLabelString(buildInput.split('\n')[1]));
-																} else {
-																	addressLabel.setObjectText(field, 'Standard software load.');
-																}
-															}
-
-														// reimage only labels
-														} else if (labelType === 'reimage' && (field === 'TEXT_4' || field === 'TEXT_8')) {
-															if (field === 'TEXT_4') {
-																addressLabel.setObjectText(field, g_form.getValue('rhs_software').split('\n')[0]);
-															} else {
-																var buildInput = g_form.getValue('rhs_software');
-																if (buildInput.indexOf('\n') !== -1) {
-																	addressLabel.setObjectText(field, snafuShortenLabelString(buildInput.split('\n')[1]));
-																} else {
-																	addressLabel.setObjectText(field, 'Standard software load.');
-																}
-															}
-														
-														// catch the rest
-														} else {
-															addressLabel.setObjectText(field, snafuShortenLabelString(snafuReplaceWildcards(labelFields[field])));
-														}
-													}
-												}
-
-												if (!canPrint) {
-													console.warn('SNAFU: Unable to print label due to errors.');
-												} else {
-													addressLabel.print(printerName);
-												}
-											}
-										} else {
-											console.warn('SNAFU: Unable to determine printer name.  Skipping print job. . .');
-											snafuErrorMessage('Unable to determine printer name.  Skipping print job. . .');
-										}
+									if (snafuHasValidPrinter()) {
+										snafuPrintLabel(ticketType, labelType);
 									} else {
 										console.warn('SNAFU: No appropriate printers were found.  Skipping print job. . .');
 										snafuErrorMessage('No appropriate printers were found.  Skipping print job. . .');
@@ -858,7 +689,9 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 				}
 				break;
 
-			// handle everything else
+			/**
+			 * default behavior
+			 */
 			default:
 				// make sure ticket is assigned
 				if (snafuIsResolveCode(inject.detail.field, inject.detail.value) === true && g_form.getReference('assigned_to').currentRow === -1) {
@@ -1021,7 +854,6 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 						// print labels
 						if (type === 'sendEquipment' || type.indexOf('closeQuarantine') !== -1 || type.indexOf('closeHotSwap') !== -1 || type.indexOf('closeRepair') !== -1) {
 							// determine the label type from the ticket type
-							var labelType
 							if (type === 'sendEquipment') {
 								labelType = 'equipment';
 							} else if (type.indexOf('closeRepair') !== -1) {
@@ -1033,89 +865,8 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 							// make sure we automatically print this label type
 							if (labelSettings[labelType] === true) {
 								// make sure we have a valid printer
-								var printers = dymo.label.framework.getPrinters().filter(function(printer) { return (printer.isConnected === true && printer.isLocal === true) });
-								if (printers.length > 0) {
-						
-									// get the printer's name as well for printing
-									var printerName = printers[0]['name'];
-									if (!snafuIsVarEmpty(printerName)) {
-
-										if (snafuLabelFields[labelType] === undefined) {
-											console.info(labelType);
-											console.warn('SNAFU: Dymo label type returned invalid.  Skipping print job. . .');
-											snafuErrorMessage('Dymo label type returned invalid.  Skipping print job. . .');
-										} else {
-											var addressLabel = dymo.label.framework.openLabelXml(snafuGetDymoLabelXml(labelType));
-											var labelFields = snafuLabelFields[labelType];
-											var reason = ''
-											var canPrint = true;
-											for (var field in labelFields) {
-												if (field !== 'ticketType') {
-													// reclaim and repair labels
-													if ((labelType === 'reclaim' || labelType === 'repair') && field === 'TEXT_5') {
-														reason = prompt(snafuSprintf('Enter the reason for %s this device.  KEEP IT SHORT!', (labelType === 'reclaim') ? ['reclaiming'] : ['repairing']));
-														if (snafuIsVarEmpty(reason) === true) {
-															console.warn('SNAFU: You must provide a valid reason.');
-															snafuErrorMessage('You must provide a valid reason.  Skipping print job. . .');
-															canPrint = false;
-															break;
-														} else {
-															addressLabel.setObjectText(field, snafuShortenLabelString(reason));
-														}
-
-													// build ack labels
-													} else if (
-														(labelType === 'buildack' || labelType === 'reimageack') &&
-														(field === 'BUILD' || field === 'APPS')
-													) {
-														if (field === 'BUILD') {
-															addressLabel.setObjectText(field, g_form.getValue('rhs_software').split('\n')[0]);
-														} else {
-															var buildInput = g_form.getValue('rhs_software');
-															if (buildInput.indexOf('\n') !== -1) {
-																addressLabel.setObjectText(field, snafuShortenLabelString(buildInput.split('\n')[1]));
-															} else {
-																addressLabel.setObjectText(field, 'Standard software load.');
-															}
-														}
-						
-													// hot swap build labels
-													} else if (
-														(labelType === 'build' || labelType === 'reimage') && 
-														(field === 'TEXT_4' || field === 'TEXT_8')
-													) {
-														if (field === 'TEXT_4') {
-															addressLabel.setObjectText(field, g_form.getValue('rhs_software').split('\n')[0]);
-														} else {
-															var buildInput = g_form.getValue('rhs_software');
-															if (buildInput.indexOf('\n') !== -1) {
-																addressLabel.setObjectText(field, snafuShortenLabelString(buildInput.split('\n')[1]));
-															} else {
-																addressLabel.setObjectText(field, 'Standard software load.');
-															}
-														}
-
-													// equipment configuration labels
-													} else if (labelType === 'equipment' && (field === 'HOSTNAME_TEXT' || field === 'TEXT_8' || field === 'TEXT_4')) {
-														addressLabel.setObjectText(field, snafuShortenLabelString(inject.detail.equipLabel[field]));
-
-													// "the rest"
-													} else {
-														addressLabel.setObjectText(field, snafuShortenLabelString(snafuReplaceWildcards(labelFields[field])));
-													}
-												}
-											}
-
-											if (!canPrint) {
-												console.warn('SNAFU: Unable to print label due to errors.');
-											} else {
-												addressLabel.print(printerName);
-											}
-										}
-									} else {
-										console.warn('SNAFU: Unable to determine printer name.  Skipping print job. . .');
-										snafuErrorMessage('Unable to determine printer name.  Skipping print job. . .');
-									}
+								if (snafuHasValidPrinter()) {
+									snafuPrintLabel(ticketType, labelType);
 								} else {
 									console.warn('SNAFU: No appropriate printers were found.  Skipping print job. . .');
 									snafuErrorMessage('No appropriate printers were found.  Skipping print job. . .');
@@ -1487,6 +1238,143 @@ function snafuGetResolveType(cmdb) {
 			}
 		}
 		return false;
+	}
+}
+
+/**
+ * Determines if valid Dymo printers are connected.
+ * @return	{Boolean}
+ */
+function snafuHasValidPrinter() {
+	var printers = dymo.label.framework.getPrinters().filter(function(printer) { return (printer.isConnected === true && printer.isLocal === true) });
+	return (printers.length > 0) ? true : false
+}
+
+/**
+ * Prints a Dymo label.
+ * @param	{String}	ticketType
+ * @param	{String}	labelType
+ */
+function snafuPrintLabel(ticketType, labelType) {
+	// get the printer's name as well for printing
+	var printers = dymo.label.framework.getPrinters().filter(function(printer) { return (printer.isConnected === true && printer.isLocal === true) });
+	var printerName = printers[0]['name'];
+
+	if (!snafuIsVarEmpty(printerName)) {
+		var labelFields = snafuLabelFields[labelType];
+		if (labelFields === undefined) {
+			console.warn('SNAFU: Dymo label type returned invalid.  Skipping print job. . .');
+			snafuErrorMessage('Dymo label type returned invalid.  Skipping print job. . .');
+		} else if (labelFields['ticketType'] !== true && labelFields['ticketType'].indexOf(ticketType) === -1) {
+			console.warn(snafuSprintf('SNAFU: You can\'t print label type "%s" on ticket type "%s".', [labelType, ticketType]));
+			snafuErrorMessage(snafuSprintf('You can\'t print label type "%s" on ticket type "%s".', [labelType, ticketType]));
+		} else {
+			var addressLabel = dymo.label.framework.openLabelXml(snafuGetDymoLabelXml(labelType));
+			var reason = '';
+			var canPrint = true;
+			for (var field in labelFields) {
+				if (field !== 'ticketType') {
+					// reclaim and repair labels
+					if ((labelType === 'reclaim' || labelType === 'repair') && field === 'TEXT_5') {
+						reason = prompt(snafuSprintf('Enter the reason for %s this device.  KEEP IT SHORT!', (labelType === 'reclaim') ? ['reclaiming'] : ['repairing']));
+						if (snafuIsVarEmpty(reason) === true) {
+							console.warn('SNAFU: You must provide a valid reason.');
+							snafuErrorMessage('You must provide a valid reason.  Skipping print job. . .');
+							canPrint = false;
+							break;
+						} else {
+							addressLabel.setObjectText(field, snafuShortenLabelString(reason));
+							reason = '';
+						}
+
+					// broken equipment labels
+					} else if (labelType === 'broken' && field === 'EQUIP') {
+						reason = prompt('What equipment is broken?  KEEP IT SHORT!');
+						if (snafuIsVarEmpty(reason) === true) {
+							console.warn('SNAFU: You must provide a valid reason.');
+							snafuErrorMessage('You must provide a valid reason.  Skipping print job. . .');
+							canPrint = false;
+							break;
+						} else {
+							addressLabel.setObjectText(field, snafuShortenLabelString(reason));
+							reason = '';
+						}
+
+					// hot swap build labels
+					} else if (
+						(labelType === 'build' || labelType === 'reimage') && 
+						(field === 'TEXT_4' || field === 'TEXT_8')
+					) {
+						if (field === 'TEXT_4') {
+							addressLabel.setObjectText(field, g_form.getValue('rhs_software').split('\n')[0]);
+						} else {
+							var buildInput = g_form.getValue('rhs_software');
+							if (buildInput.indexOf('\n') !== -1) {
+								addressLabel.setObjectText(field, snafuShortenLabelString(buildInput.split('\n')[1]));
+							} else {
+								addressLabel.setObjectText(field, 'Standard software load.');
+							}
+						}
+					
+					// build ack labels
+					} else if (
+						(labelType === 'buildack' || labelType === 'reimageack') &&
+						(field === 'BUILD' || field === 'APPS')
+					) {
+						if (field === 'BUILD') {
+							addressLabel.setObjectText(field, g_form.getValue('rhs_software').split('\n')[0]);
+						} else {
+							var buildInput = g_form.getValue('rhs_software');
+							if (buildInput.indexOf('\n') !== -1) {
+								addressLabel.setObjectText(field, snafuShortenLabelString(buildInput.split('\n')[1]));
+							} else {
+								addressLabel.setObjectText(field, 'Standard software load.');
+							}
+						}
+
+					// purchase order labels
+					} else if (labelType === 'purchase' && (field === 'PO' || field === 'MORE_PO')) {
+						reason = prompt('Enter up to three PO numbers. Separate them by commas with no spaces. Each one will be put on the new line.');
+						if (!snafuIsVarEmpty(reason)) addressLabel.setObjectText(field, (reason.indexOf(',') !== -1) ? reason.replace(/,/g, '\r\n') : reason);
+
+					// equipment configuration labels
+					} else if (labelType === 'equipment' && (field === 'HOSTNAME_TEXT' || field === 'TEXT_8' || field === 'TEXT_4')) {
+						addressLabel.setObjectText(field, snafuShortenLabelString(inject.detail.equipLabel[field]));
+
+					// prebuilt device label
+					} else if (labelType === 'prebuilt') {
+						if (field === 'BUILD_TYPE') {
+							reason = prompt('What is the build type (GrMH-MANDATORY, etc.) of the prebuilt device?');
+						} else if (field === 'HOSTNAME') {
+							reason = prompt('What is the device\'s hostname?');
+						} else {
+							reason = prompt('What is the device\'s asset tag?');
+						}
+
+						if (snafuIsVarEmpty(reason) === true) {
+							console.warn('SNAFU: You must provide valid input.');
+							snafuErrorMessage('You must provide valid input.  Skipping print job. . .');
+							canPrint = false;
+						} else {
+							addressLabel.setObjectText(field, snafuShortenLabelString(reason.toUpperCase()));
+							reason = ''; // reset it for the next field
+						}
+					// "the rest"
+					} else {
+						addressLabel.setObjectText(field, snafuShortenLabelString(snafuReplaceWildcards(labelFields[field])));
+					}
+				}
+			}
+
+			if (!canPrint) {
+				console.warn('SNAFU: Unable to print label due to errors.');
+			} else {
+				addressLabel.print(printerName);
+			}
+		}
+	} else {
+		console.warn('SNAFU: Unable to determine printer name.  Skipping print job. . .');
+		snafuErrorMessage('Unable to determine printer name.  Skipping print job. . .');
 	}
 }
 

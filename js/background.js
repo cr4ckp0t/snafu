@@ -60,7 +60,7 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
 });
 
 // only activate the icon if service now is the active tab
-chrome.runtime.onInstalled.addListener(function() {
+chrome.runtime.onInstalled.addListener(function(details) {
     chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
         chrome.declarativeContent.onPageChanged.addRules([{
             conditions: [
@@ -70,14 +70,23 @@ chrome.runtime.onInstalled.addListener(function() {
             ],
             actions: [new chrome.declarativeContent.ShowPageAction()]
         }]);
-    });
-});
-
-// show help page the when the extension is installed
-chrome.runtime.onInstalled.addListener(function(details) {
+	});
+	
 	if (details.reason === 'install') {
 		// show help page
 		chrome.tabs.create({url: chrome.runtime.getURL('html/help.html')});
+	} else if (details.reason === 'update') {
+		// check for incorrect setting(s) and remove it/them
+		chrome.storage.sync.get(['labels'], function(items) {
+			if (items.labels.indexOf('buildAck') !== -1) {
+				chrome.storage.sync.set({
+					labels: {
+						buildack: items.buildAck,
+						buildAck: null
+					}
+				});
+			}
+		});
 	}
 });
 
@@ -117,7 +126,7 @@ chrome.runtime.onStartup.addListener(function() {
 			if (isVarEmpty(items.labels) === true) {
 				settingsToCreate['labels'] = {
 					build: true,
-					buildAck: true,
+					buildack: true,
 					decommission: true,
 					equipment: true,
 					reclaim: true,
@@ -133,7 +142,7 @@ chrome.runtime.onStartup.addListener(function() {
 					'leftVoicemail': 'Left voicemail for {INC_CUST_FNAME} at {INC_CUR_PHONE} to discuss the ticket.'
 				}
 			}
-			if (isVarEmpty(settingsToCreate) === false) {
+			if (settingsToCreate === {}) {
 				chrome.storage.sync.set(settingsToCreate, function() {
 					if (chrome.runtime.lastError) {
 						console.warn('SNAFU Sync Set Error: %s', chrome.runtime.lastError.message);

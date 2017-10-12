@@ -72,6 +72,7 @@ $(document).ready(function() {
  * @return	{Void}
  */
 function saveSettings() {
+	console.info(($('#labelBuildack').val() === 'enable') ? true : false);
 	chrome.storage.sync.set({
 		debug: ($('#debugMode').val() === 'enable') ? true : false,
 		closePopup: ($('#closePopup').val() === 'enable') ? true: false,
@@ -86,7 +87,7 @@ function saveSettings() {
 		remind: $('#remind').val(),
 		labels: {
 			build: ($('#labelBuild').val() === 'enable') ? true : false,
-			buildAck:($('#labelBuildack').val() === 'enable') ? true : false,
+			buildack: ($('#labelBuildack').val() === 'enable') ? true : false,
 			decommission: ($('#labelDecommission').val() === 'enable') ? true : false,
 			equipment: ($('#labelEquipment').val() === 'enable') ? true : false,
 			reclaim: ($('#labelReclaim').val() === 'enable') ? true : false,
@@ -229,7 +230,7 @@ function loadSettings() {
 			if (isVarEmpty(items.labels) === true) {
 				settingsToCreate['labels'] = {
 					build: true,
-					buildAck: true,
+					buildack: true,
 					decommission: true,
 					equipment: true,
 					reclaim: true,
@@ -259,7 +260,8 @@ function loadSettings() {
 			if (isVarEmpty(items.builds) === true) settingsToCreate['builds'] = {};
 			
 			// send the settings to sync storage
-			if (isVarEmpty(settingsToCreate) === false) {
+			if (settingsToCreate === {}) {
+				console.info(settingsToCreate);
 				chrome.storage.sync.set(settingsToCreate, function() {
 					if (chrome.runtime.lastError) {
 						console.warn('SNAFU Sync Set Error: %s', chrome.runtime.lastError);
