@@ -77,8 +77,8 @@ chrome.runtime.onInstalled.addListener(function(details) {
 		chrome.tabs.create({url: chrome.runtime.getURL('html/help.html')});
 	} else if (details.reason === 'update') {
 		// check for incorrect setting(s) and remove it/them
-		chrome.storage.sync.get(['labels'], function(items) {
-			if (items.labels.indexOf('buildAck') !== -1) {
+		chrome.storage.sync.get('labels', function(items) {
+			if ('buildAck' in items.labels) {
 				chrome.storage.sync.set({
 					labels: {
 						buildack: items.buildAck,
@@ -104,7 +104,11 @@ chrome.runtime.onStartup.addListener(function() {
 		'closeAlerts',
 		'remind',
 		'buildLog',
+		'decomLog',
+		'repairLog',
 		'builds',
+		'decoms',
+		'repairs',
 		'labels',
 	], function(items) {
 		if (chrome.runtime.lastError) {
@@ -122,7 +126,11 @@ chrome.runtime.onStartup.addListener(function() {
 			if (isVarEmpty(items.closeAlerts) === true) settingsToCreate['closeAlerts'] = true;
 			if (isVarEmpty(items.remind) === true) settingsToCreate['remind'] = 'open';
 			if (isVarEmpty(items.buildLog) === true) settingsToCreate['buildLog'] = false;
+			if (isVarEmpty(items.decomLog) === true) settingsToCreate['decomLog'] = false;
+			if (isVarEmpty(items.repairLog) === true) settingsToCreate['repairLog'] = false;
 			if (isVarEmpty(items.builds) === true) settingsToCreate['builds'] = {};
+			if (isVarEmpty(items.decoms) === true) settingsToCreate['decoms'] = {};
+			if (isVarEmpty(items.repairs) === true) settingsToCreate['repairs'] = {};
 			if (isVarEmpty(items.labels) === true) {
 				settingsToCreate['labels'] = {
 					build: true,

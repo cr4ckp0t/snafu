@@ -367,13 +367,27 @@ chrome.contextMenus.create({
 });
 
 chrome.contextMenus.create({
+	title: 'Decommission Log',
+	contexts: ['page'],
+	id: 'decomLogParent',
+	parentId: 'optionsParent'
+});
+
+chrome.contextMenus.create({
+	title: 'Repair Log',
+	contexts: ['page'],
+	id: 'repairLogParent',
+	parentId: 'optionsParent'
+});
+
+chrome.contextMenus.create({
 	title: 'Debug Mode',
 	contexts: ['page'],
 	id: 'debugParent',
 	parentId: 'optionsParent'
 });
 
-const toggleOptions = ['closePopup', 'keepNotes', 'clearNotes', 'sendEnter', 'closeAlerts', 'buildLog', 'debug'];
+const toggleOptions = ['closePopup', 'keepNotes', 'clearNotes', 'sendEnter', 'closeAlerts', 'buildLog', 'decomLog', 'repairLog', 'debug'];
 const objToggle = {'enable': 'Enabled', 'disable': 'Disabled'};
 
 for (var i = 0; i < toggleOptions.length; i++) {
@@ -391,6 +405,8 @@ for (var i = 0; i < toggleOptions.length; i++) {
 }
 
 chrome.contextMenus.create({type: 'separator', parentId: 'buildLogParent'});
+chrome.contextMenus.create({type: 'separator', parentId: 'decomLogParent'});
+chrome.contextMenus.create({type: 'separator', parentId: 'repairLogParent'});
 
 chrome.contextMenus.create({
 	title: "Open Build Log",
@@ -398,6 +414,22 @@ chrome.contextMenus.create({
 	id: 'openBuildLog',
 	parentId: 'buildLogParent',
 	onclick: function() { openLink(chrome.runtime.getURL('html/builds.html')); }
+});
+
+chrome.contextMenus.create({
+	title: 'Open Decommission Log',
+	contexts: ['page'],
+	id: 'openDecomLog',
+	parentId: 'decomLogParent',
+	onclick: function() { openLink(chrome.runtime.getURL('html/decoms.html')); }
+});
+
+chrome.contextMenus.create({
+	title: 'Open Repair Log',
+	contexts: ['page'],
+	id: 'openRepairLog',
+	parentId: 'repairLogParent',
+	onclick: function() { openLink(chrome.runtime.getURL('html/repairs.html')); }
 });
 
 chrome.contextMenus.create({type: 'separator', parentId: 'optionsParent'});
@@ -543,6 +575,7 @@ chrome.contextMenus.create({
 // monitor user data settings to update the context menu
 chrome.storage.onChanged.addListener(function(changes, area) {
 	if (area === 'sync') {
+		console.info(changes);
 		if ('userId' in changes) {
 			chrome.contextMenus.update('assignIncToMe', {documentUrlPatterns: (isVarEmpty(changes.userId.newValue) === true) ? ['https://make/it/hidden/'] : [docPatternsChoose.incident]});
 			chrome.contextMenus.update('assignTaskToMe', {documentUrlPatterns: (isVarEmpty(changes.userId.newValue) === true) ? ['https://make/it/hidden/'] : [docPatternsChoose.task]});
@@ -560,7 +593,7 @@ chrome.storage.onChanged.addListener(function(changes, area) {
 			['none', 'popup', 'open'].forEach(function(opt) {
 				chrome.contextMenus.update('remind-' + opt, {checked: (changes.remind.newValue === opt) ? true : false});
 			});
-		} else if ('closePopup' in changes) {
+		/*} else if ('closePopup' in changes) {
 			// set the closePopup radio
 			updateRadio('closePopup', changes.closePopup.newValue);
 		} else if ('debug' in changes) {
@@ -579,7 +612,12 @@ chrome.storage.onChanged.addListener(function(changes, area) {
 			// set the keep on submit radio
 			updateRadio('clearNotes', changes.clearNotes.newValue);
 		} else if ('closeAlerts' in changes) {
-			updateRadio('closeAlerts', changes.closeAlerts.newValue);
+			updateRadio('closeAlerts', changes.closeAlerts.newValue);*/
+		} else {
+			for (option in changes) {
+				console.info(option);
+				updateRadio(option, changes[option].newValue);
+			}
 		}
 	}
 });
@@ -714,7 +752,7 @@ function handleResponse(response) {
  * @return	{Void}
  */
 function updateOptionMenus() {
-	chrome.storage.sync.get(['debug', 'autoFinish', 'closePopup', 'sendEnter', 'keepNotes', 'closeAlerts', 'remind', 'buildLog', 'userId', 'userName', 'userEmail', 'fullName', 'groupName', 'groupId'], function(items) {
+	chrome.storage.sync.get(['debug', 'autoFinish', 'closePopup', 'sendEnter', 'keepNotes', 'closeAlerts', 'remind', 'buildLog', 'decomLog', 'repairLog', 'userId', 'userName', 'userEmail', 'fullName', 'groupName', 'groupId'], function(items) {
 		if (chrome.runtime.lastError) {
 			console.error('SNAFU User Sync Error: %s', chrome.runtime.lastError.message);
 		} else {
@@ -737,7 +775,7 @@ function updateOptionMenus() {
 			});
 
 			// update radios
-			var radios = ['closePopup', 'debug', 'sendEnter', 'keepNotes', 'clearNotes', 'closeAlerts', 'buildLog'];
+			var radios = ['closePopup', 'debug', 'sendEnter', 'keepNotes', 'clearNotes', 'closeAlerts', 'buildLog', 'decomLog', 'repairLog'];
 			for (var i = 0; i < radios.length; i++) {
 				updateRadio(radios[i], items[radios[i]]);
 			}

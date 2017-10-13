@@ -1,0 +1,162 @@
+<!--
+    SNAFU: SNow Automated Form Utilizer
+    Copyright (C) 2017  Adam Koch <akoch@ghs.org>
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<!doctype html>
+<html>
+
+<head>
+    <title>SNAFU: SNow Automated Form Utilizer</title>
+    <link href="../css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="../css/decoms.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#"><img src="../images/icon-16.png" /></a>
+            </div>
+            <div class="navbar-left">
+				<button type="button" class="btn btn-sm btn-primary navbar-btn" id="exportCSV" title="Export Log to CSV File"><span class="glyphicon glyphicon-list-alt"></span> Export To CSV</button>
+                <button type="button" class="btn btn-sm btn-warning navbar-btn" id="reloadLog" title="Reload Log"><span class="glyphicon glyphicon-refresh"></span> Reload Log</button>
+				<button type="button" class="btn btn-sm btn-danger navbar-btn" id="removeEntries" title="Remove Selected Entries"><span class="glyphicon glyphicon-floppy-remove"></span> Remove Entries</button>
+                <button type="button" class="btn btn-sm btn-danger navbar-btn" id="clearLog" title="Clear Log"><span class="glyphicon glyphicon-exclamation-sign"></span> Clear Log</button>
+            </div>
+            <div class="btn-group btn-group-sm navbar-right" role="group" style="padding-right:5px;padding-top:2px;">
+                <button type="button" class="btn btn-default navbar-btn" data-toggle="modal" data-target="#aboutModal" title="About SNAFU"><span class="glyphicon glyphicon-modal-window" aria-hidden="true"></span></button>
+                <button type="button" class="btn btn-default navbar-btn" id="openHelp" title="Help Page"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span></button>
+				<button type="button" class="btn btn-default navbar-btn" id="openFaq" title="Frequently Asked Questions"><span class="glyphicon glyphicon-tasks" aria-hidden="true"></span></button>
+				<button type="button" class="btn btn-default navbar-btn" id="openChangelog" title="Changelog"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span></button>
+                <button type="button" class="btn btn-primary navbar-btn" id="openOptions"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span></button>
+                <button type="button" class="btn btn-danger navbar-btn" id="closeWindow" title="Close Window"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
+            </div>
+        </div>
+    </nav>
+	<div id="content">
+		<h1 id="header" ><img src="../images/icon-64.png" alt="Logo" style="height:50px;width:50px;" /> SNAFU <small>Decommission Log</small></h1>
+		<div id="alertSuccess" style="margin: 0 auto;text-align:center;" class="alert alert-success alert-dismissible" role="alert">
+			<span class="glyphicon glyphicon-ok"></span>  <span id="alertSuccessMsg"></span>
+			<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		</div>
+		<div id="alertFailure" style="margin: 0 auto;text-align:center;" class="alert alert-danger alert-dismissible" role="alert">
+			<span class="glyphicon glyphicon-remove"></span>  <span id="alertFailureMsg"></span>
+			<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		</div>
+		<br />
+		<div class="panel panel-primary">
+			<div class="panel-heading">Build Log</div>
+			<table class="table">
+				<thead>
+					<tr>
+						<th></th>
+						<th>Request Item</th>
+						<th>Date/Time</th>
+						<th>Hostname</th>
+						<th>Asset Tag</th>
+						<th>Model</th>
+					</tr>
+				</thead>
+				<tbody id="decomList">
+					<tr><td colspan="8" style="text-align:center;"><span style="font-style:italic;color:#a0a0a0;">No decommissions have been recorded.</span></td></tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+	<!-- About Modal -->
+	<div class="modal fade" id="aboutModal" tabindex="-1" role="dialog" aria-describedby="aboutModalLabel">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title" id="aboutModalLabel">About SNAFU v<span id="versionAbout"></span></h4>
+				</div>
+				<div class="modal-body">
+					<table id="aboutTable" cellspacing="5">
+						<tr>
+							<td id="about-label">Author:</td>
+							<td id="about-value">Adam Koch</td>
+						</tr>
+						<tr>
+							<td id="about-label">E-Mail:</td>
+							<td id="about-value">
+								<a href="mailto:me@adamko.ch">me@adamko.ch</a> (Personal)<br />
+								<a href="mailto:akoch@ghs.org">akoch@ghs.org</a> (Work)
+							</td>
+						</tr>
+						<tr>
+							<td id="about-label">Website:</td>
+							<td id="about-value"><a href="https://adamko.ch" target="_blank">https://adamko.ch</a></td>
+						</tr>
+						<tr>
+							<td id="about-label">Web Store:</td>
+							<td id="about-value"><a href="https://chrome.google.com/webstore/detail/snafu-snow-automated-form/hnnbkmfkgnjngnkijdmfijmbkpjmmmpd?hl=en-US&gl=US" target="_blank">Click Here</a></td>
+						</tr>
+						<tr>
+							<td id="about-label">License:</td>
+							<td id="about-value"><a id="licenseLink" href="#">GNU General Public License v3</a></td>
+						</tr>
+						<tr>
+							<td id="about-label">Git Repository:</td>
+							<td id="about-value"><a href="https://github.com/akoch-ghs/snafu" target="_blank" title="Email me to be given access.">Click Here</a> (Private)</td>
+						</tr>
+						<tr>
+							<td id="about-label">Changelog:</td>
+							<td id="about-value"><a href="https://adamko.ch/snafu" target="_blank">Here</a> or <a href="https://adamkoch.squarespace.com/snafu/" target="_blank">Here</a> (GHS Safe)</td>
+						</tr>
+						<tr>
+							<td id="about-label">Tools Used:</td>
+							<td id="about-value">
+								<a href="https://code.visualstudio.com/" target="_blank" title="IDE">Microsoft Visual Studio Code</a><br />
+								<a href="https://github.com" target="_blank" title="Git repository host.">GitHub</a>
+							</td>
+						</tr>
+						<tr>
+							<td id="about-label">Icons:</td>
+							<td id="about-value"><a href="http://www.flaticon.com/authors/dave-gandy" target="_blank">Dave Gandy</a> from <a href="http://www.flaticon.com" target="_blank">FlatIcon.com</a></td>
+						</tr>
+						<tr>
+							<td id="about-label">Languages:</td>
+							<td id="about-value">JavaScript<br/><acronym title="Hypertext Markup Language 5">HTML5</acronym><br/><acronym title="Cascading Stylesheets">CSS</acronym></td>
+						</tr>
+						<tr>
+							<td id="about-label">JavaScript Libraries:</td>
+							<td id="about-value">
+								<a href="https://jquery.com/" target="_blank">jQuery</a><br />
+								<a href="http://getbootrap.com/" target="_blank">Bootstrap</a><br />
+                                <a href="https://momentjs.com/" target="_blank">Moment.js</a><br />
+                                <a href="https://github.com/showdownjs/showdown" target="_blank">Showdown</a><br />
+								<a href="http://developers.dymo.com/2010/06/02/dymo-label-framework-javascript-library-samples-print-a-label/" target="_blank">Dymo Label Framework</a>
+							</td>
+						</tr>
+					</table>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close Dialog</button>
+				</div>
+			</div>
+		</div>
+	</div>
+    <!-- END About Modal -->
+
+	<script src="../js/jquery.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+	<script src="../js/moment.min.js"></script>
+    <script src="../js/decoms.js"></script>
+</body>
+
+</html>

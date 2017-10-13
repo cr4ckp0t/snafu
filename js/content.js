@@ -112,7 +112,7 @@ document.addEventListener('SNAFU_UserQuery', function(userData) {
 });
 
 chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
-    chrome.storage.sync.get(['autoFinish', 'finishDelay', 'buildLog', 'labels', 'remind', 'debug'], function(items) {
+    chrome.storage.sync.get(['autoFinish', 'finishDelay', 'buildLog', 'decomLog', 'repairLog', 'labels', 'remind', 'debug'], function(items) {
         if (chrome.runtime.lastError) {
             console.error('SNAFU Sync Get Error: %s', chrome.runtime.lastError.message);
         } else {
@@ -185,6 +185,8 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                             autoFinish: items.autoFinish || 'none',
                             finishDelay: items.finishDelay || 1.5,
                             buildLog: items.buildLog,
+                            decomLog: items.decomLog,
+                            repairLog: items.repairLog,
                             labels: items.labels,
                             remind: items.remind,
                         }
@@ -267,6 +269,8 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                             workNotes: sprintf('{BROKEN_HOSTNAME} was removed from quarantine %s', addToNotes),
                             custNotes: null,
                             buildLog: items.buildLog,
+                            decomLog: items.decomLog,
+                            repairLog: items.repairLog,
                             labels: items.labels,
                             remind: items.remind,
                         }
@@ -292,6 +296,8 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                             workNotes: (msg.type === 'closeRepairOnSite') ? '{BROKEN_HOSTNAME} was repaired and returned to stock.' : '{BROKEN_HOSTNAME} will not be repaired, and will be added to decommission workflow.',
                             custNotes: null,
                             buildLog: items.buildLog,
+                            decomLog: items.decomLog,
+                            repairLog: items.repairLog,
                             labels: items.labels,
                             remind: items.remind,
                         }
@@ -354,6 +360,8 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                             workNotes: msg.workNotes || null,
                             custNotes: msg.custNotes || null,
                             buildLog: items.buildLog,
+                            decomLog: items.decomLog,
+                            repairLog: items.repairLog,
                             labels: items.labels,
                             remind: items.remind,
                         }

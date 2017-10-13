@@ -10,6 +10,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Added rhs_repair tasks to whitelist for decommission labels.
 
+### Fixed
+- Bug with build acknowledgement labels.
+
+### ToDo
+- Add repair log.
+- Add decommission log.
+
 ## 1.2.12 [2017-10-12]
 ### Added
 - Auto On-Hold menu option.

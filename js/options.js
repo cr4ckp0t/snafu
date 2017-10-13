@@ -24,6 +24,8 @@ $(document).ready(function() {
 	$('#openFaq').click(function() { chrome.tabs.create({url: chrome.runtime.getURL('html/faq.html')}); });
 	$('#openHelp').click(function() { chrome.tabs.create({url: chrome.runtime.getURL('html/help.html')}); });
 	$('#openBuildLog').click(function() { chrome.tabs.create({url: chrome.runtime.getURL('html/builds.html')}); });
+	$('#openDecomLog').click(function() { chrome.tabs.create({url: chrome.runtime.getURL('html/decoms.html')}); });
+	$('#openRepairLog').click(function() { chrome.tabs.create({url: chrome.runtime.getURL('html/repairs.html')}); });
 	$('#openChangelog').click(function() { chrome.tabs.create({url: chrome.runtime.getURL('html/changelog.html')}); });
 	$('#closeWindow').click(function() { chrome.tabs.query({active: true, currentWindow: true}, function(tabs) { chrome.tabs.remove(tabs[0].id); }); });
 
@@ -84,6 +86,8 @@ function saveSettings() {
 		finishDelay: $('#finishDelay').val(),
 		closeAlerts: ($('#closeAlerts').val() === 'enable') ? true : false,
 		buildLog: ($('#buildLog').val() === 'enable') ? true : false,
+		repairLog: ($('#repairLog').val() === 'enable') ? true : false,
+		decomLog: ($('#decomLog').val() === 'enable') ? true : false,
 		remind: $('#remind').val(),
 		labels: {
 			build: ($('#labelBuild').val() === 'enable') ? true : false,
@@ -124,7 +128,11 @@ function loadSettings() {
 		'closeAlerts',
 		'remind',
 		'buildLog',
+		'decomLog',
+		'repairLog',
 		'builds',
+		'decoms',
+		'repairs',
 		'labels',
 		'userId',
 		'userName',
@@ -256,8 +264,30 @@ function loadSettings() {
 				$('#buildLog').val((items.buildLog === true) ? 'enable' : 'disable');
 			}
 
+			// decom log
+			if (isVarEmpty(items.decomLog) === true) {
+				settingsToCreate['decomLog'] = false;
+				$('#decomLog').val('disable');
+			} else {
+				$('#decomLog').val((items.decomLog === true) ? 'enable' : 'disable');
+			}
+
+			// repair log
+			if (isVarEmpty(items.repairLog) === true) {
+				settingsToCreate['repairLog'] = false;
+				$('#repairLog').val('disable');
+			} else {
+				$('#repairLog').val((items.repairLog === true) ? 'enable' : 'disable');
+			}
+
 			// completed builds
 			if (isVarEmpty(items.builds) === true) settingsToCreate['builds'] = {};
+
+			// completed decoms
+			if (isVarEmpty(items.decoms) === true) settingsToCreate['decoms'] = {};
+
+			// completed repairs
+			if (isVarEmpty(items.repairs) === true) settingsToCreate['repairs'] = {};
 			
 			// send the settings to sync storage
 			if (settingsToCreate === {}) {
