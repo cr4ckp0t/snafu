@@ -23,7 +23,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ```
 
-## Libraries Used
+## JavaScript Libraries Used
 - [jQuery](https://jquery.com)
 - [Bootstrap](http://getbootrap.com/)
 - [Moment.js](https://momentjs.com/)
