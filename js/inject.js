@@ -669,13 +669,7 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 							}
 
 							// print labels
-							if (
-								(
-									type === 'autoClose' && (ticketType === 'rhs_reclaim' || ticketType === 'rhs_reimage')
-								) || (
-									type === 'autoAcknowledge' && (ticketType === 'rhs_build' || ticketType === 'rhs_reimage')
-								)
-							) {
+							if ((type === 'autoClose' && (ticketType === 'rhs_reclaim' || ticketType === 'rhs_reimage')) || (type === 'autoAcknowledge' && (ticketType === 'rhs_build' || ticketType === 'rhs_reimage'))) {
 								// determine the label type from the ticket type
 								labelType = snafuGetLabelType(type, ticketType);
 
@@ -797,26 +791,43 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 							} else if (type.indexOf('closeRepair') !== -1) {
 								snafuSetValue('rhs_repair_type', type.replace('closeRepair', '').toLowerCase());
 							}
-						}
 
-						// if build logging is enabled and closing a hot swap, then log the build
-						if (inject.detail.buildLog === true && type.indexOf('closeHotSwap') !== -1 && ticketType === 'rhs_build') {
-							// query the user info sent by the options page
-							var buildLogQuery = document.createEvent('CustomEvent');
-							var replacement = g_form.getReference('rhs_replacement_computer');
-							var requestItem = g_form.getReference('request_item');
-							buildLogQuery.initCustomEvent('SNAFU_BuildLogQuery', true, true, {
-								sysId: requestItem.sys_id,
-								ritm: requestItem.number,
-								hostname: replacement.name,
-								assetTag: replacement.asset_tag,
-								dateTime: Date.now(),
-								build: g_form.getValue('rhs_software'),
-								model: snafuGetComputerModel(replacement.model_id),
-								newUsed: type.replace('closeHotSwap', '').toLowerCase()
-							});
-							snafuInfoMessage('Build saved to the log.');
-							document.dispatchEvent(buildLogQuery);
+							// if build logging is enabled and closing a hot swap, then log the build
+							if (inject.detail.buildLog === true && ticketType === 'rhs_build' && (type.indexOf('closeHotSwap') !== -1 || snafuIsResolveCode(field, value) === true)) {
+								// query the user info sent by the options page
+								var buildLogQuery = document.createEvent('CustomEvent');
+								var replacement = g_form.getReference('rhs_replacement_computer');
+								var requestItem = g_form.getReference('request_item');
+								buildLogQuery.initCustomEvent('SNAFU_BuildLogQuery', true, true, {
+									sysId: requestItem.sys_id,
+									ritm: requestItem.number,
+									hostname: replacement.name,
+									assetTag: replacement.asset_tag,
+									dateTime: Date.now(),
+									build: g_form.getValue('rhs_software'),
+									model: snafuGetComputerModel(replacement.model_id),
+									newUsed: type.replace('closeHotSwap', '').toLowerCase()
+								});
+								snafuInfoMessage('Build saved to the log.');
+								document.dispatchEvent(buildLogQuery);
+
+							// decommssion and repair log
+							} else if (snafuIsResolveCode(field, value) === true && ((inject.detail.decomLog == true && ticketType === 'rhs_decommission') || (inject.detail.repairLog === true && ticketType === 'rhs_repair'))) {
+								var logQuery = document.createEvent('CustomEvent');
+								var brokenAsset = g_form.getReference('rhs_comp_name');
+								var requestItem = g_form.getReference('request_item');
+								logQuery.initCustomEvent('SNAFU_LogQuery', true, true, {
+									logType: (ticketType === 'rhs_decommission') ? 'decoms' : 'repairs',
+									sysId: requestItem.sys_id,
+									ritm: requestItem.number,
+									hostname: brokenAsset.name,
+									assetTag: brokenAsset.asset_tag,
+									dateTime: Date.now(),
+									model: snafuGetComputerModel(brokenAsset.model_id)
+								});
+								snafuInfoMessage(snafuSprintf('Added to the %s log.', [(ticketType === 'rhs_decommission') ? 'decommission' : 'repair']));
+								document.dispatchEvent(logQuery);
+							}
 						}
 						
 						// reminders

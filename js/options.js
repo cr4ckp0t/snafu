@@ -290,7 +290,7 @@ function loadSettings() {
 			if (isVarEmpty(items.repairs) === true) settingsToCreate['repairs'] = {};
 			
 			// send the settings to sync storage
-			if (settingsToCreate === {}) {
+			if (settingsToCreate !== {}) {
 				console.info(settingsToCreate);
 				chrome.storage.sync.set(settingsToCreate, function() {
 					if (chrome.runtime.lastError) {

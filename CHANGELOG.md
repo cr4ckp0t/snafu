@@ -5,17 +5,17 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
+### Added
 - Task type purchasing_review handling.
+- Repair logging.
+- Decommission logging.
 
 ### Changed
 - Added rhs_repair tasks to whitelist for decommission labels.
 
 ### Fixed
 - Bug with build acknowledgement labels.
-
-### ToDo
-- Add repair log.
-- Add decommission log.
+- Bug showing Auto Pending menu on incorrect pages.
 
 ## 1.2.12 [2017-10-12]
 ### Added

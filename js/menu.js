@@ -66,7 +66,7 @@ chrome.contextMenus.create({
 	contexts: ['page'],
 	id: 'autoPending',
 	parentId: 'snafuParent',
-	documentUrlPatterns: docPatterns.task,
+	documentUrlPatterns: [docPatternsChoose.task],
 	onclick: actionHandler
 });
 
@@ -450,7 +450,7 @@ chrome.contextMenus.create({
 	contexts: ['page'],
 	id: 'printLabelParent',
 	parentId: 'snafuParent',
-	documentUrlPatterns: docPatterns
+	documentUrlPatterns: [docPatternsChoose.global]
 });
 
 const menuLblTypes = ['build', 'buildack', 'decommission', 'reclaim', 'repair', 'restock']
@@ -481,7 +481,7 @@ chrome.contextMenus.create({
 	contexts: ['page'],
 	id: 'printLabelPurchase',
 	parentId: 'printLabelParent',
-	documentUrlPatterns: docPatterns,
+	documentUrlPatterns: [docPatternsChoose.global],
 	onclick: actionHandler
 });
 
@@ -490,7 +490,7 @@ chrome.contextMenus.create({
 	contexts: ['page'],
 	id: 'printLabelPrebuilt',
 	parentId: 'printLabelParent',
-	documentUrlPatterns: docPatterns,
+	documentUrlPatterns: [docPatternsChoose.global],
 	onclick: actionHandler
 });
 
@@ -575,7 +575,6 @@ chrome.contextMenus.create({
 // monitor user data settings to update the context menu
 chrome.storage.onChanged.addListener(function(changes, area) {
 	if (area === 'sync') {
-		console.info(changes);
 		if ('userId' in changes) {
 			chrome.contextMenus.update('assignIncToMe', {documentUrlPatterns: (isVarEmpty(changes.userId.newValue) === true) ? ['https://make/it/hidden/'] : [docPatternsChoose.incident]});
 			chrome.contextMenus.update('assignTaskToMe', {documentUrlPatterns: (isVarEmpty(changes.userId.newValue) === true) ? ['https://make/it/hidden/'] : [docPatternsChoose.task]});
@@ -593,29 +592,8 @@ chrome.storage.onChanged.addListener(function(changes, area) {
 			['none', 'popup', 'open'].forEach(function(opt) {
 				chrome.contextMenus.update('remind-' + opt, {checked: (changes.remind.newValue === opt) ? true : false});
 			});
-		/*} else if ('closePopup' in changes) {
-			// set the closePopup radio
-			updateRadio('closePopup', changes.closePopup.newValue);
-		} else if ('debug' in changes) {
-			// set the debug radio
-			updateRadio('debug', changes.debug.newValue);
-		} else if ('sendEnter' in changes) {
-			// set the send on enter radio
-			updateRadio('sendEnter', changes.sendEnter.newValue);
-		} else if ('keepNotes' in changes) {
-			// set the keep notes radio
-			updateRadio('keepNotes', changes.keepNotes.newValue);
-		} else if ('buildLog' in changes) {
-			// set the build log radio\
-			updateRadio('buildLog', changes.buildLog.newValue);
-		} else if ('clearNotes' in changes) {
-			// set the keep on submit radio
-			updateRadio('clearNotes', changes.clearNotes.newValue);
-		} else if ('closeAlerts' in changes) {
-			updateRadio('closeAlerts', changes.closeAlerts.newValue);*/
 		} else {
 			for (option in changes) {
-				console.info(option);
 				updateRadio(option, changes[option].newValue);
 			}
 		}

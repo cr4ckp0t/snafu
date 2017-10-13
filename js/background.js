@@ -41,13 +41,13 @@ chrome.commands.onCommand.addListener(function(command) {
 					}
 				}
 				chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-					chrome.tabs.sendMessage(tabs[0].id, messageData, handleResponse);
+					chrome.tabs.sendMessage(tabs[0].id, messageData, handleResponseBG);
 				});
 			}
 		});
 	} else {
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-			chrome.tabs.sendMessage(tabs[0].id, {type: command}, handleResponse);
+			chrome.tabs.sendMessage(tabs[0].id, {type: command}, handleResponseBG);
 		});
 	}
 });
@@ -150,7 +150,7 @@ chrome.runtime.onStartup.addListener(function() {
 					'leftVoicemail': 'Left voicemail for {INC_CUST_FNAME} at {INC_CUR_PHONE} to discuss the ticket.'
 				}
 			}
-			if (settingsToCreate === {}) {
+			if (settingsToCreate !== {}) {
 				chrome.storage.sync.set(settingsToCreate, function() {
 					if (chrome.runtime.lastError) {
 						console.warn('SNAFU Sync Set Error: %s', chrome.runtime.lastError.message);
@@ -182,7 +182,7 @@ function isVarEmpty(value) {
  * @param	{Object}	response
  * @return	{Void}
  */
-function handleResponse(response) {
+function handleResponseBG(response) {
 	chrome.storage.sync.get(['debug'], function(items) {
 		if (chrome.runtime.lastError) {
 			console.error('SNAFU Sync Get Error: %s', chrome.runtime.lastError.message);
