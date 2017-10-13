@@ -28,7 +28,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 - [Bootstrap](http://getbootrap.com/)
 - [Moment.js](https://momentjs.com/)
 - [Showdown](https://github.com/showdownjs/showdown)
-- [SweetAlert](https://sweetalert.js.org/)
 - [Dymo Label Framework](http://developers.dymo.com/2010/06/02/dymo-label-framework-javascript-library-samples-print-a-label/)
 
 ## Statistics
