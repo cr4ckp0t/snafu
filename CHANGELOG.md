@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+- Task type purchasing_review handling.
+
+### Changed
+- Added rhs_repair tasks to whitelist for decommission labels.
+
 ## 1.2.12 [2017-10-12]
 ### Added
 - Auto On-Hold menu option.

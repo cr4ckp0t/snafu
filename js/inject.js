@@ -146,6 +146,14 @@
 	},
 
 	// purchase order workflow
+	'purchasing_review': {
+		field: 'state',
+		ack: { script: 'Acknowledging purchase review task.', value: '2' },
+		enRoute: null,
+		pending: null,
+		close: null
+	},
+
 	'po_configure_pc': {
 		field: 'state',
 		ack: { script: 'Acknowledging equipment configuration task.', value: '2' },
@@ -302,11 +310,11 @@ const snafuLabelFields = {
 
 	// decommission
 	'decommission': {
-		'ticketType': ['rhs_restock', 'rhs_decommission'],		// to force correct printing
-		'TEXT': '{BROKEN_SERIAL}',								// asset serial being decommissioned
-		'Tech': '{LABEL_TECH}',									// technician
-		'TEXT_5': 'Decommission asset.',						// reason
-		'RITM#': '{REQUEST_ITEM}'								// ritm number
+		'ticketType': ['rhs_restock', 'rhs_decommission', 'rhs_repair'],	// to force correct printing
+		'TEXT': '{BROKEN_SERIAL}',											// asset serial being decommissioned
+		'Tech': '{LABEL_TECH}',												// technician
+		'TEXT_5': 'Decommission asset.',									// reason
+		'RITM#': '{REQUEST_ITEM}'											// ritm number
 	},
 
 	// equipment configuration
