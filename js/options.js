@@ -74,7 +74,6 @@ $(document).ready(function() {
  * @return	{Void}
  */
 function saveSettings() {
-	console.info(($('#labelBuildack').val() === 'enable') ? true : false);
 	chrome.storage.sync.set({
 		debug: ($('#debugMode').val() === 'enable') ? true : false,
 		closePopup: ($('#closePopup').val() === 'enable') ? true: false,
@@ -291,7 +290,6 @@ function loadSettings() {
 			
 			// send the settings to sync storage
 			if (settingsToCreate !== {}) {
-				console.info(settingsToCreate);
 				chrome.storage.sync.set(settingsToCreate, function() {
 					if (chrome.runtime.lastError) {
 						console.warn('SNAFU Sync Set Error: %s', chrome.runtime.lastError);
