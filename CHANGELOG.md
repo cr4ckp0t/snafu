@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+### Added
+- Time to quarantine label for proper tracking.
+
+### Fixed
+- Small typo on the options page.
+
 ## 1.2.13 [2017-10-16]
 ### Added
 - Task type purchasing_review handling.
