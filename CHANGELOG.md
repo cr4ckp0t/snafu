@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+### Added
+- Additional default canned messages for alternative phone numbers.
+- In Progress, On Hold, and Resolve menu items.
+
 ## 1.2.14 [2017-11-16]
 ### Added
 - Time to quarantine label for proper tracking.

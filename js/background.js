@@ -146,8 +146,10 @@ chrome.runtime.onStartup.addListener(function() {
 			}
 			if (isVarEmpty(items.canned) === true) {
 				settingsToCreate['canned'] = {
-					'callingUser': 'Calling {INC_CUST_FNAME} at {INC_CUR_PHONE}.',
-					'leftVoicemail': 'Left voicemail for {INC_CUST_FNAME} at {INC_CUR_PHONE} to discuss the ticket.'
+					'callingUserCur': 'Calling {INC_CUST_FNAME} at {INC_CUR_PHONE}.',
+					'callingUserAlt': 'Calling {INC_CUST_FNAME} at {INC_ALT_PHONE}.',
+					'leftVoicemailCur': 'Left voicemail for {INC_CUST_FNAME} at {INC_CUR_PHONE} to discuss the ticket.',
+					'leftVoicemailAlt': 'Left voicemail for {INC_CUST_FNAME} at {INC_ALT_PHONE} to discuss the ticket.'
 				}
 			}
 			if (settingsToCreate !== {}) {

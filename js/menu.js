@@ -85,6 +85,45 @@ chrome.contextMenus.create({
 chrome.contextMenus.create({type: 'separator', parentId: 'snafuParent'});
 
 /**
+ * In Progress Note
+ */
+var ticketTypes = ['Task', 'Incident']
+for (var i = 0; i < ticketTypes.length; i++) {
+	chrome.contextMenus.create({
+		title: 'In Progress',
+		contexts: ['page'],
+		id: 'inProgress-' + ticketTypes[i],
+		parentId: 'snafuParent',
+		documentUrlPatterns: [docPatternsChoose[ticketTypes[i].toLowerCase()]],
+		onclick: ticketHandler	
+	});
+
+	chrome.contextMenus.create({
+		title: 'On Hold',
+		contexts: ['page'],
+		id: 'onHold-' + ticketTypes[i],
+		parentId: 'snafuParent',
+		documentUrlPatterns: [docPatternsChoose[ticketTypes[i].toLowerCase()]],
+		onclick: ticketHandler
+	});
+
+	chrome.contextMenus.create({
+		title: 'Resolved',
+		contexts: ['page'],
+		id: 'resolve-' + ticketTypes[i],
+		parentId: 'snafuParent',
+		documentUrlPatterns: [docPatternsChoose[ticketTypes[i].toLowerCase()]],
+		onclick: ticketHandler
+	});
+}
+
+chrome.contextMenus.create({
+	title: 'In Progress',
+});
+
+chrome.contextMenus.create({type: 'separator', parentId: 'snafuParent'});
+
+/**
  * Close Hot Swap Task
  */
 chrome.contextMenus.create({
@@ -643,6 +682,21 @@ function optionsHandler(info, tab) {
 		}	
 	});
 	updateOptionMenus();
+}
+
+/**
+ * Handle Ticket Menus
+ * @param	{Object}	info
+ * @param	{Object}	tabs
+ * @return	{Void}
+ */
+function ticketHandler(info, tab) {
+	var comment = prompt('Enter the comment to send. This is REQUIRED.');
+	var action = info.menuItemId.substring(0, info.menuItemId.indexOf('-')).toLowerCase();
+	var type = info.menuItem.substring(info.menuItemId.indexOf('-') + 1).toLowerCase();
+	if (!isVarEmpty(comment)) {
+		
+	}
 }
 
 /**
