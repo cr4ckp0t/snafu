@@ -4,10 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## 1.2.15 [2017-11-30]
 ### Added
 - Additional default canned messages for alternative phone numbers.
 - In Progress, On Hold, and Resolve menu items.
+
+### Fixed
+- Updated ticket detection for description changes.
 
 ## 1.2.14 [2017-11-16]
 ### Added

@@ -92,7 +92,7 @@ for (var i = 0; i < ticketTypes.length; i++) {
 	chrome.contextMenus.create({
 		title: 'In Progress',
 		contexts: ['page'],
-		id: 'inProgress-' + ticketTypes[i],
+		id: ticketTypes[i].toLowerCase() + '-0',
 		parentId: 'snafuParent',
 		documentUrlPatterns: [docPatternsChoose[ticketTypes[i].toLowerCase()]],
 		onclick: ticketHandler	
@@ -101,7 +101,7 @@ for (var i = 0; i < ticketTypes.length; i++) {
 	chrome.contextMenus.create({
 		title: 'On Hold',
 		contexts: ['page'],
-		id: 'onHold-' + ticketTypes[i],
+		id: ticketTypes[i].toLowerCase() + '-1',
 		parentId: 'snafuParent',
 		documentUrlPatterns: [docPatternsChoose[ticketTypes[i].toLowerCase()]],
 		onclick: ticketHandler
@@ -110,16 +110,12 @@ for (var i = 0; i < ticketTypes.length; i++) {
 	chrome.contextMenus.create({
 		title: 'Resolved',
 		contexts: ['page'],
-		id: 'resolve-' + ticketTypes[i],
+		id: ticketTypes[i].toLowerCase() + '-2',
 		parentId: 'snafuParent',
 		documentUrlPatterns: [docPatternsChoose[ticketTypes[i].toLowerCase()]],
 		onclick: ticketHandler
 	});
 }
-
-chrome.contextMenus.create({
-	title: 'In Progress',
-});
 
 chrome.contextMenus.create({type: 'separator', parentId: 'snafuParent'});
 
@@ -692,10 +688,14 @@ function optionsHandler(info, tab) {
  */
 function ticketHandler(info, tab) {
 	var comment = prompt('Enter the comment to send. This is REQUIRED.');
-	var action = info.menuItemId.substring(0, info.menuItemId.indexOf('-')).toLowerCase();
-	var type = info.menuItem.substring(info.menuItemId.indexOf('-') + 1).toLowerCase();
 	if (!isVarEmpty(comment)) {
-		
+		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+			chrome.tabs.sendMessage(tabs[0].id, {
+				type: 'sendUpdate',
+				tState: info.menuItemId.substring(info.menuItemId.indexOf('-') + 1),
+				custNotes: comment,
+			}, handleResponse);
+		});
 	}
 }
 

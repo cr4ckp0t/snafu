@@ -949,7 +949,7 @@ function snafuReplaceWildcards(strIn) {
 		"{INC_URGENCY}": "(snafuIsVarEmpty(g_form.getValue('urgency')) === false) ? g_form.getValue('urgency') : 'UNKNOWN';",
 		
 		// task only	
-		"{CATEGORY_ITEM}": "(snafuIsVarEmpty(g_form.getValue('cat_item')) === false) ? g_form.getValue('cat_item') : 'UNKNOWN';",
+		"{CATEGORY_ITEM}": "(snafuIsVarEmpty(g_form.getReference('request_item.cat_item')) === false) ? g_form.getReference('request_item.cat_item').name : 'UNKNOWN';",
 		"{DUE_DATE}": "(snafuIsVarEmpty(g_form.getValue('due_date')) === false) ? g_form.getValue('due_date') : 'UNKNOWN';",
 		"{REQUEST_ITEM}": "(snafuIsVarEmpty(g_form.getReference('request_item').number) === false) ? g_form.getReference('request_item').number : 'UNKNOWN';",
 		"{REQUESTED_BY}": "(snafuIsVarEmpty(g_form.getReference('request_item.request.requested_for').name) === false) ? snafuUcwords(g_form.getReference('request_item.request.requested_for').name) : 'UNKNOWN';",
@@ -1104,9 +1104,7 @@ function snafuGetTicketType() {
     } else if (document.getElementById('sc_task.state') !== null) {
         // it's a trap! (task)
 		var shortDesc = g_form.getValue('short_description');
-		if (shortDesc.indexOf('Equipment Move/Remove') !== -1) {
-			return 'equip_removal';
-		} else if (shortDesc.indexOf('Disconnect System') !== -1) {
+		if (shortDesc.indexOf('Disconnect System') !== -1) {
 			return 'equip_disconnect';
 		} else if (shortDesc.indexOf('Reconnect System') !== -1) {
 			return 'equip_reconnect';
@@ -1115,8 +1113,13 @@ function snafuGetTicketType() {
 		} else if (shortDesc.indexOf('CANCELLED TASK') !== -1) {
 			return 'cancelled_task';
 		} else {
-        	var taskName = g_form.getValue('u_task_name').toLowerCase();
-			return (taskName in snafuAutoTickets) ? taskName : 'generic_task';
+			var catItem = g_form.getReference('request_item.cat_item')
+			if (snafuIsVarEmpty(catItem) || catItem.name.indexOf('Asset Management') !== -1) {
+        		var taskName = g_form.getValue('u_task_name').toLowerCase();
+				return (taskName in snafuAutoTickets) ? taskName : 'generic_task';
+			} else {
+				return (catItem.name.indexOf('Equipment Move') !== -1) ? 'equip_removal' : 'generic_task';
+			}
 		}
 	} else if (document.getElementById('u_absolute_install.state') !== null) {
 		return 'absolute_install';
