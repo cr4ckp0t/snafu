@@ -1113,11 +1113,11 @@ function snafuGetTicketType() {
 		} else if (shortDesc.indexOf('CANCELLED TASK') !== -1) {
 			return 'cancelled_task';
 		} else {
-			var catItem = g_form.getReference('request_item.cat_item')
-			if (snafuIsVarEmpty(catItem) || catItem.name.indexOf('Asset Management') !== -1) {
-        		var taskName = g_form.getValue('u_task_name').toLowerCase();
-				return (taskName in snafuAutoTickets) ? taskName : 'generic_task';
+			var taskName = g_form.getValue('u_task_name').toLowerCase();
+			if (taskName in snafuAutoTickets) {
+				return taskName
 			} else {
+				var catItem = g_form.getReference('request_item.cat_item')
 				return (catItem.name.indexOf('Equipment Move') !== -1) ? 'equip_removal' : 'generic_task';
 			}
 		}
