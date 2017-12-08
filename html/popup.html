@@ -88,6 +88,11 @@
                     <label for="customerNotes">Additional Comments (Viewable By Customer)</label>
                     <textarea class="form-control" id="customerNotes" name="customerNotes" rows="2" cols="35"></textarea>
                     <div class="input-group input-group-sm">
+                        <span class="input-group-addon" id="custETAAddon">ETA:</span>
+                        <input type="number" min="0" max="120" value="0" step="5" id="custETA" class="form-control" aria-describedby="custETAAddon" />
+                        <span class="input-group-addon" id="custETAMin">Minutes</span>
+                    </div>
+                    <div class="input-group input-group-sm">
                         <span class="input-group-addon" id="custWildcardsAddon">Wildcards</span>
                         <select id="custWildcards" name="custWildcards" class="form-control" aria-describedby="custWildcardsAddon"></select>
                     </div>

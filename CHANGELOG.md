@@ -4,10 +4,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.2.17 [2017-12-08]
+### Added
+- Group communications are now automatically detected and handled.
+
+### Fixed
+- Cleaned up task detection code to make for quicker additions.
+
+### ToDo
+- Add ETA field to popup.
+
 ## 1.2.16 [2017-12-01]
 ### Fixed
 - More tweaks to task detection.
-- Disable mini-fication.
+- Disabled mini-fication.
 
 ## 1.2.15 [2017-11-30]
 ### Added

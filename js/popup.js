@@ -160,13 +160,14 @@ $(document).ready(function() {
         } else if (isVarEmpty($('#customerNotes').val()) === true && isVarEmpty($('#workNotes').val()) === true) {
             console.error('SNAFU Error: You must provide customer and/or work notes.');
         } else {
+
             chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
                 chrome.tabs.sendMessage(tabs[0].id, {
                     type: 'sendUpdate',
                     tState: $('input[name=tStatus]:checked').val(),
                     subStatus: $('#taskSubStatus').val(),
                     workNotes: $('#workNotes').val(),
-                    custNotes: $('#customerNotes').val()
+                    custNotes: ($('#custETA').val() === '0') ? $('#customerNotes').val() : sprintf('%s\r\n\r\nETA is %s minutes.', [$('#customerNotes').val(), $('#custETA').val()])
                 }, function(response) {
                     chrome.storage.sync.get(['debug', 'closePopup', 'keepNotes', 'clearNotes'], function(items) {
                         if (chrome.runtime.lastError) {
