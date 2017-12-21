@@ -100,6 +100,13 @@
 		pending: null,
 		close: null
 	},
+	'rhs_comp_deploy': {
+		field: 'state',
+		ack: { script: 'Acknowledging replacement computer deployment task.', value: '2' },
+		enRoute: { script: 'En route to deploy replacement computer.', value: '2' },
+		pending: null,
+		close: { script: '{REPLACE_HOSTNAME} has been deployed.', value: '3' },
+	},
 	'rhs_reclaim': {
 		field: 'state',
 		ack: { script: 'Acknowledging reclaim task.', value: '2' },
@@ -278,7 +285,7 @@
 	// group communications
 	'group_comms': {
 		field: 'state',
-		ack: { script: 'Acknowledginge group communication.', value: '2' },
+		ack: { script: 'I have read and acknowledged the group communication.', value: '2' },
 		enRoute: null,
 		pending: null,
 		close: { script: 'Closing group communication.', value: '3' },
@@ -308,13 +315,13 @@ const snafuLabelFields = {
 
 	// replacement build
 	'build': {
-		'ticketType': ['rhs_build'],			// to force correct printing
-		'HOSTNAME_TEXT': '{REPLACE_HOSTNAME}',	// replacement build's hostname
-		'TEXT_3': '{LABEL_TECH}',				// technician
-		'TEXT_4': '{REPLACE_BUILD}',			// replacement os and build
-		'RITM#': '{REQUEST_ITEM}',				// ritm number
-		'TEXT_2': '{REPLACE_CUSTOMER}',			// customer
-		'TEXT_8': '{REPLACE_SOFTWARE}'			// software
+		'ticketType': ['rhs_build', 'rhs_comp_deploy'],	// to force correct printing
+		'HOSTNAME_TEXT': '{REPLACE_HOSTNAME}',			// replacement build's hostname
+		'TEXT_3': '{LABEL_TECH}',						// technician
+		'TEXT_4': '{REPLACE_BUILD}',					// replacement os and build
+		'RITM#': '{REQUEST_ITEM}',						// ritm number
+		'TEXT_2': '{REPLACE_CUSTOMER}',					// customer
+		'TEXT_8': '{REPLACE_SOFTWARE}'					// software
 	},
 
 	// decommission
@@ -1136,6 +1143,8 @@ function snafuGetTicketType() {
 							return 'equip_removal';
 						} else if (catItem.indexOf('Group Communication') !== -1) {
 							return 'group_comms';
+						} else if (catItem.indexOf('Application Install') !== -1) {
+							return 'app_install';
 						} else {
 							return 'generic_task';
 						}

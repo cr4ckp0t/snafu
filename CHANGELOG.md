@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.2.18 [2017-12-21]
+### Added
+- ETA field to popup to providing an ETA to the End User.
+- Proper detection for the new Delivery task of Hot Swap requests.
+
+### Fixed
+- Application Install requests are now detected properly once again.
+
 ## 1.2.17 [2017-12-08]
 ### Added
 - Group communications are now automatically detected and handled.
