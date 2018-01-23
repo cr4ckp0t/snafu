@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+### Changed
+- Performing any automated action on an unassigned ticket will now trigger an error.
+
 ## 1.2.18 [2017-12-21]
 ### Added
 - ETA field to popup to providing an ETA to the End User.

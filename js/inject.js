@@ -22,6 +22,7 @@
  *  access to page variables, so we have to inject code and use Custom Events
  *  to pass data between the extension and the page.
  **/
+
  const snafuAutoTickets = { 
 	// misc
 	'generic_task': {
@@ -614,89 +615,96 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 						if (snafuIsVarEmpty(ticketAction) === true) {
 							snafuErrorMessage(snafuSprintf('Unable to complete action "%s" on this ticket type (%s).', [type, ticketType]));
 						} else {
-							// set the field with value
-							if (!snafuIsVarEmpty(ticket.field) && !snafuIsVarEmpty(ticketAction.value)) {
-								snafuSetValue(ticket.field, ticketAction.value);
-								snafuFlash(ticket.field);
-							}
 
-							// set the work notes
-							if (!snafuIsVarEmpty(ticketAction.script)) {
-								snafuSetValue('comments', snafuReplaceWildcards(ticketAction.script));
-								snafuFlash('comments');
-							}
-
-							// if a task, set root cause ci and due date
-							if (ticket.field === 'state') {
-								var dueDate = snafuGetDueDate();
-
-								// due date
-								if (g_form.getValue('due_date') !== dueDate) {
-									snafuSetValue('due_date', dueDate);
-									snafuFlash('due_date');
-								}
-
-								// root cause ci
-								// desktop services value is 5a8d6816a1cf38003a42245d1035d56e
-								if (ticketType !== 'absolute_install' && g_form.getValue('cmdb_ci') !== '5a8d6816a1cf38003a42245d1035d56e') {
-									snafuSetDisplayValue('cmdb_ci', '5a8d6816a1cf38003a42245d1035d56e', 'Desktop Services');
-									snafuFlash('cmdb_ci');
-								}
-							}
-
-							// reminders
-							if (type === 'autoClose' && snafuReminderTickets.indexOf(ticketType) !== -1) {
-								// action performed is depends on reminder
-								switch (inject.detail.remind) {
-									
-									// open computer database tab
-									case 'open':
-										// save, update, auto, none
-										snafuEndTicketInteraction(inject.detail.autoFinish, inject.detail.finishDelay, ticket.field, ticketAction.value);
-
-										// attempt to get the root cause's sys_id
-										var rootCause = snafuGetRootCauseSysId(ticketType);
-
-										// open a tab using a custom javascript event
-										query = document.createEvent('CustomEvent');
-										query.initCustomEvent('SNAFU_OpenTab', true, true, {
-											url: (rootCause !== false) ? snafuSprintf('https://ghsprod.service-now.com/cmdb_ci_computer.do?sys_id=%s', [rootCause]) : 'https://ghsprod.service-now.com/cmdb_ci_computer_list.do'
-										});
-										document.dispatchEvent(query);
-										break;
-
-									// popup using sweet alerts
-									case 'popup':
-										alert('Don\'t forget to update the device\'s location information.');
-										
-										// save, update, auto, none
-										snafuEndTicketInteraction(inject.detail.autoFinish, inject.detail.finishDelay, ticket.field, ticketAction.value);
-										break;
-
-									// no reminder
-									case 'none':
-									default:
-										// save, update, auto, none
-										snafuEndTicketInteraction(inject.detail.autoFinish, inject.detail.finishDelay, ticket.field, ticketAction.value);
-										break;
-								}
+							// prevent automation on unassigned tickets
+							if (snafuIsVarEmpty(g_form.getReference('assigned_to').name)) {
+								snafuErrorMessage(snafuSprintf('Unable to complete action "%s" on an unassigned ticket.', [type]));
 							} else {
-								snafuEndTicketInteraction(inject.detail.autoFinish, inject.detail.finishDelay, ticket.field, ticketAction.value);
-							}
 
-							// print labels
-							if ((type === 'autoClose' && (ticketType === 'rhs_reclaim' || ticketType === 'rhs_reimage')) || (type === 'autoAcknowledge' && (ticketType === 'rhs_build' || ticketType === 'rhs_reimage'))) {
-								// determine the label type from the ticket type
-								labelType = snafuGetLabelType(type, ticketType);
+								// set the field with value
+								if (!snafuIsVarEmpty(ticket.field) && !snafuIsVarEmpty(ticketAction.value)) {
+									snafuSetValue(ticket.field, ticketAction.value);
+									snafuFlash(ticket.field);
+								}
 
-								// make sure we do want to print these labels
-								if (labelSettings[labelType] === true) {
-									// make sure we have a valid printer
-									if (snafuHasValidPrinter()) {
-										snafuPrintLabel(ticketType, labelType);
-									} else {
-										console.warn('SNAFU: No appropriate printers were found.  Skipping print job. . .');
-										snafuErrorMessage('No appropriate printers were found.  Skipping print job. . .');
+								// set the work notes
+								if (!snafuIsVarEmpty(ticketAction.script)) {
+									snafuSetValue('comments', snafuReplaceWildcards(ticketAction.script));
+									snafuFlash('comments');
+								}
+
+								// if a task, set root cause ci and due date
+								if (ticket.field === 'state') {
+									var dueDate = snafuGetDueDate();
+
+									// due date
+									if (g_form.getValue('due_date') !== dueDate) {
+										snafuSetValue('due_date', dueDate);
+										snafuFlash('due_date');
+									}
+
+									// root cause ci
+									// desktop services value is 5a8d6816a1cf38003a42245d1035d56e
+									if (ticketType !== 'absolute_install' && g_form.getValue('cmdb_ci') !== '5a8d6816a1cf38003a42245d1035d56e') {
+										snafuSetDisplayValue('cmdb_ci', '5a8d6816a1cf38003a42245d1035d56e', 'Desktop Services');
+										snafuFlash('cmdb_ci');
+									}
+								}
+
+								// reminders
+								if (type === 'autoClose' && snafuReminderTickets.indexOf(ticketType) !== -1) {
+									// action performed is depends on reminder
+									switch (inject.detail.remind) {
+										
+										// open computer database tab
+										case 'open':
+											// save, update, auto, none
+											snafuEndTicketInteraction(inject.detail.autoFinish, inject.detail.finishDelay, ticket.field, ticketAction.value);
+
+											// attempt to get the root cause's sys_id
+											var rootCause = snafuGetRootCauseSysId(ticketType);
+
+											// open a tab using a custom javascript event
+											query = document.createEvent('CustomEvent');
+											query.initCustomEvent('SNAFU_OpenTab', true, true, {
+												url: (rootCause !== false) ? snafuSprintf('https://ghsprod.service-now.com/cmdb_ci_computer.do?sys_id=%s', [rootCause]) : 'https://ghsprod.service-now.com/cmdb_ci_computer_list.do'
+											});
+											document.dispatchEvent(query);
+											break;
+
+										// popup using sweet alerts
+										case 'popup':
+											alert('Don\'t forget to update the device\'s location information.');
+											
+											// save, update, auto, none
+											snafuEndTicketInteraction(inject.detail.autoFinish, inject.detail.finishDelay, ticket.field, ticketAction.value);
+											break;
+
+										// no reminder
+										case 'none':
+										default:
+											// save, update, auto, none
+											snafuEndTicketInteraction(inject.detail.autoFinish, inject.detail.finishDelay, ticket.field, ticketAction.value);
+											break;
+									}
+								} else {
+									snafuEndTicketInteraction(inject.detail.autoFinish, inject.detail.finishDelay, ticket.field, ticketAction.value);
+								}
+
+								// print labels
+								if ((type === 'autoClose' && (ticketType === 'rhs_reclaim' || ticketType === 'rhs_reimage')) || (type === 'autoAcknowledge' && (ticketType === 'rhs_build' || ticketType === 'rhs_reimage'))) {
+									// determine the label type from the ticket type
+									labelType = snafuGetLabelType(type, ticketType);
+
+									// make sure we do want to print these labels
+									if (labelSettings[labelType] === true) {
+										// make sure we have a valid printer
+										if (snafuHasValidPrinter()) {
+											snafuPrintLabel(ticketType, labelType);
+										} else {
+											console.warn('SNAFU: No appropriate printers were found.  Skipping print job. . .');
+											snafuErrorMessage('No appropriate printers were found.  Skipping print job. . .');
+										}
 									}
 								}
 							}
