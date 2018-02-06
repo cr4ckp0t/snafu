@@ -363,7 +363,7 @@ const snafuLabelFields = {
 
 	// reclaim task
 	'reclaim': {
-		'ticketType': ['rhs_reclaim', 'loaner_reclaim'],	// to force correct printing
+		'ticketType': ['rhs_reclaim', 'loaner_reclaim',],	// to force correct printing
 		'TEXT':	'{BROKEN_SERIAL}',							// reclaimed asset's serial number
 		'Tech': '{LABEL_TECH}',								// technician
 		'TEXT_1': '{RECLAIM_REASON}',						// reason for reclaiming
@@ -1135,7 +1135,7 @@ function snafuGetTicketType() {
 			case 'Reconnect System':
 				return 'equip_reconnect';
 				break;
-			case 'Smart/Remote Hands':
+			case 'Smart/Remote Hands Request':
 				return 'smart_hands';
 				break;
 			default:

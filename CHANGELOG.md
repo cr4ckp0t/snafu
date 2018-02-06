@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.2.20 [2018-02-06]
+### Fixed
+- Bug fixes related to automatic task detection, due to changes in naming.
+
 ## 1.2.19 [2018-01-23]
 ### Changed
 - Performing any automated action on an unassigned ticket will now trigger an error.
