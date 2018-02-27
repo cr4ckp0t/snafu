@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+### Changed
+- Changed log storage for sync to local for additional space.
+- Updated copyright year to 2018.
+
 ## 1.2.20 [2018-02-06]
 ### Fixed
 - Bug fixes related to automatic task detection, due to changes in naming.

@@ -1,6 +1,6 @@
 /**
  *  SNAFU: SNow Automated Form Utilizer
- *  Copyright (C) 2017  Adam Koch <akoch@ghs.org>
+ *  Copyright (C) 2018  Adam Koch <akoch@ghs.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -87,11 +87,40 @@ chrome.runtime.onInstalled.addListener(function(details) {
 				});
 			}
 		});
+
+		// remove the logs from the sync storage
+		chrome.storage.sync.remove(['builds', 'decoms', 'repairs']);
 	}
 });
 
 // create settings on startup, if they don't exist
 chrome.runtime.onStartup.addListener(function() {
+	// init logs
+	chrome.storage.local.get([
+		'build',
+		'decoms',
+		'repairs'
+	], function(items) {
+		if (chrome.runtime.lastError) {
+			console.error('SNAFU: Sync Get Error: %s', chrome.runtime.lastError.message);
+		} else {
+			var settingsToCreate = {}
+			if (isVarEmpty(items.builds) === true) settingsToCreate['builds'] = {};
+			if (isVarEmpty(items.decoms) === true) settingsToCreate['decoms'] = {};
+			if (isVarEmpty(items.repairs) === true) settingsToCreate['repairs'] = {};
+
+			if (settingsToCreate !== {}) {
+				chrome.storage.local.set(settingsToCreate, function() {
+					if (chrome.runtime.lastError) {
+						console.warn('SNAFU Sync Set Error: %s', chrome.runtime.lastError.message);
+					} else {
+						console.info('SNAFU: Log settings created successfully.');
+					}
+				});
+			}
+		}
+	});
+
 	chrome.storage.sync.get([
 		'autoFinish',
 		'finishDelay',
@@ -106,9 +135,6 @@ chrome.runtime.onStartup.addListener(function() {
 		'buildLog',
 		'decomLog',
 		'repairLog',
-		'builds',
-		'decoms',
-		'repairs',
 		'labels',
 	], function(items) {
 		if (chrome.runtime.lastError) {
@@ -128,9 +154,6 @@ chrome.runtime.onStartup.addListener(function() {
 			if (isVarEmpty(items.buildLog) === true) settingsToCreate['buildLog'] = false;
 			if (isVarEmpty(items.decomLog) === true) settingsToCreate['decomLog'] = false;
 			if (isVarEmpty(items.repairLog) === true) settingsToCreate['repairLog'] = false;
-			if (isVarEmpty(items.builds) === true) settingsToCreate['builds'] = {};
-			if (isVarEmpty(items.decoms) === true) settingsToCreate['decoms'] = {};
-			if (isVarEmpty(items.repairs) === true) settingsToCreate['repairs'] = {};
 			if (isVarEmpty(items.labels) === true) {
 				settingsToCreate['labels'] = {
 					build: true,

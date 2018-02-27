@@ -1,6 +1,6 @@
 /**
  *  SNAFU: SNow Automated Form Utilizer
- *  Copyright (C) 2017  Adam Koch <akoch@ghs.org>
+ *  Copyright (C) 2018  Adam Koch <akoch@ghs.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ $(document).ready(function() {
 
 	// clear the repair log
 	$('#clearLog').click(function() {
-		chrome.storage.sync.set({ repairs: {} }, function() {
+		chrome.storage.local.set({ repairs: {} }, function() {
 			if (chrome.runtime.lastError) {
 				errorMessage('Failed to reset the repair log.');
 			} else {
@@ -51,13 +51,13 @@ $(document).ready(function() {
 		if (removeEntries.length === 0) {
 			errorMessage('No repairs are selected.');
 		} else {
-			chrome.storage.sync.get('repairs', function(items) {
+			chrome.storage.local.get('repairs', function(items) {
 				if (chrome.runtime.lastError) {
 					errorMessage('Failed to remove entries.');
 				} else {
 					for (var i = 0; i < removeEntries.length; i++)
 						delete items.repairs[removeEntries[i]];
-					chrome.storage.sync.set({ repairs: items.repairs }, function() {
+					chrome.storage.local.set({ repairs: items.repairs }, function() {
 						if (chrome.runtime.lastError) {
 							errorMessage('Failed to resave the updated repair list.');
 						} else {
@@ -72,12 +72,10 @@ $(document).ready(function() {
 
 	// export csv
 	$('#exportCSV').click(function() {
-		chrome.storage.sync.get(['debug', 'repairs'], function(items) {
+		chrome.storage.local.get(['repairs'], function(items) {
 			if (chrome.runtime.lastError) {
 				console.warn('SNAFU Sync Get Error; %s', chrome.runtime.lastError.message);
 			} else {
-				if (items.debug === true) console.info('SNAFU: Generating CSV of repair log.');
-
 				if (Object.keys(items.repairs).length === 0) {
 					errorMessage('No repairs have been logged.');
 				} else {
@@ -93,7 +91,7 @@ $(document).ready(function() {
 		});
 	});
 
-	/* chrome.storage.sync.set({
+	/* chrome.storage.local.set({
 		repairs: {
 			'RITM0123456': {
 				sysId: '83e5ecf36fbe72007839d4a21c3ee453',
@@ -128,12 +126,10 @@ $(document).on('click', '.entry', function() {
  * @return	{Void}
  */
 function loadRepairs() {
-	chrome.storage.sync.get(['debug', 'repairs'], function(items) {
+	chrome.storage.local.get(['repairs'], function(items) {
 		if (chrome.runtime.lastError) {
 			console.warn('SNAFU Sync Get Error: %s', chrome.runtime.lastError.message);
 		} else {
-			if (items.debug === true) console.info('SNAFU: Generating repair list.');
-
 			if (Object.keys(items.repairs).length > 0) {
 				var innerHtml = '', i = 0;
 				var template = '<tr><td><input class="entry" type="checkbox" id="%s" name="removeEntry" value="%s" /></td><td><a href="https://ghsprod.service-now.com/nav_to.do?uri=%2Fsc_req_item.do%3Fsys_id%3D%s" target="_blank">%s</a></td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>\n';

@@ -1,6 +1,6 @@
 /**
  *  SNAFU: SNow Automated Form Utilizer
- *  Copyright (C) 2017  Adam Koch <akoch@ghs.org>
+ *  Copyright (C) 2018  Adam Koch <akoch@ghs.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ $(document).ready(function() {
 
 	// clear the build log
 	$('#clearLog').click(function() {
-		chrome.storage.sync.set({ builds: {} }, function() {
+		chrome.storage.local.set({ builds: {} }, function() {
 			if (chrome.runtime.lastError) {
 				errorMessage('Failed to reset the build log.');
 			} else {
@@ -51,13 +51,13 @@ $(document).ready(function() {
 		if (removeEntries.length === 0) {
 			errorMessage('No builds are selected.');
 		} else {
-			chrome.storage.sync.get('builds', function(items) {
+			chrome.storage.local.get('builds', function(items) {
 				if (chrome.runtime.lastError) {
 					errorMessage('Failed to remove entries.');
 				} else {
 					for (var i = 0; i < removeEntries.length; i++)
 						delete items.builds[removeEntries[i]];
-					chrome.storage.sync.set({ builds: items.builds }, function() {
+					chrome.storage.local.set({ builds: items.builds }, function() {
 						if (chrome.runtime.lastError) {
 							errorMessage('Failed to resave the updated build list.');
 						} else {
@@ -72,12 +72,10 @@ $(document).ready(function() {
 
 	// export csv
 	$('#exportCSV').click(function() {
-		chrome.storage.sync.get(['debug', 'builds'], function(items) {
+		chrome.storage.local.get(['builds'], function(items) {
 			if (chrome.runtime.lastError) {
-				console.warn('SNAFU Sync Get Error; %s', chrome.runtime.lastError.message);
+				console.warn('SNAFU Sync Get Error: %s', chrome.runtime.lastError.message);
 			} else {
-				if (items.debug === true) console.info('SNAFU: Generating CSV of build log.');
-
 				if (Object.keys(items.builds).length === 0) {
 					errorMessage('No builds have been logged.');
 				} else {
@@ -95,7 +93,7 @@ $(document).ready(function() {
 
 	loadBuilds();
 
-	/*chrome.storage.sync.set({
+	/*chrome.storage.local.set({
 		builds: {
 			'RITM0123456': {
 				sysId: '83e5ecf36fbe72007839d4a21c3ee453',
@@ -132,12 +130,10 @@ $(document).on('click', '.entry', function() {
  * @return	{Void}
  */
 function loadBuilds() {
-	chrome.storage.sync.get(['debug', 'builds'], function(items) {
+	chrome.storage.local.get(['builds'], function(items) {
 		if (chrome.runtime.lastError) {
 			console.warn('SNAFU Sync Get Error: %s', chrome.runtime.lastError.message);
 		} else {
-			if (items.debug === true) console.info('SNAFU: Generating build list.');
-
 			if (Object.keys(items.builds).length > 0) {
 				var innerHtml = '', i = 0;
 				var template = '<tr><td><input class="entry" type="checkbox" id="%s" name="removeEntry" value="%s" /></td><td><a href="https://ghsprod.service-now.com/nav_to.do?uri=%2Fsc_req_item.do%3Fsys_id%3D%s" target="_blank">%s</a></td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>\n';

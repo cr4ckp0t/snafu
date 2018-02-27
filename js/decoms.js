@@ -1,6 +1,6 @@
 /**
  *  SNAFU: SNow Automated Form Utilizer
- *  Copyright (C) 2017  Adam Koch <akoch@ghs.org>
+ *  Copyright (C) 2018  Adam Koch <akoch@ghs.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ $(document).ready(function() {
 
 	// clear the decommission log
 	$('#clearLog').click(function() {
-		chrome.storage.sync.set({ decoms: {} }, function() {
+		chrome.storage.local.set({ decoms: {} }, function() {
 			if (chrome.runtime.lastError) {
 				errorMessage('Failed to reset the decommission log.');
 			} else {
@@ -51,13 +51,13 @@ $(document).ready(function() {
 		if (removeEntries.length === 0) {
 			errorMessage('No decommissions are selected.');
 		} else {
-			chrome.storage.sync.get('decoms', function(items) {
+			chrome.storage.local.get('decoms', function(items) {
 				if (chrome.runtime.lastError) {
 					errorMessage('Failed to remove entries.');
 				} else {
 					for (var i = 0; i < removeEntries.length; i++)
 						delete items.decoms[removeEntries[i]];
-					chrome.storage.sync.set({ decoms: items.decoms }, function() {
+					chrome.storage.local.set({ decoms: items.decoms }, function() {
 						if (chrome.runtime.lastError) {
 							errorMessage('Failed to resave the updated decommission list.');
 						} else {
@@ -72,12 +72,10 @@ $(document).ready(function() {
 
 	// export csv
 	$('#exportCSV').click(function() {
-		chrome.storage.sync.get(['debug', 'decoms'], function(items) {
+		chrome.storage.local.get(['decoms'], function(items) {
 			if (chrome.runtime.lastError) {
 				console.warn('SNAFU Sync Get Error; %s', chrome.runtime.lastError.message);
 			} else {
-				if (items.debug === true) console.info('SNAFU: Generating CSV of decommission log.');
-
 				if (Object.keys(items.decoms).length === 0) {
 					errorMessage('No decommissions have been logged.');
 				} else {
@@ -93,7 +91,7 @@ $(document).ready(function() {
 		});
 	});
 
-	/* chrome.storage.sync.set({
+	/* chrome.storage.local.set({
 		decoms: {
 			'RITM0123456': {
 				sysId: '83e5ecf36fbe72007839d4a21c3ee453',
@@ -128,12 +126,10 @@ $(document).on('click', '.entry', function() {
  * @return	{Void}
  */
 function loadDecoms() {
-	chrome.storage.sync.get(['debug', 'decoms'], function(items) {
+	chrome.storage.local.get(['decoms'], function(items) {
 		if (chrome.runtime.lastError) {
 			console.warn('SNAFU Sync Get Error: %s', chrome.runtime.lastError.message);
 		} else {
-			if (items.debug === true) console.info('SNAFU: Generating decommision list.');
-
 			if (Object.keys(items.decoms).length > 0) {
 				var innerHtml = '', i = 0;
 				var template = '<tr><td><input class="entry" type="checkbox" id="%s" name="removeEntry" value="%s" /></td><td><a href="https://ghsprod.service-now.com/nav_to.do?uri=%2Fsc_req_item.do%3Fsys_id%3D%s" target="_blank">%s</a></td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>\n';

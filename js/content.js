@@ -1,6 +1,6 @@
 /**
  *  SNAFU: SNow Automated Form Utilizer
- *  Copyright (C) 2017  Adam Koch <akoch@ghs.org>
+ *  Copyright (C) 2018  Adam Koch <akoch@ghs.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -59,7 +59,7 @@ document.addEventListener('SNAFU_BuildLogQuery', function(build) {
     if (isVarEmpty(build.detail.sysId) || isVarEmpty(build.detail.ritm) || isVarEmpty(build.detail.hostname) || isVarEmpty(build.detail.assetTag) || isVarEmpty(build.detail.dateTime) || isVarEmpty(build.detail.build) || isVarEmpty(build.detail.model) || isVarEmpty(build.detail.newUsed)) {
         sendStatusMessage('error', 'Received incorrect data for the build log.');
     } else {
-       chrome.storage.sync.get('builds', function(items) {
+       chrome.storage.local.get('builds', function(items) {
             if (chrome.runtime.lastError) {
                 sendStatusMessage('error', 'Unable to pull build log data.');
             } else {
@@ -72,7 +72,7 @@ document.addEventListener('SNAFU_BuildLogQuery', function(build) {
                     model: build.detail.model,
                     newUsed: build.detail.newUsed
                 }
-                chrome.storage.sync.set({builds: items.builds}, function() {});
+                chrome.storage.local.set({builds: items.builds}, function() {});
             }
         });
     }
@@ -83,7 +83,7 @@ document.addEventListener('SNAFU_LogQuery', function(query) {
     if (isVarEmpty(query.detail.logType) || isVarEmpty(query.detail.sysId) || isVarEmpty(query.detail.ritm) || isVarEmpty(query.detail.hostname) || isVarEmpty(query.detail.assetTag) || isVarEmpty(query.detail.dateTime) || isVarEmpty(query.detail.model)) {
         sendStatusMessage('error', sprintf('Received incorrect data for %s log.', [query.detail.logType.slice(0, query.detail.logType.length - 1)]));
     } else {
-        chrome.storage.sync.get([query.detail.logType], function(items) {
+        chrome.storage.local.get([query.detail.logType], function(items) {
             if (chrome.runtime.lastError) {
                 sendStatusMessage('error', sprintf('Unable to pull %s log data.', [query.detail.logType.slice(0, query.detail.logType.length - 1)]));
             } else {
@@ -94,7 +94,7 @@ document.addEventListener('SNAFU_LogQuery', function(query) {
                     dateTime: query.detail.dateTime,
                     model: query.detail.model
                 }
-                chrome.storage.sync.set(items, function() {});
+                chrome.storage.local.set(items, function() {});
             }
         });
     }
