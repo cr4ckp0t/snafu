@@ -1242,10 +1242,10 @@ function snafuEndTicketInteraction(action, delay, field, value) {
 			}
 			break;
 
-		// auto (save all updates except closures, which are updated. incidents are never automatically resolved)
+		// auto (save all updates except holds or closures, which are updated. incidents are never automatically resolved)
 		case 'auto':
 			// if a closure then update, otherwise save
-			if (field === 'state' && (value === '3' || value === '4')) {
+			if (value === '4' || (field === 'state' && (value === '3' || value === '-5'))) {
 				// update
 				setTimeout(function() { g_form.submit(); }, delay * 1000);
 			} else if (field === 'state' || (field === 'incident_state' && value !== '6')) {

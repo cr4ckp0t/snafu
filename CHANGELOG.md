@@ -6,8 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 ### Changed
-- Changed log storage for sync to local for additional space.
+- Changed log storage from sync to local for additional space.
 - Updated copyright year to 2018.
+- Automatic ticket handling will now use Update instead of Save when putting tickets on hold.
 
 ## 1.2.20 [2018-02-06]
 ### Fixed
