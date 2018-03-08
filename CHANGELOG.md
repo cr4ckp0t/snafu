@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## 1.2.21 [2018-03-08]
 ### Changed
 - Changed log storage from sync to local for additional space.
 - Updated copyright year to 2018.
