@@ -645,9 +645,27 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 
 									// root cause ci
 									// desktop services value is 5a8d6816a1cf38003a42245d1035d56e
-									if (ticketType !== 'absolute_install' && g_form.getValue('cmdb_ci') !== '5a8d6816a1cf38003a42245d1035d56e') {
-										snafuSetDisplayValue('cmdb_ci', '5a8d6816a1cf38003a42245d1035d56e', 'Desktop Services');
-										snafuFlash('cmdb_ci');
+									if (ticketType !== 'absolute_install') {
+										// root cause ci
+										if (ticketType === 'rhs_build' || ticketType === 'rhs_reclaim' || ticketType === 'rhs_restock' || ticketType === 'rhs_repair' || ticketType === 'rhs_decommission') {
+											var brokenHost = g_form.getReference('rhs_comp_name');
+											if (rootCause !== brokenHost.sys_id) {
+												snafuSetDisplayValue('cmdb_ci', brokenHost.sys_id, brokenHost.name);
+												snafuFlash('cmdb_ci');
+											}
+										} else if (ticketType === 'rhs_comp_deploy') {
+											var replaceHost = g_form.getReference('rhs_replacement_computer');
+											if (rootCause !== replaceHost.sys_id) {
+												snafuSetDisplayValue('cmdb_ci', replaceHost.sys_id, replaceHost.name);
+												snafuFlash('cmdb_ci');
+											}
+										} else {
+											// desktop services value is 5a8d6816a1cf38003a42245d1035d56e
+											if (rootCause !== '5a8d6816a1cf38003a42245d1035d56e') {
+												snafuSetDisplayValue('cmdb_ci', '5a8d6816a1cf38003a42245d1035d56e', 'Desktop Services');
+												snafuFlash('cmdb_ci');
+											}
+										}
 									}
 								}
 
@@ -782,6 +800,8 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 						// change the root cause ci and due date for tasks
 						} else if (field === 'state') {
 							var dueDate = snafuGetDueDate();
+							var rootCause = g_form.getValue('cmdb_ci');
+							var taskName = g_form.getValue('u_task_name').toLowerCase();
 
 							// due date
 							if (g_form.getValue('due_date') !== dueDate) {
@@ -790,10 +810,25 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 							}
 
 							// root cause ci
-							// desktop services value is 5a8d6816a1cf38003a42245d1035d56e
-							if (g_form.getValue('cmdb_ci') !== '5a8d6816a1cf38003a42245d1035d56e') {
-								snafuSetDisplayValue('cmdb_ci', '5a8d6816a1cf38003a42245d1035d56e', 'Desktop Services');
-								snafuFlash('cmdb_ci');
+							if (taskName === 'rhs_build' || taskName === 'rhs_reclaim' || taskName === 'rhs_restock' || taskName === 'rhs_repair' || taskName === 'rhs_decommission') {
+								var brokenHost = g_form.getReference('rhs_comp_name');
+								if (rootCause !== brokenHost.sys_id) {
+									snafuSetDisplayValue('cmdb_ci', brokenHost.sys_id, brokenHost.name);
+									snafuFlash('cmdb_ci');
+								}
+							} else if (taskName === 'rhs_comp_deploy') {
+								var replaceHost = g_form.getReference('rhs_replacement_computer');
+								console.info(rootCause, replaceHost);
+								if (rootCause !== replaceHost.sys_id) {
+									snafuSetDisplayValue('cmdb_ci', replaceHost.sys_id, replaceHost.name);
+									snafuFlash('cmdb_ci');
+								}
+							} else {
+								// desktop services value is 5a8d6816a1cf38003a42245d1035d56e
+								if (rootCause !== '5a8d6816a1cf38003a42245d1035d56e') {
+									snafuSetDisplayValue('cmdb_ci', '5a8d6816a1cf38003a42245d1035d56e', 'Desktop Services');
+									snafuFlash('cmdb_ci');
+								}
 							}
 
 							// if setting to pending and sub-status is set, then set the select

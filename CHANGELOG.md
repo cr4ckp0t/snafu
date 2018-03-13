@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.2.22 [2018-03-13]
+### Changed
+- When handling Asset Management tasks, the Root Cause CI field will be set according to the broken/replacement hostname.
+
 ## 1.2.21 [2018-03-08]
 ### Changed
 - Changed log storage from sync to local for additional space.
