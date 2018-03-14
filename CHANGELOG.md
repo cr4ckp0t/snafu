@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.2.23 [2018-03-14]
+### Fixed
+- Root Cause CI field is not properly detected to see if it has the correct informaiton when updating tasks.
+
 ## 1.2.22 [2018-03-13]
 ### Changed
 - When handling Asset Management tasks, the Root Cause CI field will be set according to the broken/replacement hostname.
