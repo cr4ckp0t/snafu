@@ -220,7 +220,7 @@ function handleResponseBG(response) {
 						console.info('SNAFU: Update sent!');
 					}
 				} else {
-					console.error('SNAFU Error: Unable to process response to message.');
+					//console.error('SNAFU Error: Unable to process response to message.');
 				}
 			}
 		}

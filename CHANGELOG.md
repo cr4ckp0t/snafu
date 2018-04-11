@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+### Added
+- Loads of new keyboard shortcuts!
+
 ## 1.2.23 [2018-03-14]
 ### Fixed
 - Root Cause CI field is not properly detected to see if it has the correct informaiton when updating tasks.

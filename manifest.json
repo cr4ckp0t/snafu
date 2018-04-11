@@ -1,7 +1,7 @@
 {
     "name": "SNAFU: SNow Automated Form Utilizer",
     "short_name": "SNAFU",
-    "version": "1.2.23",
+    "version": "1.2.24",
     "description": "It's like SNAP, only way better!",
     "author": "Adam Koch",
     "omnibox": {"keyword": "snafu"},
@@ -26,22 +26,19 @@
         "run_at": "document_end"
     }],
     "commands": {
-        "assignToMe": {
-            "description": "Query technician info or assign to technician.",
-            "suggested_key": { "default": "Alt+Q" }
-        },
-        "savePage": {
-            "description": "Save the ticket.",
-            "suggested_key": { "default": "Alt+S" }
-        },
-        "updatePage": {
-            "description": "Update the ticket.",
-            "suggested_key": {  "default": "Alt+U"  }
-        },
-        "autoHandle": {
-            "description": "Auto-acknowledge/close ticket.",
-            "suggested_key": { "default": "Alt+A" }
-        }
+        "updatePage": {  "description": "Update Ticket" },
+        "autoHandle": { "description": "Auto Acknowledge/Close Ticket" },
+        "autoClose": {  "description": "Auto Close Ticket" },
+        "autoEnRoute": { "description": "Auto En Route Update" },
+        "autoPending": { "description": "Auto On Hold/Pending Update" },
+        "closeHotSwapNew": { "description": "Close Hot Swap (New Device)" },
+        "closeHotSwapRepurposed": { "description": "Close Hot Swap (Repurposed Device)" },
+        "closeQuarantineDecommission": { "description": "Close Quarantine (Decommission)" },
+        "closeQuarantineRepairYes": {  "description": "Close Quarantine (Repair On-Site)"  },
+        "closeQuarantineRepairNo": {  "description": "Close Quarantine (Repair At MDC)"  },
+        "closeQuarantineRestock": { "description": "Close Quarantine (Restock)"  },
+        "assignToMe": { "description": "Save Tech Info/Assign To Self" },
+        "savePage": { "description": "Save Ticket"  }
     },
     "options_page": "html/options.html",
     "web_accessible_resources": ["CHANGELOG.md", "js/inject.js", "js/dymo.js"],
