@@ -1,7 +1,7 @@
 {
     "name": "SNAFU: SNow Automated Form Utilizer",
     "short_name": "SNAFU",
-    "version": "1.2.24",
+    "version": "1.2.25",
     "description": "It's like SNAP, only way better!",
     "author": "Adam Koch",
     "omnibox": {"keyword": "snafu"},
@@ -38,7 +38,10 @@
         "closeQuarantineRepairNo": {  "description": "Close Quarantine (Repair At MDC)"  },
         "closeQuarantineRestock": { "description": "Close Quarantine (Restock)"  },
         "assignToMe": { "description": "Save Tech Info/Assign To Self" },
-        "savePage": { "description": "Save Ticket"  }
+        "savePage": { "description": "Save Ticket"  },
+        "sendUpdateInProgress": { "description": "Send Update (In Progress)" },
+        "sendUpdateOnHold": { "description": "Send Update (On Hold)" },
+        "sendUpdateResolved": { "description": "Send Update (Resolved)" }
     },
     "options_page": "html/options.html",
     "web_accessible_resources": ["CHANGELOG.md", "js/inject.js", "js/dymo.js"],

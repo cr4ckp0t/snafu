@@ -18,6 +18,8 @@
 
 // keyboard shortcuts
 chrome.commands.onCommand.addListener(function(command) {
+	var messageData = {}
+
 	if (command === 'assignToMe') {
 		chrome.storage.sync.get(['debug', 'userId', 'fullName', 'groupId', 'groupName'], function(items) {
 			if (chrome.runtime.lastError) {
@@ -25,12 +27,12 @@ chrome.commands.onCommand.addListener(function(command) {
 			} else {
 				if (isVarEmpty(items.userId) === true || isVarEmpty(items.fullName) === true || isVarEmpty(items.groupId) === true || isVarEmpty(items.groupName) === true) {
 					// query user info
-					var messageData = {
+					messageData = {
 						type: 'userQuery'
 					}
 				} else {
 					// assign to technician
-					var messageData = {
+					messageData = {
 						type: 'assignToMe',
 						userInfo: {
 							userId: items.userId,
@@ -40,14 +42,39 @@ chrome.commands.onCommand.addListener(function(command) {
 						}
 					}
 				}
-				chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-					chrome.tabs.sendMessage(tabs[0].id, messageData, handleResponseBG);
-				});
 			}
 		});
+	} else if (command.indexOf('sendUpdate') !== -1) {
+		var statusCode;
+		var comment = prompt('Enter the comment to send. This is REQUIRED.');
+		if (!isVarEmpty(comment)) {
+			switch (command) {
+				case 'sendUpdateInProgress':
+					statusCode = '0';
+					break;
+				case 'sendUpdateOnHold':
+					statusCode = '1';
+					break;
+				case 'sendUpdateResolved':
+					statusCode = '2';
+					break;
+				default: break;
+			}
+			messageData = {
+				type: 'sendUpdate',
+				tStatus: statusCode,
+				custNotes: comment
+			}
+		} else {
+			console.warn('SNAFU Error: You must provide a comment to send an update.');
+		}
 	} else {
+		messageData['type'] = command;
+	}
+
+	if (!isVarEmpty(messageData)) {
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-			chrome.tabs.sendMessage(tabs[0].id, {type: command}, handleResponseBG);
+			chrome.tabs.sendMessage(tabs[0].id, messageData, handleResponseBG);
 		});
 	}
 });
