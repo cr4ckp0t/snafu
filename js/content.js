@@ -371,7 +371,7 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                                 }
                             });
                         }
-
+                        
                         injectData = {
                             type: msg.type,
                             autoFinish: items.autoFinish || 'none',
