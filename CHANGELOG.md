@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.2.26 [2018-04-13]
+### Fixed
+- Small bug with incorrect ticket status being sent via keyboard shortcuts.
+
 ## 1.2.25 [2018-04-12]
 ### Added
 - Updates can be sent via keyboard shortcuts. It will prompt for a note to include.

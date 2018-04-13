@@ -62,7 +62,7 @@ chrome.commands.onCommand.addListener(function(command) {
 			}
 			messageData = {
 				type: 'sendUpdate',
-				tStatus: statusCode,
+				tState: statusCode,
 				custNotes: comment
 			}
 		} else {

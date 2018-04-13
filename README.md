@@ -32,7 +32,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ## Statistics
 ```
-http://cloc.sourceforge.net v 1.64  T=0.53 s (62.8 files/s, 14511.8 lines/s)
+http://cloc.sourceforge.net v 1.64  T=0.54 s (61.4 files/s, 14191.9 lines/s)
 -------------------------------------------------------------------------------
 Language                     files          blank        comment           code
 -------------------------------------------------------------------------------
