@@ -529,6 +529,32 @@ chrome.contextMenus.create({
 	onclick: actionHandler
 });
 
+chrome.contextMenus.create({
+	title: 'Staging Transfer Label',
+	contexts: ['page'],
+	id: 'printLabelStaging',
+	parentId: 'printLabelParent',
+	documentUrlPatterns: [docPatternsChoose.global],
+});
+
+chrome.contextMenus.create({
+	title: 'Single Label',
+	contexts: ['page'],
+	id: 'printLabelStagingSingle',
+	parentId: 'printLabelStaging',
+	documentUrlPatterns: [docPatternsChoose.global],
+	onclick: actionHandler
+});
+
+chrome.contextMenus.create({
+	title: 'Entire Ticket',
+	contexts: ['page'],
+	id: 'printLabelStagingEntire',
+	parentId: 'printLabelStaging',
+	documentUrlPatterns: [docPatternsChoose.global],
+	onclick: actionHandler
+});
+
 chrome.contextMenus.create({type: 'separator', parentId: 'snafuParent'});
 
 /**

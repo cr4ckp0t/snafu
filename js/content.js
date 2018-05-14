@@ -224,7 +224,9 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
                 case 'printLabelReclaim':
                 case 'printLabelRepair':
                 case 'printLabelRestock':
-                    if ((msg.type !== 'printLabelPurchase' && msg.type !== 'printLabelPrebuilt' && msg.type !== 'printLabelBroken') && ticketType !== 'task') {
+                case 'printLabelStagingSingle':
+                case 'printLabelStagingEntire':
+                    if ((msg.type !== 'printLabelPurchase' && msg.type !== 'printLabelPrebuilt' && msg.type !== 'printLabelBroken' && msg.type.indexOf('printLabelStaging') === -1) && ticketType !== 'task') {
                         injectData = {
                             type: 'error',
                             errMsg: 'Task type is invalid for this operation.'
