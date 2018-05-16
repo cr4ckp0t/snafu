@@ -26,7 +26,7 @@
         "run_at": "document_end"
     }],
     "commands": {
-        "updatePage": {  "description": "Update Ticket" },
+        "updatePage": { "description": "Update Ticket" },
         "autoHandle": { "description": "Auto Acknowledge/Close Ticket" },
         "autoClose": {  "description": "Auto Close Ticket" },
         "autoEnRoute": { "description": "Auto En Route Update" },
