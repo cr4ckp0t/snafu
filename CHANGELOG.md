@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.3.1 [2018-05-16]
+### Fixed
+- Campuses will now be pulled correctly for Staging Transfer labels.
+- Staging Transfer print jobs will alert when there are > 3 labels to print. Otherwise they will just print normally.
+
 ## 1.3.0 [2018-05-14]
 ### Notes
 - Since I am leaving the Desktop Support group, this will likely be the last major release. I will try to update SNAFU as I can when things bring or change, but SNAFU will no longer be in active development.

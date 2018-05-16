@@ -22,8 +22,7 @@
  *  access to page variables, so we have to inject code and use Custom Events
  *  to pass data between the extension and the page.
  **/
-
- const snafuAutoTickets = { 
+const snafuAutoTickets = { 
 	// misc
 	'generic_task': {
 		field: 'state',
@@ -613,13 +612,13 @@ document.addEventListener('SNAFU_Inject', function(inject) {
 					console.warn('SNAFU: No appropriate printers were found. Skipping print job. . .');
 					snafuErrorMessage('No appropriate printers were found. Skipping print job. . .');
 				} else {
-					var serials = g_form.getValue('ni.VE13ff30e1dbf91b4ccf1fa961ca9619ed').split('\n')
+					var serials = g_form.getValue('equipment').split('\n')
 					var printers = dymo.label.framework.getPrinters().filter(function(printer) { return (printer.isConnected === true && printer.isLocal === true) });
 					var printerName = printers[0]['name'];
 					if (snafuIsVarEmpty(serials) || serials.length === 0) {
 						console.warn('SNAFU: No serials found. Skipping print job. . .');
 						snafuErrorMessage('No appropriate printers were found. Skipping print job. . .');
-					} else if (confirm(snafuSprintf('Are you sure you want to print %s labels?\n\nIt will take some time to complete the print job.', [serials.length]))) {
+					} else if (serials.length <= 3 || confirm(snafuSprintf('Are you sure you want to print %s labels?\n\nIt will take some time to complete the print job.', [serials.length]))) {
 						// well...they had their chance to cancel...
 						var addressLabel = dymo.label.framework.openLabelXml(snafuGetDymoLabelXml('staging'));
 						
@@ -1105,8 +1104,8 @@ function snafuReplaceWildcards(strIn) {
 		"{REPLACE_SERIAL}": "(snafuIsVarEmpty(g_form.rhs_replacement_computer('serial_number')) === false) ? g_form.rhs_replacement_computer('serial_number') : 'UNKNOWN';",
 		
 		// staging transfer wildcards
-		"{TRANSFER_FROM}": "(snafuIsVarEmpty(g_form.getReference('ni.VE5fff3ca1dbf91b4ccf1fa961ca961967')) === false) ? g_form.getReference('ni.VE5fff3ca1dbf91b4ccf1fa961ca961967').u_building : 'UNKNOWN';",
-		"{TRANSFER_TO}": "(snafuIsVarEmpty(g_form.getReference('ni.VE1fff30e1dbf91b4ccf1fa961ca9619ec')) === false) ? g_form.getReference('ni.VE1fff30e1dbf91b4ccf1fa961ca9619ec').u_building : 'UNKNOWN';",
+		"{TRANSFER_FROM}": "(snafuIsVarEmpty(g_form.getReference('from')) === false) ? snafuGetCampusName(g_form.getReference('from').sys_id) : 'UNKNOWN';",
+		"{TRANSFER_TO}": "(snafuIsVarEmpty(g_form.getReference('to')) === false) ? snafuGetCampusName(g_form.getReference('to').sys_id) : 'UNKNOWN';",
 		
 		// miscellaneous
 		"{ABS_MACHINE}": "(snafuIsVarEmpty(g_form.getReference('cmdb_ci')) === false) ? g_form.getReference('cmdb_ci').name : 'UNKNOWN';",
@@ -1602,6 +1601,7 @@ function snafuGetCampusName(uid) {
 			break;
 		default:
 			return 'Unknown';
+			break;
 	}
 }
 
