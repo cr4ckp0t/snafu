@@ -7,7 +7,7 @@
 ## License
 ```
 SNAFU: SNow Automated Field Utilizer
-Copyright (C) 2018  Adam Koch <akoch@ghs.org>
+Copyright (C) 2019  Adam Koch <adam.koch@prismahealth.org>
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

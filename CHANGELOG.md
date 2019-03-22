@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.3.2 [2019-03-22]
+### Changed
+- Updated copyright to 2019.
+- Updated contact email to adam.koch@prismahealth.org in anticipation of the April 1st change.
+
 ## 1.3.1 [2018-05-16]
 ### Fixed
 - Campuses will now be pulled correctly for Staging Transfer labels.
